@@ -45,8 +45,8 @@ pnpm typecheck && pnpm lint && pnpm lint:channels && pnpm test:unit && pnpm test
 pnpm test:db   # precisa de Docker
 ```
 
-A sincronização com o projeto de origem segue
-[`docs/unnify/sincronizacao.md`](docs/unnify/sincronizacao.md).
+A sincronização com o projeto de origem é feita no repositório interno, com um guia que fica só
+lá.
 
 ## Conduta
 

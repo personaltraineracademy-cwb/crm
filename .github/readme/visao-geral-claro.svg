@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="268" viewBox="0 0 880 268" role="img" aria-labelledby="titulo desc">
+  <title id="titulo">Unnify CRM em uma imagem</title>
+  <desc id="desc">Três frentes: atendimento pelo WhatsApp, vendas no funil e agentes de IA. Roda na sua VPS, é multiempresa, tem a LGPD no desenho e o código é aberto, sob a licença MIT.</desc>
+  <rect width="880" height="268" rx="16" fill="#f1f3f6"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif">
+    <rect x="24" y="24" width="262" height="168" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+    <rect x="44" y="46" width="28" height="4" rx="2" fill="#0066cc"/>
+    <text x="44" y="78" font-size="16" font-weight="600" fill="#20242c">Atendimento</text>
+    <text x="44" y="106" font-size="14" fill="#626a77">Todas as conversas do</text>
+    <text x="44" y="126" font-size="14" fill="#626a77">WhatsApp numa caixa de</text>
+    <text x="44" y="146" font-size="14" fill="#626a77">entrada, com fila, radar e</text>
+    <text x="44" y="166" font-size="14" fill="#626a77">respostas rápidas.</text>
+    <rect x="309" y="24" width="262" height="168" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+    <rect x="329" y="46" width="28" height="4" rx="2" fill="#0066cc"/>
+    <text x="329" y="78" font-size="16" font-weight="600" fill="#20242c">Vendas</text>
+    <text x="329" y="106" font-size="14" fill="#626a77">Funil em quadro, contatos,</text>
+    <text x="329" y="126" font-size="14" fill="#626a77">tarefas, propostas e</text>
+    <text x="329" y="146" font-size="14" fill="#626a77">campanhas, com o vocabulário</text>
+    <text x="329" y="166" font-size="14" fill="#626a77">do seu negócio.</text>
+    <rect x="594" y="24" width="262" height="168" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+    <rect x="614" y="46" width="28" height="4" rx="2" fill="#0066cc"/>
+    <text x="614" y="78" font-size="16" font-weight="600" fill="#20242c">Agentes de IA</text>
+    <text x="614" y="106" font-size="14" fill="#626a77">Atendem, qualificam e movem</text>
+    <text x="614" y="126" font-size="14" fill="#626a77">o lead no funil. Passam a</text>
+    <text x="614" y="146" font-size="14" fill="#626a77">conversa para a equipe</text>
+    <text x="614" y="166" font-size="14" fill="#626a77">quando é hora.</text>
+    <rect x="114" y="212" width="139" height="32" rx="16" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="184" y="233" font-size="14" font-weight="500" text-anchor="middle" fill="#0055aa">Roda na sua VPS</text>
+    <rect x="265" y="212" width="117" height="32" rx="16" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="324" y="233" font-size="14" font-weight="500" text-anchor="middle" fill="#0055aa">Multiempresa</text>
+    <rect x="394" y="212" width="139" height="32" rx="16" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="464" y="233" font-size="14" font-weight="500" text-anchor="middle" fill="#0055aa">LGPD no desenho</text>
+    <rect x="545" y="212" width="220" height="32" rx="16" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="655" y="233" font-size="14" font-weight="500" text-anchor="middle" fill="#0055aa">Código aberto, licença MIT</text>
+  </g>
+</svg>

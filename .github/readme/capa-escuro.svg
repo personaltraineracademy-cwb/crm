@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="240" viewBox="0 0 880 240" role="img" aria-label="Unnify CRM" aria-describedby="desc">
+  <title>Unnify CRM</title>
+  <desc id="desc">CRM de vendas e atendimento pelo WhatsApp, com agentes de IA que trabalham junto com a equipe. Ao lado, uma conversa esquemática: o cliente pergunta por um horário, a IA digita e responde.</desc>
+  <style>
+.entra { animation: entra 280ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+    .d1 { animation-delay: 60ms; } .d2 { animation-delay: 120ms; } .d3 { animation-delay: 180ms; }
+    .d4 { animation-delay: 240ms; }
+    @keyframes entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .b1 { animation: b1 8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s infinite both; }
+    .dig { animation: dig 8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s infinite both; }
+    .b2 { animation: b2 8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s infinite both; }
+    .p { animation: ponto 1.2s ease-in-out infinite; }
+    .p2 { animation-delay: 0.15s; } .p3 { animation-delay: 0.3s; }
+    @keyframes b1 {
+  0% { opacity: 0; transform: translateY(6px); }
+  5% { opacity: 1; transform: none; }
+  90% { opacity: 1; transform: none; }
+  96% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes dig {
+  0% { opacity: 0; }
+  14% { opacity: 0; }
+  18% { opacity: 1; }
+  40% { opacity: 1; }
+  43% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes b2 {
+  0% { opacity: 0; transform: translateY(6px); }
+  42% { opacity: 0; transform: translateY(6px); }
+  47% { opacity: 1; transform: none; }
+  90% { opacity: 1; transform: none; }
+  96% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes ponto { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .entra, .b1, .b2, .dig, .p { animation: none; }
+      .dig { opacity: 0; }
+    }
+  </style>
+  <rect width="880" height="240" rx="16" fill="#181a1e"/>
+  <g class="entra"><text x="40" y="92" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif" font-size="40" font-weight="600" fill="#f3f5f8" letter-spacing="-1.4">Unnify CRM</text></g>
+  <g class="entra d1">
+    <text x="40" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="400" fill="#f3f5f8">CRM de vendas e atendimento pelo WhatsApp,</text>
+    <text x="40" y="156" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="400" fill="#f3f5f8">com agentes de IA que trabalham junto com a equipe.</text>
+  </g>
+  <g class="entra d2"><text x="40" y="196" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="400" fill="#b4bbc6">Roda no seu servidor. Os dados ficam com você. Código MIT.</text></g>
+  <g class="entra d3">
+    <rect x="548" y="28" width="300" height="184" rx="12" fill="#23262b" stroke="#353a42"/>
+    <text x="568" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#b4bbc6">Conversa no WhatsApp</text>
+    <line x1="548" y1="66" x2="848" y2="66" stroke="#353a42"/>
+    <g class="b1">
+      <rect x="564" y="80" width="214" height="34" rx="10" fill="#2d3239"/>
+      <text x="578" y="102" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="400" fill="#f3f5f8">Oi! Ainda tem horário amanhã?</text>
+    </g>
+    <g class="dig">
+      <text x="744" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#b4bbc6" text-anchor="end">IA digitando</text>
+      <rect x="752" y="126" width="80" height="28" rx="10" fill="#203750"/>
+      <circle class="p p1" cx="776" cy="140" r="3.5" fill="#75b7ff"/>
+      <circle class="p p2" cx="792" cy="140" r="3.5" fill="#75b7ff"/>
+      <circle class="p p3" cx="808" cy="140" r="3.5" fill="#75b7ff"/>
+    </g>
+    <g class="b2">
+      <rect x="640" y="124" width="192" height="34" rx="10" fill="#75b7ff"/>
+      <text x="654" y="146" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="#08131c">Tem sim. Reservo às 10h?</text>
+      <text x="832" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#b4bbc6" text-anchor="end">Agente de IA</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="300" viewBox="0 0 880 300" role="img" aria-label="Do WhatsApp à resposta da IA" aria-describedby="desc">
+  <title>Do WhatsApp à resposta da IA</title>
+  <desc id="desc">O cliente escreve no WhatsApp. A mensagem passa pelo WAHA, chega ao app por um webhook assinado e é gravada no banco, que a enfileira. O worker monta a resposta com a IA (digitando) e a envia de volta pelo WAHA até o WhatsApp do cliente.</desc>
+  <style>
+.ida { animation: ida 7s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; }
+    .ida-vis { animation: ida-vis 7s linear infinite; }
+    .volta { animation: volta 7s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; }
+    .volta-vis { animation: volta-vis 7s linear infinite; }
+    .dig { animation: dig 7s linear infinite; }
+    .ok { animation: ok 7s linear infinite; }
+    .p { animation: ponto 1.2s ease-in-out infinite; }
+    .p2 { animation-delay: 0.15s; } .p3 { animation-delay: 0.3s; }
+    .no0 { animation: no0 7s linear infinite; } .no1 { animation: no1 7s linear infinite; } .no2 { animation: no2 7s linear infinite; } .no3 { animation: no3 7s linear infinite; } .no4 { animation: no4 7s linear infinite; }
+    @keyframes ida {
+  0% { transform: translate(152px, 128px); }
+  6% { transform: translate(152px, 128px); }
+  12% { transform: translate(206px, 128px); }
+  12.01% { transform: translate(326px, 128px); }
+  16% { transform: translate(326px, 128px); }
+  22% { transform: translate(380px, 128px); }
+  22.01% { transform: translate(500px, 128px); }
+  26% { transform: translate(500px, 128px); }
+  32% { transform: translate(554px, 128px); }
+  32.01% { transform: translate(674px, 128px); }
+  36% { transform: translate(674px, 128px); }
+  42% { transform: translate(728px, 128px); }
+  100% { transform: translate(728px, 128px); }
+}
+    @keyframes volta {
+  0% { transform: translate(788px, 160px); }
+  56% { transform: translate(788px, 160px); }
+  60% { transform: translate(788px, 238px); }
+  72% { transform: translate(266px, 238px); }
+  76% { transform: translate(266px, 160px); }
+  80% { transform: translate(266px, 160px); }
+  80.01% { transform: translate(206px, 146px); }
+  86% { transform: translate(152px, 146px); }
+  100% { transform: translate(152px, 146px); }
+}
+    @keyframes ida-vis {
+  0% { opacity: 1; }
+  56% { opacity: 1; }
+  56.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes volta-vis {
+  0% { opacity: 0; }
+  55.5% { opacity: 0; }
+  56% { opacity: 1; }
+  87% { opacity: 1; }
+  87.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes no0 {
+  0% { opacity: 1; }
+  6% { opacity: 1; }
+  7.5% { opacity: 0; }
+  84.5% { opacity: 0; }
+  86% { opacity: 1; }
+  96% { opacity: 1; }
+  97.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes no1 {
+  0% { opacity: 0; }
+  10.5% { opacity: 0; }
+  12% { opacity: 1; }
+  16% { opacity: 1; }
+  17.5% { opacity: 0; }
+  74.5% { opacity: 0; }
+  76% { opacity: 1; }
+  80% { opacity: 1; }
+  81.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes no2 {
+  0% { opacity: 0; }
+  20.5% { opacity: 0; }
+  22% { opacity: 1; }
+  26% { opacity: 1; }
+  27.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes no3 {
+  0% { opacity: 0; }
+  30.5% { opacity: 0; }
+  32% { opacity: 1; }
+  36% { opacity: 1; }
+  37.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes no4 {
+  0% { opacity: 0; }
+  40.5% { opacity: 0; }
+  42% { opacity: 1; }
+  56% { opacity: 1; }
+  57.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes dig {
+  0% { opacity: 0; }
+  42% { opacity: 0; }
+  44% { opacity: 1; }
+  55% { opacity: 1; }
+  57% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes ok {
+  0% { opacity: 0; }
+  86% { opacity: 0; }
+  88% { opacity: 1; }
+  97% { opacity: 1; }
+  99% { opacity: 0; }
+  100% { opacity: 0; }
+}
+    @keyframes ponto { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .ida, .ida-vis, .volta, .volta-vis, .dig, .ok, .p, .no0, .no1, .no2, .no3, .no4 { animation: none; }
+      .ida-vis, .volta-vis, .no0, .no1, .no2, .no3, .no4, .ok { opacity: 0; }
+      .dig { opacity: 1; }
+    }
+  </style>
+  <rect width="880" height="300" rx="16" fill="#f1f3f6"/>
+  <text x="24" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="600" fill="#071a32">Do WhatsApp à resposta da IA</text>
+  <circle cx="586" cy="39" r="5" fill="#0066cc"/>
+  <text x="598" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77">mensagem do cliente</text>
+  <circle cx="738" cy="39" r="5" fill="#00a8f6"/>
+  <text x="750" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77">resposta</text>
+  <defs>
+    <marker id="seta-ida" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#0066cc"/></marker>
+    <marker id="seta-volta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#00a8f6"/></marker>
+  </defs>
+  <line x1="160" y1="128" x2="195" y2="128" stroke="#0066cc" stroke-width="2" marker-end="url(#seta-ida)"/>
+  <line x1="334" y1="128" x2="369" y2="128" stroke="#0066cc" stroke-width="2" marker-end="url(#seta-ida)"/>
+  <line x1="508" y1="128" x2="543" y2="128" stroke="#0066cc" stroke-width="2" marker-end="url(#seta-ida)"/>
+  <line x1="682" y1="128" x2="717" y2="128" stroke="#0066cc" stroke-width="2" marker-end="url(#seta-ida)"/>
+  <path d="M788,168 V238 H266 V171" fill="none" stroke="#00a8f6" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#seta-volta)"/>
+  <line x1="198" y1="146" x2="163" y2="146" stroke="#00a8f6" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#seta-volta)"/>
+  <text x="527" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">a resposta volta pelo mesmo número, no ritmo seguro de envio</text>
+  <g class="ida-vis"><g class="ida"><circle r="7" fill="#0066cc" stroke="#f1f3f6" stroke-width="3"/></g></g>
+  <g class="volta-vis"><g class="volta"><circle r="7" fill="#00a8f6" stroke="#f1f3f6" stroke-width="3"/></g></g>
+  <rect x="24" y="104" width="136" height="64" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+  <rect class="no0" x="24" y="104" width="136" height="64" rx="12" fill="#eaf2fc" stroke="#0066cc" stroke-width="2"/>
+  <text x="92" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#20242c" text-anchor="middle">WhatsApp</text>
+  <text x="92" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">o cliente escreve</text>
+  <rect x="198" y="104" width="136" height="64" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+  <rect class="no1" x="198" y="104" width="136" height="64" rx="12" fill="#eaf2fc" stroke="#0066cc" stroke-width="2"/>
+  <text x="266" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#20242c" text-anchor="middle">WAHA</text>
+  <text x="266" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">sessão do número</text>
+  <rect x="372" y="104" width="136" height="64" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+  <rect class="no2" x="372" y="104" width="136" height="64" rx="12" fill="#eaf2fc" stroke="#0066cc" stroke-width="2"/>
+  <text x="440" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#20242c" text-anchor="middle">App</text>
+  <text x="440" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">webhook assinado</text>
+  <rect x="546" y="104" width="136" height="64" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+  <rect class="no3" x="546" y="104" width="136" height="64" rx="12" fill="#eaf2fc" stroke="#0066cc" stroke-width="2"/>
+  <text x="614" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#20242c" text-anchor="middle">Banco</text>
+  <text x="614" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">grava e enfileira</text>
+  <rect x="720" y="104" width="136" height="64" rx="12" fill="#ffffff" stroke="#d2d9e2"/>
+  <rect class="no4" x="720" y="104" width="136" height="64" rx="12" fill="#eaf2fc" stroke="#0066cc" stroke-width="2"/>
+  <text x="788" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#20242c" text-anchor="middle">Worker + IA</text>
+  <text x="788" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#626a77" text-anchor="middle">monta a resposta</text>
+  <g class="dig">
+    <rect x="732" y="62" width="112" height="28" rx="10" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="744" y="81" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#0055aa">digitando</text>
+    <circle class="p p1" cx="804" cy="76" r="3" fill="#0066cc"/>
+    <circle class="p p2" cx="816" cy="76" r="3" fill="#0066cc"/>
+    <circle class="p p3" cx="828" cy="76" r="3" fill="#0066cc"/>
+  </g>
+  <g class="ok">
+    <rect x="40" y="62" width="104" height="28" rx="10" fill="#eaf2fc" stroke="#b8d8ff"/>
+    <text x="92" y="81" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#0055aa" text-anchor="middle">respondido</text>
+  </g>
+</svg>
