@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Falha de segurança
+    url: https://github.com/personaltraineracademy-cwb/crm/security/advisories/new
+    about: Relato privado. Nunca abra issue pública para falha de segurança.

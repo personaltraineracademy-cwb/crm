@@ -1,0 +1,43 @@
+name: Relatar um bug
+description: Algo quebrou ou não funciona como documentado
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por relatar. Para **falha de segurança**, não abra issue: use o [relato privado](https://github.com/personaltraineracademy-cwb/crm/security/advisories/new).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o bug e o que você esperava que acontecesse.
+      placeholder: Ao clicar em X na tela Y, acontece Z em vez de W.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Acesse '...'
+        2. Clique em '...'
+        3. Veja o erro
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Versão instalada (tag vX.Y.Z), onde roda (VPS, local) e a saída de /api/v1/health.
+      placeholder: |
+        v1.89.0 · VPS com hostgator-setup-kit · Ubuntu 24.04
+        Saída de /api/v1/health: ...
+        Saída de bash hostgator-setup-kit/healthcheck.sh: ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou print
+      description: Stack trace, print ou saída relevante. Tire os dados pessoais antes.
+      render: shell
