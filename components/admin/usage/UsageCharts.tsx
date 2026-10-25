@@ -12,28 +12,33 @@ import {
 } from "recharts";
 import type { UsageSeries } from "@/app/api/v1/admin/usage/route";
 import { formatCentsUSD } from "@/lib/money";
+import {
+  PROPS_DA_DICA,
+  PROPS_DA_GRADE,
+  PROPS_DO_EIXO,
+  diaDoEixo,
+  numeroCompacto,
+  numeroPtBr,
+} from "@/components/ai/grafico/tema-do-grafico";
 import { useT } from "@/hooks/i18n/useT";
 
 interface UsageChartsProps {
   series: UsageSeries;
 }
 
-function formatDateTick(date: string, idioma: string): string {
-  const d = new Date(date + "T00:00:00");
-  return d.toLocaleDateString(idioma, { day: "2-digit", month: "2-digit" });
-}
+// Data de calendário puro: lida em UTC (§12.3). Antes era meia-noite LOCAL,
+// e no fuso do Brasil o rótulo andava um dia para trás.
+const formatDateTick = diaDoEixo;
 
 // DÓLAR: o número é `llm_calls.cost_cents`, e `pricing.ts` cota o provedor em USD.
 const formatCurrency = formatCentsUSD;
 
-function formatNumber(n: number): string {
-  return n.toLocaleString("pt-BR");
-}
+const formatNumber = (n: number) => numeroPtBr(n);
 
 function EmptyChart() {
   const t = useT();
   return (
-    <div className="flex h-40 items-center justify-center text-sm text-muted-foreground">
+    <div className="flex h-40 items-center justify-center rounded-lg bg-muted/40 text-sm text-muted-foreground">
       {t("Sem dados no período")}
     </div>
   );
@@ -46,8 +51,8 @@ interface ChartCardProps {
 
 function ChartCard({ title, children }: ChartCardProps) {
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <h3 className="mb-4 text-sm font-medium text-muted-foreground">{title}</h3>
+    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
       {children}
     </div>
   );
@@ -74,41 +79,34 @@ export function UsageCharts({ series }: UsageChartsProps) {
             >
               <defs>
                 <linearGradient id="colorMsg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.16} />
+                  <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 tickFormatter={formatNumber}
                 width={45}
               />
               <Tooltip
+                {...PROPS_DA_DICA}
                 formatter={(value) => [formatNumber(Number(value)), t("Mensagens")]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={{
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-surface)",
-                }}
               />
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="var(--color-accent)"
+                stroke="var(--chart-1)"
                 strokeWidth={2}
+                activeDot={{ r: 3, strokeWidth: 0 }}
                 fill="url(#colorMsg)"
               />
             </AreaChart>
@@ -128,43 +126,36 @@ export function UsageCharts({ series }: UsageChartsProps) {
             >
               <defs>
                 <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--chart-2,142 76% 36%))" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="hsl(var(--chart-2,142 76% 36%))" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.16} />
+                  <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 tickFormatter={(v: number) =>
                   formatCurrency(v)
                 }
                 width={70}
               />
               <Tooltip
+                {...PROPS_DA_DICA}
                 formatter={(value) => [formatCurrency(Number(value)), t("Custo")]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={{
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-surface)",
-                }}
               />
               <Area
                 type="monotone"
                 dataKey="cents"
-                stroke="hsl(142 76% 36%)"
+                stroke="var(--chart-2)"
                 strokeWidth={2}
+                activeDot={{ r: 3, strokeWidth: 0 }}
                 fill="url(#colorCost)"
               />
             </AreaChart>
@@ -185,45 +176,34 @@ export function UsageCharts({ series }: UsageChartsProps) {
               >
                 <defs>
                   <linearGradient id="colorTokens" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--chart-3,262 83% 58%))" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="hsl(var(--chart-3,262 83% 58%))" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={0.16} />
+                    <stop offset="95%" stopColor="var(--chart-3)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                <CartesianGrid {...PROPS_DA_GRADE} />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
+                  {...PROPS_DO_EIXO}
                   interval="preserveStartEnd"
+                  minTickGap={24}
                 />
                 <YAxis
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(v: number) => {
-                    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-                    if (v >= 1_000) return `${(v / 1_000).toFixed(0)}k`;
-                    return String(v);
-                  }}
+                  {...PROPS_DO_EIXO}
+                  tickFormatter={numeroCompacto}
                   width={50}
                 />
                 <Tooltip
+                  {...PROPS_DA_DICA}
                   formatter={(value) => [formatNumber(Number(value)), "Tokens"]}
                   labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                  contentStyle={{
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface)",
-                  }}
                 />
                 <Area
                   type="monotone"
                   dataKey="tokens"
-                  stroke="hsl(262 83% 58%)"
+                  stroke="var(--chart-3)"
                   strokeWidth={2}
+                  activeDot={{ r: 3, strokeWidth: 0 }}
                   fill="url(#colorTokens)"
                 />
               </AreaChart>

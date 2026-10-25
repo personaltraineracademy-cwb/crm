@@ -65,7 +65,7 @@ export function TeamMembersClient({ currentUserId, canManage }: Props) {
     return <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>;
   }
   if (isError) {
-    return <p className="text-sm text-destructive">{t("Erro ao carregar membros.")}</p>;
+    return <p className="text-danger-foreground text-sm">{t("Erro ao carregar membros.")}</p>;
   }
   const members = data?.data ?? [];
   if (members.length === 0) {
@@ -199,7 +199,7 @@ export function TeamMembersClient({ currentUserId, canManage }: Props) {
                             </DropdownMenuItem>
                           ) : (
                             <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
+                              className="text-danger-foreground focus:text-danger-foreground"
                               onClick={() => setRevokeDialog(m)}
                             >
                               {t("Revogar acesso")}

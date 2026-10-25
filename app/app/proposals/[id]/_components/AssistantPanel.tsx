@@ -118,7 +118,7 @@ export function AssistantPanel({
   }
 
   return (
-    <div className="rounded-md border p-4 space-y-3">
+    <div className="space-y-3 rounded-lg border p-4">
       <h2 className="font-semibold">{t("Assistente")}</h2>
       <div className="flex gap-2">
         <Input
@@ -132,11 +132,13 @@ export function AssistantPanel({
           {t("Gerar")}
         </Button>
       </div>
-      {semOrcamento && <p className="text-sm text-gray-500">{t(orcamento?.motivo ?? "")}</p>}
-      {erro && <p className="text-red-600">{erro}</p>}
-      {preview && !preview.disponivel && <p className="text-gray-500">{preview.motivo}</p>}
+      {semOrcamento && (
+        <p className="text-sm text-muted-foreground">{t(orcamento?.motivo ?? "")}</p>
+      )}
+      {erro && <p className="text-danger-foreground">{erro}</p>}
+      {preview && !preview.disponivel && <p className="text-muted-foreground">{preview.motivo}</p>}
       {preview && preview.disponivel && preview.mudancas.length === 0 && (
-        <p className="text-gray-500">
+        <p className="text-muted-foreground">
           {preview.nao_entendido ?? t("Não entendi o que mudar nesta proposta.")}
         </p>
       )}
@@ -147,7 +149,7 @@ export function AssistantPanel({
               <li key={i}>
                 {m.tipo === "remover_item" && (
                   <span>
-                    {t("item")} "{m.descricao}" → {t("REMOVIDO")}
+                    {t("item")} "{m.descricao}" → {t("removido")}
                   </span>
                 )}
                 {m.tipo === "editar_item" && (

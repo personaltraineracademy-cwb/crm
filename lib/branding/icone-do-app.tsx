@@ -3,7 +3,8 @@ import { ImageResponse } from "next/og";
 import { marcaEhADoProduto } from "@/lib/branding";
 import { logger } from "@/lib/logger";
 
-import { CORES_DA_MARCA, SIMBOLO } from "./desenho";
+import { ativoDaMarcaComoDataUri, comoArrayBuffer, lerAtivoDaMarca } from "./ativos-da-marca";
+import { ICONE_DO_APP, type LadoComPng } from "./desenho";
 import { letraDoIcone } from "./icone";
 import {
   baseDoStorage,
@@ -51,7 +52,43 @@ export async function lerArquivoDoIcone(
 }
 
 /**
- * Um PNG por tamanho do app. Sem arquivo válido, preserva símbolo ou cor + inicial.
+ * Quanto o ícone do produto é AMPLIADO quando o desenho tem de ocupar o lado
+ * inteiro (iPhone e `maskable`). O `icone-app.svg` é um quadrado de cantos
+ * arredondados (raio 58 em 256) com o fundo transparente nos cantos: o iPhone
+ * pinta esse transparente de preto, e o Android recorta o `maskable` em formas
+ * que alcançam a borda. A 118% o canto do recorte cai dentro do gradiente
+ * (precisa de 115,3%), e o nó, que vai até 32,7% do lado a partir do centro,
+ * fica em 38,6% — dentro do círculo de 40% que o `maskable` garante.
+ */
+const AMPLIACAO_SEM_CANTO = 1.18;
+
+/** O ícone de app do produto num lado: o PNG pronto, ou o SVG ampliado sem canto. */
+async function iconeDoProduto(lado: 180 | 192 | 512, conteudo: number): Promise<ArrayBuffer> {
+  if (conteudo >= 1 && lado in ICONE_DO_APP.png) {
+    return comoArrayBuffer(await lerAtivoDaMarca(ICONE_DO_APP.png[lado as LadoComPng]));
+  }
+  const svg = await ativoDaMarcaComoDataUri(ICONE_DO_APP.svg);
+  const ampliado = Math.round(lado * AMPLIACAO_SEM_CANTO);
+  const margem = Math.round((lado - ampliado) / 2);
+  return new ImageResponse(
+    <div style={{ width: "100%", height: "100%", display: "flex", position: "relative" }}>
+      {/* O src é data: lido de `public/marca/` na imagem do app, nunca de rede. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={svg}
+        alt=""
+        width={ampliado}
+        height={ampliado}
+        style={{ position: "absolute", left: margem, top: margem }}
+      />
+    </div>,
+    { width: lado, height: lado },
+  ).arrayBuffer();
+}
+
+/**
+ * Um PNG por tamanho do app. Sem arquivo válido: o ícone do produto quando não há
+ * logo configurado, senão cor + inicial.
  *
  * `conteudo` é a fração do lado que o DESENHO ocupa; o fundo opaco ocupa sempre
  * o lado inteiro. Abaixo de 1 é para quem recorta o ícone: o iPhone arredonda
@@ -64,9 +101,8 @@ export async function gerarIconeDoApp(
   conteudo = 1,
 ): Promise<ArrayBuffer> {
   const caixa = Math.round(lado * conteudo);
-  const desenhar = (imagem: string | null) => {
-    const produto = marcaEhADoProduto({ name: marca.nome, logoUrl: marca.logoUrl });
-    return new ImageResponse(
+  const desenhar = (imagem: string | null) =>
+    new ImageResponse(
       <div
         style={{
           width: "100%",
@@ -74,7 +110,7 @@ export async function gerarIconeDoApp(
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: imagem || produto ? NEUTROS_DE_SAIDA.fundo : marca.accent,
+          background: imagem ? NEUTROS_DE_SAIDA.fundo : marca.accent,
           color: marca.accentFg,
           fontSize: Math.round(caixa * 0.62),
         }}
@@ -83,24 +119,21 @@ export async function gerarIconeDoApp(
           // O src é data: gerado de bytes limitados do Storage da instalação.
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imagem} alt="" width={caixa} height={caixa} style={{ objectFit: "contain" }} />
-        ) : produto ? (
-          <svg
-            viewBox={SIMBOLO.viewBox}
-            width={Math.round(caixa * 0.78)}
-            height={Math.round(caixa * 0.78)}
-          >
-            <g fill={CORES_DA_MARCA.claro.simbolo} transform={SIMBOLO.transform}>
-              <path d={SIMBOLO.d} />
-              <rect {...SIMBOLO.modulo} />
-            </g>
-          </svg>
         ) : (
           (letraDoIcone(marca.nome) ?? "")
         )}
       </div>,
       { width: lado, height: lado },
     ).arrayBuffer();
-  };
+  // Sem arquivo de ícone subido e sem logo configurado: o ícone do Unnify CRM.
+  // Se os arquivos dele faltarem, segue para a inicial, como antes.
+  if (!arquivo && marcaEhADoProduto({ name: marca.nome, logoUrl: marca.logoUrl })) {
+    try {
+      return await iconeDoProduto(lado, conteudo);
+    } catch {
+      logger.warn("marca: ícone do produto indisponível; usando a inicial");
+    }
+  }
   try {
     return await desenhar(arquivo);
   } catch (erro) {

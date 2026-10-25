@@ -1,7 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
-
 import { razaoDeContraste } from "@/lib/branding/contraste";
+
+import { cssEfetivo } from "./css-efetivo";
 
 /**
  * Contraste CALCULADO de um utilitário de cor do Tailwind contra um token de
@@ -12,7 +11,7 @@ import { razaoDeContraste } from "@/lib/branding/contraste";
  * a classe nomeia: `border-muted-foreground` → `--color-muted-foreground` (no
  * `@theme inline`) → `--color-text-muted` → o hex de cada tema.
  */
-const CSS = fs.readFileSync(path.join(process.cwd(), "app/globals.css"), "utf8");
+const CSS = cssEfetivo(); // Unnify: globals.css + app/unnify, o que pinta a tela
 
 function bloco(seletor: string): string {
   const rx = new RegExp(`^${seletor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\{`, "m");

@@ -130,7 +130,9 @@ export function SyncPhoneContactsDialog({ open, onOpenChange }: Props) {
             {canais.isLoading ? (
               <Skeleton className="h-9 w-full" />
             ) : canais.isError ? (
-              <p className="text-sm text-error-fg">{t("Não foi possível carregar seus números conectados.")}</p>
+              <p className="text-danger-foreground text-sm">
+                {t("Não foi possível carregar seus números conectados.")}
+              </p>
             ) : conectados.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {t("Nenhum número conectado. Conecte um número em Conexões para sincronizar a agenda.")}
@@ -171,9 +173,14 @@ export function SyncPhoneContactsDialog({ open, onOpenChange }: Props) {
                 aviso fica no caminho do clique, não escondido na descrição. */}
             <div
               role="note"
-              className="flex items-start gap-2 rounded-md border border-warning-fg/30 bg-warning-bg p-3 text-sm"
+              className="border-warning-border bg-warning-soft flex items-start gap-2 rounded-lg border p-3 text-sm"
             >
-              <Warning size={18} weight="duotone" aria-hidden className="mt-0.5 shrink-0 text-warning-fg" />
+              <Warning
+                size={18}
+                weight="duotone"
+                aria-hidden
+                className="text-warning-foreground mt-0.5 shrink-0"
+              />
               <p>
                 {t(
                   "Isto traz todos os contatos salvos no celular, inclusive os pessoais. Só mande campanha a quem autorizou receber.",
@@ -195,19 +202,19 @@ export function SyncPhoneContactsDialog({ open, onOpenChange }: Props) {
         {resumo && (
           <div className="space-y-3">
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="rounded-md bg-surface px-2 py-1">
+              <span className="rounded-md bg-card px-2 py-1">
                 {resumo.lidos} {t("lido(s) no aparelho")}
               </span>
               <span className="rounded-md px-2 py-1 font-medium">
                 {resumo.importados} {t("importado(s)")}
               </span>
               {resumo.ja_existentes > 0 && (
-                <span className="rounded-md bg-surface px-2 py-1">
+                <span className="rounded-md bg-card px-2 py-1">
                   {resumo.ja_existentes} {t("já existente(s)")}
                 </span>
               )}
               {resumo.ignorados > 0 && (
-                <span className="rounded-md bg-surface px-2 py-1">
+                <span className="rounded-md bg-card px-2 py-1">
                   {resumo.ignorados} {t("ignorado(s)")}
                 </span>
               )}

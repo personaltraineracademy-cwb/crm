@@ -15,12 +15,15 @@ export function ComoCriarAcesso({ motor }: { motor: "postgres" | "mysql" }) {
   if (motor !== "mysql") return null;
 
   return (
-    <details className="group rounded-md border border-border bg-surface p-4" data-testid="como-criar-acesso">
+    <details
+      className="group rounded-lg border border-border bg-card p-4"
+      data-testid="como-criar-acesso"
+    >
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-        <Info size={16} aria-hidden className="text-accent" />
+        <Info size={16} aria-hidden className="text-primary" />
         {t("Como criar um acesso só de leitura (guia rápido)")}
       </summary>
-      <div className="mt-3 space-y-3 text-sm text-text-muted">
+      <div className="mt-3 space-y-3 text-sm text-muted-foreground">
         <p>
           {t(
             "Quem administra o banco de dados do cliente executa estes comandos nele. O CRM só precisa de um acesso que leia o que você quiser mostrar ao assistente, e nada além disso.",
@@ -29,7 +32,7 @@ export function ComoCriarAcesso({ motor }: { motor: "postgres" | "mysql" }) {
         <ol className="list-decimal space-y-3 pl-5">
           <li>
             <p>{t("Crie um usuário novo. Troque a senha por uma forte, que você não use em nenhum outro lugar.")}</p>
-            <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-surface p-3 text-xs text-text select-all">
+            <pre className="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs text-foreground select-all">
               {SQL_MYSQL_CRIAR_USUARIO}
             </pre>
             <p className="mt-1 text-xs">
@@ -42,7 +45,7 @@ export function ComoCriarAcesso({ motor }: { motor: "postgres" | "mysql" }) {
                 "Crie uma view (uma tabela virtual) só com as colunas que o assistente pode ver, e libere somente ela. Troque os nomes em MAIÚSCULAS pelos do seu banco.",
               )}
             </p>
-            <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-surface p-3 text-xs text-text select-all">
+            <pre className="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs text-foreground select-all">
               {SQL_MYSQL_CRIAR_E_LIBERAR_VIEW}
             </pre>
             <p className="mt-1 text-xs">

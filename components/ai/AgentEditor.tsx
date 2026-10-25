@@ -235,7 +235,7 @@ export function AgentEditor({ agentId, initialData, readOnly = false }: Props) {
               />
               <Label htmlFor="is_active">{t("Agent ativo")}</Label>
             </div>
-            <div className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
+            <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
               <strong>{t("Default:")}</strong> {agent.is_default ? t("Sim") : t("Não")} ({t("read-only — gerenciado pelo backend")}).
             </div>
           </Card>
@@ -244,7 +244,7 @@ export function AgentEditor({ agentId, initialData, readOnly = false }: Props) {
         <TabsContent value="model">
           <Card className="space-y-4 p-4">
             {agent.channel === "voice" ? (
-              <p className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
+              <p className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
                 {t(
                   "Este agente fala pela Realtime API da OpenAI -- o modelo de voz se escolhe na aba Voz, não aqui.",
                 )}

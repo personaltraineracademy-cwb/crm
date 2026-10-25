@@ -173,8 +173,11 @@ export function ConditionForm({
       </div>
 
       {trocaPendente && (
-        <div className="space-y-2 rounded-sm border border-warning bg-warning-bg p-2" data-testid="cond-troca-aviso">
-          <p className="text-xs leading-snug text-warning-fg">
+        <div
+          className="bg-warning-soft space-y-2 rounded-sm border border-warning p-2"
+          data-testid="cond-troca-aviso"
+        >
+          <p className="text-warning-foreground text-xs leading-snug">
             {t("Trocar de modo deixa")} {trocaPendente.orfas}{" "}
             {trocaPendente.orfas === 1 ? t("ligação sem saída") : t("ligações sem saída")}{" "}
             {t("neste nó. Elas continuam desenhadas, mas param de levar a lugar nenhum até você religá-las.")}
@@ -223,7 +226,9 @@ export function ConditionForm({
         {checks.map((check, idx) => (
           <div key={check.id ?? idx} className="space-y-2 rounded-sm border border-border p-2" data-testid={`condition-check-${idx}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-text-muted">{t("Condição")} {idx + 1}</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                {t("Condição")} {idx + 1}
+              </span>
               <Button
                 type="button"
                 variant="ghost"
@@ -358,7 +363,7 @@ export function ConditionForm({
                     trocarValor(idx, /^\d+$/.test(bruto) ? Number(bruto) : bruto);
                   }}
                 />
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-muted-foreground">
                   {t(
                     "O campo é o mesmo nome usado na ficha do negócio. O prazo conta em dias de calendário no fuso da organização; 0 inclui o dia de hoje.",
                   )}
@@ -390,12 +395,16 @@ export function ConditionForm({
             )}
             {/* A frase inteira, para quem não tem certeza do que os três campos
                 acima somam — e o aviso quando o motor nunca satisfaz o par. */}
-            <p className="text-xs text-text-muted">{fraseDaCondicao(check.field, check.op, check.value, nomes)}</p>
+            <p className="text-xs text-muted-foreground">
+              {fraseDaCondicao(check.field, check.op, check.value, nomes)}
+            </p>
             {comparador(check.field, check.op).aviso && (
-              <p className="text-xs text-warning-fg">{t(comparador(check.field, check.op).aviso!)}</p>
+              <p className="text-warning-foreground text-xs">
+                {t(comparador(check.field, check.op).aviso!)}
+              </p>
             )}
             {regraValeSempre(check.field, check.op, check.value) && (
-              <p className="text-xs text-warning-fg" data-testid={`regra-vale-sempre-${idx}`}>
+              <p className="text-xs text-warning-foreground" data-testid={`regra-vale-sempre-${idx}`}>
                 {t("Esta regra vale para todo contato. A saída dela leva todo mundo, e as saídas seguintes nunca são usadas.")}
               </p>
             )}
@@ -419,7 +428,7 @@ export function ConditionForm({
       >
         <Plus size={14} aria-hidden className="mr-1" /> {t("Condição")}
       </Button>
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }
@@ -471,17 +480,17 @@ function ValorDeEtapa({
         </SelectContent>
       </Select>
       {falhou && (
-        <p className="text-xs text-warning-fg" data-testid="regra-etapas-indisponiveis">
+        <p className="text-xs text-warning-foreground" data-testid="regra-etapas-indisponiveis">
           {t("Não consegui carregar as etapas agora. O que estava escolhido continua salvo — recarregue a página para escolher outra.")}
         </p>
       )}
       {semEtapas && (
-        <p className="text-xs text-error-fg">
+        <p className="text-danger-foreground text-xs">
           {t("Nenhuma etapa ativa encontrada — crie o funil antes de usar esta regra.")}
         </p>
       )}
       {solta && (
-        <p className="text-xs text-warning-fg" data-testid="regra-etapa-solta">
+        <p className="text-warning-foreground text-xs" data-testid="regra-etapa-solta">
           {temFormaDeId(valor)
             ? t("A etapa escolhida não está mais na lista de etapas ativas — foi arquivada ou apagada. Escolha outra.")
             : `“${valor}” ${t("foi digitado à mão e não é uma etapa do funil. Escolha a etapa na lista — do jeito que está, esta regra nunca decide nada.")}`}

@@ -23,6 +23,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -73,16 +74,18 @@ export default async function ConexaoExternaPage({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{conexao.label}</h1>
-        <p className="text-sm text-muted-foreground">
-          {conexao.host}:{conexao.port}/{conexao.database_name} · {conexao.username} ·{" "}
-          {traduzir("somente leitura", idioma)}
-        </p>
-      </header>
+      <PageHeader
+        title={conexao.label}
+        description={
+          <>
+            {conexao.host}:{conexao.port}/{conexao.database_name} · {conexao.username} ·{" "}
+            {traduzir("somente leitura", idioma)}
+          </>
+        }
+      />
 
       {!conexao.enabled && (
-        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+        <div className="rounded-lg border border-warning-border bg-warning-soft p-3 text-sm">
           {traduzir("Esta conexão está desativada. Ative-a na lista para consultar os dados.", idioma)}
         </div>
       )}

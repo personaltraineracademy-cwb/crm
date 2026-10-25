@@ -78,6 +78,36 @@ interface Props {
 /** Quem tem um motor que reenvia sozinho quando a conexão volta (`redriveQueued`). */
 const SAI_SOZINHA_QUANDO_VOLTAR = new Set(["ai", "automation", "system"]);
 
+/**
+ * A FORMA DO BALÃO — escolha visual GRANDE que o Unnify não responde (o DS
+ * não cobre conversa). Fica numa constante para trocar sem caçar classe.
+ *
+ *   "quina" (RECOMENDADA, a que está no ar): raio 12 (`rounded-xl`, o do
+ *     cartão) com o canto de baixo do lado de quem fala em 4. Sem cauda
+ *     desenhada: o balão é conteúdo, não flutua, e a superfície é lisa (DS §1).
+ *   "cauda" (ALTERNATIVA registrada): a mesma quina mais uma cauda de 8px
+ *     desenhada para fora, na cor do balão (como o WhatsApp). No balão do
+ *     cliente a cauda não leva a borda de 1px.
+ */
+export type FormaDoBalao = "quina" | "cauda";
+export const FORMA_DO_BALAO: FormaDoBalao = "quina";
+
+/**
+ * QUEM FALA DECIDE A SUPERFÍCIE (adaptação do Unnify, sem cor nova):
+ *   cliente  → `card` com borda 1px (no claro o `muted` some no fundo da página);
+ *   equipe   → `interactive`, o azul suave da seleção, com texto `foreground`;
+ *   automático (IA, automação, sistema) → `muted`, e a IA ganha o selo "IA"
+ *     em chip `info`.
+ * A nota interna é outro componente (`NoteCard`, trio de aviso).
+ */
+type Autor = "cliente" | "equipe" | "automatico";
+const SUPERFICIE_DO_AUTOR: Record<Autor, string> = {
+  cliente: "border-border bg-card text-card-foreground",
+  equipe: "border-transparent bg-interactive text-foreground",
+  automatico: "border-transparent bg-muted text-foreground",
+};
+const AUTOMATICOS = new Set(["ai", "automation", "system"]);
+
 function AckIndicator({ status, paradaSemConexao, saiSozinha, t }: {
   status: string; paradaSemConexao: boolean; saiSozinha: boolean; t: (texto: string) => string;
 }) {
@@ -88,23 +118,23 @@ function AckIndicator({ status, paradaSemConexao, saiSozinha, t }: {
     // "Aguardando" só promete o que acontece: a mensagem de pessoa não é
     // reenviada por ninguém quando o número volta, e fica com o botão.
     return saiSozinha ? (
-      <span className="inline-flex items-center gap-0.5 font-semibold">
-        <Clock size={10} weight="bold" aria-hidden /> {t("Aguardando conexão")}
+      <span className="text-warning-foreground inline-flex items-center gap-1 font-medium">
+        <Clock size={12} weight="bold" aria-hidden /> {t("Aguardando conexão")}
       </span>
     ) : (
-      <span className="inline-flex items-center gap-0.5 font-semibold">
-        <WarningOctagon size={10} weight="bold" aria-hidden /> {t("Não enviada — sem conexão")}
+      <span className="text-danger-foreground inline-flex items-center gap-1 font-medium">
+        <WarningOctagon size={12} weight="bold" aria-hidden /> {t("Não enviada — sem conexão")}
       </span>
     );
   }
   if (status === "read") {
-    return <Checks size={12} weight="bold" className="text-blue-400" aria-label={t("Lida")} />;
+    return <Checks size={12} weight="bold" className="text-primary" aria-label={t("Lida")} />;
   }
   if (status === "delivered") {
-    return <Checks size={12} weight="bold" className="text-current/70" aria-label={t("Entregue")} />;
+    return <Checks size={12} weight="bold" aria-label={t("Entregue")} />;
   }
   if (status === "sent") {
-    return <Check size={12} weight="bold" className="text-current/70" aria-label={t("Enviada")} />;
+    return <Check size={12} weight="bold" aria-label={t("Enviada")} />;
   }
   return null;
 }
@@ -262,6 +292,15 @@ export function MessageBubble({
   // `lerRemetenteDeGrupo` (Task 2): este componente não conhece o formato de
   // `metadata.group_sender`, só o resultado já validado.
   const remetente = !isOutbound ? lerRemetenteDeGrupo(message.metadata) : null;
+  const autor: Autor = !isOutbound
+    ? "cliente"
+    : AUTOMATICOS.has(message.sent_via)
+      ? "automatico"
+      : "equipe";
+  const comCauda = FORMA_DO_BALAO === "cauda" && !isBareSticker;
+  // UMA chamada a `t()` sobre o rótulo calculado (dívida congelada da cerca de
+  // espanhol): o selo da IA e o texto simples usam a mesma tradução.
+  const textoDoAutor = senderLabel ? t(senderLabel) : null;
   // O anúncio que gerou ESTA mensagem (a ingestão grava em `metadata.anuncio`
   // a mensagem nascida de um clique). Só na recebida: é o cliente que chega
   // pelo anúncio, como o WhatsApp mostra no celular.
@@ -305,41 +344,55 @@ export function MessageBubble({
         // classe utilitária entrava na conta — foi assim que o painel flutuante
         // fez a spec achar que havia mensagem onde não havia (issue #1318).
         data-testid="message-bubble"
+        data-autor={autor}
         className={cn(
           "relative max-w-[75%] min-w-0 text-sm",
           isBareSticker
             ? "px-0 py-0"
             : cn(
-                "rounded-2xl px-3 py-2 shadow-sm",
-                temMenu && "pr-8",
-                isOutbound
-                  ? "rounded-br-sm bg-primary text-primary-foreground"
-                  : "rounded-bl-sm bg-muted text-foreground",
+                // Raio 12 com a quina de 4 do lado de quem fala; sem sombra
+                // (balão é conteúdo, não flutua). Ver `FORMA_DO_BALAO`.
+                "rounded-xl border px-3 py-2",
+                temMenu && "pr-9",
+                isOutbound ? "rounded-br-sm" : "rounded-bl-sm",
+                SUPERFICIE_DO_AUTOR[autor],
               ),
-          isFailed && "border border-destructive",
+          isFailed && "border-destructive",
           // Apagada sai das cores da DIREÇÃO e vai para o CINZA: a diferença
           // entre o que foi apagado e o que está vivo tem de ser vista de
           // relance, e o fundo é justamente o que diz de quem é a mensagem —
           // trocá-lo é o ponto.
-          apagada && "bg-muted/60 text-muted-foreground ring-1 ring-border",
+          apagada && "border-border bg-muted/40 text-muted-foreground",
           // A marca da busca é ANEL, não cor de fundo: o fundo já diz de quem é
           // a mensagem, e trocá-lo apagaria essa leitura justo na bolha achada.
-          searchMatch && "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+          searchMatch && "ring-2 ring-ring ring-offset-2 ring-offset-background",
           // Espaço para a marca de reação, que fica metade para fora do balão.
           Boolean(reacoes?.length) && "mb-3",
         )}
       >
+        {comCauda && (
+          <span
+            aria-hidden
+            className={cn(
+              "absolute bottom-0 size-2 bg-inherit",
+              isOutbound
+                ? "-right-2 [clip-path:polygon(0_0,0_100%,100%_100%)]"
+                : "-left-2 [clip-path:polygon(100%_0,0_100%,100%_100%)]",
+            )}
+          />
+        )}
         {temMenu && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button type="button" aria-label={t("Opções da mensagem")} disabled={ocupado}
                 className={cn(
-                  "absolute right-1 top-1 z-10 rounded-md p-0.5 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-1",
+                  // Fantasma de 24 dentro do balão (o `icon-xs` encolhido um degrau).
+                  "absolute top-1 right-1 z-10 flex size-6 items-center justify-center rounded-md text-muted-foreground transition-[opacity,background-color,color] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1",
                   // No toque, a área que pega o dedo passa a ~48px sem mudar o desenho:
                   // a setinha é o único caminho para "Responder a esta mensagem".
                   "pointer-coarse:before:absolute pointer-coarse:before:-inset-3.5 pointer-coarse:before:content-['']",
                   "opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100",
-                  isOutbound ? "text-primary-foreground hover:bg-primary-foreground/15" : "text-muted-foreground hover:bg-background/70",
+                  autor === "automatico" ? "hover:bg-card" : "hover:bg-muted",
                 )}>
                 <CaretDown size={16} weight="bold" aria-hidden />
               </button>
@@ -376,7 +429,7 @@ export function MessageBubble({
               {podeApagar && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => setApagando(true)} className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem onSelect={() => setApagando(true)} className="text-danger-foreground focus:bg-destructive/10 focus:text-danger-foreground">
                     <Trash size={16} aria-hidden />{t("Apagar para todos")}
                   </DropdownMenuItem>
                 </>
@@ -402,13 +455,14 @@ export function MessageBubble({
         {citada && (
           <div
             className={cn(
-              "mb-1 rounded-md border-l-2 px-2 py-1 text-xs",
-              isOutbound
-                ? "border-primary-foreground/50 bg-primary-foreground/10"
-                : "border-primary bg-background/60",
+              // Bloco aninhado (DS §1: `muted/40`, raio 8) com a barra de 2px
+              // `primary` da citação de texto rico (DS §10.23).
+              "relative mb-1.5 rounded-lg py-1 pr-2 pl-3 text-xs",
+              autor === "automatico" ? "bg-card" : "bg-muted/40",
             )}
           >
-            <div className="font-medium opacity-80">
+            <span className="absolute inset-y-1 left-1 w-0.5 rounded-full bg-primary" aria-hidden />
+            <div className="font-medium text-foreground">
               {citada.direction === "outbound" ? t("Você") : t("Cliente")}
             </div>
             {/*
@@ -421,7 +475,12 @@ export function MessageBubble({
               continuava legível dentro de cada resposta que a citou. O fio
               permanece (a citação some, não a resposta); o conteúdo, não.
             */}
-            <div className={cn("line-clamp-2 wrap-anywhere opacity-70", Boolean(citada.revoked_at || citada.metadata?.crm_hidden_at) && "italic")}>
+            <div
+              className={cn(
+                "line-clamp-2 wrap-anywhere text-muted-foreground",
+                Boolean(citada.revoked_at || citada.metadata?.crm_hidden_at) && "italic",
+              )}
+            >
               {citada.revoked_at
                 ? t("Esta mensagem foi apagada")
                 : citada.metadata?.crm_hidden_at
@@ -433,16 +492,22 @@ export function MessageBubble({
           </div>
         )}
         {remetente && (
-          <p className="mb-0.5 text-[11px] font-medium text-muted-foreground">
+          <p className="mb-0.5 text-xs font-medium text-muted-foreground">
             {rotuloDoRemetente(remetente)}
           </p>
         )}
         {senderLabel && (
-          <div className="mb-0.5 flex items-center gap-1 text-[11px] font-semibold opacity-80">
+          <div className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
             {senderLabel === "IA" ? (
-              <Robot size={10} weight="duotone" aria-hidden />
-            ) : null}
-            {senderLabel && t(senderLabel)}
+              // O selo da IA: chip `info` (DS §10.6), o mesmo do "Exemplo
+              // para a IA" da lista de conversas.
+              <span className="border-info-border bg-info-soft text-info-foreground inline-flex h-5 items-center gap-1 rounded-md border px-1.5">
+                <Robot size={12} weight="duotone" aria-hidden />
+                {textoDoAutor}
+              </span>
+            ) : (
+              textoDoAutor
+            )}
           </div>
         )}
 
@@ -463,7 +528,7 @@ export function MessageBubble({
                 }
               }}
               maxLength={4096}
-              className="min-h-20 w-full rounded-md border border-border bg-background p-2 text-base text-foreground md:text-sm"
+              className="hover:border-interactive-border min-h-20 w-full rounded-lg border border-input bg-card px-3 py-2 text-base text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:outline-hidden md:text-sm"
             />
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" disabled={ocupado} onClick={() => setEditando(false)}>{t("Cancelar")}</Button>
@@ -472,19 +537,19 @@ export function MessageBubble({
           </div>
         ) : apagada ? (
           <div className="space-y-1">
-            <p className="italic leading-snug opacity-80">{t(marcadorDaApagada(message.direction))}</p>
+            <p className="leading-snug italic">{t(marcadorDaApagada(message.direction))}</p>
             {/* O WhatsApp revoga o envio; o CRM conserva o corpo para auditoria
                 interna. Não revelamos texto de uma mensagem apagada pelo cliente
                 (`textoDaApagadaApareceNaInbox`). */}
             {textoApagadoVisivel && message.body && (
-              <div className="border-t border-current/20 pt-1">
-                <p className="text-[10px] opacity-70">{t("Visível só aqui no CRM")}</p>
+              <div className="border-t border-border pt-1">
+                <p className="text-xs">{t("Visível só aqui no CRM")}</p>
                 <p className="whitespace-pre-wrap wrap-anywhere leading-snug">{message.body}</p>
               </div>
             )}
           </div>
         ) : ocultaNoCrm ? (
-          <p className="whitespace-pre-wrap wrap-anywhere italic leading-snug opacity-60">
+          <p className="leading-snug wrap-anywhere whitespace-pre-wrap text-muted-foreground italic">
             {t("Mensagem ocultada no CRM")}
           </p>
         ) : (
@@ -518,13 +583,9 @@ export function MessageBubble({
         )}
 
         <div
-          className={cn(
-            "mt-1 flex items-center justify-end gap-1 text-[10px]",
-            // O carimbo acompanha o FUNDO: numa bolha apagada (cinza) o
-            // `primary-foreground` do envio sumiria — hora e check invisíveis
-            // numa bolha que existe justamente para deixar registro.
-            apagada || !isOutbound ? "text-muted-foreground" : "text-primary-foreground",
-          )}
+          // Metadado (DS §4.4): `xs`, `muted-foreground`, tabular. Nenhuma
+          // superfície de balão é sólida, então o carimbo é o mesmo em todas.
+          className="mt-1 flex flex-wrap items-center justify-end gap-1 text-xs text-muted-foreground tabular-nums"
         >
           {editada && (
             // Ao lado da hora, não no corpo: o texto mostrado JÁ é o novo, e o
@@ -546,8 +607,8 @@ export function MessageBubble({
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="inline-flex items-center gap-0.5 font-semibold text-destructive">
-                    <WarningOctagon size={10} weight="fill" aria-hidden /> {t("Falhou")}
+                  <span className="text-danger-foreground inline-flex items-center gap-1 font-medium">
+                    <WarningOctagon size={12} weight="fill" aria-hidden /> {t("Falhou")}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>{motivoDaFalha}</TooltipContent>
@@ -556,10 +617,17 @@ export function MessageBubble({
           )}
         </div>
         {(isFailed || reenvio !== "nenhum") && (
-          <div className="mt-1.5 space-y-1.5 border-t border-current/20 pt-1.5">
-            {isFailed && <p data-testid="motivo-da-falha" className="text-xs leading-snug">{motivoDaFalha}</p>}
+          <div className="mt-1.5 space-y-1.5 border-t border-border pt-1.5">
+            {isFailed && (
+              <p
+                data-testid="motivo-da-falha"
+                className="text-danger-foreground text-xs leading-snug"
+              >
+                {motivoDaFalha}
+              </p>
+            )}
             {reenvio !== "nenhum" && (
-              <Button size="sm" variant="secondary" disabled={ocupado}
+              <Button size="sm" variant="outline" disabled={ocupado}
                 onClick={() => (reenvio === "confirmar" ? setConfirmandoReenvio(true) : void reenviar(false))}>
                 {t("Tentar de novo")}
               </Button>
@@ -574,12 +642,15 @@ export function MessageBubble({
               .map((r) => t(r.direction === "inbound" ? "Cliente reagiu com {emoji}" : "Atendente reagiu com {emoji}").replace("{emoji}", r.emoji))
               .join(", ")}
             className={cn(
-              "absolute -bottom-3 flex items-center gap-0.5 rounded-full border border-border bg-background px-1.5 py-0.5 text-xs leading-none text-foreground shadow-sm",
+              // A reação flutua sobre a borda do balão: `popover` com `shadow-xs`.
+              "absolute -bottom-3 flex items-center gap-1 rounded-full border border-border bg-popover px-1.5 py-0.5 text-xs leading-4 text-popover-foreground shadow-xs",
               isOutbound ? "right-2" : "left-2",
             )}
           >
             {[...new Set(reacoes.map((r) => r.emoji))].join("")}
-            {reacoes.length > 1 && <span className="text-[10px] text-muted-foreground">{reacoes.length}</span>}
+            {reacoes.length > 1 && (
+              <span className="text-muted-foreground tabular-nums">{reacoes.length}</span>
+            )}
           </span>
         ) : null}
       </div>
@@ -591,7 +662,7 @@ export function MessageBubble({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={ocupado}>{t("Cancelar")}</AlertDialogCancel>
-            <Button variant="destructive" disabled={ocupado} onClick={async () => {
+            <Button variant="destructive-solid" disabled={ocupado} onClick={async () => {
               if (!onApagar) return;
               setOcupado(true);
               try { await onApagar(); setApagando(false); }

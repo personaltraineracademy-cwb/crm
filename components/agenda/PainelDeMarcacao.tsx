@@ -497,7 +497,7 @@ export function PainelDeMarcacao({
                 {t("Usar")}
               </Button>
             </div>
-            <p id="ajuda-do-encaixe" className="text-[11px] leading-4 text-text-subtle">
+            <p id="ajuda-do-encaixe" className="text-xs leading-4 text-text-subtle">
               {t("Vale fora dos horários publicados. A agenda só recusa se o horário já estiver ocupado.")}
             </p>
           </div>
@@ -634,7 +634,7 @@ export function PainelDeMarcacao({
           ) : null}
         </dl>
         {fuso ? (
-          <p className="mt-4 border-t border-border pt-3 text-[11px] leading-4 text-text-subtle">
+          <p className="mt-4 border-t border-border pt-3 text-xs leading-4 text-text-subtle">
             {t("Horários no fuso")} <span className="font-mono">{fuso.replace("_", " ")}</span>.
           </p>
         ) : null}
@@ -707,7 +707,7 @@ export function PainelDeMarcacao({
             <Link
               href="/app/team?aba=atendimento"
               data-testid="ir-configurar-horarios"
-              className="mt-2 inline-block text-xs font-medium text-accent underline underline-offset-2 hover:text-accent-strong"
+              className="mt-2 inline-block text-xs font-medium text-primary underline decoration-primary/45 underline-offset-2 hover:decoration-primary"
             >
               {t("Configurar meus horários de atendimento")}
             </Link>
@@ -734,7 +734,7 @@ export function PainelDeMarcacao({
             <Link
               href="/app/team?aba=atendimento"
               data-testid="ir-configurar-horarios"
-              className="mt-2 inline-block text-xs font-medium text-accent underline underline-offset-2 hover:text-accent-strong"
+              className="mt-2 inline-block text-xs font-medium text-primary underline decoration-primary/45 underline-offset-2 hover:decoration-primary"
             >
               {t("Configurar meus horários de atendimento")}
             </Link>
@@ -745,7 +745,7 @@ export function PainelDeMarcacao({
           <div
             data-testid="motivo-do-bloqueio"
             data-motivo="sem-vaga"
-            className="mb-3 rounded-sm border border-border bg-surface-sunken p-3"
+            className="mb-3 rounded-lg border border-border bg-muted/40 p-3"
           >
             <p className="text-sm font-semibold text-text">
               {t("Nenhum horário livre em")} {format(mes, "MMMM", { locale: localeDaData })}
@@ -758,7 +758,7 @@ export function PainelDeMarcacao({
 
         {googleCoberturaParcial && <p role="status" className="mb-2 text-xs text-warning">{t("Ocupação do Google ainda não verificada neste período.")}</p>}
         {fusoSuposto && (
-          <p data-testid="fuso-suposto" className="mb-2 text-[11px] leading-4 text-text-subtle">
+          <p data-testid="fuso-suposto" className="mb-2 text-xs leading-4 text-text-subtle">
             {t("Estamos supondo o fuso")} <span className="font-mono">{(fuso ?? "").replace("_", " ")}</span> {t("— ninguém escolheu ainda. O agente oferece horário usando ele.")}
           </p>
         )}
@@ -767,7 +767,7 @@ export function PainelDeMarcacao({
           // Falhar fechado na AÇÃO (o horário fica bloqueado de qualquer jeito)
           // e aberto na INFORMAÇÃO (a tela diz desde quando). O contrário —
           // bloquear em silêncio — faz a pessoa achar que a agenda está errada.
-          <p data-testid="fontes-defasadas" className="mb-2 text-[11px] leading-4 text-warning">
+          <p data-testid="fontes-defasadas" className="mb-2 text-xs leading-4 text-warning">
             {fontesDefasadas.length === 1
               ? `A agenda conectada ${fontesDefasadas[0]?.nome ?? ""} não atualiza desde ${fontesDefasadas[0]?.desde ?? "algum tempo"}. Os horários dela seguem bloqueados por precaução.`
               : `${fontesDefasadas.length} agendas conectadas não estão atualizando. Os horários delas seguem bloqueados por precaução.`}
@@ -776,7 +776,10 @@ export function PainelDeMarcacao({
 
         <div className="grid grid-cols-7 gap-1 text-center">
           {semanas[0]?.map((d) => (
-            <span key={`c-${d.toISOString()}`} className="pb-1 text-[10px] font-semibold uppercase text-text-subtle">
+            <span
+              key={`c-${d.toISOString()}`}
+              className="pb-1 text-xs font-medium text-text-subtle first-letter:uppercase"
+            >
               {format(d, "EEEEEE", { locale: localeDaData }).replace(".", "")}
             </span>
           ))}
@@ -821,7 +824,9 @@ export function PainelDeMarcacao({
                   "flex h-9 items-center justify-center rounded-sm text-sm tabular-nums transition-colors duration-fast ease-out",
                   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
                   !isSameMonth(d, mes) && "text-text-subtle",
-                  disponivel && !escolhido && "bg-accent-soft text-text hover:bg-accent hover:text-accent-foreground",
+                  disponivel &&
+                    !escolhido &&
+                    "hover:bg-interactive-strong bg-accent-soft text-text",
                   soEncaixe && !escolhido && "text-text hover:bg-accent-soft",
                   escolhido && "bg-accent font-semibold text-accent-foreground",
                   !clicavel && "cursor-default text-text-subtle",

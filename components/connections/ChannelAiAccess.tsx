@@ -131,7 +131,11 @@ function AccessForm({ channelId, initial, onClose, phoneTesting }: { channelId: 
       <p className="text-sm text-muted-foreground">
         {t("O agente precisa estar publicado e vinculado a este canal. Bloqueios do contato e atendimento humano continuam sendo respeitados.")}
       </p>
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p role="alert" className="text-danger-foreground text-sm">
+          {error}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button disabled={busy} onClick={() => void save("pre_go_live")}>
           {busy ? t("Salvando…") : !phoneTesting ? t("Pausar respostas da IA") : initial.mode === "pre_go_live" ? t("Salvar lista de teste") : t("Ativar modo de teste")}

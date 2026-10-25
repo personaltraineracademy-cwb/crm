@@ -2,7 +2,7 @@
  * AS DIVISÓRIAS DO INBOX — limites, piso da conversa e memória por faixa (#2579).
  *
  * A largura das três colunas vivia fixa no CSS
- * (`md:grid-cols-[300px_1fr] xl:grid-cols-[272px_1fr_296px] 2xl:...`), e num
+ * (`lg:grid-cols-[300px_1fr] xl:grid-cols-[272px_1fr_296px] 2xl:...`), e num
  * monitor grande sobrava conversa no meio enquanto a lista cortava nome e a
  * ficha quebrava campo. Este módulo é a REGRA do arraste, separada do React de
  * propósito: o componente só posiciona a alça e chama estas funções — quem
@@ -19,7 +19,7 @@
  *      quem impede estouro; sem piso nenhum a lista poderia crescer até
  *      empurrar a conversa para fora da tela).
  *
- *   2. MEMÓRIA POR FAIXA, não por breakpoint de CSS. `md`, `xl` e `2xl` têm
+ *   2. MEMÓRIA POR FAIXA, não por breakpoint de CSS. `lg`, `xl` e `2xl` têm
  *      padrões DIFERENTES (300/272/300 na lista), então uma largura só de
  *      "desktop" brigaria entre notebook e monitor: quem estica a lista no
  *      notebook a estica a 500px e, no 27", a mesma chave derrubaria a
@@ -35,7 +35,7 @@
  */
 
 /** Faixa de viewport do Tailwind que define o FORMATO da grade. */
-export type FaixaId = "md" | "xl" | "2xl";
+export type FaixaId = "lg" | "xl" | "2xl";
 
 export interface LargurasDoInbox {
   lista: number;
@@ -64,10 +64,12 @@ export const PASSO_TECLADO = 16;
 export const FAIXAS: readonly Faixa[] = [
   { id: "2xl", min: 1536, lista: 300, ficha: 320, temFicha: true },
   { id: "xl", min: 1280, lista: 272, ficha: 296, temFicha: true },
-  { id: "md", min: 768, lista: 300, ficha: 300, temFicha: false },
+  // `lg` (1024), e não mais `md` (768): o Unnify troca a casca em `lg` (DS
+  // §5.4), e abaixo dele a caixa de entrada é uma coluna por vez.
+  { id: "lg", min: 1024, lista: 300, ficha: 300, temFicha: false },
 ];
 
-/** Abaixo do `md` o inbox é uma coluna por vez e não tem divisória nenhuma. */
+/** Abaixo do `lg` o inbox é uma coluna por vez e não tem divisória nenhuma. */
 export function faixaDaLargura(largura: number): Faixa | null {
   if (!Number.isFinite(largura) || largura <= 0) return null;
   return FAIXAS.find((f) => largura >= f.min) ?? null;

@@ -164,7 +164,7 @@ export function PainelDeLoginCodex({
         </div>
 
         <div
-          className="space-y-2 rounded-lg border border-amber-500/50 bg-amber-500/10 p-4 text-sm"
+          className="border-warning-border bg-warning-soft space-y-2 rounded-lg border p-4 text-sm"
           data-testid="aviso-login-codex"
         >
           <p className="font-medium">{t("Antes de ligar")}</p>
@@ -192,7 +192,7 @@ export function PainelDeLoginCodex({
           </ul>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-lg border p-4 text-sm">
+        <div className="flex items-center justify-between gap-3 rounded-xl border p-4 text-sm">
           <p data-testid="estado-login-codex">
             {jaConectado && !siwcAutorizado && !conectouAgora
               ? t("Há um login anterior salvo, mas ele ainda não autorizou o uso do plano ChatGPT. Conecte novamente por este link para listar modelos e usar a assinatura.")

@@ -1,47 +1,38 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Buildings, Clock, WifiSlash, Scales, ChartBar } from "@/lib/ui/icons";
+import { StatCard } from "@/components/ui/stat-card";
 import type { DashboardKPIs } from "@/app/api/v1/admin/dashboard/kpis/route";
-import type { ElementType } from "react";
 import { useT } from "@/hooks/i18n/useT";
+import { cn } from "@/lib/utils";
 
 interface KPICardProps {
   label: string;
   value: number;
   subtitle: string;
-  Icon: ElementType;
   accent?: boolean;
   danger?: boolean;
 }
 
-function KPICard({ label, value, subtitle, Icon, accent, danger }: KPICardProps) {
-  const iconColor = danger
-    ? "text-red-500"
-    : accent
-      ? "text-amber-500"
-      : "text-muted-foreground";
-
-  const valueColor = danger
-    ? "text-red-600"
-    : accent
-      ? "text-amber-600"
-      : "text-foreground";
-
+/**
+ * Um KPI do painel no `StatCard` do DS (§10.11): rótulo, valor tabular e
+ * contexto. O valor fica sempre em `foreground`; o estado (aviso ou perigo)
+ * aparece no contexto, em frase, para a cor não ser o único sinal.
+ */
+function KPICard({ label, value, subtitle, accent, danger }: KPICardProps) {
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between gap-2">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {label}
-            </p>
-            <p className={`text-3xl font-bold tabular-nums ${valueColor}`}>{value}</p>
-            <p className="text-xs text-muted-foreground">{subtitle}</p>
-          </div>
-          <Icon className={`h-5 w-5 mt-0.5 shrink-0 ${iconColor}`} />
-        </div>
-      </CardContent>
-    </Card>
+    <StatCard
+      label={label}
+      value={value.toLocaleString("pt-BR")}
+      context={
+        <span
+          className={cn(
+            danger && "text-danger-foreground font-medium",
+            !danger && accent && "text-warning-foreground font-medium",
+          )}
+        >
+          {subtitle}
+        </span>
+      }
+    />
   );
 }
 
@@ -52,18 +43,16 @@ interface KPICardsProps {
 export function KPICards({ kpis }: KPICardsProps) {
   const t = useT();
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4">
       <KPICard
-        label={t("Tenants Ativos")}
+        label={t("Tenants ativos")}
         value={kpis.tenants_active}
         subtitle={t("organizações ativas")}
-        Icon={Buildings}
       />
       <KPICard
         label={t("Pendentes >10min")}
         value={kpis.conv_pending_10min}
         subtitle={t("conversas sem resposta")}
-        Icon={Clock}
         accent={kpis.conv_pending_10min > 0}
       />
       <KPICard
@@ -79,14 +68,12 @@ export function KPICards({ kpis }: KPICardsProps) {
         label="Alertas WAHA"
         value={kpis.waha_ban_alerts}
         subtitle={t("sessões com problema")}
-        Icon={WifiSlash}
         accent={kpis.waha_ban_alerts > 0}
       />
       <KPICard
-        label={t("LGPD em Risco")}
+        label={t("LGPD em risco")}
         value={kpis.lgpd_at_risk}
         subtitle={t("requisições próximas do prazo")}
-        Icon={Scales}
         danger={kpis.lgpd_at_risk > 0}
       />
       {/* "acumulado", e não "no mês": o número vem de
@@ -99,7 +86,6 @@ export function KPICards({ kpis }: KPICardsProps) {
         label={t("Budgets IA")}
         value={kpis.ai_budget_warnings}
         subtitle={t("tenants com gasto acumulado ≥80% do teto")}
-        Icon={ChartBar}
         accent={kpis.ai_budget_warnings > 0}
       />
     </div>

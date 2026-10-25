@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function PersonDetailClient({ id }: { id: string }) {
   const t = useT();
@@ -27,13 +28,11 @@ export function PersonDetailClient({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div>
-        <Link href="/app/people" className="text-sm text-muted-foreground hover:underline">
-          ← {t("Pessoas")}
-        </Link>
-        <h1 className="text-xl font-semibold">{(data.person.full_name as string)}</h1>
-        <p className="text-sm text-muted-foreground">{(data.person.email as string) || "—"}</p>
-      </div>
+      <PageHeader
+        back={{ href: "/app/people", label: t("Pessoas") }}
+        title={data.person.full_name as string}
+        description={(data.person.email as string) || "—"}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="space-y-2 p-4">

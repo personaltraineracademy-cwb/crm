@@ -154,9 +154,13 @@ export function LoseLeadDialog({
             {opcoes.map((opcao) => (
               <label
                 key={opcao.valor}
-                className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm hover:bg-accent"
+                // Opção do padrão (DS §10.4): contorno `input`, raio 8, hover
+                // suave; a escolhida ganha a borda e o fundo de seleção. O
+                // `hover:bg-accent` antigo pintava o azul de ação cheio.
+                className="has-[:checked]:bg-interactive flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm transition-colors hover:bg-muted/40 has-[:checked]:border-primary lg:min-h-0"
               >
                 <input
+                  className="size-4 shrink-0 accent-primary"
                   type="radio"
                   name="lost-reason"
                   value={opcao.valor}
@@ -180,11 +184,11 @@ export function LoseLeadDialog({
                 maxLength={MAX_LEN}
                 rows={3}
               />
-              <div className="text-right text-[11px] text-muted-foreground tabular-nums">
+              <div className="text-right text-xs text-muted-foreground tabular-nums">
                 {otherText.length}/{MAX_LEN}
               </div>
               {outroRecusado && (
-                <p role="alert" className="text-xs text-destructive">
+                <p role="alert" className="text-danger-foreground text-xs">
                   {/*
                     A MESMA frase do servidor, e não uma irmã: `lib/leads/motivo-da-perda.ts`
                     (#935) já devolve este texto quando o motivo chega fora da lista pela

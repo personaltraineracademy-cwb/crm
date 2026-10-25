@@ -10,6 +10,7 @@ import { useT } from "@/hooks/i18n/useT";
 import { apiClient } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/types";
 import type { ApiSuccess } from "@/lib/api/wrappers";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface ModeloListado {
   slug: string;
@@ -125,8 +126,11 @@ export function ModelosDeProposta() {
 
   if (propostasDesligadas) {
     return (
-      <div className="mx-auto w-full max-w-3xl space-y-3 p-6">
-        <h1 className="text-xl font-semibold">{t("Modelos de proposta")}</h1>
+      <div className="w-full space-y-6 p-6">
+        <PageHeader
+          back={{ href: "/app/settings/tenant/proposals", label: t("Propostas") }}
+          title={t("Modelos de proposta")}
+        />
         <p>
           {t("As propostas estão desligadas para esta organização. Para editar os modelos, ligue as propostas em Configurações › Propostas e salve.")}
         </p>
@@ -140,19 +144,30 @@ export function ModelosDeProposta() {
   if (!modelos) return <div className="p-6">{t("Carregando…")}</div>;
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6 p-6">
-      <h1 className="text-xl font-semibold">{t("Modelos de proposta")}</h1>
+    <div className="w-full space-y-6 p-6">
+      <PageHeader
+        back={{ href: "/app/settings/tenant/proposals", label: t("Propostas") }}
+        title={t("Modelos de proposta")}
+      />
 
       {salvo && !faixaFechada ? (
-        <p role="status" className="flex items-center justify-between gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+        <p
+          role="status"
+          className="border-success-border bg-success-soft text-success-foreground flex items-center justify-between gap-2 rounded-lg border p-3 text-sm"
+        >
           <span>{t("Modelo «{nome}» salvo.").replace("{nome}", salvo)}</span>
-          <button type="button" aria-label={t("Fechar")} onClick={() => setFaixaFechada(true)} className="rounded-md px-2 py-0.5 hover:bg-green-100">
+          <button
+            type="button"
+            aria-label={t("Fechar")}
+            onClick={() => setFaixaFechada(true)}
+            className="hover:bg-success-soft rounded-md px-2 py-0.5"
+          >
             ×
           </button>
         </p>
       ) : null}
 
-      <section className="space-y-2 rounded-lg border p-4">
+      <section className="space-y-2 rounded-xl border p-4">
         <h2 className="font-medium">{t("Criar a partir da proposta que a empresa já usa")}</h2>
         <p className="text-sm text-muted-foreground">
           {t("Envie um PDF, .md ou .txt de até 5 MB. A IA divide em seções, troca por campos o que muda de um cliente e de um projeto para outro, e você revisa antes de salvar.")}
@@ -170,7 +185,7 @@ export function ModelosDeProposta() {
           }}
         />
         {ocupado && andamento ? <p role="status" className="text-sm text-muted-foreground">{andamento}</p> : null}
-        {mensagem ? <p role="alert" className="text-sm text-red-700">{mensagem}</p> : null}
+        {mensagem ? <p role="alert" className="text-sm text-danger-foreground">{mensagem}</p> : null}
       </section>
 
       <section className="flex flex-col gap-2 sm:flex-row sm:items-end">

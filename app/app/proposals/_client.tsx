@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { showApiError } from "@/components/feedback/ApiErrorToast";
+import { FileText } from "@/lib/ui/icons";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useT } from "@/hooks/i18n/useT";
 import { apiClient } from "@/lib/api/client";
 import type { ApiSuccess } from "@/lib/api/wrappers";
 import { formatCents } from "@/lib/money";
 import type { ProposalStatus } from "@/lib/propostas/tipos";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface PropostaResumo {
   id: string;
@@ -73,61 +78,91 @@ export function ProposalsClient({ podeCriar }: { podeCriar: boolean }) {
   }, [tentativa]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-4 md:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">{t("Propostas")}</h1>
-        {podeCriar ? (
-          <Button asChild>
-            <Link href="/app/proposals/novo">{t("Nova proposta")}</Link>
-          </Button>
-        ) : null}
-      </header>
+    <div className="w-full space-y-6 md:p-6">
+      <PageHeader
+        title={t("Propostas")}
+        actions={
+          podeCriar ? (
+            <Button asChild size="sm">
+              <Link href="/app/proposals/novo">{t("Nova proposta")}</Link>
+            </Button>
+          ) : null
+        }
+      />
 
       {carregando ? (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t("Carregando…")}
-        </p>
-      ) : erro ? (
-        <div role="alert" className="space-y-3 rounded-lg border p-4">
-          <p className="text-sm">{t("Falha ao listar propostas.")}</p>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setErro(false);
-              setCarregando(true);
-              setTentativa((atual) => atual + 1);
-            }}
-          >
-            {t("Tentar novamente")}
-          </Button>
+        <div
+          role="status"
+          aria-label={t("Carregando…")}
+          className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card"
+        >
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="flex h-12 items-center gap-4 px-4">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-56" />
+              <Skeleton className="ml-auto h-4 w-24" />
+            </div>
+          ))}
         </div>
+      ) : erro ? (
+        <Alert
+          variant="destructive"
+          action={
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setErro(false);
+                setCarregando(true);
+                setTentativa((atual) => atual + 1);
+              }}
+            >
+              {t("Tentar novamente")}
+            </Button>
+          }
+        >
+          {t("Falha ao listar propostas.")}
+        </Alert>
       ) : propostas.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-          {t("Nenhuma proposta cadastrada ainda.")}
-        </p>
+        <div className="rounded-xl border border-border bg-card">
+          <EmptyState
+            icon={<FileText aria-hidden />}
+            title={t("Nenhuma proposta cadastrada ainda.")}
+          />
+        </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full text-sm max-md:block">
-            <thead className="max-md:hidden">
-              <tr className="border-b text-left">
-                <th scope="col" className="p-3">{t("Número")}</th>
-                <th scope="col" className="p-3">{t("Título")}</th>
-                <th scope="col" className="p-3">{t("Status")}</th>
-                <th scope="col" className="p-3 text-right">{t("Valor")}</th>
+        // Tabela do DS (§10.12): cabeçalho `muted/40` de 48 com rótulos xs/500,
+        // linhas de 48 e o título (a identidade) preso à esquerda ao rolar.
+        <div className="overflow-x-auto rounded-xl border border-border bg-card">
+          <table className="w-full text-sm max-md:block md:min-w-[720px]">
+            <thead className="bg-muted/40 max-md:hidden">
+              <tr className="h-12 border-b border-border text-left text-xs font-medium text-muted-foreground">
+                <th scope="col" className="px-4 font-medium">
+                  {t("Número")}
+                </th>
+                <th scope="col" className="px-4 font-medium">
+                  {t("Título")}
+                </th>
+                <th scope="col" className="px-4 font-medium">
+                  {t("Status")}
+                </th>
+                <th scope="col" className="px-4 text-right font-medium">
+                  {t("Valor")}
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y max-md:block">
+            <tbody className="divide-y divide-border max-md:block">
               {propostas.map((p) => (
                 <tr
                   key={p.id}
-                  className="max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3 max-md:px-3 max-md:py-2"
+                  className="transition-colors hover:bg-muted/40 max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3 max-md:px-3 max-md:py-2 md:h-12"
                 >
-                  <td className="whitespace-nowrap p-3 max-md:p-0 max-md:text-xs">
+                  <td className="px-4 whitespace-nowrap tabular-nums max-md:p-0 max-md:text-xs">
                     {p.numero !== null && p.ano !== null
                       ? `${String(p.numero).padStart(4, "0")}/${p.ano} v${p.versao}`
                       : t("Rascunho")}
                   </td>
-                  <td className="p-3 max-md:order-first max-md:basis-full max-md:p-0">
+                  <td className="min-w-64 px-4 max-md:order-first max-md:basis-full max-md:p-0">
                     <Link
                       href={`/app/proposals/${p.id}`}
                       className="underline underline-offset-4 max-md:flex max-md:min-h-11 max-md:items-center"
@@ -135,16 +170,16 @@ export function ProposalsClient({ podeCriar }: { podeCriar: boolean }) {
                       {p.titulo}
                     </Link>
                   </td>
-                  <td className="p-3 max-md:p-0 max-md:text-xs">
+                  <td className="px-4 max-md:p-0 max-md:text-xs">
                     {aguardaRevisao(p) ? (
-                      <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
+                      <span className="border-warning-border bg-warning-soft text-warning-foreground rounded-md border px-2 py-0.5 text-xs font-medium">
                         {t("Aguardando revisão")}
                       </span>
                     ) : (
                       statusLabels[p.status]
                     )}
                   </td>
-                  <td className="whitespace-nowrap p-3 text-right tabular-nums max-md:p-0 max-md:text-xs">
+                  <td className="px-4 text-right whitespace-nowrap tabular-nums max-md:p-0 max-md:text-xs">
                     {formatCents(p.total_cents, p.moeda)}
                   </td>
                 </tr>

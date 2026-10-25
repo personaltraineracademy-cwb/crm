@@ -25,8 +25,8 @@ import { cn } from "@/lib/utils";
  * reserva valer antes de o navegador medir a caixa. Para esta peça, piso é
  * defeito.
  *
- * Esta barra existe em toda largura e quem a esconde acima de `md` é CSS
- * (`md:hidden`), não condição de render. Então no laptop ela está no DOM com
+ * Esta barra existe em toda largura e quem a esconde a partir de `lg` é CSS
+ * (`lg:hidden`), não condição de render. Então no laptop ela está no DOM com
  * `display: none` — e `ocupacaoDaPeca` é `distancia + max(altura, medida)`: com
  * `altura: 56`, o `<main>` do desktop perderia 56px de rodapé por uma barra que
  * não está na tela. O Inbox e o quadro do funil, que leem a mesma variável para
@@ -139,19 +139,24 @@ export function BarraInferior() {
       // aqui: é o mesmo número que a casca desconta (issue #1305).
       style={{ bottom: BARRA_INFERIOR.distancia }}
       /*
-        `pb-[env(safe-area-inset-bottom)]`: a barra encosta na borda de baixo, e
-        no iOS em tela cheia os últimos ~34px dali são do indicador de home. Sem
-        esta linha os rótulos ficariam por baixo dele — e é esta barra, de todas
-        as peças do produto, a que mais obviamente precisa disso, porque ela
-        mora exatamente onde o indicador mora.
+        A BARRA ANCORADA DO UNNIFY (DS §5.6, `.pta-mobile-dock`): fixa embaixo,
+        `padding: 6px 8px + safe-area`, borda de cima de 1px e fundo `card` a
+        94% com `blur(20px) saturate(1.3)` — os três últimos moram em
+        `.casca-dock` (`components/shell/casca.css`), que também a devolve a
+        sólido com transparência reduzida ou alto contraste. Camada 40 (§5.5).
 
-        `md:hidden` é o mesmo corte que a casca usa para trocar o sidebar pela
-        gaveta (`hidden md:block` no `AppShell`): acima de 768px a barra lateral
-        já está na tela e uma segunda navegação seria redundante.
+        A safe-area entra SOMADA aos 6px: no iOS em tela cheia os últimos ~34px
+        são do indicador de home, e sem ela os rótulos ficariam por baixo dele —
+        e é esta barra, de todas as peças do produto, a que mais obviamente
+        precisa disso, porque ela mora exatamente onde o indicador mora.
+
+        `lg:hidden` é o mesmo corte que a casca usa para trocar a barra lateral
+        pela gaveta (`hidden lg:block` no `AppShell`): de 1024px para cima a
+        barra lateral já está na tela e uma segunda navegação seria redundante.
       */
-      className="ds-surge fixed inset-x-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur md:hidden"
+      className="casca-dock fixed inset-x-0 z-40 px-2 pt-1.5 pb-[calc(6px+env(safe-area-inset-bottom,0px))] lg:hidden"
     >
-      <ul className="flex items-stretch justify-around py-1">
+      <ul className="flex items-stretch justify-around gap-1">
         {abas.map((aba) => {
           const Icone = aba.icon;
           // `startsWith` e não igualdade: em `/app/inbox/[id]` a aba Inbox
@@ -165,24 +170,35 @@ export function BarraInferior() {
                 href={aba.href}
                 aria-current={aqui ? "page" : undefined}
                 className={cn(
-                  "relative flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1",
+                  // Coluna ícone + rótulo `xs`/500, altura mínima 56, raio 12;
+                  // ao tocar, `interactive-strong` (em `.casca-dock`).
+                  "relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5",
                   "transition-[color,background-color] duration-fast",
-                  aqui ? "text-accent" : "text-muted-foreground",
+                  aqui ? "text-primary" : "text-muted-foreground",
                 )}
               >
-                <Icone size={22} weight={aqui ? "fill" : "regular"} aria-hidden />
-                <span className="w-full truncate text-center text-[10px] leading-tight">
+                {/* O `relative` é a âncora do ponto do contador: no canto do
+                    ícone, e não no canto da coluna inteira. */}
+                <span className="relative">
+                  <Icone size={20} aria-hidden />
+                  {aba.contador === "fila" && (
+                    <ContadorDaFila compacto className="-top-0.5 -right-1 ring-card" />
+                  )}
+                  {aba.contador === "casos" && (
+                    <ContadorDeCasos compacto className="-top-0.5 -right-1 ring-card" />
+                  )}
+                </span>
+                <span className="w-full truncate text-center text-xs leading-tight font-medium">
                   {t(aba.label)}
                 </span>
                 {/*
-                  `compacto` desenha o contador como um PONTO de 8px absoluto, em
-                  vez do número ao lado do rótulo. Numa aba de ~70px o número não
-                  caberia junto do texto, e o ponto é o que um app nativo mostra:
-                  "tem coisa aqui", sem pedir leitura. O rótulo acessível com a
-                  contagem exata continua no `aria-label` do próprio contador.
+                  `compacto` desenha o contador como um PONTO de 8px (acima, no
+                  canto do ícone), em vez do número ao lado do rótulo. Numa aba
+                  de ~70px o número não caberia junto do texto, e o ponto é o que
+                  um app nativo mostra: "tem coisa aqui", sem pedir leitura. O
+                  rótulo acessível com a contagem exata continua no `aria-label`
+                  do próprio contador.
                 */}
-                {aba.contador === "fila" && <ContadorDaFila compacto />}
-                {aba.contador === "casos" && <ContadorDeCasos compacto />}
               </Link>
             </li>
           );

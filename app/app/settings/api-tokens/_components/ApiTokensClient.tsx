@@ -260,7 +260,7 @@ export function ApiTokensClient() {
           </DialogHeader>
           {created ? (
             <div className="space-y-3">
-              <code className="block break-all rounded-md border bg-muted p-3 text-sm">
+              <code className="block rounded-lg border bg-muted p-3 text-sm break-all">
                 {created.plaintext}
               </code>
               <Button

@@ -112,7 +112,7 @@ export function FunisDoAgente({ funis, value, onChange, cobertura, disabled = fa
                 {marcados.has(f.id) && cobertura?.[f.id]?.mudo ? (
                   <span
                     data-testid={`funil-mudo-${f.id}`}
-                    className="ml-2 text-xs text-warning-fg"
+                    className="text-warning-foreground ml-2 text-xs"
                   >
                     {t("— ele não sabe organizar este funil ainda")}
                   </span>
@@ -132,7 +132,7 @@ export function FunisDoAgente({ funis, value, onChange, cobertura, disabled = fa
       ) : null}
 
       {mudosMarcados.length > 0 ? (
-        <p data-testid="agente-funis-mudos" className="text-xs text-warning-fg">
+        <p data-testid="agente-funis-mudos" className="text-warning-foreground text-xs">
           {mudosMarcados.length === 1
             ? `${t("Você marcou")} ${mudosMarcados[0]}${t(", mas ninguém disse ao assistente o que cada etapa desse funil significa — ele vai atender e deixar os negócios parados onde estão.")}`
             : `${t("Você marcou")} ${mudosMarcados.length} ${t("funis em que ninguém disse ao assistente o que cada etapa significa — ele vai atender e deixar os negócios parados onde estão.")}`}{" "}
@@ -152,7 +152,7 @@ export function FunisDoAgente({ funis, value, onChange, cobertura, disabled = fa
       ) : null}
 
       {entradaDeFora ? (
-        <p data-testid="agente-entrada-de-fora" className="text-xs text-warning-fg">
+        <p data-testid="agente-entrada-de-fora" className="text-warning-foreground text-xs">
           {t("As conversas novas viram negócio em")} <strong>{funilDeEntrada?.name}</strong>
           {t(", que não está marcado. O assistente vai atender e os negócios vão se acumular ali sem que ele possa organizá-los.")}
         </p>

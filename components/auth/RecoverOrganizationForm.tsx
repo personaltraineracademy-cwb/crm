@@ -91,7 +91,7 @@ export function RecoverOrganizationForm({
           <Label htmlFor="recovery-plano">{t("Plano")}</Label>
           <select
             id="recovery-plano"
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+            className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm"
             value={plano}
             onChange={(event) => setPlano(event.target.value)}
             disabled={isPending}
@@ -106,11 +106,16 @@ export function RecoverOrganizationForm({
         </div>
       )}
       {error && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-danger-foreground text-sm" role="alert">
           {error}
         </p>
       )}
-      <Button className="w-full" type="submit" disabled={isPending || name.trim().length < 2}>
+      <Button
+        className="w-full"
+        size="lg"
+        type="submit"
+        disabled={isPending || name.trim().length < 2}
+      >
         {isPending
           ? t("Preparando seu ambiente…")
           : comAprovacao

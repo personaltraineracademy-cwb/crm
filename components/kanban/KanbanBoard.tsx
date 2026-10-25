@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@/hooks/i18n/useT";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { chaveDoQuadro, useBoard } from "@/hooks/kanban/useBoard";
 import { useMoveCard, type MoveArgs, type RecusaDeCampos, type RetomadaPendente } from "@/hooks/kanban/useMoveCard";
 import { useRenameStage } from "@/hooks/kanban/useRenameStage";
@@ -65,17 +66,32 @@ function groupLeadsByStage(stages: Stage[], leads: Lead[]): Map<string, Lead[]> 
   return map;
 }
 
+/**
+ * A barra de rolagem fina do quadro (`pta-kanban-scroll` do Work), em
+ * utilitários para não depender de classe global. `scrollbar-color` vale no
+ * Firefox e no Chrome 121+; os pseudo-elementos `-webkit-` cobrem o Safari.
+ */
+const BARRA_FINA_DO_QUADRO = cn(
+  "[scrollbar-gutter:stable] [scrollbar-width:thin]",
+  "[scrollbar-color:color-mix(in_srgb,var(--muted-foreground)_42%,transparent)_color-mix(in_srgb,var(--muted)_44%,transparent)]",
+  "[&::-webkit-scrollbar]:size-3",
+  "[&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-muted/40",
+  "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-3 [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-padding",
+  "[&::-webkit-scrollbar-thumb]:bg-[color-mix(in_srgb,var(--muted-foreground)_46%,transparent)]",
+  "[&::-webkit-scrollbar-thumb:hover]:bg-[color-mix(in_srgb,var(--primary)_58%,var(--muted-foreground))]",
+);
+
 function BoardSkeleton() {
   return (
-    <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto p-4">
+    <div className="flex min-h-0 flex-1 gap-4 overflow-x-auto px-4 pb-4 sm:px-6 sm:pb-6">
       {[0, 1, 2].map((c) => (
         <div
           key={c}
-          className="flex w-80 shrink-0 flex-col gap-2 rounded-lg border border-border bg-surface-muted/40 p-3"
+          className="flex w-[85vw] max-w-80 shrink-0 flex-col gap-2 rounded-xl border border-border bg-muted/40 p-2 md:w-72 md:max-w-md md:grow"
         >
-          <Skeleton className="h-5 w-32" />
+          <Skeleton className="m-1 h-5 w-32" />
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full animate-pulse" />
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
           ))}
         </div>
       ))}
@@ -311,7 +327,7 @@ export function KanbanBoard({
 
   if (isError) {
     return (
-      <Card className="m-4 p-6 text-sm text-text-muted">
+      <Card className="m-4 p-6 text-sm text-muted-foreground">
         {t("Falha ao carregar o board.")}
         {error instanceof Error ? ` ${error.message}` : null}
       </Card>
@@ -324,7 +340,7 @@ export function KanbanBoard({
 
   if (data.stages.length === 0) {
     return (
-      <Card className="m-4 p-6 text-sm text-text-muted">
+      <Card className="m-4 p-6 text-sm text-muted-foreground">
         {t("Nenhum lead nesta pipeline ainda.")}
       </Card>
     );
@@ -346,9 +362,16 @@ export function KanbanBoard({
           na borda do conteúdo do contêiner, então um `pt-4` deixava uma faixa
           de 16px acima dele por onde os cards apareciam rolando (medido no e2e
           "o quadro cabe na tela"). O respiro até os filtros vem do `gap-4` da
-          página. */}
+          página.
+          Medidas do quadro do Work (DS §10.23): 16px de respiro (24 a partir de
+          `sm`) e 16px entre colunas. A barra de rolagem é a fina do quadro
+          (`pta-kanban-scroll`): 12px, trilho e polegar translúcidos, polegar
+          puxando para o `primary` no hover. */}
       <div
-        className="flex min-h-0 flex-1 items-start gap-3 overflow-auto px-4 pb-4"
+        className={cn(
+          "flex min-h-0 flex-1 items-start gap-4 overflow-auto px-4 pb-4 sm:px-6 sm:pb-6",
+          BARRA_FINA_DO_QUADRO,
+        )}
         data-quadro-do-funil
       >
         {/* A FAIXA entre o rolo e as colunas (#3030). O contêiner de fora é o
@@ -362,13 +385,14 @@ export function KanbanBoard({
             então o `@hello-pangea/dnd` segue com a rolagem automática do
             arraste (Droppable dentro de outro rolável ele não suporta). */}
         <div
-          className="flex min-h-full w-max items-stretch gap-3"
+          className="flex min-h-full w-max min-w-full items-stretch gap-4"
           data-faixa-das-etapas
         >
-          {data.stages.map((stage) => (
+          {data.stages.map((stage, posicao) => (
             <StageColumn
               key={stage.id}
               stage={stage}
+              posicao={posicao}
               leads={grouped.get(stage.id) ?? []}
               pipelineId={pipelineId}
               ownerNames={ownerNames}

@@ -12,10 +12,10 @@ import { useT } from "@/hooks/i18n/useT";
  * melhoria que ele aprovou ou uma habilidade que instalou. Três origens diferentes,
  * três coisas diferentes a fazer se ele quiser mais.
  */
-const TIPOS: Record<TimelineItem["kind"], { rotulo: string; Icone: typeof Brain; cor: string }> = {
-  memory: { rotulo: "Regra que você ensinou", Icone: Brain, cor: "text-accent" },
-  proposal: { rotulo: "Melhoria que você aprovou", Icone: Lightbulb, cor: "text-warning-fg" },
-  skill: { rotulo: "Habilidade instalada", Icone: PuzzlePiece, cor: "text-info-fg" },
+const TIPOS: Record<TimelineItem["kind"], { rotulo: string; Icone: typeof Brain }> = {
+  memory: { rotulo: "Regra que você ensinou", Icone: Brain },
+  proposal: { rotulo: "Melhoria que você aprovou", Icone: Lightbulb },
+  skill: { rotulo: "Habilidade instalada", Icone: PuzzlePiece },
 };
 
 /**
@@ -50,12 +50,16 @@ export function EvolutionTimeline({ items }: { items: TimelineItem[] }) {
         const tipo = TIPOS[it.kind];
         return (
           <li key={`${it.day}-${it.kind}-${i}`} className="flex items-start gap-3 py-3">
-            <tipo.Icone size={18} className={`mt-0.5 shrink-0 ${tipo.cor}`} aria-hidden />
+            {/* O tipo é categoria, não estado: o bloco de ícone é o mesmo
+                (`primary/10`) e quem distingue é o ícone e o rótulo. */}
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+              <tipo.Icone size={16} aria-hidden />
+            </span>
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-muted-foreground tabular-nums">
                 {dia(it.day, tagDoIdioma)} · {t(tipo.rotulo)}
               </p>
-              <p className="mt-0.5 break-words text-sm">{titulo(it.title)}</p>
+              <p className="mt-0.5 text-sm break-words text-foreground">{titulo(it.title)}</p>
             </div>
           </li>
         );

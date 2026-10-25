@@ -197,14 +197,14 @@ export function RedesSociaisClient() {
         </Button>
       </div>
       {params.get("error") && (
-        <p role="alert" className="rounded-md border p-3 text-sm">
+        <p role="alert" className="rounded-lg border p-3 text-sm">
           {t(
             "A autorização não foi concluída. Tente conectar novamente e aceite as permissões necessárias.",
           )}
         </p>
       )}
       {params.get("connected") && (
-        <p role="status" className="rounded-md border p-3 text-sm">
+        <p role="status" className="rounded-lg border p-3 text-sm">
           {t(
             "Autorização concluída. Confira a conta na lista e ative o atendimento, quando disponível.",
           )}
@@ -213,7 +213,7 @@ export function RedesSociaisClient() {
       {(error || query.error) && (
         <p
           role="alert"
-          className="rounded-md border border-destructive p-3 text-sm text-destructive"
+          className="text-danger-foreground rounded-lg border border-destructive p-3 text-sm"
         >
           {t(error ?? query.error?.message ?? "Não foi possível carregar as redes sociais.")}
         </p>
@@ -260,7 +260,7 @@ export function RedesSociaisClient() {
                 <Label htmlFor="social-profile">{t("Perfil da empresa")}</Label>
                 <select
                   id="social-profile"
-                  className="w-full rounded-md border bg-background p-2"
+                  className="w-full rounded-lg border bg-background p-2"
                   value={profile}
                   onChange={(e) => setProfile(e.target.value)}
                 >
@@ -294,7 +294,7 @@ export function RedesSociaisClient() {
               <Label htmlFor="social-network">{t("Conectar uma rede")}</Label>
               <select
                 id="social-network"
-                className="w-full rounded-md border bg-background p-2"
+                className="w-full rounded-lg border bg-background p-2"
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value)}
               >
@@ -322,7 +322,7 @@ export function RedesSociaisClient() {
               <Card key={account.id} className="flex flex-col gap-3 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    <p className="text-xs font-medium text-muted-foreground">
                       {state.networks.find((n) => n.id === account.platform)?.label ??
                         account.platform}
                     </p>
@@ -452,7 +452,7 @@ export function RedesSociaisClient() {
               {(state.orphaned_channels ?? []).map((orfao) => (
                 <div
                   key={orfao.channel_id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/40 p-3"
                 >
                   <div>
                     <p className="font-medium">{orfao.display_name ?? orfao.account_id}</p>

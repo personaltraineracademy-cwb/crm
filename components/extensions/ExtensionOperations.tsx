@@ -109,12 +109,14 @@ export function ExtensionOperations({
                   <p className="mt-1 text-xs break-all text-muted-foreground">
                     {operationSubject(operation, t)}
                   </p>
-                  <p className="mt-1 font-mono text-[11px] text-text-subtle">
+                  <p className="mt-1 font-mono text-xs text-muted-foreground">
                     {operation.id} · {new Date(operation.updated_at).toLocaleString(locale)}
                   </p>
                   {operation.error_message ? (
-                    <div className="mt-3 rounded-md bg-error-bg p-3 text-sm">
-                      <p className="font-medium text-error-fg">{t(operation.error_message)}</p>
+                    <div className="bg-danger-soft mt-3 rounded-lg p-3 text-sm">
+                      <p className="text-danger-foreground font-medium">
+                        {t(operation.error_message)}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {operation.kind === "install"
                           ? t("Confira o catálogo admitido e tente a instalação novamente.")

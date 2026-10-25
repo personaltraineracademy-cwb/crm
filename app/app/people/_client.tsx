@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface PersonRow {
   id: string;
@@ -78,18 +79,18 @@ export function PeopleListClient() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">{t("Pessoas")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Decisores e contatos — telefones ficam em Contatos.")}
-          </p>
-        </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-2 size-4" />
-          {t("Nova pessoa")}
-        </Button>
-      </div>
+      <PageHeader
+        title={t("Pessoas")}
+        description={t("Decisores e contatos — telefones ficam em Contatos.")}
+        actions={
+          <>
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-2 size-4" />
+              {t("Nova pessoa")}
+            </Button>
+          </>
+        }
+      />
 
       <div className="relative max-w-sm">
         <MagnifyingGlass className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />

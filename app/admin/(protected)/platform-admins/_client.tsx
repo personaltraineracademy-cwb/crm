@@ -6,6 +6,7 @@ import {
 } from "@/components/admin/platform-admins/PlatformAdminsTable";
 import { useAdminPlatformAdmins } from "@/hooks/useAdminPlatformAdmins";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function PlatformAdminsClient() {
   const t = useT();
@@ -14,12 +15,10 @@ export function PlatformAdminsClient() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Platform Admins")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("Administradores com acesso privilegiado à plataforma")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Platform Admins")}
+        description={t("Administradores com acesso privilegiado à plataforma")}
+      />
 
       {/* T-04 Notice — proeminente, antes da tabela */}
       <DBAOnlyNotice />

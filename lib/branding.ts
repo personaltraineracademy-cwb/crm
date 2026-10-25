@@ -53,6 +53,23 @@ export function resolveBranding(
 }
 
 /**
+ * Ninguém configurou logo — e é só então que o logo do PRODUTO (Unnify CRM,
+ * `lib/branding/desenho.ts`) aparece no lugar dele.
+ *
+ * Uma condição só: sem logo configurado, nem no banco nem no `.env` (nem na
+ * organização, quando quem chama já desceu por ela). O NOME não conta: o logo é
+ * a camada de baixo do campo "logo", e o nome da instalação continua no
+ * título da aba, nos e-mails e onde mais o texto aparece. Quem sobe logo em `/admin/marca` ou declara `APP_LOGO_URL` vence.
+ *
+ * Antes do logo do Unnify CRM o nome também precisava ser o padrão, porque o
+ * desenho antigo soletrava o nome do produto original; com um nome próprio, a
+ * barra mostrava o nome em texto. Esse caminho deixou de existir de propósito.
+ */
+export function marcaEhADoProduto(marca: Pick<Branding, "name" | "logoUrl">): boolean {
+  return marca.logoUrl === null;
+}
+
+/**
  * A marca da instalação — **SOMENTE em componente de servidor.**
  *
  * ⚠️ NÃO CHAME ISTO DE UM `"use client"`. Em client component use
@@ -82,20 +99,6 @@ export function resolveBranding(
  * produto nos DOIS lados e mostraria a marca errada em SILÊNCIO. Divergir é
  * barulhento (o console acusa), e barulhento é o modo de falhar que se conserta.
  */
-/**
- * A marca em vigor é a do PRODUTO — e é só então que o símbolo e o logotipo
- * de `lib/branding/desenho.ts` podem aparecer.
- *
- * Duas condições, e as duas são necessárias: sem logo configurado E com o nome
- * padrão. Quem só trocou o nome (para "Acme CRM") não pode receber um logotipo
- * que soletra outro nome; quem só subiu um logo já tem o dele na tela. Trocar a
- * cor de destaque não conta — a marca do produto continua sendo a que está
- * escrita, só pintada de outro jeito.
- */
-export function marcaEhADoProduto(marca: Pick<Branding, "name" | "logoUrl">): boolean {
-  return marca.logoUrl === null && marca.name === DEFAULT_APP_NAME;
-}
-
 export function branding(): Branding {
   if (typeof window !== "undefined") {
     const runtime = window.__PUBLIC_ENV__;

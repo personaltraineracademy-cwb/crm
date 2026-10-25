@@ -1,0 +1,25 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — ponto de entrada do CSS (etapa 1, tokens).
+
+   O `app/layout.tsx` importa ESTE arquivo no lugar do `app/globals.css`. O
+   `globals.css` do DeskcommCRM original fica intocado e entra primeiro; os
+   nossos arquivos vêm depois e vencem pela ORDEM (mesma especificidade) ou
+   pelo `@theme` posterior, que substitui a chave anterior.
+
+   Por que um ponto de entrada, e não dois `import` de CSS no layout: cada
+   arquivo importado pelo Next vira uma compilação Tailwind separada, e um
+   `@theme` num segundo arquivo não alcançaria os utilitários gerados no
+   primeiro (`text-sky-500`, `font-bold`…). Aqui é UMA compilação só.
+
+   Os `@source "../app"` etc. do `globals.css` continuam resolvendo contra a
+   pasta dele (`app/`), não contra esta — o import preserva a base.
+
+   Especificação: `docs/unnify/mapa-de-tokens.md` (etapa 0).
+   ───────────────────────────────────────────────────────────────────────── */
+@import "../globals.css";
+@import "./tokens.css";
+@import "./raios.css";
+@import "./camadas.css";
+@import "./paleta.css";
+@import "./tipografia.css";
+@import "./base.css";

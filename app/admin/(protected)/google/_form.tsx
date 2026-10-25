@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Props {
   readonly clientIdSalvo: string | null;
@@ -58,12 +59,12 @@ export function FormularioDoGoogle({
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Google Agenda desta instalação")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("Com estas duas informações, quem atende consegue conectar a agenda pessoal do Google e ver os compromissos do CRM lá. Elas valem para a instalação inteira — cada pessoa conecta a conta dela depois, sozinha.")}
-        </p>
-      </header>
+      <PageHeader
+        title={t("Google Agenda desta instalação")}
+        description={t(
+          "Com estas duas informações, quem atende consegue conectar a agenda pessoal do Google e ver os compromissos do CRM lá. Elas valem para a instalação inteira — cada pessoa conecta a conta dela depois, sozinha.",
+        )}
+      />
 
       <Card className="flex flex-col gap-4 p-4">
         <div className="flex flex-col gap-1.5">
@@ -103,7 +104,7 @@ export function FormularioDoGoogle({
             placeholder={temSegredoSalvo ? "••••••••  (já cadastrada)" : "GOCSPX-…"}
           />
           {secretComFormatoRuim ? (
-            <p data-testid="google-secret-formato-ruim" className="text-xs text-warning">
+            <p data-testid="google-secret-formato-ruim" className="text-xs text-warning-foreground">
               {t("Essa chave tem aspas, vírgula ou espaço — sinal de que veio colada junto com o resto do arquivo. Copie só o valor que começa com GOCSPX-, sem nada colado depois.")}
             </p>
           ) : (
@@ -124,13 +125,13 @@ export function FormularioDoGoogle({
         {temNoAmbiente ? (
           <p
             data-testid="google-tem-no-ambiente"
-            className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+            className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
           >
             {t("Esta instalação já tem as credenciais no arquivo de configuração do servidor. O que você salvar aqui passa a valer no lugar delas; apagar o que está aqui faz o sistema voltar a usar as do arquivo.")}
           </p>
         ) : null}
 
-        <p className="rounded-md border border-warning/40 bg-warning-bg p-3 text-xs leading-4 text-text-muted">
+        <p className="border-warning-border bg-warning-soft rounded-lg border p-3 text-xs leading-4 text-muted-foreground">
           {/*
             O efeito colateral que ninguém antecipa: trocar o client id ou a
             chave invalida os refresh tokens que o Google já emitiu para esta
@@ -138,7 +139,7 @@ export function FormularioDoGoogle({
             passe do cron e exige reconexão manual. É comportamento do Google, e
             silencioso se a tela não avisar.
           */}
-          <strong className="font-semibold text-text">{t("Ao trocar uma credencial já em uso:")}</strong>{" "}
+          <strong className="font-semibold text-foreground">{t("Ao trocar uma credencial já em uso:")}</strong>{" "}
           {t("quem já conectou a agenda vai precisar conectar de novo. O Google invalida as autorizações antigas quando o aplicativo muda — não há como evitar, e ninguém perde compromisso por isso.")}
         </p>
 

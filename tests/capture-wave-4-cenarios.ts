@@ -298,7 +298,7 @@ async function abrirTimeline(page: Page, contactId: string): Promise<void> {
   await page.goto(`${BASE}/app/contacts/${contactId}`);
   await page.waitForLoadState("networkidle").catch(() => null);
   const aba = page
-    .getByRole("tab", { name: /timeline/i })
+    .getByRole("tab", { name: /timeline|linha do tempo/i })
     .or(page.getByRole("button", { name: /^Timeline$/i }));
   if ((await aba.count()) > 0) await aba.first().click();
   // Espera por CONTEÚDO, nunca por relógio: o fetch da timeline dispara depois

@@ -22,8 +22,8 @@
  * dívida que não existe.
  */
 import { useT } from "@/hooks/i18n/useT";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
+import { StatCard } from "@/components/ui/stat-card";
 import { mesLegivel } from "@/lib/metas/periodo";
 import Link from "next/link";
 
@@ -54,110 +54,83 @@ export function MetaDoMesPanel({ estado, periodo, metas, podeConfigurar }: Props
   const t = useT();
   const mes = mesLegivel(periodo);
 
+  // Seção com título e uma grade de cartões de métrica (DS §10.11 e §11.3), e
+  // não um cartão com cartões dentro: cada meta é um `StatCard`, com o
+  // realizado como valor, o alvo e o percentual no contexto e a barra de 8px
+  // da meta embaixo.
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">
-          {t("Meta do mês")}
-          {mes ? ` · ${mes}` : ""}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {estado === "carregando" ? (
-          <div
-            className="flex flex-col gap-2"
-            aria-busy="true"
-            aria-label={t("Carregando a meta do mês")}
-          >
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-2 w-full" />
-          </div>
-        ) : null}
+    <section className="flex flex-col gap-3">
+      <h2 className="text-base font-semibold">
+        {t("Meta do mês")}
+        {mes ? ` · ${mes}` : ""}
+      </h2>
 
-        {estado === "erro" ? (
+      {estado === "carregando" ? (
+        <div aria-label={t("Carregando a meta do mês")} className={GRADE}>
+          <StatCard loading label="" value="" />
+        </div>
+      ) : null}
+
+      {estado === "erro" ? (
+        <Alert variant="warning">
+          {t(
+            "Não consegui carregar a meta do mês — isto é uma falha de leitura, não a ausência de meta.",
+          )}
+        </Alert>
+      ) : null}
+
+      {estado === "vazio" ? (
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4 sm:p-5">
+          <p className="text-sm text-muted-foreground">
+            {t("Nenhuma meta cadastrada para este mês.")}
+          </p>
           <p className="text-sm text-muted-foreground">
             {t(
-              "Não consegui carregar a meta do mês — isto é uma falha de leitura, não a ausência de meta.",
+              "Defina a meta em Configurações › Meta de vendas para ver aqui o quanto já foi feito e o quanto falta.",
             )}
           </p>
-        ) : null}
-
-        {estado === "vazio" ? (
-          <div className="flex flex-col gap-2">
+          {podeConfigurar ? (
+            <Link
+              href="/app/settings/metas"
+              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("Definir a meta")}
+            </Link>
+          ) : (
             <p className="text-sm text-muted-foreground">
-              {t("Nenhuma meta cadastrada para este mês.")}
+              {t("Só quem administra a empresa define a meta.")}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {t(
-                "Defina a meta em Configurações › Meta de vendas para ver aqui o quanto já foi feito e o quanto falta.",
-              )}
-            </p>
-            {podeConfigurar ? (
-              <Link
-                href="/app/settings/metas"
-                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-              >
-                {t("Definir a meta")}
-              </Link>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                {t("Só quem administra a empresa define a meta.")}
-              </p>
-            )}
-          </div>
-        ) : null}
+          )}
+        </div>
+      ) : null}
 
-        {estado === "ok"
-          ? metas.map((m) => (
-              <div key={m.id} className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="truncate text-sm">
-                    {m.escopo === "funil" ? (m.pipeline_nome ?? t("Funil")) : t("Empresa")}
-                  </span>
-                  <span className="shrink-0 text-sm tabular-nums">
-                    <span data-meta="percentual">{m.percentual}%</span> {t("da meta")}
-                  </span>
-                </div>
-
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    data-meta="barra"
-                    className={`h-full rounded-full transition-[width] ${
-                      m.atingida ? "bg-emerald-500" : "bg-primary"
-                    }`}
-                    style={{ width: `${Math.min(100, Math.max(0, m.percentual))}%` }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
-                  <span>
-                    <span className="tabular-nums" data-meta="realizado">
-                      {m.realizado}
-                    </span>{" "}
-                    {t("de")}{" "}
-                    <span className="tabular-nums" data-meta="alvo">
-                      {m.alvo}
-                    </span>{" "}
-                    {t("Vendas ganhas")}
-                  </span>
-                  <span>
-                    {m.atingida ? (
-                      t("Meta atingida.")
-                    ) : (
-                      <>
-                        {t("Faltam")}{" "}
-                        <span className="tabular-nums" data-meta="falta">
-                          {m.falta}
-                        </span>{" "}
-                        {t("para a meta")}
-                      </>
-                    )}
-                  </span>
-                </div>
-              </div>
-            ))
-          : null}
-      </CardContent>
-    </Card>
+      {estado === "ok" ? (
+        <div className={GRADE}>
+          {metas.map((m) => (
+            <StatCard
+              key={m.id}
+              label={m.escopo === "funil" ? (m.pipeline_nome ?? t("Funil")) : t("Empresa")}
+              value={<span data-meta="realizado">{m.realizado}</span>}
+              context={
+                <>
+                  {t("de")} <strong data-meta="alvo">{m.alvo}</strong> {t("Vendas ganhas")} ·{" "}
+                  <strong data-meta="percentual">{m.percentual}%</strong> {t("da meta")}
+                </>
+              }
+              goal={{
+                progress: m.percentual,
+                status: "ok",
+                label: m.atingida
+                  ? t("Meta atingida.")
+                  : `${t("Faltam")} ${m.falta} ${t("para a meta")}`,
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 }
+
+/** Grade de KPIs: as colunas se ajustam à largura (DS §11.3). */
+const GRADE = "grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]";

@@ -80,7 +80,7 @@ export function PublishConfirmDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="space-y-2 rounded-md border border-border/60 p-3 text-xs">
+        <div className="space-y-2 rounded-lg border border-border/60 p-3 text-xs">
           {providerChanged ? (
             <p>
               <strong>{t("Empresa:")}</strong>{" "}

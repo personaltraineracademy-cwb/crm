@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { useT } from "@/hooks/i18n/useT";
 import { TOTPInput } from "@/components/auth/TOTPInput";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { verifyMfa } from "@/app/actions/auth/verifyMfa";
 
@@ -94,19 +95,17 @@ export function MfaForm({ next }: MfaFormProps) {
       </label>
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-sm text-destructive"
-        >
+        <Alert variant="destructive">
           {locked && secondsLeft > 0
             ? `${t("Muitas tentativas. Tente novamente em")} ${secondsLeft}s.`
             : error}
-        </div>
+        </Alert>
       )}
 
       <Button
         type="submit"
         className="w-full"
+        size="lg"
         disabled={isPending || locked || code.length !== 6}
       >
         {isPending ? t("Verificando...") : t("Verificar")}

@@ -6,21 +6,17 @@ import { RESULTADOS_DO_FIM } from "@/lib/followup/vocabulario";
 import { NOS_DA_SUPERFICIE } from "@/lib/followup/validate-publish";
 
 /**
- * Visual identity per node type — shared by the palette (Task 6.2 increment 2)
- * and the custom node cards (increment 3). Each type gets a DISTINCT icon +
- * Sage token pairing (never a bare default React Flow box): trigger=accent
- * (start), wait=info (calm/waiting), condition=warning (branch), ai_classify=
- * solid accent (the "smart" step), action=success (send/go), end=error
- * (terminal — reads as "stop", not literally an error).
+ * Identidade de cada tipo de nó — usada pela paleta e pelos cartões. No tema
+ * do Unnify (`components/fluxo/tema-do-fluxo.tsx`) o tipo se distingue pelo
+ * ÍCONE e pelo NOME (`paletteLabel`, em `xs` muted no cabeçalho do cartão),
+ * todos no mesmo bloco de ícone `primary/10`: cor carrega significado, e o
+ * tipo de etapa não é estado. Antes cada tipo tinha um par de tokens e uma
+ * borda esquerda colorida, e o desenho virava um arco-íris.
  */
 export interface NodeVisual {
   type: NodeType;
   paletteLabel: string;
   icon: ComponentType<{ size?: number; className?: string; "aria-hidden"?: boolean }>;
-  /** Icon chip background + text. */
-  chipClassName: string;
-  /** Left accent border on the node card. */
-  borderClassName: string;
   defaultLabel: string;
   defaultConfig: () => FlowNode["config"];
 }
@@ -61,8 +57,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "trigger",
     paletteLabel: "Gatilho",
     icon: Play,
-    chipClassName: "bg-accent-soft text-accent",
-    borderClassName: "border-l-accent-500",
     defaultLabel: "Início do fluxo",
     defaultConfig: () => ({}),
   },
@@ -70,8 +64,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "wait",
     paletteLabel: "Aguardar",
     icon: Clock,
-    chipClassName: "bg-info-bg text-info-fg",
-    borderClassName: "border-l-info",
     defaultLabel: "Aguardar",
     defaultConfig: () => ({ mode: "fixed", duration_ms: 300_000 }),
   },
@@ -79,8 +71,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "condition",
     paletteLabel: "Condição",
     icon: GitBranch,
-    chipClassName: "bg-warning-bg text-warning-fg",
-    borderClassName: "border-l-warning",
     defaultLabel: "Verificar condição",
     defaultConfig: () => ({ combinator: "and", checks: [regraEmBranco()] }),
   },
@@ -88,8 +78,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "ai_classify",
     paletteLabel: "Classificar (IA)",
     icon: Brain,
-    chipClassName: "bg-accent text-accent-foreground",
-    borderClassName: "border-l-accent-700",
     defaultLabel: "Classificar resposta",
     defaultConfig: () => ({
       // Em português, e dizendo o CRITÉRIO: estes nomes são a definição inteira
@@ -107,8 +95,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "match_reply",
     paletteLabel: "Resposta (texto)",
     icon: ChatCircle,
-    chipClassName: "bg-info-bg text-info-fg",
-    borderClassName: "border-l-info",
     defaultLabel: "Casar resposta",
     defaultConfig: () => ({
       branches: [{ id: "br_sim", label: "Sim", op: "contains", pattern: "sim" }],
@@ -119,8 +105,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "repeat",
     paletteLabel: "Repetir",
     icon: ArrowsClockwise,
-    chipClassName: "bg-warning-bg text-warning-fg",
-    borderClassName: "border-l-warning",
     defaultLabel: "Repetir pela resposta",
     defaultConfig: () => ({ max_count: 12 }),
   },
@@ -128,8 +112,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "collect",
     paletteLabel: "Pergunta",
     icon: Question,
-    chipClassName: "bg-info-bg text-info-fg",
-    borderClassName: "border-l-info",
     defaultLabel: "Nova pergunta",
     defaultConfig: () => ({ key: "novo_campo", label: "Nova pergunta", type: "text", required: true, permite_correcao: true }),
   },
@@ -137,8 +119,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "skill",
     paletteLabel: "Skill",
     icon: PuzzlePiece,
-    chipClassName: "bg-accent-soft text-accent",
-    borderClassName: "border-l-accent-500",
     defaultLabel: "Puxar skill",
     defaultConfig: () => ({ skill_name: "nome-da-skill" }),
   },
@@ -146,8 +126,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "action",
     paletteLabel: "Ação",
     icon: PaperPlaneTilt,
-    chipClassName: "bg-success-bg text-success-fg",
-    borderClassName: "border-l-success",
     defaultLabel: "Enviar mensagem",
     defaultConfig: () => configPadraoDaAcao(),
   },
@@ -155,8 +133,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "internal_task",
     paletteLabel: "Lembrete interno",
     icon: Bell,
-    chipClassName: "bg-warning-bg text-warning-fg",
-    borderClassName: "border-l-warning",
     defaultLabel: "Criar tarefa (só interno)",
     defaultConfig: () => ({
       titulo: "Ligar para {{contact.name}}",
@@ -173,8 +149,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "move_lead",
     paletteLabel: "Mover lead no funil",
     icon: Funnel,
-    chipClassName: "bg-info-bg text-info-fg",
-    borderClassName: "border-l-info",
     defaultLabel: "Mover card de etapa",
     defaultConfig: () => ({ stage_id: "" }),
   },
@@ -182,8 +156,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "edit_lead_tag",
     paletteLabel: "Editar tag do lead",
     icon: Tag,
-    chipClassName: "bg-accent-soft text-accent",
-    borderClassName: "border-l-accent-500",
     defaultLabel: "Gravar tag no lead",
     defaultConfig: () => ({ tags: [] }),
   },
@@ -191,8 +163,6 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     type: "end",
     paletteLabel: "Fim",
     icon: Flag,
-    chipClassName: "bg-error-bg text-error-fg",
-    borderClassName: "border-l-error",
     defaultLabel: "Fim do fluxo",
     defaultConfig: () => ({ outcome: "exhausted" }),
   },

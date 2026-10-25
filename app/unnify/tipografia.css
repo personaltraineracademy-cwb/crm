@@ -1,0 +1,89 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — tipografia (etapa 1). DS §4.
+
+   - Fonte: a pilha de SISTEMA do Unnify (San Francisco no Apple, Segoe UI
+     Variable no Windows). O `next/font` da Atkinson e da Plex Mono continua no
+     `app/layout.tsx` (passo separado; `tests/unit/tailwind-tokens.test.ts`
+     exige a variável lá), mas nenhum utilitário a usa mais.
+   - Pesos: no máximo 600. `font-bold`, `font-extrabold` e `font-black` saem
+     com 600 pela chave de tema, que é o caminho oficial do Tailwind.
+   - Sem caixa-alta e sem espaçamento largo: `uppercase` e `tracking-wide*`
+     são neutralizados aqui, e `first-letter:uppercase` (frase normal, que é
+     permitida) é reposto. O comportamento é vigiado compilando o CSS em
+     `tests/unit/unnify-css-compilado.test.ts`, porque o anexo de declaração do
+     `@utility` sobre um utilitário nativo não é contrato documentado.
+   - A escala de tamanhos (`text-xs`…`text-3xl`) do Tailwind já é a do Unnify.
+     Os `text-[Npx]` arbitrários NÃO são convertidos nesta etapa.
+   ───────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", system-ui,
+    sans-serif;
+  --font-mono:
+    ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  --font-weight-bold: 600;
+  --font-weight-extrabold: 600;
+  --font-weight-black: 600;
+
+  --tracking-wide: 0em;
+  --tracking-wider: 0em;
+  --tracking-widest: 0em;
+}
+
+/* O Tailwind ANEXA esta declaração à regra nativa (`.uppercase { text-transform:
+   uppercase; text-transform: none }`), e a última vence — inclusive nas
+   variantes (`md:uppercase`, `first-letter:uppercase`). */
+@utility uppercase {
+  text-transform: none;
+}
+
+/* Reposição: a primeira letra maiúscula é frase normal, não caixa-alta. */
+@layer utilities {
+  .first-letter\:uppercase::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+@layer base {
+  /* `<body>` usa `font-sans` (utilitário, `app/layout.tsx`), que já vence;
+     isto cobre o resto da regra do `globals.css`: tira o `ss01` (conjunto
+     estilístico da Atkinson, que em outra fonte liga outros glifos) e liga o
+     tamanho óptico da fonte de sistema. */
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: normal;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* O `globals.css` aponta código para `var(--font-mono)`, que é a variável do
+     `next/font` (Plex Mono). Aqui volta à pilha de sistema do Work. */
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family:
+      ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  /* Pesos: o sistema usa no máximo 600 (o preflight dá `bolder`, que é 700). */
+  b,
+  strong {
+    font-weight: 600;
+  }
+
+  /* Títulos (base.css do Unnify). Utilitário de peso ou de tracking no próprio
+     elemento continua vencendo: isto é `@layer base`. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+}

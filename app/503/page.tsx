@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { IDIOMA_PADRAO } from "@/lib/i18n/idiomas";
 import { traduzir } from "@/lib/i18n/dicionario";
 
@@ -12,8 +11,10 @@ const idioma = IDIOMA_PADRAO;
 export default function ServiceUnavailablePage() {
   return (
     <main className="flex min-h-screen items-center justify-center p-8">
-      <Card className="w-full max-w-md p-8 text-center">
-        <h1 className="text-2xl font-semibold">{traduzir("503 — Em manutenção", idioma)}</h1>
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {traduzir("503 — Em manutenção", idioma)}
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {traduzir("Voltamos em alguns minutos.", idioma)}
         </p>
@@ -22,7 +23,7 @@ export default function ServiceUnavailablePage() {
             <Link href="/">{traduzir("Voltar", idioma)}</Link>
           </Button>
         </div>
-      </Card>
+      </div>
     </main>
   );
 }

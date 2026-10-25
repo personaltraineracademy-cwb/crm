@@ -143,7 +143,7 @@ export function SkillsClient({ initialState }: Props) {
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {installed.length === 0 ? (
-            <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
               {t('Nenhuma skill instalada ainda. Instale uma pronta do catálogo abaixo ou envie a sua em "Enviar skill (.zip)".')}
             </p>
           ) : (
@@ -151,22 +151,27 @@ export function SkillsClient({ initialState }: Props) {
               {installed.map((skill) => (
                 <li
                   key={skill.name}
-                  className="flex flex-col gap-1.5 rounded-md border border-border/60 p-3 text-sm"
+                  className="flex flex-col gap-1.5 rounded-lg border border-border/60 p-3 text-sm"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <PuzzlePiece className="text-accent" aria-hidden />
+                    <PuzzlePiece className="text-primary" aria-hidden />
                     <span className="font-medium">{skill.name}</span>
-                    <Badge variant={skill.source === "catalog" ? "info" : "neutral"} className="text-[10px]">
+                    <Badge
+                      variant={skill.source === "catalog" ? "info" : "neutral"}
+                      className="text-xs"
+                    >
                       {skill.source === "catalog" ? t("do catálogo") : t("manual")}
                     </Badge>
                     <span className="ml-auto text-xs text-muted-foreground">
                       {t("atualizada em")} {formatDate(skill.updated_at, tagDoIdioma)}
                     </span>
                   </div>
-                  {skill.description && <p className="text-text-muted">{skill.description}</p>}
+                  {skill.description && (
+                    <p className="text-muted-foreground">{skill.description}</p>
+                  )}
                   {skill.versao_nova_catalogo && (
-                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-accent bg-accent-soft p-2.5 text-xs">
-                      <span className="flex flex-col gap-1.5 text-text">
+                    <div className="bg-interactive flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary p-2.5 text-xs">
+                      <span className="flex flex-col gap-1.5 text-foreground">
                         <span className="flex items-center gap-1.5">
                           <Info className="shrink-0" aria-hidden />
                           {t(
@@ -175,10 +180,10 @@ export function SkillsClient({ initialState }: Props) {
                         </span>
                         {skill.comparativo && skill.comparativo.mudou_em.length > 0 && (
                           <span className="flex flex-col gap-1 pl-6">
-                            <span className="font-medium text-text">
+                            <span className="font-medium text-foreground">
                               {t("Se você adotar a versão do catálogo, muda:")}
                             </span>
-                            <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-text-muted">
+                            <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-muted-foreground">
                               {skill.comparativo.mudou_em.includes("descricao") && (
                                 <span>• {t("Descrição")}</span>
                               )}
@@ -188,7 +193,9 @@ export function SkillsClient({ initialState }: Props) {
                                   <span>
                                     • {t("Palavras-chave de ativação")}:{" "}
                                     {skill.comparativo.any_adicionadas.length > 0 && (
-                                      <span className="text-accent">+{skill.comparativo.any_adicionadas.join(", ")}</span>
+                                      <span className="text-primary">
+                                        +{skill.comparativo.any_adicionadas.join(", ")}
+                                      </span>
                                     )}
                                     {skill.comparativo.any_adicionadas.length > 0 &&
                                       skill.comparativo.any_removidas.length > 0 && <span aria-hidden> </span>}
@@ -203,7 +210,9 @@ export function SkillsClient({ initialState }: Props) {
                                   <span>
                                     • {t("Etiquetas de ativação")}:{" "}
                                     {skill.comparativo.tags_adicionadas.length > 0 && (
-                                      <span className="text-accent">+{skill.comparativo.tags_adicionadas.join(", ")}</span>
+                                      <span className="text-primary">
+                                        +{skill.comparativo.tags_adicionadas.join(", ")}
+                                      </span>
                                     )}
                                     {skill.comparativo.tags_adicionadas.length > 0 &&
                                       skill.comparativo.tags_removidas.length > 0 && <span aria-hidden> </span>}
@@ -261,7 +270,7 @@ export function SkillsClient({ initialState }: Props) {
             </ul>
           )}
 
-          <div className="flex items-start gap-2 rounded-md bg-accent-soft p-3 text-xs text-text-muted">
+          <div className="bg-interactive flex items-start gap-2 rounded-lg p-3 text-xs text-muted-foreground">
             <Info className="mt-0.5 shrink-0" aria-hidden />
             <p>
               {t(
@@ -281,7 +290,7 @@ export function SkillsClient({ initialState }: Props) {
         </CardHeader>
         <CardContent>
           {catalog.length === 0 ? (
-            <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
               {t("Nenhuma skill nova no catálogo — você já instalou tudo que a plataforma oferece hoje.")}
             </p>
           ) : (
@@ -289,13 +298,15 @@ export function SkillsClient({ initialState }: Props) {
               {catalog.map((skill) => (
                 <li
                   key={skill.name}
-                  className="flex flex-col gap-1.5 rounded-md border border-border/60 p-3 text-sm"
+                  className="flex flex-col gap-1.5 rounded-lg border border-border/60 p-3 text-sm"
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <PuzzlePiece aria-hidden />
                     <span className="font-medium">{skill.name}</span>
                   </div>
-                  {skill.description && <p className="text-text-muted">{skill.description}</p>}
+                  {skill.description && (
+                    <p className="text-muted-foreground">{skill.description}</p>
+                  )}
                   {canManage && (
                     <div className="flex sm:justify-end">
                       <Button

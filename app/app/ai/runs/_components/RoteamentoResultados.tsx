@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Caso {
   id: string; router_id: string; conversation_id: string | null; modo: string;
@@ -102,30 +103,43 @@ export function RoteamentoResultados() {
   const porcentagem = (a: number, b: number) => b ? `${Math.round(100 * a / b)}% (${a}/${b})` : t("Sem pares");
   return (
     <div className="mx-auto w-full max-w-5xl space-y-5 p-6" data-testid="resultados-roteamento">
-      <header>
-        <div className="mb-2 flex gap-3 text-sm"><Link href="/app/ai/runs" className="underline">{t("Execuções")}</Link><span aria-current="page" className="font-medium">{t("Roteamento")}</span></div>
-        <h1 className="text-2xl font-semibold">{t("Resultados do roteamento")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t("Compare os modos e revise decisões reais. Concordância entre IAs não é prova de acerto.")}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{t("A janela é a da sua IA de sempre. O Jev recebe só a mensagem atual.")}</p>
-      </header>
+      <PageHeader
+        title={t("Resultados do roteamento")}
+        description={t(
+          "Compare os modos e revise decisões reais. Concordância entre IAs não é prova de acerto.",
+        )}
+        meta={
+          <>
+            <nav className="flex gap-3">
+              <Link href="/app/ai/runs" className="text-primary underline-offset-4 hover:underline">
+                {t("Execuções")}
+              </Link>
+              <span aria-current="page" className="font-medium text-foreground">
+                {t("Roteamento")}
+              </span>
+            </nav>
+            <span>{t("A janela é a da sua IA de sempre. O Jev recebe só a mensagem atual.")}</span>
+          </>
+        }
+      />
       <Card className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
         <label className="text-xs">{t("Período")}
-          <select className="mt-1 block w-full rounded-md border bg-background p-2" value={dias} onChange={(e) => setDias(e.target.value)}>
+          <select className="mt-1 block w-full rounded-lg border bg-background p-2" value={dias} onChange={(e) => setDias(e.target.value)}>
             {[7,30,90].map((n) => <option key={n} value={n}>{n} {t("dias")}</option>)}
           </select>
         </label>
         <label className="text-xs">{t("Modo")}
-          <select className="mt-1 block w-full rounded-md border bg-background p-2" value={modo} onChange={(e) => setModo(e.target.value)}>
+          <select className="mt-1 block w-full rounded-lg border bg-background p-2" value={modo} onChange={(e) => setModo(e.target.value)}>
             <option value="">{t("Todos")}</option>{["tradicional_comparacao", "jev_comparacao", "jev_sob_demanda"].map((v) => <option key={v} value={v}>{nomeDoModo(v, t)}</option>)}
           </select>
         </label>
         <label className="text-xs">{t("Roteador")}
-          <select className="mt-1 block w-full rounded-md border bg-background p-2" value={routerId} onChange={(e) => setRouterId(e.target.value)}>
+          <select className="mt-1 block w-full rounded-lg border bg-background p-2" value={routerId} onChange={(e) => setRouterId(e.target.value)}>
             <option value="">{t("Todos")}</option>{routers.map((router) => <option key={router.id} value={router.id}>{router.name}</option>)}
           </select>
         </label>
         <label className="text-xs">{t("Modelo do Jev")}
-          <select className="mt-1 block w-full rounded-md border bg-background p-2" value={modelo} onChange={(e) => setModelo(e.target.value)}>
+          <select className="mt-1 block w-full rounded-lg border bg-background p-2" value={modelo} onChange={(e) => setModelo(e.target.value)}>
             <option value="">{t("Todos")}</option>{modelos.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </label>

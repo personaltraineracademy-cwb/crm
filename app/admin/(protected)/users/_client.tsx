@@ -15,6 +15,7 @@ import {
   UsersTableAdminSkeleton,
 } from "@/components/admin/users/UsersTableAdmin";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 // ---------------------------------------------------------------------------
 // Component
@@ -68,15 +69,16 @@ export function UsersClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Usuários")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {isLoading
-            ? t("Carregando...")
-            : `${total} ${total !== 1 ? t("usuários") : t("usuário")}${hasNextPage ? "+" : ""}`}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Usuários")}
+        meta={
+          <span className="tabular-nums">
+            {isLoading
+              ? t("Carregando...")
+              : `${total} ${total !== 1 ? t("usuários") : t("usuário")}${hasNextPage ? "+" : ""}`}
+          </span>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">

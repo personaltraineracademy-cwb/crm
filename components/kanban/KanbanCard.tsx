@@ -2,6 +2,8 @@
 import { Draggable } from "@hello-pangea/dnd";
 import type { MouseEvent } from "react";
 import { useT } from "@/hooks/i18n/useT";
+import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
+import { CalendarBlank, DragHandle } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatValorDoNegocio, MOEDA_PADRAO } from "@/lib/money";
 import type { Lead } from "@/lib/types/leads";
@@ -15,6 +17,13 @@ import { ScoreSlot } from "./ScoreSlot";
 import { OwnerBadge } from "./OwnerBadge";
 import { ContatoNoCard } from "./ContatoNoCard";
 import { TarefasNoCard } from "./TarefasNoCard";
+import { prazoRelativo } from "./prazo";
+import { useCoresDasEtiquetas } from "@/components/tags/CoresDasEtiquetas";
+import { chaveDaEtiqueta } from "@/lib/tags/cor-da-etiqueta";
+import { TOM_MARCADOR, TOM_SUAVE, tomDaEtiqueta, tomMaisProximo, type Tom } from "./tons";
+
+/** Quantas etiquetas cabem na linha do card; o resto vira "+N" (todas no `title`). */
+const ETIQUETAS_VISIVEIS = 3;
 
 /** Os dois gestos de seleção que o card sabe relatar. */
 export type GestoDeSelecao = "alterna" | "intervalo";
@@ -69,7 +78,15 @@ function formatValor(cents: number | null, currency: string | null): string | nu
  * legível quando score, próxima ação e alerta chegarem — o card não cresce com
  * dados, ele TROCA de estado.
  *
- * Cor só aparece na borda esquerda, e só quando o estado pede (Lei C).
+ * Visual do cartão de tarefa do Work (DS §6.3 e §10.23): `card` com borda,
+ * raio 12 e a sombra leve que só ele tem; hover mais marcado; etiquetas em
+ * chips de tom; prazo em texto relativo; alça de arrastar no canto.
+ *
+ * Cor só quando o estado pede (Lei C, e a regra de prioridade do Unnify: cor
+ * só em "alta" e "urgente"). O negócio não tem prioridade própria; os dois
+ * estados que pedem ação já têm cor no próprio texto: esfriando em aviso (③)
+ * e tarefa atrasada em perigo (④). A antiga borda esquerda colorida saiu — o
+ * cartão do Work não tem faixa lateral.
  */
 export function KanbanCard({
   card,
@@ -88,6 +105,17 @@ export function KanbanCard({
   const value = formatValor(card.valueCents, card.currency);
   const state = resolveCardState(card, t);
   const age = stageAgeLabel(card.hoursInStage, t);
+  const tagDeIdioma = useTagDeIdioma();
+  const prazo = prazoRelativo(lead.expected_close_date, new Date(), t, tagDeIdioma);
+  // A cor cadastrada da etiqueta (Configurações › Tags) manda; ela vira o
+  // `tone-*` mais próximo. Sem cor cadastrada, o tom sai do próprio texto.
+  const coresDasEtiquetas = useCoresDasEtiquetas();
+  const tomDe = (tag: string): Tom => {
+    const cor = coresDasEtiquetas[chaveDaEtiqueta(tag)];
+    return (cor ? tomMaisProximo(cor) : null) ?? tomDaEtiqueta(tag);
+  };
+  const etiquetasVisiveis = card.tags.slice(0, ETIQUETAS_VISIVEIS);
+  const etiquetasEscondidas = card.tags.length - etiquetasVisiveis.length;
 
   // Clique ABRE o dossiê; ctrl/cmd+clique SELECIONA; shift+clique estende até a
   // âncora. "Clicar abre" é a convenção mais forte, e seleção múltipla é recurso
@@ -144,11 +172,13 @@ export function KanbanCard({
           // Tags saem do card (Lei A): ficam a um hover, sem ocupar altura.
           title={card.tags.length > 0 ? `Tags: ${card.tags.join(", ")}` : undefined}
           className={cn(
-            "group relative overflow-hidden rounded-md border border-border bg-surface",
-            "py-2.5 pl-3 pr-3 shadow-xs transition-colors",
-            "hover:border-border-strong",
-            snapshot.isDragging && "rotate-1 shadow-md ring-1 ring-accent/40",
-            isSelected && "ring-2 ring-accent",
+            "group relative overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground",
+            // A sombra do cartão de tarefa do Work (DS §6.3) — o único cartão
+            // com sombra em repouso, porque é o único que se arrasta.
+            "shadow-[0_2px_4px_rgb(0_0_0/3%),0_6px_18px_rgb(0_0_0/2%)] transition-shadow",
+            "hover:shadow-[0_4px_16px_rgb(0_0_0/7%)]",
+            snapshot.isDragging && "rotate-1 shadow-md ring-1 ring-primary/40",
+            isSelected && "ring-2 ring-primary",
           )}
         >
           {/* key = contador: cada evento remoto monta um overlay NOVO, e é isso
@@ -165,16 +195,9 @@ export function KanbanCard({
               className="card-pulse pointer-events-none absolute inset-0"
             />
           )}
-          {/* Borda de estado — 2px, a única cor do card. */}
-          <span
-            aria-hidden
-            className={cn(
-              "absolute inset-y-0 left-0 w-0.5",
-              state.border === "accent" && "bg-accent",
-              state.border === "warning" && "bg-warning",
-              state.border === "neutral" && "bg-transparent",
-            )}
-          />
+          {/* O estado continua exposto para quem mede (e2e, leitor de DOM),
+              mas sem tinta: a cor mora no texto do slot ③. */}
+          <span aria-hidden data-estado-do-card={state.border} className="hidden" />
 
           {/* ① identidade — altura FIXA de 2 linhas, com ou sem texto longo. */}
           <div className="flex items-start justify-between gap-2">
@@ -200,8 +223,8 @@ export function KanbanCard({
                   /* estado vem de `isSelected`; quem decide é o onClick acima */
                 }}
                 className={cn(
-                  "mt-1 h-4 w-4 shrink-0 cursor-pointer accent-accent transition-opacity",
-                  "focus:opacity-100 focus-visible:outline-2 focus-visible:outline-accent",
+                  "mt-0.5 size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
+                  "focus:opacity-100 focus-visible:outline-2 focus-visible:outline-ring",
                   isSelected || isSelecting
                     ? "opacity-100"
                     : "opacity-0 group-hover:opacity-100",
@@ -209,7 +232,10 @@ export function KanbanCard({
               />
               {card.canonicalTag && (
                 <span
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                  className={cn(
+                    "mt-1.5 size-2 shrink-0 rounded-full",
+                    TOM_MARCADOR[tomDe(card.canonicalTag)],
+                  )}
                   title={card.canonicalTag}
                   // role="img": um span nu não aceita aria-label (aria-prohibited-attr).
                   role="img"
@@ -224,7 +250,7 @@ export function KanbanCard({
                   acessibilidade; deixar só onKeyDown daria uma ação que existe
                   e NÃO É DESCOBERTA por leitor de tela. O título como button
                   atende mouse, teclado e leitor sem desfazer a decisão antiga. */}
-              <h3 className="line-clamp-2 h-10 text-sm font-medium leading-5 text-text">
+              <h3 className="line-clamp-2 h-10 text-sm leading-5 font-medium text-foreground">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -241,23 +267,83 @@ export function KanbanCard({
                 </button>
               </h3>
             </div>
-            <KanbanCardActions
-              lead={lead}
-              pipelineId={pipelineId}
-              etapas={etapas}
-              onMoverPara={onMoverPara}
-            />
+            <div className="-mt-1 -mr-1 flex shrink-0 items-center">
+              {/* A alça do canto (DS §10.23). O arrasto continua pegando o card
+                  inteiro, como antes; a alça é a pista visual de que ele se
+                  arrasta, e some no repouso para não poluir a coluna. */}
+              <span
+                aria-hidden
+                data-alca-de-arrastar
+                className={cn(
+                  "inline-flex size-6 cursor-grab items-center justify-center rounded-md text-muted-foreground transition-opacity",
+                  "opacity-0 group-hover:opacity-100 pointer-coarse:opacity-100",
+                  snapshot.isDragging && "cursor-grabbing opacity-100",
+                )}
+              >
+                <DragHandle size={14} />
+              </span>
+              <KanbanCardActions
+                lead={lead}
+                pipelineId={pipelineId}
+                etapas={etapas}
+                onMoverPara={onMoverPara}
+              />
+            </div>
           </div>
 
           {/* ② valor — altura reservada mesmo sem valor, senão o card encolhe. */}
-          <p
-            className={cn(
-              "mt-1 h-5 text-xs font-medium leading-5 tabular-nums",
-              value ? "text-text" : "text-text-muted",
+          <div className="mt-1 flex h-5 items-center justify-between gap-2">
+            <p
+              className={cn(
+                "text-xs leading-5 font-medium tabular-nums",
+                value ? "text-foreground" : "text-muted-foreground",
+              )}
+            >
+              {value ?? "—"}
+            </p>
+            {prazo && (
+              // Prazo relativo (DS §13): "Hoje", "Amanhã", "10 de out". Só o
+              // vencido ganha cor — é o estado "urgente" do cartão.
+              <span
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1 text-xs tabular-nums",
+                  prazo.vencido ? "text-danger-foreground font-medium" : "text-muted-foreground",
+                )}
+                title={`${t("Fechamento previsto")}: ${prazo.completo}`}
+                data-prazo-do-card
+              >
+                <CalendarBlank size={12} aria-hidden />
+                {prazo.texto}
+              </span>
             )}
-          >
-            {value ?? "—"}
-          </p>
+          </div>
+
+          {/* Etiquetas (DS §10.23): chips de tom, gap 6, até 128px cada,
+              truncadas. A lista inteira segue no `title` do card. */}
+          {etiquetasVisiveis.length > 0 && (
+            <ul
+              className="mt-1.5 flex h-5 items-center gap-1.5 overflow-hidden"
+              aria-label={t("Tags")}
+            >
+              {etiquetasVisiveis.map((tag) => (
+                <li
+                  key={tag}
+                  className={cn(
+                    "inline-flex h-5 max-w-32 shrink-0 items-center rounded-md px-1.5 text-xs font-medium",
+                    TOM_SUAVE[tomDe(tag)],
+                  )}
+                  title={tag}
+                >
+                  <span className="truncate">{tag}</span>
+                </li>
+              ))}
+              {etiquetasEscondidas > 0 && (
+                <li className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                  +{etiquetasEscondidas}
+                </li>
+              )}
+            </ul>
+          )}
 
           {/* ③ a linha do agente — um slot, três estados, nunca três blocos. */}
           <div className="mt-1.5 flex h-6 items-center gap-2 text-xs">
@@ -286,7 +372,7 @@ export function KanbanCard({
             {state.slot.type === "cooling" && (
               // -fg é a variante de TEXTO do token (o -warning puro dá 3.7:1 em
               // 12px); a cor cheia fica na borda de estado, que é gráfica.
-              <span className="truncate text-warning-fg">{state.slot.label}</span>
+              <span className="text-warning-foreground truncate">{state.slot.label}</span>
             )}
             {state.slot.type === "meter" && (
               <ScoreSlot
@@ -321,7 +407,7 @@ export function KanbanCard({
               />
               <TarefasNoCard tarefas={lead.tarefas} />
             </div>
-            <span className="shrink-0 whitespace-nowrap text-[11px] tabular-nums text-text-muted">
+            <span className="min-w-0 truncate text-xs whitespace-nowrap text-muted-foreground tabular-nums">
               {state.showStageAge && age
                 ? `${age} ${t("em")} ${card.stageName}`
                 : `${t("em")} ${card.stageName}`}

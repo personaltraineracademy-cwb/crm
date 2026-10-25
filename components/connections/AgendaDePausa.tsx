@@ -209,7 +209,7 @@ export function AgendaDePausa({ canais }: { canais: CanalDaLista[] }) {
             {t("Fuso da organização")}: {fuso ?? "…"}
           </p>
           {janelas.isError && (
-            <p className="text-xs text-error-fg" role="alert">
+            <p className="text-danger-foreground text-xs" role="alert">
               {t(
                 "Sem o fuso da organização não dá para agendar: a janela seria gravada com a hora errada.",
               )}

@@ -51,23 +51,23 @@ export function Origem({
   const t = (s: string) => traduzir(s, idioma);
   if (fonte === "ausente") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-400">
-        <span aria-hidden className="size-1.5 rounded-full bg-amber-500" />
+      <span className="text-warning-foreground inline-flex items-center gap-1.5 text-xs font-medium">
+        <span aria-hidden className="size-1.5 rounded-full bg-warning" />
         {t("Não configurado")}
       </span>
     );
   }
   if (fonte === "banco") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
-        <span aria-hidden className="size-1.5 rounded-full bg-emerald-500" />
+      <span className="text-success-foreground inline-flex items-center gap-1.5 text-xs font-medium">
+        <span aria-hidden className="size-1.5 rounded-full bg-success" />
         {t("Definido aqui nesta tela")}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted">
-      <span aria-hidden className="size-1.5 rounded-full bg-neutral-400" />
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+      <span aria-hidden className="size-1.5 rounded-full bg-muted-foreground" />
       {t("Vem do arquivo de instalação do servidor")}
     </span>
   );
@@ -130,12 +130,12 @@ export function CampoEditavel({ linha, idioma }: { linha: LinhaDaInstalacao; idi
         <Origem fonte={estado.fonte} idioma={idioma} />
       </div>
 
-      <p id={idAjuda} className="text-sm text-text-muted">
+      <p id={idAjuda} className="text-sm text-muted-foreground">
         {t(definicao.explicacao)}
       </p>
 
       {estado.configurado && (
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {definicao.natureza === "segredo"
             ? `${t("Guardado, terminando em")} ••••${estado.last4 ?? ""}`
             : `${t("Agora:")} ${estado.valorVisivel}`}

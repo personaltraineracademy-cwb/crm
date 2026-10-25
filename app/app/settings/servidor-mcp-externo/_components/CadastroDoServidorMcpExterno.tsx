@@ -223,7 +223,7 @@ export function CadastroDoServidorMcpExterno() {
           </p>
           <Button
             variant="ghost"
-            className="w-fit text-destructive"
+            className="text-danger-foreground w-fit"
             onClick={remover}
             disabled={pendente}
             data-testid="remover"
@@ -238,7 +238,7 @@ export function CadastroDoServidorMcpExterno() {
         <p
           data-testid="chave-criada"
           role="status"
-          className="rounded-md border border-border bg-muted/30 p-3 text-sm"
+          className="rounded-lg border border-border bg-muted/30 p-3 text-sm"
         >
           {t("Chave gravada. Ela aparece só agora, na criação — termina em")}{" "}
           <code className="font-semibold">{chaveCriada}</code>
@@ -252,7 +252,7 @@ export function CadastroDoServidorMcpExterno() {
       ) : null}
 
       {erro ? (
-        <p data-testid="erro" role="alert" className="text-sm text-destructive">
+        <p data-testid="erro" role="alert" className="text-danger-foreground text-sm">
           {erro}
         </p>
       ) : null}
@@ -278,7 +278,7 @@ export function CadastroDoServidorMcpExterno() {
             */}
             <ul data-testid="ferramentas" className="flex flex-col gap-1 text-sm">
               {teste.ferramentas.map((f) => (
-                <li key={f.nome} className="rounded-md border border-border px-3 py-2">
+                <li key={f.nome} className="rounded-lg border border-border px-3 py-2">
                   <code className="font-medium">{f.nome}</code>
                   {f.descricao ? (
                     <span className="ml-2 text-muted-foreground">{f.descricao}</span>

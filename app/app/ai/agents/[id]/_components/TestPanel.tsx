@@ -83,14 +83,14 @@ function Verificacoes({ g }: { g: NonNullable<TestResponse["data"]["guardrails"]
       {g.avaliado === false ? null : g.passou ? (
         <p
           data-testid="teste-vazamento-limpo"
-          className="rounded-md border border-border/60 bg-muted/40 p-2 text-xs"
+          className="rounded-lg border border-border/60 bg-muted/40 p-2 text-xs"
         >
           {t("A resposta não usa palavras internas do sistema.")}
         </p>
       ) : (
         <div
           data-testid="teste-vazamento-achado"
-          className="rounded-md border border-destructive/50 bg-destructive/5 p-2 text-xs"
+          className="rounded-lg border border-destructive/50 bg-destructive/5 p-2 text-xs"
         >
           <p className="font-medium text-destructive">
             {t("Esta resposta usa palavras que o cliente não deveria ver.")}
@@ -198,7 +198,7 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="flex flex-col gap-4">
         <div>
-          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          <p className="text-xs font-medium text-muted-foreground">
             {t("Versão alvo")}
           </p>
           <div className="flex items-center gap-2 text-sm">
@@ -209,8 +209,8 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
           </div>
         </div>
 
-        <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-xs">
-          <p className="font-medium text-amber-700 dark:text-amber-400">
+        <div className="border-warning-border bg-warning-soft rounded-lg border p-3 text-xs">
+          <p className="text-warning-foreground font-medium">
             {t("⚠ Modo teste consome créditos do provider.")}
           </p>
           <p className="mt-1 text-muted-foreground">
@@ -259,7 +259,7 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        <p className="text-xs font-medium text-muted-foreground">
           {t("Resultado")}
         </p>
 
@@ -274,7 +274,7 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
         {result ? (
           <>
             {result.stub ? (
-              <p className="rounded-md border border-border/60 bg-muted/40 p-2 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-border/60 bg-muted/40 p-2 text-xs text-muted-foreground">
                 {t(
                   "Provedor de teste controlado. O motor e as verificações são os mesmos; não há chamada a uma IA externa.",
                 )}
@@ -324,7 +324,7 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
                     role="status"
                     key={`aviso-${i}`}
                     data-testid="teste-aviso-de-envio"
-                    className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2"
+                    className="border-warning-border bg-warning-soft rounded-lg border p-2"
                   >
                     {x.message}
                   </p>
@@ -360,7 +360,7 @@ export function TestPanel({ agent, draft, published, readOnly }: Props) {
 function Cell({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="rounded-md border border-border/60 px-2 py-1">
-      <p className="text-[10px] tracking-wide text-muted-foreground uppercase">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className="font-mono">{children}</p>
     </div>
   );

@@ -3,6 +3,23 @@ import type { TrilhaDeCor } from "./tipos";
 /**
  * As oito trilhas de cor de pessoa da Agenda.
  *
+ * ⚠️ AINDA NÃO SÃO OS `tone-*` DO UNNIFY, e é por medida, não por esquecimento
+ * (etapa 8B, 24/10/2026). A troca foi proposta e medida contra a guarda que a
+ * agenda já tem (`tests/e2e/agenda-kit-visual.spec.ts`: cada trilha ≥ 3:1
+ * contra o fundo e distância OKLab > 0,1 entre quaisquer duas, nos dois temas):
+ *
+ * - os dez tons não dão OITO cores distinguíveis — o melhor conjunto de oito
+ *   fica em 0,099 (e precisa do `blue`, que é ação, e do `stone`); violeta ×
+ *   roxo dá 0,051 e verde-água × ciano 0,071;
+ * - no claro, laranja (2,8:1), lima (2,0:1), verde-água (2,5:1) e ciano
+ *   (2,4:1) ficam abaixo de 3:1 sobre o branco;
+ * - seis pessoas cabem (stone, orange, lime, teal, violet, pink: 0,159).
+ *
+ * A decisão (oito trilhas próprias, seis tons do Unnify, ou relaxar a guarda) é
+ * do dono. Enquanto isso, o BLOCO já segue a receita do tom (cor a 12% +
+ * marcador sólido + texto `foreground`), então trocar a cor é trocar só
+ * `corDaTrilha`.
+ *
  * Os valores moram no `globals.css` (`--agenda-pessoa-1..8`), em três blocos de
  * tema, e NÃO são repetidos aqui — este módulo só sabe *apontar* para eles. Hex
  * em componente seria um segundo lugar para a mesma verdade, e o tema escuro
@@ -35,7 +52,7 @@ export function corDaTrilha(trilha: TrilhaDeCor): string {
  * mantém o contraste do texto previsível nos dois temas.
  */
 export function fundoDaTrilha(trilha: TrilhaDeCor, porcento = 12): string {
-  return `color-mix(in oklab, ${corDaTrilha(trilha)} ${porcento}%, var(--color-surface))`;
+  return `color-mix(in oklab, ${corDaTrilha(trilha)} ${porcento}%, var(--card))`;
 }
 
 /**

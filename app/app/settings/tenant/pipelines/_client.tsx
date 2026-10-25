@@ -513,7 +513,7 @@ export function OpcoesDaLista({
       </div>
       {aberta && (
         <div
-          className="space-y-2 rounded-md border border-border p-2"
+          className="space-y-2 rounded-lg border border-border p-2"
           data-testid={`lista-opcoes-${indice + 1}`}
         >
           <Input
@@ -608,7 +608,7 @@ export function OpcoesDaLista({
             <div className="flex items-start gap-2">
               <textarea
                 aria-label={`${t("Importar opções (CSV)")} ${indice + 1}`}
-                className="min-h-16 w-full rounded-md border border-border bg-transparent p-2 text-xs"
+                className="min-h-16 w-full rounded-lg border border-border bg-transparent p-2 text-xs"
                 placeholder={t("value,label,apelidos — uma opção por linha")}
                 value={csv}
                 onChange={(e) => aoMudarCsv(e.target.value)}
@@ -909,7 +909,10 @@ function PipelineEditor({
           {t("Aparecem no dossiê do negócio. No follow-up, você escolhe em qual campo gravar a resposta.")}
         </p>
         {fields.map((f, i) => (
-          <div key={`${f.key}-${i}`} className="grid gap-2 rounded-md border border-border p-2 md:grid-cols-[1fr_1fr_8rem_auto]">
+          <div
+            key={`${f.key}-${i}`}
+            className="grid gap-2 rounded-lg border border-border p-2 md:grid-cols-[1fr_1fr_8rem_auto]"
+          >
             <Input
               aria-label={`${t("Chave do campo")} ${i + 1}`}
               placeholder={t("chave (endereco)")}

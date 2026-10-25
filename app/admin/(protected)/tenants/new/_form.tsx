@@ -28,6 +28,7 @@ import { ApiError } from "@/lib/api/types";
 import { useT } from "@/hooks/i18n/useT";
 import { useIdioma } from "@/lib/i18n/IdiomaProvider";
 import { copyToClipboard } from "@/lib/clipboard";
+import { PageHeader } from "@/components/ui/page-header";
 
 // ---------------------------------------------------------------------------
 // Schema (mirrors server Zod; client keeps it in sync)
@@ -219,12 +220,12 @@ export function NewTenantForm({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Nova organização")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("Você terá acesso como administrador e poderá concluir a configuração inicial.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Nova organização")}
+        description={t(
+          "Você terá acesso como administrador e poderá concluir a configuração inicial.",
+        )}
+      />
 
       <Card>
         <CardHeader>
@@ -235,7 +236,7 @@ export function NewTenantForm({
             {/* display_name */}
             <div className="space-y-1.5">
               <Label htmlFor="display_name">
-                {t("Nome de exibição")} <span className="text-error-fg">*</span>
+                {t("Nome de exibição")} <span className="text-danger-foreground">*</span>
               </Label>
               <Input
                 id="display_name"
@@ -245,14 +246,16 @@ export function NewTenantForm({
                 aria-invalid={!!errors.display_name}
               />
               {errors.display_name && (
-                <p className="text-xs text-error-fg">{t(errors.display_name.message ?? "")}</p>
+                <p className="text-danger-foreground text-xs">
+                  {t(errors.display_name.message ?? "")}
+                </p>
               )}
             </div>
 
             {/* slug */}
             <div className="space-y-1.5">
               <Label htmlFor="slug">
-                Slug <span className="text-error-fg">*</span>
+                Slug <span className="text-danger-foreground">*</span>
               </Label>
               <Input
                 id="slug"
@@ -266,7 +269,7 @@ export function NewTenantForm({
                 {t("Apenas letras minúsculas, números e hífens. Gerado automaticamente.")}
               </p>
               {errors.slug && (
-                <p className="text-xs text-error-fg">{t(errors.slug.message ?? "")}</p>
+                <p className="text-danger-foreground text-xs">{t(errors.slug.message ?? "")}</p>
               )}
             </div>
 
@@ -280,7 +283,9 @@ export function NewTenantForm({
                 aria-invalid={!!errors.legal_name}
               />
               {errors.legal_name && (
-                <p className="text-xs text-error-fg">{t(errors.legal_name.message ?? "")}</p>
+                <p className="text-danger-foreground text-xs">
+                  {t(errors.legal_name.message ?? "")}
+                </p>
               )}
             </div>
 
@@ -298,7 +303,7 @@ export function NewTenantForm({
                 className="font-mono"
               />
               {errors.cnpj && (
-                <p className="text-xs text-error-fg">{t(errors.cnpj.message ?? "")}</p>
+                <p className="text-danger-foreground text-xs">{t(errors.cnpj.message ?? "")}</p>
               )}
             </div>
 
@@ -346,7 +351,7 @@ export function NewTenantForm({
                 </SelectContent>
               </Select>
               {errors.plan && (
-                <p className="text-xs text-error-fg">{t(errors.plan.message ?? "")}</p>
+                <p className="text-xs text-danger-foreground">{t(errors.plan.message ?? "")}</p>
               )}
             </div>
             )}
@@ -354,7 +359,7 @@ export function NewTenantForm({
             {/* owner_email */}
             <div className="space-y-1.5">
               <Label htmlFor="owner_email">
-                {t("E-mail do responsável")} <span className="text-error-fg">*</span>
+                {t("E-mail do responsável")} <span className="text-danger-foreground">*</span>
               </Label>
               <Input
                 id="owner_email"
@@ -364,7 +369,9 @@ export function NewTenantForm({
                 aria-invalid={!!errors.owner_email}
               />
               {errors.owner_email && (
-                <p className="text-xs text-error-fg">{t(errors.owner_email.message ?? "")}</p>
+                <p className="text-danger-foreground text-xs">
+                  {t(errors.owner_email.message ?? "")}
+                </p>
               )}
             </div>
 

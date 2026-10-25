@@ -44,6 +44,7 @@ import { useT } from "@/hooks/i18n/useT";
 
 import { CartaoDeMapas } from "./CartaoDeMapas";
 import { CartaoDoJev, jevNoPonto, useDadosDoJev, type DadosDoJev } from "./CartaoDoJev";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Ponto {
   id: string;
@@ -184,16 +185,24 @@ export function PainelDeProvedores() {
 
   return (
     <div className="mx-auto w-full max-w-5xl p-6" data-testid="painel-de-provedores">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Provedores de IA")}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          {t("Seu sistema usa inteligência artificial em")} {dados.pontos.length}{" "}
-          {t("lugares diferentes. Aqui você vê qual está atendendo cada um — e troca, se quiser.")}
-        </p>
-      </header>
+      <PageHeader
+        className="mb-6"
+        title={t("Provedores de IA")}
+        description={
+          <>
+            {t("Seu sistema usa inteligência artificial em")} {dados.pontos.length}{" "}
+            {t(
+              "lugares diferentes. Aqui você vê qual está atendendo cada um — e troca, se quiser.",
+            )}
+          </>
+        }
+      />
 
       {semChave && (
-        <Card className="mb-6 border-amber-500/40 bg-amber-500/5 p-4" data-testid="aviso-sem-chave">
+        <Card
+          className="border-warning-border bg-warning-soft mb-6 p-4"
+          data-testid="aviso-sem-chave"
+        >
           <p className="text-sm">
             {t("Você ainda não cadastrou a chave da sua IA principal, a que conversa com os clientes.")}{" "}
             {/* Só é verdade quando a instalação tem chave; sem ela, a frase
@@ -422,7 +431,7 @@ function ResumoDoGrupo({ pontos }: { pontos: Ponto[] }) {
         ))}
       </div>
       {comAviso > 0 && (
-        <p className="mt-2 text-sm text-amber-600 dark:text-amber-500" data-testid="grupo-com-aviso">
+        <p className="text-warning-foreground mt-2 text-sm" data-testid="grupo-com-aviso">
           {comAviso === 1
             ? t("1 ponto deste grupo precisa da sua atenção.")
             : `${comAviso} ${t("pontos deste grupo precisam da sua atenção.")}`}
@@ -518,7 +527,7 @@ function CartaoDoPonto({
           {/* O modelo deste cartão continua valendo com o Jev ligado — como
               reserva, ou como quem decide enquanto o Jev só observa. */}
           {oJevAqui && (
-            <p className="mt-1 text-xs text-accent" data-testid={`jev-no-ponto-${ponto.id}`}>
+            <p className="mt-1 text-xs text-primary" data-testid={`jev-no-ponto-${ponto.id}`}>
               {oJevAqui === "observacao"
                 ? t("O Jev observa; o modelo abaixo ainda decide.")
                 : oJevAqui === "sozinho"
@@ -534,14 +543,14 @@ function CartaoDoPonto({
       </div>
 
       {/* O que a pessoa VÊ quando este ponto falha. É a razão de a tela existir. */}
-      <p className="mt-3 rounded-md bg-muted/50 p-2 text-xs text-muted-foreground">
+      <p className="mt-3 rounded-lg bg-muted/50 p-2 text-xs text-muted-foreground">
         <span className="font-medium">{t("Se falhar:")}</span> {t(ponto.sintomaDeFalha)}
       </p>
 
       {ponto.avisos.map((a) => (
         <p
           key={a}
-          className="mt-2 rounded-md bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-500"
+          className="bg-warning-soft text-warning-foreground mt-2 rounded-lg p-2 text-xs"
           data-testid={`aviso-${ponto.id}`}
         >
           {t(a)}

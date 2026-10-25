@@ -194,34 +194,36 @@ export function Faturamento({
   return (
     <div className="flex flex-col gap-4">
       <form className="flex flex-wrap items-end gap-2">
-        <label className="flex flex-col gap-1 text-xs text-text-muted">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           {t("De")}
           <input
             type="date"
             value={de}
             data-testid="periodo-de"
             onChange={(e) => setDe(e.target.value)}
-            className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text max-md:min-h-11"
+            className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground max-md:min-h-11"
           />
         </label>
-        <label className="flex flex-col gap-1 text-xs text-text-muted">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           {t("Até")}
           <input
             type="date"
             value={ate}
             data-testid="periodo-ate"
             onChange={(e) => setAte(e.target.value)}
-            className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text max-md:min-h-11"
+            className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground max-md:min-h-11"
           />
         </label>
       </form>
 
       {relatorio.isError ? (
-        <p className="text-sm text-danger">{t("Não foi possível carregar o período.")}</p>
+        <p className="text-danger-foreground text-sm">
+          {t("Não foi possível carregar o período.")}
+        </p>
       ) : null}
 
       {variasMoedas ? (
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Moedas diferentes não se somam: cada uma tem o seu bloco.")}
         </p>
       ) : null}
@@ -297,7 +299,7 @@ function BlocoDaMoeda({
         <Cartao titulo={t("Ticket médio")} valor={formatCents(totais.ticket_medio_cents, moeda)} />
       </div>
 
-      <p className="text-sm text-text-muted" data-testid="resumo-de-comandas">
+      <p className="text-sm text-muted-foreground" data-testid="resumo-de-comandas">
         {totais.comandas_finalizadas} {t("comanda(s) finalizada(s)")}
         {totais.comandas_estornadas > 0
           ? `, ${totais.comandas_estornadas} ${t("estornada(s)")}`
@@ -315,7 +317,7 @@ function BlocoDaMoeda({
         primeiro bloco: repetido em cada um, viraria ruído que ninguém lê.
       */}
       {comAviso ? (
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t(
             "O faturado soma comandas; o que entrou soma lançamentos pagos. Os dois não precisam bater.",
           )}
@@ -326,9 +328,9 @@ function BlocoDaMoeda({
         {totais.por_forma.map((f) => (
           <tr key={f.nome} className="border-b border-border/60">
             <td className="py-1">{f.nome}</td>
-            <td className="py-1 text-right text-text-muted">{f.quantidade}</td>
+            <td className="py-1 text-right text-muted-foreground">{f.quantidade}</td>
             <td className="py-1 text-right tabular-nums">{formatCents(f.total_cents, moeda)}</td>
-            <td className="py-1 text-right text-text-muted">
+            <td className="py-1 text-right text-muted-foreground">
               {totais.faturado_cents > 0
                 ? `${Math.round((f.total_cents / totais.faturado_cents) * 100)}%`
                 : "—"}
@@ -341,7 +343,7 @@ function BlocoDaMoeda({
         {totais.por_servico.map((sv) => (
           <tr key={sv.nome} className="border-b border-border/60">
             <td className="py-1">{sv.nome}</td>
-            <td className="py-1 text-right text-text-muted">{sv.quantidade}</td>
+            <td className="py-1 text-right text-muted-foreground">{sv.quantidade}</td>
             <td className="py-1 text-right tabular-nums" colSpan={2}>
               {formatCents(sv.total_cents, moeda)}
             </td>
@@ -353,7 +355,7 @@ function BlocoDaMoeda({
         {totais.por_cliente.map((c) => (
           <tr key={c.contact_id} className="border-b border-border/60">
             <td className="py-1">{nomeDoContato(c.contact_id)}</td>
-            <td className="py-1 text-right text-text-muted">{c.comandas}</td>
+            <td className="py-1 text-right text-muted-foreground">{c.comandas}</td>
             <td className="py-1 text-right tabular-nums" colSpan={2}>
               {formatCents(c.total_cents, moeda)}
             </td>
@@ -365,7 +367,7 @@ function BlocoDaMoeda({
         {totais.por_profissional.map((p) => (
           <tr key={p.attendant_user_id ?? "sem"} className="border-b border-border/60">
             <td className="py-1">{nomeDe(p.attendant_user_id)}</td>
-            <td className="py-1 text-right text-text-muted">{p.itens}</td>
+            <td className="py-1 text-right text-muted-foreground">{p.itens}</td>
             <td className="py-1 text-right tabular-nums" colSpan={2}>
               {formatCents(p.comissao_cents, moeda)}
             </td>
@@ -386,8 +388,8 @@ function Cartao({
   destaque?: boolean;
 }) {
   return (
-    <div className="rounded-md border border-border p-3">
-      <p className="text-xs text-text-muted">{titulo}</p>
+    <div className="rounded-lg border border-border p-3">
+      <p className="text-xs text-muted-foreground">{titulo}</p>
       <p className={`tabular-nums ${destaque ? "text-xl font-semibold" : "text-lg"}`}>{valor}</p>
     </div>
   );
@@ -404,14 +406,14 @@ function Tabela({
 }) {
   const temLinha = Array.isArray(children) ? children.length > 0 : Boolean(children);
   return (
-    <section className="rounded-md border border-border p-3">
+    <section className="rounded-lg border border-border p-3">
       <h2 className="mb-2 text-sm font-semibold">{titulo}</h2>
       {temLinha ? (
         <table className="w-full text-sm">
           <tbody>{children}</tbody>
         </table>
       ) : (
-        <p className="text-sm text-text-muted">{vazio}</p>
+        <p className="text-sm text-muted-foreground">{vazio}</p>
       )}
     </section>
   );

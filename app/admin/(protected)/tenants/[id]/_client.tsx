@@ -32,7 +32,7 @@ export function TenantOverviewClient({ id, cobrancaLigada = false }: TenantOverv
 
   if (isError || !data?.data) {
     return (
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-6 py-10 text-center text-sm text-destructive">
+      <div className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border px-6 py-10 text-center text-sm">
         {t("Não foi possível carregar os dados do tenant. Tente recarregar a página.")}
       </div>
     );

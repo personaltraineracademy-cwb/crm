@@ -385,12 +385,16 @@ describe("Enter no toque quebra linha; quem envia é o botão (F2)", () => {
  * a guarda barata de que as classes que produzem essas medidas não voltaram.
  */
 describe("campo e alvos pensados para o toque (F2)", () => {
-  it("o campo usa 16px abaixo do md (o iPhone não amplia a página) e 44px de altura", () => {
+  it("o campo usa 16px abaixo do md (o iPhone não amplia a página) e o grupo tem 44px de altura", () => {
     renderComposer({ contactName: "Rafael Melgaço" });
     const campo = screen.getByRole("textbox");
     expect(campo.className).toMatch(/(^|\s)text-base(\s|$)/);
     expect(campo.className).toContain("md:text-sm");
-    expect(campo.className).toMatch(/(^|\s)min-h-11(\s|$)/);
+    // Unnify: o campo é um GRUPO (`InputGroup` do Work) — a altura mínima de 44
+    // e a borda são do grupo, que envolve o campo e as ações.
+    const grupo = campo.closest('[data-slot="grupo-do-campo"]');
+    expect(grupo).not.toBeNull();
+    expect(grupo!.className).toMatch(/(^|\s)min-h-11(\s|$)/);
   });
 
   it("o botão Enviar não fixa h-9: herda os 44px do size=icon abaixo do lg", () => {
@@ -398,6 +402,10 @@ describe("campo e alvos pensados para o toque (F2)", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "oi" } });
     const enviar = screen.getByRole("button", { name: /enviar/i });
     expect(enviar.className).not.toMatch(/(^|\s)h-9(\s|$)/);
-    expect(enviar.className).toContain("h-11");
+    // O alvo de 44 vem do `size="icon"`: hoje `h-11` abaixo do lg; no botão do
+    // Unnify (etapa 3A), `min-h-11` no ponteiro grosso. Qualquer um dos dois.
+    expect(enviar.className).toMatch(/(^|\s)(h-11|pointer-coarse:min-h-11)(\s|$)/);
+    // E ele mora DENTRO do grupo do campo, como o enviar do `InputGroup`.
+    expect(enviar.closest('[data-slot="grupo-do-campo"]')).not.toBeNull();
   });
 });

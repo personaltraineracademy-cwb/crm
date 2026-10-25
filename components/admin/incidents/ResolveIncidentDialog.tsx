@@ -74,7 +74,7 @@ export function ResolveIncidentDialog({ incidentId }: ResolveIncidentDialogProps
             disabled={isPending}
           />
           {note.trim().length > 0 && note.trim().length < 10 && (
-            <p className="text-xs text-destructive">
+            <p className="text-danger-foreground text-xs">
               {t("Mínimo de 10 caracteres")} ({note.trim().length}/10)
             </p>
           )}

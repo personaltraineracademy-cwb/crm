@@ -274,7 +274,10 @@ export function FormularioDeTarefa({
           </div>
 
           {erro ? (
-            <p role="alert" className="rounded-md bg-destructive/10 p-2 text-xs font-medium text-destructive">
+            <p
+              role="alert"
+              className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border px-3 py-2 text-sm"
+            >
               {erro}
             </p>
           ) : null}

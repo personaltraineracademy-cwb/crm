@@ -22,6 +22,10 @@ export const VARIAVEL_DAS_FAIXAS = "--faixas-de-cima";
  * pai: as faixas sozinhas, dentro deste `<div>` da altura delas, passariam a
  * rolar junto com a página. E ele empilha as faixas — antes, duas sticky em
  * `top-0` se sobrepunham quando apareciam juntas.
+ *
+ * Camada 40 (DS §5.5): acima da barra de cima (30), que gruda logo abaixo
+ * delas, e abaixo de toda sobreposição (diálogo, menu, popover: 50). Em 50 elas
+ * disputavam a camada com os menus e só perdiam pela ordem no documento.
  */
 export function FaixasDeCima({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -45,7 +49,7 @@ export function FaixasDeCima({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div ref={ref} className="sticky top-0 z-50">
+    <div ref={ref} className="sticky top-0 z-40">
       {children}
     </div>
   );

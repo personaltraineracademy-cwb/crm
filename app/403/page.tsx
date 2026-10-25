@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { IdiomaProvider } from "@/lib/i18n/IdiomaProvider";
 import { normalizarIdioma } from "@/lib/i18n/idiomas";
@@ -21,8 +20,10 @@ export default async function ForbiddenPage() {
   return (
     <IdiomaProvider locale={idioma}>
       <main className="flex min-h-screen items-center justify-center p-8">
-        <Card className="w-full max-w-md p-8 text-center">
-          <h1 className="text-2xl font-semibold">{traduzir("403 — Sem permissão", idioma)}</h1>
+        <div className="w-full max-w-md text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-balance">
+            {traduzir("403 — Sem permissão", idioma)}
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {traduzir("Você não tem acesso a essa área.", idioma)}
           </p>
@@ -34,7 +35,7 @@ export default async function ForbiddenPage() {
               <Link href="/app/inbox">{traduzir("Voltar pra Inbox", idioma)}</Link>
             </Button>
           </div>
-        </Card>
+        </div>
       </main>
     </IdiomaProvider>
   );

@@ -99,7 +99,7 @@ export function AgendaComErro({
     <div
       data-testid="agenda-com-erro"
       role="alert"
-      className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 rounded-lg border border-error/30 bg-error-bg p-8 text-center"
+      className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-error/30 bg-error-bg p-8 text-center"
     >
       <WarningOctagon size={28} weight="duotone" className="text-error" aria-hidden />
       <div>

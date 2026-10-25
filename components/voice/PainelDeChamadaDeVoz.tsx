@@ -127,8 +127,10 @@ export function PainelDeChamadaDeVoz() {
 
   if (ilegivel) {
     return (
-      <Card className="space-y-2 p-6">
-        <h2 className="text-sm font-semibold">{t("Chamada de voz pelo WhatsApp")}</h2>
+      <Card className="space-y-2 p-5">
+        <h2 className="text-base font-semibold text-foreground">
+          {t("Chamada de voz pelo WhatsApp")}
+        </h2>
         <p className="text-sm text-muted-foreground">
           {t(
             "Não consegui verificar se a chamada de voz está ligada nesta empresa. Recarregue a página; se continuar, avise quem cuida da instalação.",
@@ -144,9 +146,11 @@ export function PainelDeChamadaDeVoz() {
     // `data-testid` para o e2e conseguir ISOLAR este painel e medir o texto
     // dele — a tela de Segurança tem outros cartões, e uma varredura de
     // qualidade que pegasse a página inteira acusaria o vizinho.
-    <Card className="space-y-4 p-6" data-testid="painel-voz">
+    <Card className="space-y-4 p-5" data-testid="painel-voz">
       <div className="space-y-1">
-        <h2 className="text-sm font-semibold">{t("Chamada de voz pelo WhatsApp")}</h2>
+        <h2 className="text-base font-semibold text-foreground">
+          {t("Chamada de voz pelo WhatsApp")}
+        </h2>
         <p className="text-sm text-muted-foreground">
           {estado.ligada
             ? t("Ligada. Sua equipe pode ligar e receber chamadas pelo número conectado.")
@@ -155,7 +159,7 @@ export function PainelDeChamadaDeVoz() {
       </div>
 
       {/* O RISCO, ANTES DO CONTROLE. Sem jargão: quem lê é dono de negócio. */}
-      <div className="rounded-md border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-100">
+      <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm">
         <p className="font-medium">{t("Leia antes de ligar")}</p>
         <p className="mt-1">
           {t(

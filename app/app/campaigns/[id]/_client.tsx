@@ -36,11 +36,11 @@ import { useAgentesPublicados, useFunis } from "@/hooks/campanhas/useDestinoDaCa
 import { channelLabel, useChannelSessions } from "@/hooks/channels/useChannelSessions";
 import { useContactList } from "@/hooks/contacts/useContactList";
 import { useT } from "@/hooks/i18n/useT";
-import { ArrowBendUpLeft } from "@/lib/ui/icons";
 import { rotuloDoContato } from "@/lib/contacts/rotulo-do-contato";
 import { TEXTO_DA_EXCLUSAO } from "@/lib/campanhas/tipos";
 
 import { ModeloDaCampanhaNoDetalhe } from "../_components/ModeloDaCampanhaNoDetalhe";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function DetalheDaCampanha({ id }: { id: string }) {
   const t = useT();
@@ -64,7 +64,9 @@ export function DetalheDaCampanha({ id }: { id: string }) {
     return (
       <div className="p-6">
         <Card className="p-6 text-center">
-          <p className="text-sm text-error-fg">{t("Não foi possível carregar a campanha.")}</p>
+          <p className="text-danger-foreground text-sm">
+            {t("Não foi possível carregar a campanha.")}
+          </p>
           <Button size="sm" variant="outline" className="mt-2" onClick={() => campanha.refetch()}>
             {t("Tentar novamente")}
           </Button>
@@ -93,60 +95,53 @@ export function DetalheDaCampanha({ id }: { id: string }) {
 
   return (
     <div className="space-y-4 p-6">
-      <div>
-        <Link
-          href="/app/campaigns"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-text"
-        >
-          <ArrowBendUpLeft size={14} aria-hidden />
-          {t("Campanhas")}
-        </Link>
-      </div>
-
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">{c.name}</h1>
-            <EstadoDaCampanha status={c.status} />
-          </div>
-          {c.failure_code && (
-            <p className="mt-1 text-sm text-warning-fg" data-testid="motivo-da-pausa">
+      <PageHeader
+        back={{ href: "/app/campaigns", label: t("Campanhas") }}
+        title={c.name}
+        badge={<EstadoDaCampanha status={c.status} />}
+        description={
+          c.failure_code ? (
+            <span className="text-warning-foreground" data-testid="motivo-da-pausa">
               {t("Último problema")}: {c.failure_detail ? t(c.failure_detail) : c.failure_code}
               {c.status === "paused" && c.failure_detail
                 ? ` ${t("Corrija a causa e use Retomar.")}`
                 : ""}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {c.status === "draft" && (
-            <Button variant="outline" asChild>
-              <Link href={`/app/campaigns/${c.id}/edit`}>{t("Editar")}</Link>
-            </Button>
-          )}
-          {disponiveis.map((a) => (
-            <Button
-              key={a}
-              variant={a === "cancelar" ? "outline" : "default"}
-              disabled={acao.isPending}
-              onClick={() => {
-                // Iniciar e cancelar mexem com gente de verdade: confirmação
-                // explícita (PRD §34). As outras não pedem cerimônia.
-                if (a === "iniciar" || a === "cancelar") setConfirmando(a);
-                // O teste precisa saber PARA QUEM: mandar para o primeiro da
-                // lista transformaria um teste num envio real a um prospect.
-                else if (a === "testar") setTestando(true);
-                else acao.mutate({ acao: a });
-              }}
-            >
-              {t(ROTULO_DA_ACAO[a])}
-            </Button>
-          ))}
-        </div>
-      </header>
+            </span>
+          ) : undefined
+        }
+        actions={
+          <>
+            {c.status === "draft" && (
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/app/campaigns/${c.id}/edit`}>{t("Editar")}</Link>
+              </Button>
+            )}
+            {disponiveis.map((a) => (
+              <Button
+                key={a}
+                // Uma primária por área (DS §1): testar e cancelar são secundárias.
+                variant={a === "cancelar" || a === "testar" ? "outline" : "default"}
+                size="sm"
+                disabled={acao.isPending}
+                onClick={() => {
+                  // Iniciar e cancelar mexem com gente de verdade: confirmação
+                  // explícita (PRD §34). As outras não pedem cerimônia.
+                  if (a === "iniciar" || a === "cancelar") setConfirmando(a);
+                  // O teste precisa saber PARA QUEM: mandar para o primeiro da
+                  // lista transformaria um teste num envio real a um prospect.
+                  else if (a === "testar") setTestando(true);
+                  else acao.mutate({ acao: a });
+                }}
+              >
+                {t(ROTULO_DA_ACAO[a])}
+              </Button>
+            ))}
+          </>
+        }
+      />
 
       {confirmando && (
-        <Card className="space-y-3 border-warning-fg p-4">
+        <Card className="border-warning-border space-y-3 p-4">
           <p className="text-sm">
             {confirmando === "iniciar"
               ? `${t("Começar a enviar para")} ${c.snapshot_eligible} ${c.snapshot_eligible === 1 ? t("pessoa?") : t("pessoas?")} ${t("O envio segue o ritmo do número e pode levar horas.")}`
@@ -195,7 +190,7 @@ export function DetalheDaCampanha({ id }: { id: string }) {
             <h2 className="font-medium">{t("Progresso")}</h2>
             <span className="text-sm text-muted-foreground">{Math.round(m.progresso * 100)}%</span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full bg-accent-500"
               style={{ width: `${Math.round(m.progresso * 100)}%` }}
@@ -237,7 +232,7 @@ export function DetalheDaCampanha({ id }: { id: string }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-medium">{t("Quem está na lista")}</h2>
           <select
-            className="h-9 rounded-md border border-border bg-surface px-2 text-sm"
+            className="h-9 rounded-md border border-border bg-card px-2 text-sm"
             value={filtroDeStatus}
             onChange={(e) => setFiltroDeStatus(e.target.value)}
             aria-label={t("Filtrar destinatários")}
@@ -268,7 +263,7 @@ export function DetalheDaCampanha({ id }: { id: string }) {
                     : t(ROTULO_DO_DESTINATARIO[d.status] ?? d.status)}
                   {d.motivo_da_falha && (
                     <span
-                      className="block max-w-xs text-xs whitespace-normal text-warning-fg"
+                      className="text-warning-foreground block max-w-xs text-xs whitespace-normal"
                       data-testid="motivo-da-falha"
                     >
                       {t(d.motivo_da_falha)}
@@ -501,7 +496,7 @@ function RitmoDaCampanha({ campanha }: { campanha: CampanhaDetalhada }) {
           {editar.isPending ? t("Salvando…") : t("Salvar ritmo")}
         </Button>
         {editar.isSuccess && !editar.isPending && (
-          <span className="text-sm text-success-fg">{t("Ritmo salvo.")}</span>
+          <span className="text-success-foreground text-sm">{t("Ritmo salvo.")}</span>
         )}
       </div>
     </Card>

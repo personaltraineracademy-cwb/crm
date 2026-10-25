@@ -51,7 +51,7 @@ export function OwnerBadge({
           className={`${compacto ? "h-4 w-4" : "h-6 w-6"} shrink-0 rounded-full border border-dashed border-border-strong`}
           aria-hidden
         />
-        <span className={`truncate text-text-muted ${compacto ? "text-[10px]" : "text-xs"}`}>
+        <span className={`truncate text-muted-foreground ${compacto ? "text-[10px]" : "text-xs"}`}>
           {t("Sem responsável")}
         </span>
       </div>
@@ -73,18 +73,18 @@ export function OwnerBadge({
         className={
           isAgent
             ? // Vazado com anel: o fundo do card atravessa o disco.
-              `flex ${compacto ? "h-4 w-4 text-[8px]" : "h-6 w-6 text-[10px]"} shrink-0 items-center justify-center rounded-full border border-accent bg-surface font-mono font-semibold text-accent ring-1 ring-inset ring-accent/40`
+              `flex ${compacto ? "h-4 w-4 text-[8px]" : "h-6 w-6 text-xs"} shrink-0 items-center justify-center rounded-full border border-primary bg-card font-mono font-semibold text-primary ring-1 ring-primary/40 ring-inset`
             : // Preenchido SÓLIDO: a um metro, o humano é uma mancha escura e o
               // agente é um anel claro. Contraste que não depende da borda —
               // fundo suave fazia os dois lerem como "círculo claro".
-              `flex ${compacto ? "h-4 w-4 text-[8px]" : "h-6 w-6 text-[10px]"} shrink-0 items-center justify-center rounded-full bg-accent font-semibold text-accent-foreground`
+              `flex ${compacto ? "h-4 w-4 text-[8px]" : "h-6 w-6 text-xs"} shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground`
         }
         aria-hidden
       >
         {ownerName ? ownerInitials(ownerName) : "?"}
       </span>
       <span
-        className={`truncate text-text-muted ${compacto ? "max-w-[7rem] text-[10px]" : "max-w-[9rem] text-xs"}`}
+        className={`truncate text-muted-foreground ${compacto ? "max-w-[7rem] text-[10px]" : "max-w-[9rem] text-xs"}`}
       >
         {label}
       </span>

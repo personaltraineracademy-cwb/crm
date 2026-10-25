@@ -35,7 +35,7 @@ export function VersionFooter({
     return (
       <p
         className={cn(
-          "px-3 py-1 text-[11px] text-muted-foreground",
+          "text-sidebar-muted truncate px-3 py-1 text-xs tabular-nums",
           collapsed && "px-0 text-center",
         )}
         title={`${t("Versão")} ${label}`}
@@ -52,14 +52,14 @@ export function VersionFooter({
       onClick={onNavigate}
       title={`${t("Nova versão")} ${novo} ${t("disponível")}`}
       className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-xs text-foreground hover:bg-accent/50",
+        "text-sidebar-foreground hover:bg-sidebar-accent flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition-colors",
         collapsed && "justify-center px-2",
       )}
     >
-      <span className="relative flex h-2 w-2 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-      </span>
+      {/* Ponto PARADO. O DS só admite movimento que orienta (§7), e um
+          `animate-ping` eterno no canto da barra é enfeite que nunca para — o
+          aviso já está dito pelo texto e pela cor. */}
+      <span aria-hidden className="size-2 shrink-0 rounded-full bg-primary" />
       {!collapsed && (
         <span className="truncate">
           {t("Nova versão")}

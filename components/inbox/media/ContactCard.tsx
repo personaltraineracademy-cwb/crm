@@ -47,7 +47,7 @@ export function ContactCard({ message }: Props) {
 
     return (
 
-      <div className="rounded-lg border border-current/20 bg-background/10 px-3 py-2 text-xs opacity-80">
+      <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground">
 
         {t("Contato")}
 
@@ -135,19 +135,20 @@ export function ContactCard({ message }: Props) {
 
       className={cn(
 
-        "flex max-w-[220px] items-center gap-2 rounded-lg border border-current/20 bg-background/10 px-2 py-2 text-left transition-colors",
+        "flex max-w-[220px] items-center gap-2 rounded-lg border border-border bg-card p-2 text-left text-card-foreground transition-colors",
 
-        canOpen && "cursor-pointer hover:bg-background/20 disabled:cursor-wait disabled:opacity-70",
+        canOpen &&
+          "hover:border-interactive-border hover:bg-interactive cursor-pointer disabled:cursor-wait disabled:opacity-50",
 
-        !canOpen && "cursor-default opacity-90",
+        !canOpen && "cursor-default",
 
       )}
 
     >
 
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-background/20">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
 
-        <UserCircle size={28} weight="duotone" aria-hidden />
+        <UserCircle size={24} weight="duotone" aria-hidden />
 
       </span>
 
@@ -157,7 +158,7 @@ export function ContactCard({ message }: Props) {
 
         {contact.phone_number ? (
 
-          <span className="block truncate text-xs opacity-80">{phoneForDisplay(contact.phone_number)}</span>
+          <span className="block truncate text-xs tabular-nums text-muted-foreground">{phoneForDisplay(contact.phone_number)}</span>
 
         ) : null}
 

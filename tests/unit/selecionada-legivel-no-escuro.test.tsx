@@ -11,20 +11,19 @@
  * na spec `tests/e2e/inbox-selecionada-no-escuro.spec.ts`; aqui fica a regra
  * que a impede de voltar sem precisar de navegador.
  */
-import fs from "node:fs";
-import path from "node:path";
-
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { ConversationListItem } from "@/components/inbox/ConversationListItem";
 import { conversaDeExemplo } from "@/components/inbox/__fixtures__/conversa";
 
+import { cssEfetivo } from "../setup/css-efetivo";
+
 // ── Contraste WCAG calculado a partir dos tokens de `app/globals.css` ─────────
 // O jsdom não aplica o Tailwind; o que dá para medir sem navegador é o par de
 // TOKENS que a linha usa, com os valores que o tema declara. A spec e2e mede a
 // tela; esta régua mede a escolha de token e roda em todo `test:unit`.
-const CSS = fs.readFileSync(path.join(process.cwd(), "app/globals.css"), "utf8");
+const CSS = cssEfetivo(); // Unnify: globals.css + app/unnify, o que pinta a tela
 
 function bloco(seletor: string): string {
   const i = CSS.search(new RegExp(`^${seletor.replace(/[[\]"=]/g, "\\$&")}\\s*\\{`, "m"));
@@ -72,14 +71,14 @@ function contraste(a: Rgba, b: Rgba): number {
   return (x! + 0.05) / (y! + 0.05);
 }
 
-/** Classe `bg-accent-soft` solta — `hover:bg-accent-soft` não pinta em repouso. */
-const PINTA_ACCENT_SOFT = /(?:^|\s)bg-accent-soft(?=\s|$)/;
+/** Classe `bg-interactive` solta (o `accent-soft` com o nome do Unnify) — `hover:bg-interactive` não pinta em repouso. */
+const PINTA_ACCENT_SOFT = /(?:^|\s)bg-interactive(?=\s|$)/;
 
 describe("a conversa selecionada é legível no tema escuro", () => {
   it("o fundo da selecionada é o token que muda com o tema, não um degrau fixo da rampa", () => {
     render(<ConversationListItem {...conversaDeExemplo.props} conversation={conversaDeExemplo.conversation} isSelected />);
     const linha = screen.getByRole("button", { current: true });
-    expect(linha.className).toContain("bg-accent-soft");
+    expect(linha.className).toContain("bg-interactive");
     expect(linha.className).not.toMatch(/\bbg-accent-(50|100|200|300|400|500|600|700|800|900|950)\b/);
   });
 
@@ -87,7 +86,7 @@ describe("a conversa selecionada é legível no tema escuro", () => {
     render(<ConversationListItem {...conversaDeExemplo.props} conversation={conversaDeExemplo.conversation} isSelected={false} />);
     const linha = screen.getByRole("button");
     expect(linha.getAttribute("aria-current")).toBeNull();
-    expect(linha.className).not.toContain("bg-accent-soft");
+    expect(linha.className).not.toMatch(PINTA_ACCENT_SOFT);
   });
 
   it("aberta E marcada no lote: o accent-soft é pintado uma vez só (no escuro ele é translúcido e somava)", () => {
@@ -125,10 +124,10 @@ describe("a conversa selecionada é legível no tema escuro", () => {
   it.each(["dark", "light"] as const)("na aberta, a prévia tem contraste ≥ 4,5 sobre o accent-soft (%s)", (tema) => {
     render(<ConversationListItem {...conversaDeExemplo.props} conversation={conversaDeExemplo.conversation} isSelected />);
     const classe = screen.getByText("bom dia").closest("p")?.getAttribute("class") ?? "";
-    const m = classe.match(/(?:^|\s)text-(text(?:-muted|-subtle)?)(?=\s|$)/);
+    const m = classe.match(/(?:^|\s)text-((?:muted-)?foreground)(?=\s|$)/);
     expect(m?.[1], `classe de cor da prévia: ${classe}`).toBeTruthy();
-    const fundo = sobre(cor(token(tema, "--color-accent-soft")), cor(token(tema, "--color-bg")));
-    const valor = contraste(cor(token(tema, `--color-${m![1]}`)), fundo);
+    const fundo = sobre(cor(token(tema, "--interactive")), cor(token(tema, "--color-bg")));
+    const valor = contraste(cor(token(tema, `--${m![1]}`)), fundo);
     expect(valor, `prévia ${m![1]} no ${tema}: ${valor.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
   });
 });

@@ -9,6 +9,7 @@ import { compararSkill, type ComparativoEntrada } from "@/lib/ai/skills/comparat
 import type { SkillsState } from "@/hooks/ai/useSkills";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { SkillsClient } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -89,15 +90,13 @@ export default async function SkillsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Skills da IA", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Skills da IA", idioma)}
+        description={traduzir(
             "Habilidades especializadas que seus agentes carregam só quando a conversa pede — instale prontas do catálogo ou envie a sua.",
             idioma,
           )}
-        </p>
-      </header>
+      />
       <SkillsClient initialState={initialState} />
     </div>
   );

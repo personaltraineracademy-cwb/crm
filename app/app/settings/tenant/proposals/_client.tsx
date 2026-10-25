@@ -11,6 +11,7 @@ import { showApiError } from "@/components/feedback/ApiErrorToast";
 import { useT } from "@/hooks/i18n/useT";
 import { apiClient } from "@/lib/api/client";
 import type { ApiSuccess } from "@/lib/api/wrappers";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Config { enabled: boolean; default_valid_days: number; default_conditions: string | null; avisar_no_whatsapp?: boolean }
 
@@ -51,8 +52,9 @@ export function ProposalsSettingsClient() {
   if (!cfg) return <div className="p-6">{t("Carregando…")}</div>;
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
-      <h1 className="text-xl font-semibold">{t("Propostas")}</h1>
+    // Formulário: contêiner de leitura (max-w-3xl), alinhado à esquerda.
+    <div className="w-full max-w-3xl space-y-6 p-6">
+      <PageHeader title={t("Propostas")} />
       {enabledSalvo ? (
         <p className="text-sm">
           <Link href="/app/settings/tenant/proposals/modelos" className="underline underline-offset-4">

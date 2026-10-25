@@ -141,7 +141,7 @@ export function CatalogoFinanceiro({
       {/* ─── contas ─────────────────────────────────────────────────── */}
       <section className="space-y-3 rounded-xl border p-4">
         <h2 className="font-semibold">{t("Contas")}</h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t(
             "Onde o dinheiro fica. O saldo que aparece nos relatórios é sempre somado dos lançamentos — o valor aqui é só o ponto de partida.",
           )}
@@ -150,14 +150,14 @@ export function CatalogoFinanceiro({
           <div className="flex flex-wrap items-end gap-2">
             <input
               aria-label={t("Nome da conta")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               placeholder={t("Ex.: Caixa")}
               value={nomeConta}
               onChange={(e) => setNomeConta(e.target.value)}
             />
             <select
               aria-label={t("Tipo da conta")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               value={tipoConta}
               onChange={(e) => setTipoConta(e.target.value)}
             >
@@ -209,7 +209,7 @@ export function CatalogoFinanceiro({
       {/* ─── formas de pagamento ────────────────────────────────────── */}
       <section className="space-y-3 rounded-xl border p-4">
         <h2 className="font-semibold">{t("Formas de pagamento")}</h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t(
             "Como o cliente paga. A conta escolhida aqui é onde esse dinheiro entra quando a comanda é fechada.",
           )}
@@ -218,14 +218,14 @@ export function CatalogoFinanceiro({
           <div className="flex flex-wrap items-end gap-2">
             <input
               aria-label={t("Nome da forma de pagamento")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               placeholder={t("Ex.: Pix")}
               value={nomeForma}
               onChange={(e) => setNomeForma(e.target.value)}
             />
             <select
               aria-label={t("Conta de destino")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               value={contaDaForma}
               onChange={(e) => setContaDaForma(e.target.value)}
             >
@@ -294,14 +294,14 @@ export function CatalogoFinanceiro({
       {/* ─── plano de contas ────────────────────────────────────────── */}
       <section className="space-y-3 rounded-xl border p-4">
         <h2 className="font-semibold">{t("Plano de contas")}</h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Como cada lançamento é classificado. Entrada e saída são coisas diferentes.")}
         </p>
         {podeEditar ? (
           <div className="flex flex-wrap items-end gap-2">
             <input
               aria-label={t("Nome do plano de contas")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               placeholder={t("Ex.: Serviços")}
               value={nomePlano}
               onChange={(e) => setNomePlano(e.target.value)}
@@ -314,7 +314,7 @@ export function CatalogoFinanceiro({
             */}
             <select
               aria-label={t("Entrada ou saída")}
-              className="min-h-11 rounded-md border p-2"
+              className="min-h-11 rounded-lg border p-2"
               value={direcaoPlano}
               onChange={(e) => setDirecaoPlano(e.target.value as "in" | "out" | "")}
             >
@@ -429,7 +429,7 @@ function Lista<T extends { id: string }>({
 }) {
   const t = useT();
   if (carregando) return <p>{t("Carregando…")}</p>;
-  if (itens.length === 0) return <p className="text-sm text-text-muted">{vazio}</p>;
+  if (itens.length === 0) return <p className="text-sm text-muted-foreground">{vazio}</p>;
   return (
     <ul className="space-y-1">
       {itens.map((i) => (

@@ -108,7 +108,7 @@ export function CartaoDaCarteira({ contactId, papelDoUsuario }: Props) {
                     e leitor de tela sem mais uma camada de JS. */}
                 <select
                   id="carteira-dono"
-                  className="h-9 w-full max-w-xs rounded-md border bg-background px-2 text-sm"
+                  className="h-9 w-full max-w-xs rounded-lg border bg-background px-2 text-sm"
                   value={selecionado}
                   data-testid="carteira-seletor"
                   onChange={(e) => setSelecionado(e.target.value)}

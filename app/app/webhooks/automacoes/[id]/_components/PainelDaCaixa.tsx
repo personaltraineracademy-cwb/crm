@@ -34,6 +34,13 @@ import { ActionConfigForm, type ActionItem } from "@/app/app/webhooks/_component
 import { CURATED_FIELDS, OP_LABELS, type Op } from "@/app/app/webhooks/_components/RuleEditor";
 import { ACTION_LABELS, TRIGGER_LABELS, type ActionType, type TriggerEvent } from "@/app/app/webhooks/_components/labels";
 
+import {
+  BLOCO_AGRUPADOR,
+  BLOCO_DE_ICONE,
+  classesDoChipDaEtapa,
+  type PapelDaEtapa,
+} from "@/components/fluxo/tema-do-fluxo";
+
 import { VISUAL_DAS_CONDICOES, VISUAL_DO_GATILHO, visualDaAcao, type VisualDaCaixa } from "./visual";
 
 const QUALQUER_FONTE = "__qualquer_fonte__";
@@ -42,14 +49,21 @@ const VOLTAR = "/app/webhooks?aba=automacoes";
 
 function Cabecalho({ visual, titulo, etapa }: { visual: VisualDaCaixa; titulo: string; etapa?: string }) {
   const Icone = visual.icon;
+  // O papel na fila sai do próprio visual: gatilho e condições têm um só; o resto é ação.
+  const papel: PapelDaEtapa =
+    visual === VISUAL_DO_GATILHO
+      ? "gatilho"
+      : visual === VISUAL_DAS_CONDICOES
+        ? "condicao"
+        : "acao";
   return (
-    <div className="flex items-start gap-2">
-      <span className={cn("mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full", visual.chipClassName)}>
+    <div className="flex items-start gap-3">
+      <span className={BLOCO_DE_ICONE}>
         <Icone size={16} aria-hidden />
       </span>
       <div className="min-w-0">
-        {etapa ? <p className="text-xs font-medium uppercase tracking-wide text-text-muted">{etapa}</p> : null}
-        <h2 className="text-base font-semibold text-text">{titulo}</h2>
+        {etapa ? <p className={cn(classesDoChipDaEtapa(papel), "mb-1")}>{etapa}</p> : null}
+        <h2 className="text-lg font-semibold text-foreground">{titulo}</h2>
       </div>
     </div>
   );
@@ -59,7 +73,10 @@ function Problemas({ lista }: { lista?: ProblemaDoDesenho[] }) {
   const t = useT();
   if (!lista || lista.length === 0) return null;
   return (
-    <div role="alert" className="rounded-md border border-error/40 bg-error-bg p-3 text-sm text-error-fg">
+    <div
+      role="alert"
+      className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-sm"
+    >
       <p className="font-medium">{t("Para salvar, corrija:")}</p>
       <ul className="mt-1 list-disc space-y-0.5 pl-5">
         {lista.map((p) => (
@@ -111,7 +128,7 @@ export function PainelDoGatilho({
             ))}
           </SelectContent>
         </Select>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Trocar o gatilho limpa as condições, como no editor em lista: cada gatilho tem os seus campos.")}
         </p>
       </div>
@@ -138,7 +155,7 @@ export function PainelDoGatilho({
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Escolha uma fonte para limitar esta automação a um formulário. Qualquer fonte mantém o comportamento geral.")}
           </p>
         </div>
@@ -146,7 +163,7 @@ export function PainelDoGatilho({
 
       {evento === GATILHO_DE_DATA_DO_FUNIL ? (
         <div className="space-y-3">
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             {t(
               "O aviso sai no dia em que faltarem N dias para a data, uma vez por negócio. Para avisar DEPOIS da data, use N negativo — -60 confirma a entrega 60 dias após o casamento.",
             )}
@@ -188,7 +205,7 @@ export function PainelDoGatilho({
               </SelectContent>
             </Select>
             {tela.data.pipeline_id && camposDeData.length === 0 ? (
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-muted-foreground">
                 {t(
                   "Este funil ainda não tem campo de data. Cadastre um em Funis → Campos personalizados para poder escolhê-lo aqui.",
                 )}
@@ -212,7 +229,7 @@ export function PainelDoGatilho({
 
       {evento === GATILHO_SILENCIO || evento === GATILHO_ETAPA_PARADA ? (
         <div className="space-y-3">
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             {evento === GATILHO_SILENCIO
               ? t(
                   "O lembrete sai quando se passarem N dias sem mensagem na direção escolhida. Chegando mensagem nova, o relógio zera — e um novo silêncio de N dias gera outro lembrete. Nada é enviado ao cliente.",
@@ -271,7 +288,9 @@ export function PainelDoGatilho({
       ) : null}
 
       {acoesQueFechamLaco(evento, [{ type: "assign_owner" }]).length > 0 ? (
-        <p className="rounded-md border border-border bg-muted p-3 text-xs text-text-muted">{t(MENSAGEM_DO_LACO_DE_LEAD)}</p>
+        <p className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
+          {t(MENSAGEM_DO_LACO_DE_LEAD)}
+        </p>
       ) : null}
     </div>
   );
@@ -316,7 +335,7 @@ export function PainelDasCondicoes({
       <div className="space-y-4" data-testid="condicoes-preservadas">
         <Cabecalho visual={VISUAL_DAS_CONDICOES} titulo={t("Condições")} etapa={etapa} />
         <Problemas lista={dados.problemas} />
-        <p role="note" className="rounded-md border border-border bg-muted p-3 text-sm text-text-muted">
+        <p role="note" className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
           {t(
             "Esta automação combina as condições por um grupo (qualquer uma, ou um grupo dentro de outro). Este desenho não edita esse grupo: ele é gravado como está.",
           )}
@@ -327,16 +346,20 @@ export function PainelDasCondicoes({
             const curado = campos.find((c) => c.value === linha.field);
             const operador = t(curado?.lista && linha.op === "contains" ? "tem a tag" : OP_LABELS[linha.op]);
             return (
-              <li key={i} className="rounded-md border border-border px-3 py-2 text-text" data-testid={`condicao-${i}`}>
+              <li
+                key={i}
+                className="rounded-lg bg-muted/40 px-3 py-2 text-foreground"
+                data-testid={`condicao-${i}`}
+              >
                 <span className="font-medium">{curado ? t(curado.label) : linha.field}</span>
-                <span className="text-text-muted">
+                <span className="text-muted-foreground">
                   {` ${operador} ${OPERADORES_SEM_VALOR.has(linha.op) ? "" : linha.value}`.trimEnd()}
                 </span>
               </li>
             );
           })}
         </ul>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {`${contarCondicoes(grupoPreservado)} ${contarCondicoes(grupoPreservado) === 1 ? t("condição") : t("condições")}`}
         </p>
         <Button asChild type="button" variant="secondary" size="sm">
@@ -350,11 +373,13 @@ export function PainelDasCondicoes({
     <div className="space-y-4">
       <Cabecalho visual={VISUAL_DAS_CONDICOES} titulo={t("Condições")} etapa={etapa} />
       <Problemas lista={dados.problemas} />
-      <p className="text-sm text-text-muted">
+      <p className="text-sm text-muted-foreground">
         {t("Todas as condições precisam valer para as ações rodarem. Se alguma não valer, nada acontece.")}
       </p>
       {!evento ? (
-        <p className="text-sm text-text-muted">{t("Escolha o gatilho primeiro: cada gatilho tem os seus campos.")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("Escolha o gatilho primeiro: cada gatilho tem os seus campos.")}
+        </p>
       ) : null}
       {linhas.map((linha, i) => {
         // Linha nova começa na lista; só cai no modo avançado sozinha quando o
@@ -362,9 +387,13 @@ export function PainelDasCondicoes({
         const avancado = linha.avancado ?? (linha.field !== "" && !campos.some((c) => c.value === linha.field));
         const curado = campos.find((c) => c.value === linha.field);
         return (
-          <div key={i} className="space-y-2 rounded-md border border-border p-3" data-testid={`condicao-${i}`}>
+          <div
+            key={i}
+            className="space-y-2 rounded-lg bg-muted/40 p-3"
+            data-testid={`condicao-${i}`}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-text-muted">{`${t("Condição")} ${i + 1}`}</span>
+              <span className="text-xs font-medium text-muted-foreground">{`${t("Condição")} ${i + 1}`}</span>
               <Button
                 type="button"
                 variant="ghost"
@@ -440,7 +469,7 @@ export function PainelDasCondicoes({
             </div>
             <button
               type="button"
-              className="text-xs text-text-muted underline underline-offset-4"
+              className="text-xs text-muted-foreground underline underline-offset-4"
               onClick={() => mudar(i, { avancado: !avancado, ...(avancado && !curado ? { field: "" } : {}) })}
             >
               {avancado ? t("usar campo da lista") : t("usar campo avançado")}
@@ -457,7 +486,7 @@ export function PainelDasCondicoes({
       >
         <Plus size={14} aria-hidden /> {t("Adicionar condição")}
       </Button>
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t("Linhas sem campo, ou sem valor quando o operador pede um, são descartadas ao salvar. No máximo 10.")}
       </p>
     </div>
@@ -489,7 +518,7 @@ export function PainelDaAcao({
       <div className="space-y-4">
         <Cabecalho visual={visual} titulo={t("A IA decide")} etapa={etapa} />
         <Problemas lista={problemas} />
-        <p className="rounded-md border border-border bg-muted p-3 text-sm text-text-muted">
+        <p className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
           {t(
             "Este passo foi criado pela API e hoje não tem tela de edição. O designer mostra, mantém a posição dele na fila e grava de volta sem mudar nada.",
           )}
@@ -497,16 +526,20 @@ export function PainelDaAcao({
         {typeof acao.config.instrucao === "string" ? (
           <div className="space-y-1">
             <Label>{t("Instrução para a IA")}</Label>
-            <p className="whitespace-pre-wrap break-words text-sm text-text">{acao.config.instrucao}</p>
+            <p className="text-sm break-words whitespace-pre-wrap text-foreground">
+              {acao.config.instrucao}
+            </p>
           </div>
         ) : null}
         <div className="space-y-1">
           <Label>{t("Opções")}</Label>
           <ul className="space-y-1 text-sm">
             {opcoes.map((o, i) => (
-              <li key={i} className="rounded-md border border-border px-3 py-2">
-                <span className="font-medium text-text">{typeof o.rotulo === "string" ? o.rotulo : "—"}</span>
-                <span className="text-text-muted">
+              <li key={i} className="rounded-lg bg-muted/40 px-3 py-2">
+                <span className="font-medium text-foreground">
+                  {typeof o.rotulo === "string" ? o.rotulo : "—"}
+                </span>
+                <span className="text-muted-foreground">
                   {` → ${typeof o.acao?.type === "string" ? t(ACTION_LABELS[o.acao.type as ActionType] ?? o.acao.type) : "—"}`}
                 </span>
               </li>
@@ -526,7 +559,10 @@ export function PainelDaAcao({
       />
       <Problemas lista={problemas} />
       {acoesQueFechamLaco(evento, [acao]).length > 0 ? (
-        <p role="alert" className="rounded-md border border-error/40 bg-error-bg p-3 text-sm text-error-fg">
+        <p
+          role="alert"
+          className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-sm"
+        >
           {t(MENSAGEM_DO_LACO_DE_LEAD)}
         </p>
       ) : null}
@@ -536,7 +572,7 @@ export function PainelDaAcao({
           onChange={(next) => onAcao(next as unknown as AcaoDaRegra)}
         />
       ) : (
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Esta ação não existe nesta instalação. Exclua a caixa ou escolha outra ação.")}
         </p>
       )}
@@ -550,11 +586,11 @@ export function PainelDaLigacao({ origem, destino, onExcluir }: { origem: string
   const t = useT();
   return (
     <div className="space-y-3">
-      <h2 className="text-base font-semibold text-text">{t("Ligação")}</h2>
-      <p className="text-sm text-text">
+      <h2 className="text-lg font-semibold text-foreground">{t("Ligação")}</h2>
+      <p className="text-sm text-foreground">
         {`${t("De")} “${origem}” ${t("para")} “${destino}”.`}
       </p>
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t("Para trocar o destino, arraste a bolinha de saída até outra caixa. Para tirar, exclua a ligação.")}
       </p>
       <Button type="button" variant="outline" size="sm" className="text-destructive" onClick={onExcluir}>
@@ -592,16 +628,18 @@ export function ResumoDaAutomacao({
   const emGrupo = Boolean(caixaDeCondicoes?.grupoPreservado);
   return (
     <div className="space-y-4">
-      <h2 className="text-base font-semibold text-text">{t("Como esta automação roda")}</h2>
+      <h2 className="text-lg font-semibold text-foreground">{t("Como esta automação roda")}</h2>
       <Problemas lista={problemasGerais} />
-      <dl className="space-y-3 text-sm">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">{t("Quando")}</dt>
-          <dd className="text-text">{evento ? t(TRIGGER_LABELS[evento as TriggerEvent] ?? evento) : t("Escolha o gatilho")}</dd>
+      <dl className="space-y-2 text-sm">
+        <div className={cn(BLOCO_AGRUPADOR, "space-y-1.5")}>
+          <dt className={classesDoChipDaEtapa("gatilho")}>{t("Quando")}</dt>
+          <dd className="text-foreground">
+            {evento ? t(TRIGGER_LABELS[evento as TriggerEvent] ?? evento) : t("Escolha o gatilho")}
+          </dd>
         </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">{t("Se")}</dt>
-          <dd className="text-text">
+        <div className={cn(BLOCO_AGRUPADOR, "space-y-1.5")}>
+          <dt className={classesDoChipDaEtapa("condicao")}>{t("Se")}</dt>
+          <dd className="text-foreground">
             {condicoes === 0
               ? t("Sem condições: roda em todo evento.")
               : emGrupo
@@ -609,13 +647,13 @@ export function ResumoDaAutomacao({
                 : `${condicoes} ${condicoes === 1 ? t("condição") : t("condições")}, ${t("todas precisam valer")}`}
           </dd>
         </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">{t("Então")}</dt>
+        <div className={cn(BLOCO_AGRUPADOR, "space-y-1.5")}>
+          <dt className={classesDoChipDaEtapa("acao")}>{t("Então")}</dt>
           <dd>
             {percurso.acoes.length === 0 ? (
-              <span className="text-text-muted">{t("Nenhuma ação ligada.")}</span>
+              <span className="text-muted-foreground">{t("Nenhuma ação ligada.")}</span>
             ) : (
-              <ol className="list-decimal space-y-0.5 pl-5 text-text">
+              <ol className="list-decimal space-y-0.5 pl-5 text-foreground">
                 {percurso.acoes.map((c) => (
                   <li key={c.id}>{c.data.kind === "acao" ? tituloDaAcao(c.data.acao) : ""}</li>
                 ))}
@@ -624,13 +662,17 @@ export function ResumoDaAutomacao({
           </dd>
         </div>
       </dl>
-      <p className="rounded-md border border-border bg-muted p-3 text-xs text-text-muted">
+      <p className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
         {t(
           "O desenho vira a mesma regra que o editor em lista grava: o gatilho, as condições e as ações na ordem das ligações. A posição das caixas não é gravada; ao abrir, o designer organiza sozinho.",
         )}
       </p>
-      {nova ? <p className="text-xs text-text-muted">{t("A automação nasce pausada. Revise e ligue quando estiver pronta.")}</p> : null}
-      <p className="text-xs text-text-muted">
+      {nova ? (
+        <p className="text-xs text-muted-foreground">
+          {t("A automação nasce pausada. Revise e ligue quando estiver pronta.")}
+        </p>
+      ) : null}
+      <p className="text-xs text-muted-foreground">
         {t("Clique numa caixa para configurar. Na paleta, clicar põe a caixa logo depois da selecionada, já ligada.")}
       </p>
     </div>

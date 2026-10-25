@@ -171,7 +171,7 @@ export function TaskReminderPrefs() {
       ) : null}
 
       {erro ? (
-        <p className="mt-3 text-sm text-destructive" data-testid="lembrete-erro">
+        <p className="text-danger-foreground mt-3 text-sm" data-testid="lembrete-erro">
           {t("Não foi possível salvar. Tente de novo.")}
         </p>
       ) : null}

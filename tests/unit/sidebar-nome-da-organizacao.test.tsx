@@ -84,28 +84,42 @@ vi.mock("@/hooks/auth/AuthProvider", () => ({
   useAuth: () => contexto,
 }));
 
+/**
+ * Sem logo configurado, o topo da barra mostra o logo do produto (Unnify CRM),
+ * e não o nome: o logo é a camada de baixo do campo "logo" (`marcaEhADoProduto`).
+ * O nome da organização continua lido pela barra — ele legenda o logo próprio e
+ * dá a inicial da barra recolhida —, e é isso que os casos abaixo medem.
+ */
 describe("o nome da marca na barra lateral", () => {
-  it("sem marca da organização, mostra o nome da instalação", () => {
-    // Não-regressão: a organização que nunca abriu a tela de marca precisa ver
-    // exatamente o que via antes. É também a guarda de vacuidade do caso
-    // seguinte — se a barra nunca mostrasse nome nenhum, os dois passariam.
-    contexto = { user: usuario, activeOrg: org };
-    renderSidebar({ collapsed: false });
-    expect(screen.getByText("Sistema do Revendedor")).toBeTruthy();
+  const LOGO = "https://cdn.exemplo.test/revendedor.png";
+
+  afterEach(() => {
+    marcaDaInstalacao = { name: "Sistema do Revendedor", logoUrl: null, initial: "S" };
   });
 
-  it("com marca da organização, o nome dela SUBSTITUI o da instalação", () => {
+  it("sem logo, o topo é o logo do produto — o nome não disputa o lugar com ele", () => {
+    contexto = { user: usuario, activeOrg: org };
+    renderSidebar({ collapsed: false });
+    expect(screen.getByRole("img", { name: "Unnify CRM" })).toBeTruthy();
+    // Os dois juntos não cabem na linha de 56px, e o logo já nomeia a marca.
+    expect(screen.queryByText("Sistema do Revendedor")).toBeNull();
+  });
+
+  it("com marca da organização, o nome dela SUBSTITUI o da instalação na legenda do logo", () => {
+    marcaDaInstalacao = { ...marcaDaInstalacao, logoUrl: LOGO };
     contexto = { user: usuario, activeOrg: { ...org, marca: { nome: "Loja da Ana" } } };
     renderSidebar({ collapsed: false });
-    expect(screen.getByText("Loja da Ana")).toBeTruthy();
-    // A ausência importa tanto quanto a presença: uma barra que mostrasse os
-    // dois nomes passaria na asserção de cima e estaria errada.
+    expect(screen.getByRole("img").getAttribute("alt")).toBe("Loja da Ana");
+    // A ausência importa tanto quanto a presença: uma barra que nomeasse as
+    // duas marcas passaria na asserção de cima e estaria errada.
     expect(screen.queryByText("Sistema do Revendedor")).toBeNull();
+    expect(screen.queryByAltText("Sistema do Revendedor")).toBeNull();
   });
 
   it("recolhida, a inicial acompanha o nome que a barra mostra", () => {
     // Sem isto, recolher o menu trocaria a marca: o nome viria da organização e
     // a inicial continuaria vindo da INSTALAÇÃO — "L" expandido, "S" recolhido.
+    marcaDaInstalacao = { ...marcaDaInstalacao, logoUrl: LOGO };
     contexto = { user: usuario, activeOrg: { ...org, marca: { nome: "Loja da Ana" } } };
     renderSidebar({ collapsed: true });
     expect(screen.getByText("L")).toBeTruthy();
@@ -175,14 +189,18 @@ describe("o logo na barra lateral", () => {
     expect(imagem().getAttribute("src")).toBe(LOGO_DA_INSTALACAO);
   });
 
-  it("sem logo nenhum, continua sendo o nome — não uma imagem quebrada", () => {
+  it("sem logo nenhum, é o logo do produto — não uma imagem quebrada", () => {
     // Guarda de vacuidade dos três de cima: se a barra desenhasse `<img>` sempre,
     // com `src` vazio, todos passariam pelo `getByRole("img")` e o produto
     // mostraria o ícone de imagem quebrada em toda instalação de fábrica.
     contexto = { user: usuario, activeOrg: org };
     renderSidebar({ collapsed: false });
 
-    expect(screen.queryByRole("img")).toBeNull();
-    expect(screen.getByText("Sistema do Revendedor")).toBeTruthy();
+    expect(document.querySelector("img")).toBeNull();
+    const logo = screen.getByRole("img", { name: "Unnify CRM" });
+    expect(logo.querySelectorAll("image")).toHaveLength(2);
+    for (const arte of logo.querySelectorAll("image")) {
+      expect(arte.getAttribute("href")).toMatch(/^\/marca\/unnify-crm\/.+\.svg$/);
+    }
   });
 });

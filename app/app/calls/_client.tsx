@@ -2,7 +2,7 @@
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useState, type FormEvent } from "react";
 
-import { Badge } from "@/components/ui/badge";
+import { ChipDeEstado, type TomDeEstado } from "@/components/ai/chip-de-estado";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ import { useTelefoneExemplo } from "@/hooks/contacts/useTelefoneExemplo";
 import { useT } from "@/hooks/i18n/useT";
 import { useCallsQuery, useDialCall, type CallRow } from "@/hooks/calls/useCallsQuery";
 import { rotuloDoContato } from "@/lib/contacts/rotulo-do-contato";
+import { PageHeader } from "@/components/ui/page-header";
 
 function fmtDate(iso: string | null, idioma: string): string {
   if (!iso) return "—";
@@ -46,6 +47,17 @@ function fmtDuration(seconds: number | null): string {
   const s = seconds % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
+
+/** Estado da chamada como chip do trio (§3.3): só falha e "em curso" ganham cor forte. */
+const STATUS_TOM: Record<CallRow["status"], TomDeEstado> = {
+  ringing: "info",
+  in_progress: "info",
+  completed: "sucesso",
+  no_answer: "neutro",
+  busy: "neutro",
+  failed: "perigo",
+  canceled: "neutro",
+};
 
 const STATUS_LABEL: Record<CallRow["status"], string> = {
   ringing: "Chamando",
@@ -139,15 +151,11 @@ export function CallsClient() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Chamadas")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Histórico de ligações (voz por IA) com transcrição.")}
-          </p>
-        </div>
-        <DialerDialog />
-      </header>
+      <PageHeader
+        title={t("Chamadas")}
+        description={t("Histórico de ligações (voz por IA) com transcrição.")}
+        actions={<DialerDialog />}
+      />
 
       <Card className="overflow-hidden">
         {isLoading ? (
@@ -165,7 +173,7 @@ export function CallsClient() {
                 <TableHead>{t("Quem é")}</TableHead>
                 <TableHead>{t("Status")}</TableHead>
                 <TableHead>{t("Atendido por")}</TableHead>
-                <TableHead>{t("Duração")}</TableHead>
+                <TableHead className="text-right">{t("Duração")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -175,14 +183,18 @@ export function CallsClient() {
                   className="cursor-pointer"
                   onClick={() => setSelected(call)}
                 >
-                  <TableCell>{fmtDate(call.started_at, idioma)}</TableCell>
+                  <TableCell className="tabular-nums">{fmtDate(call.started_at, idioma)}</TableCell>
                   <TableCell>{call.direction === "outbound" ? t("Saída") : t("Entrada")}</TableCell>
                   <TableCell className="font-medium">{counterpartLabel(call)}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{t(STATUS_LABEL[call.status])}</Badge>
+                    <ChipDeEstado tom={STATUS_TOM[call.status]}>
+                      {t(STATUS_LABEL[call.status])}
+                    </ChipDeEstado>
                   </TableCell>
                   <TableCell>{call.handled_by === "ai" ? t("IA") : t("Humano")}</TableCell>
-                  <TableCell>{fmtDuration(call.duration_seconds)}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {fmtDuration(call.duration_seconds)}
+                  </TableCell>
                 </TableRow>
               ))}
               {(calls ?? []).length === 0 && (
@@ -217,13 +229,13 @@ export function CallsClient() {
                     {selected.transcript.map((turn, i) => (
                       <div
                         key={i}
-                        className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                        className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
                           turn.speaker === "agent"
-                            ? "self-start bg-muted"
-                            : "self-end bg-primary text-primary-foreground"
+                            ? "self-start rounded-bl-sm border border-border bg-card"
+                            : "self-end rounded-br-sm bg-primary text-primary-foreground"
                         }`}
                       >
-                        <div className="mb-1 text-xs opacity-70">
+                        <div className="mb-1 text-xs font-medium opacity-80">
                           {turn.speaker === "agent"
                             ? "Iara"
                             : counterpartLabel(selected)}

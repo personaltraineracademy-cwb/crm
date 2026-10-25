@@ -40,6 +40,7 @@ import { OpenConversationProvider } from "@/hooks/notifications/OpenConversation
 import { CaretLeft, ChatCircle, IdentificationCard, MagnifyingGlass, X } from "@/lib/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { comandosDaFila } from "@/lib/inbox/comando-da-conversa";
 import { togglePainelDoContato } from "@/app/actions/inbox/togglePainelDoContato";
@@ -64,7 +65,7 @@ import {
 /**
  * QUAL COLUNA APARECE NO CELULAR — as duas saem da MESMA pergunta.
  *
- * Abaixo do `md` só cabe uma coluna por vez, então a lista e a conversa se
+ * Abaixo do `lg` (1024, onde o Unnify troca a casca) só cabe uma coluna por vez, então a lista e a conversa se
  * alternam. O defeito que esta função existe para tornar impossível é as duas
  * decidirem por dados DIFERENTES: a lista somia com `selectedId` (o id) e a
  * conversa aparecia com `selectedConversation` (o objeto já carregado). Entre
@@ -77,10 +78,10 @@ import {
  *      numa tela branca sem nem o botão de voltar.
  *
  * Com uma pergunta só, "as duas escondidas" deixa de ser representável.
- * `md:flex` em ambas: no desktop as duas colunas convivem e a regra não vale.
+ * `lg:flex` em ambas: no desktop as duas colunas convivem e a regra não vale.
  *
  * CONVERSA EM TELA CHEIA (F2 da ADR-0006). Escolhida, a conversa vira uma
- * camada `fixed` abaixo do `md`, em vez de um layout novo:
+ * camada `fixed` abaixo do `lg`, em vez de um layout novo:
  *
  *   - `z-[45]` cobre o TopBar (z-20) e a barra de abas (z-40) sem que ninguém
  *     os edite, e fica abaixo das faixas de cima e dos portais Radix (z-50);
@@ -97,16 +98,16 @@ import {
  * `fixed`; o e2e `atender-pelo-celular` mede o topo.
  */
 const CAMADA_DA_CONVERSA = [
-  "max-md:fixed max-md:inset-x-0 max-md:z-[45] max-md:bg-background",
-  "max-md:top-[max(var(--vv-topo,0px),var(--faixas-de-cima,0px))]",
-  "max-md:h-[calc(var(--vv-topo,0px)+var(--vv-altura,100dvh)-max(var(--vv-topo,0px),var(--faixas-de-cima,0px)))]",
-  "max-md:pt-[env(safe-area-inset-top)] max-md:pb-[env(safe-area-inset-bottom)] max-md:data-[teclado-aberto]:pb-0",
+  "max-lg:fixed max-lg:inset-x-0 max-lg:z-[45] max-lg:bg-background",
+  "max-lg:top-[max(var(--vv-topo,0px),var(--faixas-de-cima,0px))]",
+  "max-lg:h-[calc(var(--vv-topo,0px)+var(--vv-altura,100dvh)-max(var(--vv-topo,0px),var(--faixas-de-cima,0px)))]",
+  "max-lg:pt-[env(safe-area-inset-top)] max-lg:pb-[env(safe-area-inset-bottom)] max-lg:data-[teclado-aberto]:pb-0",
 ].join(" ");
 
 export function colunasDoCelular(temSelecao: boolean): { lista: string; conversa: string } {
   return {
-    lista: temSelecao ? "max-md:invisible flex" : "flex",
-    conversa: temSelecao ? `flex ${CAMADA_DA_CONVERSA}` : "hidden md:flex",
+    lista: temSelecao ? "max-lg:invisible flex" : "flex",
+    conversa: temSelecao ? `flex ${CAMADA_DA_CONVERSA}` : "hidden lg:flex",
   };
 }
 
@@ -654,7 +655,7 @@ export function InboxLayout({
    * arquivo posiciona a alça e chama a função; aquilo é o que o teste prende.
    *
    * `faixa` é `null` até o efeito rodar (e sempre, no servidor e abaixo do
-   * `md`) — é o que garante primeiro render idêntico ao do servidor: sem
+   * `lg`) — é o que garante primeiro render idêntico ao do servidor: sem
    * divisória nenhuma e sem estilo nenhum na grade. No celular nada muda.
    */
   const gradeRef = useRef<HTMLDivElement | null>(null);
@@ -853,7 +854,7 @@ export function InboxLayout({
     <div
       ref={gradeRef}
       className={cn(
-        "grid relative h-[calc(100dvh-var(--faixas-de-cima,0px)-3.5rem-var(--space-6)-max(var(--space-6),var(--rodape-ocupado,0px)))] w-full grid-cols-1 md:grid-cols-[300px_1fr]",
+        "grid relative h-[calc(100dvh-var(--faixas-de-cima,0px)-3.5rem-var(--space-6)-max(var(--space-6),var(--rodape-ocupado,0px)))] w-full grid-cols-1 lg:grid-cols-[300px_1fr]",
         // Recolhido (issue #3004), a terceira trilha vira o trilho estreito do
         // botão de expandir e a conversa fica com o que era da ficha. Duas
         // listas em vez de uma classe com valor em variável: o Tailwind precisa
@@ -897,12 +898,12 @@ export function InboxLayout({
         Sem media query em JavaScript de propósito: `useMediaQuery` decide DEPOIS
         da hidratação, então a primeira pintura mostra o layout errado e pisca. A
         classe condicional é resolvida pelo CSS, na primeira pintura, e some no
-        `md` — onde as duas colunas cabem juntas e a regra não se aplica.
+        `lg` — onde as duas colunas cabem juntas e a regra não se aplica.
       */}
       <div
         ref={listaRef}
         className={cn(
-          "h-full min-h-0 flex-col border-r border-border md:flex",
+          "h-full min-h-0 flex-col border-r border-border lg:flex",
           colunas.lista,
         )}
       >
@@ -960,7 +961,7 @@ export function InboxLayout({
         ref={conversaRef}
         data-teclado-aberto={tecladoAberto ? "" : undefined}
         className={cn(
-          "h-full min-h-0 min-w-0 flex-col md:flex group/conversa",
+          "h-full min-h-0 min-w-0 flex-col lg:flex group/conversa",
           colunas.conversa,
         )}
       >
@@ -971,11 +972,11 @@ export function InboxLayout({
           conversa, e só aparece quando há uma.
         */}
         {selectedId && (
-          <div className="flex items-center gap-1 border-b border-border px-1 py-1 md:hidden">
+          <div className="flex items-center gap-1 border-b border-border px-1 py-1 lg:hidden">
             <Button
               variant="ghost"
               size="sm"
-              className="gap-1 px-2"
+              className="min-h-11 gap-1 px-2"
               onClick={() => handleSelect(null)}
             >
               <CaretLeft size={16} />
@@ -985,12 +986,13 @@ export function InboxLayout({
             {selectedConversation && (
               <Sheet open={fichaAberta} onOpenChange={setFichaAberta}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1 px-2 xl:hidden">
+                  <Button variant="ghost" size="sm" className="min-h-11 gap-1 px-2 xl:hidden">
                     <IdentificationCard size={16} />
                     {t("Ficha")}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[min(22rem,90vw)] overflow-y-auto p-0">
+                {/* Painel lateral do Unnify (DS §10.15): 75% da tela até 384 (Work). */}
+                <SheetContent side="right" className="w-3/4 max-w-sm overflow-y-auto p-0">
                   <SheetTitle className="sr-only">{t("Ficha do contato")}</SheetTitle>
                   <CRMSidePanel conversation={selectedConversation} />
                 </SheetContent>
@@ -1111,14 +1113,20 @@ export function InboxLayout({
             />
           </>
         ) : selectionNotFound ? (
-          <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
-            {t("Conversa não encontrada ou fora do seu acesso.")}
+          <div className="flex h-full items-center justify-center p-6">
+            <EmptyState
+              icon={<ChatCircle size={32} aria-hidden />}
+              title={t("Conversa não encontrada ou fora do seu acesso.")}
+            />
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
-            <ChatCircle size={36} weight="thin" className="text-text-subtle" aria-hidden />
-            <p className="text-sm font-medium text-text-muted">{t("Selecione uma conversa")}</p>
-            <p className="text-xs text-text-muted">{t("Ou navegue com J e K")}</p>
+          // Vazio compacto (Unnify §10.21): ícone de 32, uma frase, sem ação.
+          <div className="flex h-full items-center justify-center p-6">
+            <EmptyState
+              icon={<ChatCircle size={32} aria-hidden />}
+              title={t("Selecione uma conversa")}
+              description={t("Ou navegue com J e K")}
+            />
           </div>
         )}
       </div>
@@ -1132,7 +1140,7 @@ export function InboxLayout({
       </div>
 
       {/*
-        AS DUAS DIVISÓRIAS (#2579) — só a partir do `md`, quando as colunas
+        AS DUAS DIVISÓRIAS (#2579) — só a partir do `lg`, quando as colunas
         convivem; abaixo disso `efetivas` é `null` e nenhuma nasce.
 
         `absolute` de propósito: a alça não é um item da grade (não ocupa

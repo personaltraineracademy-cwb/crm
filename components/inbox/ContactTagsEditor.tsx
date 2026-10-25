@@ -182,7 +182,7 @@ export function ContactTagsEditor(props: Props) {
         {tags.length > 0 ? (
           tags.map((tag) => (
             <Fragment key={tag}>
-              <ChipDeEtiqueta tag={tag} className="h-5 gap-1 px-1.5 text-[10px]">
+              <ChipDeEtiqueta tag={tag} className="h-5 gap-1 rounded-md px-1.5 text-xs leading-4">
                 <button
                   type="button"
                   onClick={() => remove(tag)}
@@ -262,7 +262,7 @@ export function ContactTagsEditor(props: Props) {
                   : add(tag)
               }
               disabled={pendente || tags.length >= 20}
-              className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:border-solid hover:text-foreground disabled:opacity-50"
+              className="hover:border-interactive-border inline-flex h-5 items-center gap-1 rounded-md border border-dashed border-border px-1.5 text-xs text-muted-foreground transition-colors hover:border-solid hover:text-foreground disabled:opacity-50"
             >
               <PontoDaEtiqueta tag={tag} />
               + {tag}

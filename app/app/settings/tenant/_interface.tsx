@@ -90,7 +90,7 @@ export function InterfaceDaEmpresaForm({ initial, role, camposDeCompra = [] }: P
         lugar onde ela já escolhe as áreas — nada de tela nova.
       */}
       {camposDeCompra.length > 0 && (
-        <fieldset disabled={isPending} className="space-y-2 rounded-md border p-4">
+        <fieldset disabled={isPending} className="space-y-2 rounded-lg border p-4">
           <legend className="px-1 text-sm font-medium">{t("Últimas compras")}</legend>
           <p className="text-xs text-muted-foreground">
             {t(

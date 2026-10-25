@@ -74,9 +74,10 @@ describe("a evolução dos ganhos no Desempenho", () => {
     );
     expect(celulas).toEqual(["02/10", "0"]);
 
-    // O mesmo `Card` para os dois: o ancestral comum é o próprio Cartão.
-    const cartaoDoGrafico = grafico.closest("div.rounded-lg");
-    const cartaoDaTabela = linhaParada?.closest("div.rounded-lg");
+    // O mesmo `Card` para os dois: o ancestral comum é o próprio Cartão. Pelo
+    // `data-slot`, não pelo raio: o raio é do tema e mudou com o Unnify.
+    const cartaoDoGrafico = grafico.closest('[data-slot="card"]');
+    const cartaoDaTabela = linhaParada?.closest('[data-slot="card"]');
     expect(cartaoDoGrafico).not.toBeNull();
     expect(cartaoDaTabela).toBe(cartaoDoGrafico);
     // …e o Cartão é o da série, com o título e o total — não outro qualquer.

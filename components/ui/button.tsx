@@ -5,68 +5,78 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Button — Sage design system.
- * Variants:
- *   - primary (default): accent fill, branded CTA
- *   - secondary: surface-elevated com border, ação neutra
- *   - ghost: transparent, hover suave (toolbar/inline)
- *   - destructive: error fill (delete/cancel destrutivo)
- *   - outline: alias de secondary com background transparente (compat shadcn)
- *   - link: text-only com underline
- *   - default: alias de primary (compat shadcn)
+ * Button — Unnify (DESIGN-SYSTEM.md §10.1, §9).
+ *
+ * Variantes do Unnify:
+ *   - default: a ação primária (UMA por área). `primary` → `primary-hover` → `primary-pressed`.
+ *   - outline: ação secundária padrão (cartão + borda; hover `interactive`).
+ *   - secondary: secundária com peso (fundo `secondary`, sem borda).
+ *   - ghost: terciária e botões só com ícone.
+ *   - destructive: a CANÔNICA, suave (`destructive/10`, texto destrutivo).
+ *   - destructive-solid: a sólida, reservada à confirmação final dentro de diálogo.
+ *   - link: texto `primary`, sublinha no hover.
+ * Apelido do CRM (364 arquivos importam): `primary` = `default`.
+ *
+ * Tamanhos (altura · padding · raio): xs 28·10·6 · sm 32·12·8 · default 36·14·8 ·
+ * lg 40·20·8; ícone icon-xs 28 · icon-sm 32 · icon 36 · icon-lg 40.
+ * Apelido do CRM: `md` = `default`.
+ *
+ * Alvo de toque: 44×44 em ponteiro grosso e abaixo de 640px (Work, DS §5.2). O
+ * CRM subia TODO botão a 44 abaixo de 1024px; o Unnify mede pelo ponteiro, e o
+ * notebook com mouse entre 640 e 1024 volta aos 36.
+ *
+ * Sem `active:translate-y-px` e sem sombra: no Unnify pressionar só troca a cor
+ * (§7.2) e superfície é lisa (§1).
  */
+const ALVO_DE_TOQUE = "pointer-coarse:min-h-11 max-sm:min-h-11";
+const ALVO_DE_TOQUE_ICONE = `${ALVO_DE_TOQUE} pointer-coarse:min-w-11 max-sm:min-w-11`;
+
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap",
-    "rounded-sm font-medium",
-    // `transform` SAIU da lista, e `translate` não entrou no lugar.
-    //
-    // O recuo do toque é `active:translate-y-px`, lá embaixo. No Tailwind 4 essa
-    // classe compila para a propriedade INDIVIDUAL `translate`, não para
-    // `transform` — então `transform` nesta lista era uma propriedade que nunca
-    // muda, pedindo transição para nada.
-    //
-    // E `translate` fica fora de propósito: o recuo do `:active` é o único
-    // retorno INSTANTÂNEO da interface — é ele que faz o botão parecer apertado
-    // em vez de clicado. A lei pede 80ms, que nem existe na tabela de durações
-    // dela própria; transicionar em `duration-fast` (120ms) deixaria a descida
-    // E a subida arrastadas, que é o oposto do que o recuo comunica.
-    "transition-[background-color,border-color,color,box-shadow]",
-    "duration-fast ease-out",
-    "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+    "inline-flex shrink-0 items-center justify-center whitespace-nowrap",
+    "rounded-lg border border-transparent bg-clip-padding text-sm font-medium select-none",
+    "transition-[background-color,border-color,color,box-shadow] duration-fast ease-out",
+    // Foco 2+2 (§9.2): anel `ring` com afastamento na cor do fundo.
+    "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:opacity-50",
-    "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-    "active:translate-y-px",
+    // Inválido (§9.1): borda destrutiva + anel de 4px a 20%.
+    "aria-invalid:border-destructive aria-invalid:ring-4 aria-invalid:ring-destructive/20",
+    // Ícone de 16 por padrão; quem passar `size-*` no ícone escolhe outro.
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(" "),
   {
     variants: {
       variant: {
-        primary: "bg-accent text-accent-foreground hover:bg-accent-hover shadow-xs",
-        default: "bg-accent text-accent-foreground hover:bg-accent-hover shadow-xs",
-        secondary:
-          "bg-surface-elevated text-text border border-border hover:border-accent hover:text-accent",
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed",
+        primary:
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed",
         outline:
-          "bg-transparent text-text border border-border hover:border-accent hover:text-accent",
-        ghost: "bg-transparent text-text hover:bg-accent-soft hover:text-accent",
-        destructive: "bg-error text-white hover:brightness-95 shadow-xs",
-        link: "bg-transparent text-accent underline underline-offset-4 decoration-1 hover:decoration-2 h-auto p-0",
+          "border-border bg-card text-foreground hover:border-interactive-border hover:bg-interactive hover:text-interactive-foreground active:bg-interactive-strong aria-expanded:border-interactive-border aria-expanded:bg-interactive aria-expanded:text-interactive-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-interactive hover:text-interactive-foreground active:bg-interactive-strong aria-expanded:bg-interactive aria-expanded:text-interactive-foreground",
+        ghost:
+          "bg-transparent text-muted-foreground hover:bg-interactive hover:text-interactive-foreground active:bg-interactive-strong aria-expanded:bg-interactive aria-expanded:text-interactive-foreground",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 active:bg-destructive/25 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:active:bg-destructive/35",
+        "destructive-solid":
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
+        link: "bg-transparent text-primary underline-offset-4 hover:text-primary-hover hover:underline active:text-primary-pressed",
       },
-      // Alturas de toque: abaixo de `lg` (mesmo corte que o resto da casca
-      // usa pra decidir "é celular/tablet, é mouse") toda variante bate os
-      // 44px recomendados pra alvo de toque; de `lg:` pra cima, onde quem
-      // aciona é cursor, volta pro tamanho compacto original — mudar isso
-      // globalmente pro app inteiro em telas grandes infla a densidade sem
-      // necessidade nenhuma. `lg` já nascia com 44px e não precisou mudar.
       size: {
-        sm: "h-11 px-3 text-xs lg:h-8",
-        default: "h-11 px-4 text-sm lg:h-9",
-        md: "h-11 px-4 text-sm lg:h-9",
-        lg: "h-11 px-6 text-sm",
-        icon: "h-11 w-11 lg:h-9 lg:w-9",
+        xs: `h-7 gap-1.5 rounded-md px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5 ${ALVO_DE_TOQUE}`,
+        sm: `h-8 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 ${ALVO_DE_TOQUE}`,
+        default: `h-9 gap-2 px-3.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 ${ALVO_DE_TOQUE}`,
+        md: `h-9 gap-2 px-3.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 ${ALVO_DE_TOQUE}`,
+        lg: `h-10 gap-2 px-5 has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4 ${ALVO_DE_TOQUE}`,
+        "icon-xs": `size-7 rounded-md [&_svg:not([class*='size-'])]:size-3.5 ${ALVO_DE_TOQUE_ICONE}`,
+        "icon-sm": `size-8 ${ALVO_DE_TOQUE_ICONE}`,
+        icon: `size-9 ${ALVO_DE_TOQUE_ICONE}`,
+        "icon-lg": `size-10 ${ALVO_DE_TOQUE_ICONE}`,
       },
     },
     defaultVariants: {
-      variant: "primary",
+      variant: "default",
       size: "default",
     },
   },
@@ -81,7 +91,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <Comp
+        data-slot="button"
+        data-variant={variant ?? "default"}
+        data-size={size ?? "default"}
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
     );
   },
 );

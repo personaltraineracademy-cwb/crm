@@ -8,6 +8,7 @@ import { traduzir } from "@/lib/i18n/dicionario";
 
 import { FormularioDeCadastro } from "./_form";
 import { PedidosPendentes } from "./_pedidos";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Cadastro na instalação" };
 export const dynamic = "force-dynamic";
@@ -59,18 +60,14 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {traduzir("Cadastro", usuario.idioma)}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir("Quem pode criar uma conta nesta instalação.", usuario.idioma)}
-        </p>
-      </div>
+      <PageHeader
+        title={traduzir("Cadastro", usuario.idioma)}
+        description={traduzir("Quem pode criar uma conta nesta instalação.", usuario.idioma)}
+      />
       {aviso && (
         <div
           role="status"
-          className="rounded-md border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm dark:border-amber-500/30 dark:bg-amber-950/20"
+          className="border-warning-border bg-warning-soft rounded-lg border px-4 py-3 text-sm"
         >
           <p className="font-medium">
             {traduzir("A troca de modo ainda não chegou ao servidor.", usuario.idioma)}

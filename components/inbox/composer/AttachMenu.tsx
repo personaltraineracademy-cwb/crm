@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FileText, ImageSquare, Plus, UserCircle } from "@/lib/ui/icons";
+import { ACAO_DO_CAMPO } from "./acao-do-campo";
 
 interface Props {
   disabled?: boolean;
@@ -41,11 +42,11 @@ export function AttachMenu({ disabled, onPick, onPickContact }: Props) {
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="shrink-0"
+                  className={ACAO_DO_CAMPO}
                   aria-label={t("Anexar")}
                   disabled={disabled}
                 >
-                  <Plus size={18} weight="regular" aria-hidden />
+                  <Plus size={16} weight="regular" aria-hidden />
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
@@ -54,27 +55,27 @@ export function AttachMenu({ disabled, onPick, onPickContact }: Props) {
           <PopoverContent align="start" side="top" className="w-52 p-1">
             <button
               type="button"
-              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted lg:min-h-0"
+              className="hover:bg-interactive focus-visible:bg-interactive flex min-h-11 w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-hidden lg:min-h-9"
               onClick={() => mediaRef.current?.click()}
             >
-              <ImageSquare size={18} weight="duotone" className="text-primary" aria-hidden />
+              <ImageSquare size={16} weight="duotone" className="text-primary" aria-hidden />
               {t("Fotos e vídeos")}
             </button>
             <button
               type="button"
-              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted lg:min-h-0"
+              className="hover:bg-interactive focus-visible:bg-interactive flex min-h-11 w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-hidden lg:min-h-9"
               onClick={() => docRef.current?.click()}
             >
-              <FileText size={18} weight="duotone" className="text-primary" aria-hidden />
+              <FileText size={16} weight="duotone" className="text-primary" aria-hidden />
               {t("Documento")}
             </button>
             {onPickContact && (
               <button
                 type="button"
-                className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted lg:min-h-0"
+                className="hover:bg-interactive focus-visible:bg-interactive flex min-h-11 w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-hidden lg:min-h-9"
                 onClick={onPickContact}
               >
-                <UserCircle size={18} weight="duotone" className="text-primary" aria-hidden />
+                <UserCircle size={16} weight="duotone" className="text-primary" aria-hidden />
                 {t("Contato")}
               </button>
             )}

@@ -5,6 +5,7 @@ import { useT } from "@/hooks/i18n/useT";
 import { motivoDaFalhaDaMensagem } from "@/lib/inbox/motivo-da-falha";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient } from "@/lib/api/client";
@@ -263,13 +264,15 @@ export function JanelaFechadaAviso({
   if (!fonte) return <p role="status" className="border-t px-4 py-3 text-sm text-muted-foreground">{motivo}</p>;
 
   return (
-    <div className="border-t border-amber-300 bg-amber-50/60 px-4 py-3 dark:border-amber-800/60 dark:bg-amber-950/30">
-      <p className="mb-2 text-xs text-amber-900 dark:text-amber-200">{motivo}</p>
+    // Faixa de aviso (Unnify §10.19 em largura total): o trio do estado
+    // `warning` no lugar do âmbar cru, que ignorava o tema.
+    <div className="border-warning-border bg-warning-soft text-warning-foreground border-t px-4 py-3">
+      <p className="mb-2 text-sm">{motivo}</p>
 
       {aprovados.length === 0 ? (
         // Sem modelo aprovado não há saída por aqui, e dizer isso é melhor que
         // um seletor vazio que se lê como "ainda não carregou".
-        <p className="text-xs text-amber-900/80 dark:text-amber-200/80">
+        <p className="text-xs">
           {t("Nenhum modelo aprovado ainda. Crie um em")} <strong>{t("Conexões → Templates")}</strong>{" "}
           {t("e envie quando a plataforma aprovar.")}
         </p>
@@ -283,8 +286,8 @@ export function JanelaFechadaAviso({
             className={cn(
               // 16px e 44px no toque: o Safari do iPhone amplia a página ao
               // focar campo com fonte menor (F2).
-              "h-11 min-w-[16rem] flex-1 rounded-md border border-input bg-background px-2 text-base md:text-sm lg:h-9",
-              "focus:outline-hidden focus:ring-1 focus:ring-ring",
+              "h-11 min-w-[16rem] flex-1 rounded-lg border border-input bg-card px-3 text-base text-foreground md:text-sm lg:h-9",
+              "hover:border-interactive-border focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden",
             )}
           >
             <option value="">{t("Escolha um modelo aprovado…")}</option>
@@ -318,7 +321,7 @@ export function JanelaFechadaAviso({
         <div className="mt-2 flex flex-col gap-2">
           {slots.map((slot) => (
             <label key={slot.valueKey} className="flex flex-col gap-1">
-              <span className="text-[11px] text-amber-900/80 dark:text-amber-200/80">
+              <span className="text-xs font-medium">
                 {rotuloDoSlot(slot, t)}
               </span>
               <input
@@ -330,17 +333,16 @@ export function JanelaFechadaAviso({
                 disabled={send.isPending}
                 placeholder={ehMidia(slot) ? "https://…" : ""}
                 className={cn(
-                  "h-11 rounded-md border border-input bg-background px-2 text-base md:text-sm lg:h-9",
-                  "focus:outline-hidden focus:ring-1 focus:ring-ring",
+                  "h-11 rounded-lg border border-input bg-card px-3 text-base text-foreground md:text-sm lg:h-9",
+                  "hover:border-interactive-border focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden",
                 )}
               />
               {ehMidia(slot) && atual?.savedValues !== undefined && (
-                <span className="flex items-center gap-1.5 text-[11px] text-amber-900/80 dark:text-amber-200/80">
-                  <input
-                    type="checkbox"
+                <span className="flex items-center gap-2 text-xs">
+                  <Checkbox
                     checked={salvar[slot.valueKey] ?? false}
-                    onChange={(e) =>
-                      setSalvar((v) => ({ ...v, [slot.valueKey]: e.target.checked }))
+                    onCheckedChange={(marcada) =>
+                      setSalvar((v) => ({ ...v, [slot.valueKey]: marcada }))
                     }
                     disabled={send.isPending}
                     aria-label={t("Salvar este link no modelo")}
@@ -356,7 +358,7 @@ export function JanelaFechadaAviso({
               parâmetro de novo, sempre — sem ele vem `132012 Format mismatch,
               expected IMAGE, received UNKNOWN`. */}
           {slots.some(ehMidia) && (
-            <p className="text-[11px] text-amber-900/70 dark:text-amber-200/70">
+            <p className="text-xs">
               {t("A mídia do modelo entra por link público — a plataforma baixa o arquivo na hora do envio.")}
             </p>
           )}

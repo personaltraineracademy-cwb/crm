@@ -651,7 +651,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
 
         {/* ─── A ESCOLHA DA RECEITA (só na adição) ──────────────────────────── */}
         {escolhendo && canWrite && (
-          <Card className="border border-border p-3">
+          <div className="rounded-lg bg-muted/40 p-3">
             <p className="text-xs font-medium text-muted-foreground mb-2">
               {t("Qual receita você quer usar?")}
             </p>
@@ -661,7 +661,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                   key={opcao.id}
                   type="button"
                   onClick={() => escolherReceita(opcao)}
-                  className="block w-full rounded-md border bg-background p-2 text-left text-sm hover:bg-accent"
+                  className="hover:bg-interactive block w-full rounded-lg border bg-background p-2 text-left text-sm"
                 >
                   <span className="block font-medium">{t(opcao.rotulo)}</span>
                   <span className="block text-xs text-muted-foreground">
@@ -673,7 +673,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
             <Button size="sm" variant="outline" className="mt-2" onClick={() => setEscolhendo(false)}>
               {t("Cancelar")}
             </Button>
-          </Card>
+          </div>
         )}
 
         {receitas.map((inst) => {
@@ -698,7 +698,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
 
           if (editandoEsta && canWrite) {
             return (
-              <Card key={inst.id} className="border border-border p-3 mb-2">
+              <div key={inst.id} className="rounded-lg bg-muted/40 p-3 mb-2">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div className="col-span-1 md:col-span-2">
                     <Label htmlFor={idInputRotulo} className="text-xs text-muted-foreground">
@@ -804,7 +804,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                         ))}
                       </div>
                       {confirmandoModelo && (
-                        <div className="mt-2 rounded-md border p-2">
+                        <div className="mt-2 rounded-lg p-2 bg-muted/40">
                           <p className="text-xs text-muted-foreground mb-1">
                             {t("Trocar de modelo apaga o que você preencheu. Quer continuar?")}
                           </p>
@@ -881,7 +881,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                                   onChange={(e) =>
                                     mudarCampo(i, { tipo: e.target.value as TipoDeCampo })
                                   }
-                                  className="mt-1 block w-full rounded-md border bg-background p-2 text-sm"
+                                  className="mt-1 block w-full rounded-lg border bg-background p-2 text-sm"
                                 >
                                   <option value="texto">{t("Texto")}</option>
                                   <option value="numero">{t("Número")}</option>
@@ -898,7 +898,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                                   onChange={(e) =>
                                     mudarCampo(i, { filtro: e.target.value as FiltroDeCampo })
                                   }
-                                  className="mt-1 block w-full rounded-md border bg-background p-2 text-sm"
+                                  className="mt-1 block w-full rounded-lg border bg-background p-2 text-sm"
                                 >
                                   <option value="nenhum">{t("Nenhum")}</option>
                                   {campo.tipo === "texto" && (
@@ -1015,7 +1015,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                                       nivel: e.target.value as NivelDaTaxonomia,
                                     })
                                   }
-                                  className="mt-1 block w-full rounded-md border bg-background p-2 text-sm"
+                                  className="mt-1 block w-full rounded-lg border bg-background p-2 text-sm"
                                 >
                                   <option value="qualquer">{t("Qualquer")}</option>
                                   <option value="filho">{t("Tem categoria acima")}</option>
@@ -1032,7 +1032,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                                   onChange={(e) =>
                                     mudarCategoria(i, { filtro: e.target.value as FiltroDeCategoria })
                                   }
-                                  className="mt-1 block w-full rounded-md border bg-background p-2 text-sm"
+                                  className="mt-1 block w-full rounded-lg border bg-background p-2 text-sm"
                                 >
                                   <option value="nenhum">{t("Nenhum")}</option>
                                   <option value="contem">{t("Contém")}</option>
@@ -1188,12 +1188,12 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                     </div>
                   </div>
                 )}
-              </Card>
+              </div>
             );
           }
 
           return (
-            <Card key={inst.id} className="border border-border p-3 mb-2">
+            <div key={inst.id} className="mb-2 rounded-lg bg-muted/40 p-3">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-medium">
@@ -1289,7 +1289,7 @@ export default function ReceitasProntas({ connectionId, motor, canWrite }: Props
                   </div>
                 </div>
               )}
-            </Card>
+            </div>
           );
         })}
       </CardContent>

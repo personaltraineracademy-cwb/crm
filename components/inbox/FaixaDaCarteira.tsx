@@ -53,7 +53,7 @@ export function FaixaDaCarteira({ contactId, quemAtendeId }: Props) {
     <div
       role="status"
       data-testid="faixa-da-carteira"
-      className="flex w-full items-center gap-2 rounded-md border border-warning-fg/30 bg-warning-bg px-3 py-2 text-sm text-warning-fg"
+      className="border-warning-border bg-warning-soft text-warning-foreground flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-sm"
     >
       <UsersThree size={16} weight="duotone" aria-hidden />
       <span className="min-w-0 break-words">

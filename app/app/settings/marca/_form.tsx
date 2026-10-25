@@ -109,9 +109,9 @@ const ERRO_EM_PORTUGUES: Record<string, string> = {
 };
 
 const CLASSE_DO_TOM: Record<Tom, string> = {
-  informativo: "text-text-muted",
-  atencao: "text-warning-fg",
-  problema: "text-error-fg",
+  informativo: "text-muted-foreground",
+  atencao: "text-warning-foreground",
+  problema: "text-danger-foreground",
 };
 
 /** Cinza médio para o seletor visual quando o campo ainda não tem cor válida. */
@@ -138,8 +138,8 @@ function origemEmPortugues(
 function LinhaDeOrigem({ campo, valor }: { campo: string; valor: string }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border py-2 last:border-b-0">
-      <span className="text-sm text-text">{campo}</span>
-      <span className="text-sm text-text-muted">{valor}</span>
+      <span className="text-sm text-foreground">{campo}</span>
+      <span className="text-sm text-muted-foreground">{valor}</span>
     </div>
   );
 }
@@ -313,7 +313,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       <Card className="space-y-4 p-6">
-        <h2 className="text-base font-semibold tracking-tight text-text">
+        <h2 className="text-base font-semibold tracking-tight text-foreground">
           {t("Como sua empresa aparece")}
         </h2>
 
@@ -329,7 +329,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
             maxLength={120}
             autoComplete="off"
           />
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Aparece no menu lateral, para quem trabalha aqui. Deixe em branco para usar")}{" "}
             {semAOrganizacao.name}.
           </p>
@@ -369,12 +369,12 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
               className="w-36 font-mono"
             />
             {hexLimpo.length > 0 && !hexValido ? (
-              <span className="text-sm text-error-fg">
+              <span className="text-danger-foreground text-sm">
                 {t("Use um código de cor como #7a5cd6.")}
               </span>
             ) : null}
           </div>
-          <p id="ajuda-da-cor-da-organizacao" className="text-xs text-text-muted">
+          <p id="ajuda-da-cor-da-organizacao" className="text-xs text-muted-foreground">
             {t("Deixe em branco para voltar à cor que o sistema já usa.")}
           </p>
         </div>
@@ -420,19 +420,19 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
               className="w-36 font-mono"
             />
             {hexEscuroLimpo.length > 0 && !hexEscuroValido ? (
-              <span className="text-sm text-error-fg">
+              <span className="text-danger-foreground text-sm">
                 {t("Use um código de cor como #7a5cd6.")}
               </span>
             ) : null}
           </div>
-          <p id="ajuda-da-cor-escura-da-organizacao" className="text-xs text-text-muted">
+          <p id="ajuda-da-cor-escura-da-organizacao" className="text-xs text-muted-foreground">
             {t("Deixe em branco para os dois modos usarem a cor acima.")}
           </p>
         </div>
 
         {derivada ? (
           <div className="space-y-2">
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-muted-foreground">
               {t(
                 "A partir da sua cor o sistema monta esta escala e escolhe, dentro dela, o tom que vai nos botões:",
               )}
@@ -441,7 +441,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
             {/* Fato de desenho do produto, não diagnóstico desta cor: o modo
                 escuro parte de um tom mais claro da escala por construção. Sem
                 esta linha, ver dois tons marcados na escala parece incoerência. */}
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t(
                 "No modo escuro o sistema usa naturalmente um tom mais claro da escala, para a cor não se perder no fundo escuro.",
               )}
@@ -482,10 +482,10 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
         da organização é a fatia 2 e ainda não aparece aqui.
       */}
       <Card className="space-y-4 p-6">
-        <h2 className="text-base font-semibold tracking-tight text-text">
+        <h2 className="text-base font-semibold tracking-tight text-foreground">
           {t("Como seus e-mails saem")}
         </h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t(
             "Vale para os e-mails que as automações enviam ao seu cliente. O endereço de envio continua sendo o do sistema — o que muda é o nome que aparece e para onde vai a resposta.",
           )}
@@ -503,7 +503,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
             maxLength={120}
             autoComplete="off"
           />
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("É o que o cliente lê como remetente. Deixe em branco para usar o do sistema.")}
           </p>
         </div>
@@ -520,11 +520,11 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
             aria-invalid={!responderParaValido}
           />
           {!responderParaValido ? (
-            <span className="text-sm text-error-fg">
+            <span className="text-danger-foreground text-sm">
               {t("Use um endereço de e-mail como contato@suaempresa.com")}
             </span>
           ) : null}
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Para onde vai a resposta do cliente. Deixe em branco para usar o endereço do sistema.")}
           </p>
         </div>
@@ -541,10 +541,10 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
       */}
       <Card className="space-y-3 p-6">
         <div>
-          <h2 className="text-base font-semibold tracking-tight text-text">
+          <h2 className="text-base font-semibold tracking-tight text-foreground">
             {t("De onde vem cada coisa")}
           </h2>
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             {t("Considerando o que está nos campos acima.")}
           </p>
         </div>
@@ -569,7 +569,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
         ) : null}
 
         {!serializacao.css && resolvida.cor ? (
-          <p className="text-sm text-error-fg">
+          <p className="text-danger-foreground text-sm">
             {t(
               "Do jeito que está, esta cor não chegaria à tela: o sistema continuaria com a cor que já usa.",
             )}
@@ -583,10 +583,10 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
         o que ela vai repetir para o fornecedor dela.
       */}
       <Card className="space-y-2 p-6">
-        <h2 className="text-base font-semibold tracking-tight text-text">
+        <h2 className="text-base font-semibold tracking-tight text-foreground">
           {t("O que isto ainda não muda")}
         </h2>
-        <ul className="list-disc space-y-1 pl-5 text-sm text-text-muted">
+        <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
           <li>
             {t(
               "O título da aba do navegador continua com o nome do sistema, e não com o da sua empresa.",
@@ -645,7 +645,7 @@ export function FormularioDaMarcaDaOrganizacao({ gravada, instalacao, ambiente, 
 
       <div className="flex items-center justify-end gap-3">
         {erroTecnico ? (
-          <span className="font-mono text-xs text-text-muted">{erroTecnico}</span>
+          <span className="font-mono text-xs text-muted-foreground">{erroTecnico}</span>
         ) : null}
         <Button type="submit" disabled={isPending || !hexValido || !hexEscuroValido || !responderParaValido}>
           {isPending ? t("Salvando…") : t("Salvar")}

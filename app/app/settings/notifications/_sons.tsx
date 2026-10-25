@@ -103,7 +103,7 @@ export function SonsDosAvisos() {
               {t("Ouvir")}
             </Button>
             {podeTrocar ? (
-              <label className="cursor-pointer rounded-md border px-3 py-1.5 text-sm">
+              <label className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm">
                 {enviando === tipo ? t("Enviando…") : t("Trocar som")}
                 <input
                   type="file"

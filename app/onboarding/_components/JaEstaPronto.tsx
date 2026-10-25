@@ -61,7 +61,7 @@ export function JaEstaPronto({
   return (
     <section
       aria-labelledby="ja-pronto"
-      className="rounded-lg border bg-background p-5"
+      className="rounded-xl border border-border bg-card p-5"
     >
       <h3 id="ja-pronto" className="text-sm font-medium">
         {t("Você já instalou o sistema. Isto aqui já está de pé:")}
@@ -73,7 +73,7 @@ export function JaEstaPronto({
               aria-hidden
               className={
                 "mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full " +
-                (it.pronto ? "bg-emerald-500" : "bg-amber-500")
+                (it.pronto ? "bg-success" : "bg-warning")
               }
             />
             <span className={it.pronto ? "" : "text-muted-foreground"}>{it.texto}</span>

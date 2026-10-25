@@ -13,6 +13,8 @@
  * olha.
  */
 import { useT } from "@/hooks/i18n/useT";
+import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { rotuloDoMotivoDePerda } from "@/lib/schemas/leads";
 import { SEM_CATEGORIA, SEM_ETAPA, SEM_MOEDA, SEM_MOTIVO } from "@/lib/metrics/perdas";
 import { usePerdasMetrics } from "@/hooks/metrics/usePerdasMetrics";
@@ -80,9 +82,14 @@ function Bloco({
 export function PerdasPanel() {
   const t = useT();
   const { data, isLoading, isError } = usePerdasMetrics();
-  if (isLoading) return <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>;
+  if (isLoading)
+    return (
+      <div aria-busy="true" aria-label={t("Carregando…")}>
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </div>
+    );
   if (isError || !data)
-    return <p className="text-sm text-destructive">{t("Erro ao carregar o relatório de perdas.")}</p>;
+    return <Alert variant="destructive">{t("Erro ao carregar o relatório de perdas.")}</Alert>;
 
   const relatorio = data.data;
 

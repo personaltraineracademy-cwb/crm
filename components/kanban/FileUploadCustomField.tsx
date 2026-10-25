@@ -209,7 +209,7 @@ export function FileUploadCustomField({
           {label}
           {required && <span className="ml-1 text-error-fg">*</span>}
         </Label>
-        <span className="text-[11px] text-text-muted">
+        <span className="text-xs text-text-muted">
           {files.length} {files.length === 1 ? t("arquivo") : t("arquivos")}
         </span>
       </div>
@@ -227,18 +227,18 @@ export function FileUploadCustomField({
             return (
               <div
                 key={file.id}
-                className="flex items-center justify-between gap-2 rounded-md border border-border/80 bg-background/80 px-2.5 py-1.5 text-xs shadow-sm"
+                className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs"
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {isImage ? (
-                    <ImageIcon className="h-4 w-4 shrink-0 text-sky-500" />
+                    <ImageIcon className="h-4 w-4 shrink-0 text-info" />
                   ) : (
-                    <FileText className="h-4 w-4 shrink-0 text-amber-500" />
+                    <FileText className="h-4 w-4 shrink-0 text-warning" />
                   )}
                   <span className="truncate font-medium text-text" title={file.name}>
                     {file.name}
                   </span>
-                  <span className="shrink-0 text-[10px] text-text-muted">
+                  <span className="shrink-0 text-xs text-text-muted">
                     ({formatBytes(file.size)})
                   </span>
                 </div>
@@ -323,7 +323,7 @@ export function FileUploadCustomField({
                   <Upload className="h-3.5 w-3.5 text-text-muted" />
                   <span>{t("Arraste arquivos aqui ou clique para selecionar")}</span>
                 </div>
-                <span className="text-[10px] text-text-muted">
+                <span className="text-xs text-text-muted">
                   {t("PDF, PNG, JPG ou WebP (até 50 MB)")}
                 </span>
               </div>
@@ -341,9 +341,9 @@ export function FileUploadCustomField({
           <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/80">
             <div className="flex items-center gap-2 min-w-0 pr-4">
               {previewAttachment?.type?.startsWith("image/") ? (
-                <ImageIcon className="h-4 w-4 shrink-0 text-sky-500" />
+                <ImageIcon className="h-4 w-4 shrink-0 text-info" />
               ) : (
-                <FileText className="h-4 w-4 shrink-0 text-amber-500" />
+                <FileText className="h-4 w-4 shrink-0 text-warning" />
               )}
               <DialogTitle className="text-sm font-semibold truncate text-text">
                 {previewAttachment?.name}
@@ -375,7 +375,7 @@ export function FileUploadCustomField({
                 <img
                   src={previewAttachment.url}
                   alt={previewAttachment.name}
-                  className="max-h-[75vh] w-auto max-w-full object-contain rounded-md shadow-sm"
+                  className="max-h-[75vh] w-auto max-w-full rounded-lg object-contain"
                 />
               </div>
             ) : previewAttachment?.type === "application/pdf" ? (
@@ -396,7 +396,7 @@ export function FileUploadCustomField({
                   <a
                     href={previewAttachment.url}
                     download={previewAttachment.name}
-                    className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 bg-primary text-primary-foreground text-xs font-medium shadow-sm hover:bg-primary/90"
+                    className="hover:bg-primary-hover inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground"
                   >
                     <Download className="h-4 w-4" />
                     <span>{t("Baixar arquivo para visualizar")}</span>

@@ -175,7 +175,7 @@ export function FollowupDoContato({ contactId, podeEscrever }: Props) {
 
   return (
     <section data-testid="inbox-followup">
-      <h3 className="text-xs font-semibold text-text">{t("Follow-up")}</h3>
+      <h3 className="text-sm font-semibold text-foreground">{t("Follow-up")}</h3>
       {exibido && (
         <div className="mt-2 rounded-md border border-border p-2 text-xs">
           <div className="flex items-center justify-between gap-2">

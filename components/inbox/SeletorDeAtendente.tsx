@@ -44,8 +44,9 @@ function SeletorComEquipe({
     <Select value={value ?? "all"} onValueChange={(v) => onChange(v === "all" ? undefined : v)}>
       <SelectTrigger
         className={cn(
-          "h-8 min-w-0 flex-1 rounded-full border-transparent bg-surface-elevated px-3 text-xs shadow-none",
-          value != null && "border-accent bg-accent-soft text-accent",
+          // Mesmo controle `sm` dos outros filtros da faixa (`InboxFilters`).
+          "h-8 min-w-0 flex-1 rounded-lg px-3 text-xs shadow-none",
+          value != null && "border-interactive-border bg-interactive text-interactive-foreground",
         )}
         aria-label={t("Filtrar por atendente")}
       >

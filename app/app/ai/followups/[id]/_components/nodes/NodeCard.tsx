@@ -8,6 +8,7 @@ import type { NomesDeValor } from "@/lib/followup/vocabulario";
 import { Warning } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 import { useT } from "@/hooks/i18n/useT";
+import { BLOCO_DE_ICONE, FAIXA_DO_NO, classesDoNo } from "@/components/fluxo/tema-do-fluxo";
 import { useEtapasDoFluxo } from "../EtapasDoFluxo";
 import type { NodeVisual } from "./nodeVisuals";
 
@@ -44,10 +45,11 @@ interface Props {
 }
 
 /**
- * Shared card shell for every node type — a card, not a bare React Flow box:
- * icon chip + title + subtitle + connection handles, left border in the type's
- * accent. Red ring + inline message when `errors` is non-empty (publish 422
- * anchored to this node — Task 6.2 PublishBar wires this).
+ * Casca de cartão de todo tipo de nó, no tema do Unnify (`tema-do-fluxo`):
+ * cartão de raio 12 sem sombra, bloco de ícone de 32 (`primary/10`), o TIPO em
+ * `xs` muted, o título e o subtítulo. Selecionado, o anel de foco; com `errors`
+ * (o 422 do publish ancorado neste nó, que a PublishBar liga), a borda
+ * inválida e a mensagem em linha.
  *
  * ⚠️ SUBTÍTULO E SAÍDA QUEBRAM EM DUAS LINHAS, NÃO CORTAM. Eram `truncate` numa
  * linha só dentro de um card de 224px, e o que se perdia era sempre o FIM — que
@@ -79,37 +81,31 @@ export function NodeCard({
 
   return (
     <div
-      className={cn(
-        "w-56 rounded-md border border-l-4 border-border bg-surface shadow-sm transition-shadow",
-        visual.borderClassName,
-        selected && "ring-2 ring-accent-500 ring-offset-1 ring-offset-bg",
-        hasError && "border-error ring-2 ring-error ring-offset-1 ring-offset-bg",
-      )}
+      className={classesDoNo({ selecionado: selected, comErro: hasError })}
       data-testid={`node-card-${id}`}
       title={hasError ? errors!.join("; ") : undefined}
     >
       {showTarget && <Handle type="target" position={Position.Top} />}
-      <div className="flex items-center gap-2 px-3 py-2">
-        <span
-          className={cn(
-            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-            visual.chipClassName,
-          )}
-        >
-          <Icon size={14} aria-hidden />
+      <div className="flex items-start gap-3 p-3">
+        <span className={BLOCO_DE_ICONE}>
+          <Icon size={16} aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-text" title={label}>
+          <p className="truncate text-xs text-muted-foreground">{t(visual.paletteLabel)}</p>
+          <p className="truncate text-sm font-medium text-foreground" title={label}>
             {label}
           </p>
-          <p className="line-clamp-2 break-words text-xs text-text-muted" title={subtitle}>
+          <p
+            className="mt-0.5 line-clamp-2 text-xs break-words text-muted-foreground"
+            title={subtitle}
+          >
             {subtitle}
           </p>
         </div>
       </div>
       {hasError && (
         <p
-          className="border-t border-error/30 px-3 py-1.5 text-xs leading-snug text-error-fg"
+          className={cn(FAIXA_DO_NO, "border-danger-border text-danger-foreground leading-snug")}
           data-testid={`node-error-${id}`}
         >
           {errors![0]}
@@ -124,11 +120,11 @@ export function NodeCard({
               <li
                 key={branch.id}
                 className={cn(
-                  "relative flex items-center gap-1.5 border-t border-border/60 px-3 py-1 first:border-t-0",
+                  "relative flex items-center gap-1.5 border-t border-border px-3 py-1.5 first:border-t-0",
                   // A saída de escape é a única que não veio de uma regra do usuário:
                   // fica em itálico e apagada para se ler como "o resto cai aqui".
-                  branch.kind === "fallback" && "italic text-text-muted",
-                  semEtapa && "text-warning-fg",
+                  branch.kind === "fallback" && "text-muted-foreground italic",
+                  semEtapa && "text-warning-foreground",
                 )}
                 data-testid={`node-branch-${id}-${branch.id}`}
                 data-regra-sem-etapa={semEtapa || undefined}
@@ -144,8 +140,8 @@ export function NodeCard({
                   <span
                     aria-hidden
                     className={cn(
-                      "h-1.5 w-1.5 shrink-0 rounded-full",
-                      branch.kind === "fallback" ? "bg-text-muted/50" : "bg-accent-500",
+                      "size-1.5 shrink-0 rounded-full",
+                      branch.kind === "fallback" ? "bg-muted-foreground/50" : "bg-primary",
                     )}
                   />
                 )}

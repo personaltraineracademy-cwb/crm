@@ -187,7 +187,7 @@ function LembreteDoCompromisso({
 
   return (
     <div className="grid gap-3 border-t border-border pt-3">
-      <label className="flex items-center gap-2 text-xs text-text-muted">
+      <label className="flex items-center gap-2 text-xs text-muted-foreground">
         <input
           type="checkbox"
           name="reminder_enabled"
@@ -198,14 +198,14 @@ function LembreteDoCompromisso({
         />
         {t("Avisar o cliente antes do compromisso, pelo WhatsApp")}
       </label>
-      <label className="grid gap-1 text-xs text-text-muted">
+      <label className="grid gap-1 text-xs text-muted-foreground">
         {t("Canal para enviar os lembretes")}
         <select
           name="reminder_channel_session_id"
           disabled={!ligado || Boolean(erroCanais)}
           defaultValue={tipo.reminder_channel_session_id ?? ""}
           data-testid={`editar-lembrete-canal-${tipo.id}`}
-          className="rounded-md border border-border bg-surface p-2 text-sm text-text disabled:opacity-50"
+          className="rounded-lg border border-border bg-card p-2 text-sm text-foreground disabled:opacity-50"
         >
           <option value="">
             {t("Automático — conversa da reserva ou único canal disponível")}
@@ -248,10 +248,10 @@ function LembreteDoCompromisso({
           return (
             <li
               key={c.id}
-              className="grid gap-2 rounded-md border border-border bg-surface-elevated p-3"
+              className="grid gap-2 rounded-lg border border-border bg-muted p-3"
             >
               <div className="flex flex-wrap items-end gap-2">
-                <label className="flex min-w-22 flex-col gap-1 text-xs text-text-muted">
+                <label className="flex min-w-22 flex-col gap-1 text-xs text-muted-foreground">
                   {t("Quanto antes")}
                   <input
                     type="number"
@@ -265,10 +265,10 @@ function LembreteDoCompromisso({
                         ? `editar-lembrete-minutos-${tipo.id}`
                         : `editar-lembrete-minutos-${tipo.id}-${i}`
                     }
-                    className="rounded-md border border-border bg-surface p-2 text-sm text-text disabled:opacity-50"
+                    className="rounded-lg border border-border bg-card p-2 text-sm text-foreground disabled:opacity-50"
                   />
                 </label>
-                <label className="flex min-w-28 flex-col gap-1 text-xs text-text-muted">
+                <label className="flex min-w-28 flex-col gap-1 text-xs text-muted-foreground">
                   <span className="sr-only">{t("Unidade")}</span>
                   <select
                     disabled={!ligado}
@@ -279,14 +279,14 @@ function LembreteDoCompromisso({
                         ? `editar-lembrete-unidade-${tipo.id}`
                         : `editar-lembrete-unidade-${tipo.id}-${i}`
                     }
-                    className="rounded-md border border-border bg-surface p-2 text-sm text-text disabled:opacity-50"
+                    className="rounded-lg border border-border bg-card p-2 text-sm text-foreground disabled:opacity-50"
                   >
                     <option value="minutos">{t("minutos")}</option>
                     <option value="horas">{t("horas")}</option>
                     <option value="dias">{t("dias")}</option>
                   </select>
                 </label>
-                <span className="pb-2 text-xs text-text-muted">{t("antes")}</span>
+                <span className="pb-2 text-xs text-muted-foreground">{t("antes")}</span>
                 {ligado && cartoes.length > 1 ? (
                   <Button
                     type="button"
@@ -300,7 +300,7 @@ function LembreteDoCompromisso({
                   </Button>
                 ) : null}
               </div>
-              <label className="flex flex-col gap-1 text-xs text-text-muted">
+              <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                 {t("Mensagem deste lembrete")}
                 <textarea
                   rows={3}
@@ -316,7 +316,7 @@ function LembreteDoCompromisso({
                       ? `editar-lembrete-texto-${tipo.id}`
                       : `editar-lembrete-texto-${tipo.id}-${i}`
                   }
-                  className="rounded-md border border-border bg-surface p-2 text-sm text-text disabled:opacity-50"
+                  className="rounded-lg border border-border bg-card p-2 text-sm text-foreground disabled:opacity-50"
                 />
               </label>
             </li>
@@ -346,7 +346,7 @@ function LembreteDoCompromisso({
           {t("Adicionar lembrete")}
         </Button>
       ) : null}
-      <p className="text-[11px] text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t(
           "Deixe a mensagem em branco para o texto padrão. Variáveis: {{nome}}, {{titulo}}, {{dia}}, {{hora}}, {{endereco}}.",
         )}
@@ -451,7 +451,7 @@ export function TiposDeAgendamentoClient({
           {criando ? (
             <form
               data-testid="form-novo-tipo"
-              className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2"
+              className="grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2"
               onSubmit={async (e) => {
                 e.preventDefault();
                 const feito = await comErro(
@@ -474,7 +474,7 @@ export function TiposDeAgendamentoClient({
                 }
               }}
             >
-              <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+              <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                 {t("Nome")}
                 <input
                   data-testid="novo-tipo-nome"
@@ -483,16 +483,16 @@ export function TiposDeAgendamentoClient({
                   value={rascunho.name}
                   onChange={(e) => setRascunho((r) => ({ ...r, name: e.target.value }))}
                   placeholder={t("Retorno")}
-                  className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text outline-hidden focus:border-border-strong"
+                  className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground outline-hidden focus:border-input"
                 />
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+              <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                 {t("Categoria")}
                 <select
                   data-testid="novo-tipo-categoria"
                   value={rascunho.category}
                   onChange={(e) => setRascunho((r) => ({ ...r, category: e.target.value }))}
-                  className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text outline-hidden focus:border-border-strong"
+                  className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground outline-hidden focus:border-input"
                 >
                   {CATEGORIAS.map((c) => (
                     <option key={c.valor} value={c.valor}>
@@ -501,7 +501,7 @@ export function TiposDeAgendamentoClient({
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+              <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                 {t("Duração (minutos)")}
                 <input
                   data-testid="novo-tipo-duracao"
@@ -512,16 +512,16 @@ export function TiposDeAgendamentoClient({
                   onChange={(e) =>
                     setRascunho((r) => ({ ...r, duration_minutes: Number(e.target.value) }))
                   }
-                  className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text outline-hidden focus:border-border-strong"
+                  className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground outline-hidden focus:border-input"
                 />
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+              <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                 {t("Onde acontece")}
                 <select
                   data-testid="novo-tipo-local"
                   value={rascunho.location_kind}
                   onChange={(e) => setRascunho((r) => ({ ...r, location_kind: e.target.value }))}
-                  className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text outline-hidden focus:border-border-strong"
+                  className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground outline-hidden focus:border-input"
                 >
                   {LOCAIS.map((l) => (
                     <option key={l.valor} value={l.valor}>
@@ -530,7 +530,7 @@ export function TiposDeAgendamentoClient({
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-1 text-xs font-medium text-text-muted sm:col-span-2">
+              <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground sm:col-span-2">
                 {/* ⚠️ SEM RESPONSÁVEL NÃO HÁ AGENDA. `lib/agenda/consulta.ts` exige
                     dono para saber de QUEM é a jornada; sem ele a rota devolve
                     `sem_responsavel` e a tela de marcar não oferece horário nenhum.
@@ -542,7 +542,7 @@ export function TiposDeAgendamentoClient({
                   onChange={(e) =>
                     setRascunho((r) => ({ ...r, default_owner_user_id: e.target.value }))
                   }
-                  className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text outline-hidden focus:border-border-strong"
+                  className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground outline-hidden focus:border-input"
                 >
                   <option value="">{t("Definir depois")}</option>
                   {pessoas.map((p) => (
@@ -553,7 +553,7 @@ export function TiposDeAgendamentoClient({
                 </select>
               </label>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={serviceDraft} onChange={(e) => setServiceDraft(e.target.checked)}/>{t("Criar como serviço em rascunho")}</label>
-              {serviceDraft && <p className="text-sm text-text-muted">{t("Depois de criar, abra Serviço e horários para configurar e ativar. Nenhuma reserva é oferecida antes da ativação.")}</p>}
+              {serviceDraft && <p className="text-sm text-muted-foreground">{t("Depois de criar, abra Serviço e horários para configurar e ativar. Nenhuma reserva é oferecida antes da ativação.")}</p>}
               <div className="flex justify-end gap-2 sm:col-span-2">
                 <Button type="button" variant="ghost" size="sm" onClick={() => setCriando(false)}>
                   {t("Cancelar")}
@@ -583,22 +583,22 @@ export function TiposDeAgendamentoClient({
           <li
             data-testid="erro-ao-ler-tipos"
             role="alert"
-            className="rounded-lg border border-destructive/50 bg-destructive/5 p-4 text-sm"
+            className="border-danger-border bg-danger-soft rounded-xl border p-4 text-sm"
           >
-            <p className="font-medium text-destructive">
+            <p className="text-danger-foreground font-medium">
               {t("Não consegui carregar os tipos de agendamento.")}
             </p>
-            <p className="mt-1 text-text-muted">
+            <p className="mt-1 text-muted-foreground">
               {t(
                 "Isto é uma falha de leitura, não uma lista vazia — pode haver tipos cadastrados que não estão aparecendo. Recarregue a página; se continuar, avise quem cuida da instalação.",
               )}
             </p>
-            <p className="mt-1 font-mono text-xs text-text-muted">{erroDeLeitura}</p>
+            <p className="mt-1 font-mono text-xs text-muted-foreground">{erroDeLeitura}</p>
           </li>
         ) : tiposIniciais.length === 0 ? (
           <li
             data-testid="sem-tipos"
-            className="rounded-lg border border-border bg-surface p-4 text-sm text-text-muted"
+            className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground"
           >
             {t(
               "Nenhum tipo de agendamento ainda. Crie o primeiro para que a Agenda tenha o que oferecer.",
@@ -609,19 +609,31 @@ export function TiposDeAgendamentoClient({
           <li
             key={tipo.id}
             data-testid={`tipo-${tipo.id}`}
-            className={`rounded-lg border border-border bg-surface p-3 ${tipo.is_active ? "" : "opacity-60"}`}
+            className={`rounded-lg border border-border bg-card p-3 ${tipo.is_active ? "" : "opacity-60"}`}
           >
             <div className="flex flex-wrap items-center gap-2">
               {/* Sem t(): é o nome que quem opera digitou no campo acima, não
                   rótulo do sistema — traduzir trocaria "Retorno" por
                   "Seguimiento" (chave existente, de outro contexto). */}
-              <span className="text-sm font-medium text-text">{tipo.name}</span>
-              <span className="rounded-full border border-border px-2 py-0.5 text-[11px] text-text-muted">
+              <span className="text-sm font-medium text-foreground">{tipo.name}</span>
+              <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
                 {t(rotuloDe(CATEGORIAS, tipo.category))}
               </span>
-              <span className="text-xs tabular-nums text-text-muted">{tipo.duration_minutes} min</span>
-              <span className="text-xs text-text-muted">{t(rotuloDe(LOCAIS, tipo.location_kind))}</span>
-              {tipo.service_enabled && <span className="text-xs text-text-muted">{tipo.booking_mode === "collective_limited" ? `${t("Coletivo com capacidade")} · ${tipo.service_capacity}` : tipo.booking_mode === "collective_unlimited" ? t("Coletivo sem limite automático") : t("Individual por profissional")}</span>}
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {tipo.duration_minutes} min
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {t(rotuloDe(LOCAIS, tipo.location_kind))}
+              </span>
+              {tipo.service_enabled && (
+                <span className="text-xs text-muted-foreground">
+                  {tipo.booking_mode === "collective_limited"
+                    ? `${t("Coletivo com capacidade")} · ${tipo.service_capacity}`
+                    : tipo.booking_mode === "collective_unlimited"
+                      ? t("Coletivo sem limite automático")
+                      : t("Individual por profissional")}
+                </span>
+              )}
               {!tipo.default_owner_user_id && !tipo.service_enabled ? (
                 // O aviso existe porque o sintoma é MUDO: sem dono, a tela de
                 // marcar simplesmente não mostra horário, sem dizer por quê.
@@ -640,12 +652,15 @@ export function TiposDeAgendamentoClient({
                     type="button"
                     data-testid={`sem-dono-${tipo.id}`}
                     onClick={() => setEditandoId(tipo.id)}
-                    className="text-xs text-warning underline underline-offset-2"
+                    className="text-warning-foreground text-xs underline underline-offset-2"
                   >
                     {t("sem responsável — definir quem atende")}
                   </button>
                 ) : (
-                  <span data-testid={`sem-dono-${tipo.id}`} className="text-xs text-warning">
+                  <span
+                    data-testid={`sem-dono-${tipo.id}`}
+                    className="text-warning-foreground text-xs"
+                  >
                     {t("sem responsável — não aparece para marcar")}
                   </span>
                 )
@@ -656,7 +671,7 @@ export function TiposDeAgendamentoClient({
                 // pode viver escondida atrás de um clique em "Editar".
                 <span
                   data-testid={`lembrete-ligado-${tipo.id}`}
-                  className="text-xs text-text-muted tabular-nums"
+                  className="text-xs text-muted-foreground tabular-nums"
                 >
                   {t("avisa o cliente")}{" "}
                   {[tipo.reminder_minutes_before, ...(tipo.reminder_extra_offsets_minutes ?? [])]
@@ -668,7 +683,13 @@ export function TiposDeAgendamentoClient({
                     : ""}
                 </span>
               ) : null}
-              {!tipo.is_active ? <span className="text-xs text-text-subtle">{tipo.service_enabled ? t("Rascunho: novas reservas estão desativadas.") : t("desativado")}</span> : null}
+              {!tipo.is_active ? (
+                <span className="text-xs text-muted-foreground">
+                  {tipo.service_enabled
+                    ? t("Rascunho: novas reservas estão desativadas.")
+                    : t("desativado")}
+                </span>
+              ) : null}
               {podeEditar ? (
                 <span className="ml-auto flex flex-wrap gap-1">
                   {(tipo.is_active || !tipo.service_enabled) && <Button variant="outline" size="sm" className="h-auto min-h-11 whitespace-normal text-left" onClick={() => { setServicoId(servicoId === tipo.id ? null : tipo.id); window.scrollTo({ top: 0, behavior: "smooth" }); }}>{t("Configurar")} {tipo.name}</Button>}
@@ -801,16 +822,16 @@ export function TiposDeAgendamentoClient({
                 }}
               >
                 <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_8rem_minmax(0,18rem)]">
-                  <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                     Nome
                     <input
                       name="name"
                       defaultValue={tipo.name}
                       data-testid={`editar-nome-${tipo.id}`}
-                      className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+                      className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                     {t("Duração")}
                     <input
                       name="duration_minutes"
@@ -819,16 +840,16 @@ export function TiposDeAgendamentoClient({
                       max={1440}
                       defaultValue={tipo.duration_minutes}
                       data-testid={`editar-duracao-${tipo.id}`}
-                      className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+                      className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                     {t("Quem atende")}
                     <select
                       name="default_owner_user_id"
                       defaultValue={tipo.default_owner_user_id ?? ""}
                       data-testid={`editar-dono-${tipo.id}`}
-                      className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+                      className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
                     >
                       <option value="">{t("Sem responsável")}</option>
                       {pessoas.map((p) => (
@@ -838,7 +859,7 @@ export function TiposDeAgendamentoClient({
                       ))}
                     </select>
                   </label>
-                  <label className="flex flex-col gap-1 text-xs text-text-muted">
+                  <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                     {t("Preço padrão")}
                     <input
                       name="default_price_cents"
@@ -851,9 +872,9 @@ export function TiposDeAgendamentoClient({
                           : (tipo.default_price_cents / 100).toFixed(2)
                       }
                       data-testid={`editar-preco-${tipo.id}`}
-                      className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+                      className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
                     />
-                    <span className="text-[11px] text-text-muted">
+                    <span className="text-xs text-muted-foreground">
                       {t("Opcional. Vira o valor sugerido na comanda, e pode ser mudado lá.")}
                     </span>
                   </label>
@@ -874,8 +895,8 @@ export function TiposDeAgendamentoClient({
           </li>
         ))}
       </ul>
-      {podeConfigurarGoogle && <details className="rounded-lg border border-border bg-surface p-4"><summary className="cursor-pointer font-semibold">{t("Contas e calendários Google")}</summary><div className="mt-4"><AgendasConectadas /></div></details>}
-      <details className="rounded-lg border border-border bg-surface p-4"><summary className="cursor-pointer font-semibold">{t("Regras gerais da agenda")}</summary><div className="mt-4 space-y-4">
+      {podeConfigurarGoogle && <details className="rounded-xl border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">{t("Contas e calendários Google")}</summary><div className="mt-4"><AgendasConectadas /></div></details>}
+      <details className="rounded-xl border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">{t("Regras gerais da agenda")}</summary><div className="mt-4 space-y-4">
         <TituloDaAgenda tituloInicial={tituloDaAgenda} podeEditar={podeEditar}/>
       <PrazosDePresenca podeEditar={podeEditar}/>
       <ClientePelaAgenda

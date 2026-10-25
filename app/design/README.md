@@ -76,3 +76,23 @@ Inter / Geist / Space Grotesk **proibidos** por saturação em training data.
   escolhida, migra-se para o `@theme inline` de `app/globals.css` com
   `var(--accent-N)` e os tokens viram parte do build. (Até o Tailwind 4 o alvo
   era `theme.extend.colors` do `tailwind.config.ts`, que não existe mais.)
+
+## Superfícies do Unnify (etapa 3B)
+
+A seção **Superfícies** mostra os componentes REAIS de `components/ui/` com os
+tokens do app (não as variáveis `--ds-*` deste showcase): cabeçalho de página,
+abas `line` e `segmented`, `SegmentedControl`, cartão, `StatCard`, tabela,
+`Alert`, os estados da página e avatar, separador e área rolável. Especificação:
+Unnify DS §10.7–10.13, §10.19–10.21 e §11.
+
+### Estados de uma área (DS §10.21, §11.5)
+
+| Estado              | Componente                                                | Regra                                                                                                                      |
+| ------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Vazio               | `EmptyState` (`icon`, `title`, `description?`, `action?`) | Ícone de 32, frase curta que diz o que fazer, no máximo 1 ação. Sem ilustração.                                            |
+| Carregando          | `Skeleton`                                                | A forma final do conteúdo (mesma altura e largura). Nunca spinner solto; botão mantém a largura. `StatCard` tem `loading`. |
+| Erro                | `Alert variant="destructive"` com `action`                | A causa em linguagem simples e 1 ação ("Tentar de novo"). Nunca só um código.                                              |
+| Parcial ou defasado | `Alert variant="info"`                                    | Um aviso discreto, sem alarmar.                                                                                            |
+
+`EmptyState` não desenha superfície: dentro de um cartão vai no `CardContent`;
+solto na página, fica sobre o fundo.

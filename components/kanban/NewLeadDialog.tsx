@@ -483,7 +483,7 @@ export function NewLeadDialog({
           {aviso && (
             <div
               role="alert"
-              className="rounded-md border border-amber-300 bg-amber-100 p-3 text-sm text-amber-950"
+              className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm"
             >
               <p className="font-medium">
                 {t("Este contato já tem um negócio aberto neste funil.")}

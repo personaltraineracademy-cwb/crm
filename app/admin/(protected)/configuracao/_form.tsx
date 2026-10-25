@@ -46,10 +46,10 @@ function CampoDeDiagnostico({ linha, idioma }: { linha: LinhaDaTela; idioma: Idi
         <span className="text-sm font-medium">{t(definicao.rotulo)}</span>
         <Origem fonte={estado.fonte} idioma={idioma} />
       </div>
-      <p className="text-sm text-text-muted">{t(definicao.explicacao)}</p>
+      <p className="text-sm text-muted-foreground">{t(definicao.explicacao)}</p>
 
       {estado.configurado && definicao.natureza === "segredo" && (
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Guardado, terminando em")} ••••{estado.last4 ?? ""}
         </p>
       )}
@@ -70,7 +70,7 @@ function CampoDeDiagnostico({ linha, idioma }: { linha: LinhaDaTela; idioma: Idi
         // `inline-flex` porque um `<button>` inline não aplica padding vertical
         // na caixa — o padding sai, a ALTURA não muda, e a medição continua
         // reprovando com o CSS "corrigido".
-        className="inline-flex items-center py-1.5 text-xs font-medium text-text-muted underline underline-offset-2 hover:text-foreground"
+        className="inline-flex items-center py-1.5 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
       >
         {definicao.motivo ? t(MOTIVO_CURTO[definicao.motivo]) : t("Não se troca por aqui")}
         {" · "}
@@ -78,7 +78,7 @@ function CampoDeDiagnostico({ linha, idioma }: { linha: LinhaDaTela; idioma: Idi
       </button>
 
       {aberto && definicao.comoTrocar && (
-        <p className="rounded-md bg-muted/50 p-3 text-sm text-text-muted">
+        <p className="rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
           {t(definicao.comoTrocar)}
         </p>
       )}
@@ -94,14 +94,14 @@ export function PainelDeConfiguracao({ grupos, idioma }: { grupos: Grupo[]; idio
         <Card key={g.grupo} className="p-5">
           <div className="mb-1">
             <h2 className="text-base font-semibold">{t(g.titulo)}</h2>
-            <p className="text-sm text-text-muted">{t(g.resumo)}</p>
+            <p className="text-sm text-muted-foreground">{t(g.resumo)}</p>
           </div>
           {g.ponteiro ? (
-            <p className="mt-2 text-sm text-text-muted">
+            <p className="mt-2 text-sm text-muted-foreground">
               <Link
                 href={g.ponteiro.href}
                 data-testid={`ponteiro-${g.grupo}`}
-                className="font-medium text-text underline underline-offset-4"
+                className="font-medium text-foreground underline underline-offset-4"
               >
                 {t(g.ponteiro.texto)}
               </Link>

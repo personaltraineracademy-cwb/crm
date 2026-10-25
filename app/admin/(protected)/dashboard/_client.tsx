@@ -6,6 +6,7 @@ import { AlertsBanner } from "@/components/admin/dashboard/AlertsBanner";
 import { useAdminDashboardKPIs } from "@/hooks/useAdminDashboardKPIs";
 import { useAlertsRealtime } from "@/hooks/useAlertsRealtime";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 function KPISkeleton() {
   return (
@@ -42,12 +43,10 @@ export function DashboardClient() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Dashboard")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("Visão cross-tenant — atualiza a cada 30 segundos.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Dashboard")}
+        description={t("Visão cross-tenant — atualiza a cada 30 segundos.")}
+      />
 
       {isLoading || !data ? (
         <>

@@ -38,7 +38,7 @@ function Preview({ preview }: { preview: TemplatePreview }) {
   const partes = preview.text.split(/(\{\{\w+\}\})/g);
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs uppercase tracking-wide text-muted-foreground">
+      <span className="text-xs text-muted-foreground">
         {t(preview.onde)}
       </span>
       <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -96,7 +96,7 @@ function LinkDaMidia({ tpl, slot }: { tpl: TemplateView; slot: TemplateSlotView 
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-xs uppercase tracking-wide text-muted-foreground">
+      <label htmlFor={id} className="text-xs text-muted-foreground">
         {t(slot.onde)} · {slot.expects}
       </label>
       <div className="flex gap-2">
@@ -124,7 +124,7 @@ function LinkDaMidia({ tpl, slot }: { tpl: TemplateView; slot: TemplateSlotView 
         </Button>
       </div>
       {linkInvalido ? (
-        <span className="text-xs text-destructive" role="status">
+        <span className="text-danger-foreground text-xs" role="status">
           {t("Use um link público que comece com https://")}
         </span>
       ) : (
@@ -216,7 +216,7 @@ export function TemplatesClient() {
               </div>
 
               {tpl.rejectedReason ? (
-                <p className="mt-2 text-sm text-destructive">
+                <p className="text-danger-foreground mt-2 text-sm">
                   {t("Recusado:")} {tpl.rejectedReason}
                 </p>
               ) : null}
@@ -243,7 +243,7 @@ export function TemplatesClient() {
                         />
                       ) : (
                         <div key={`m:${s.onde}:${i}`} className="flex flex-col gap-0.5">
-                          <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {t(s.onde)} · {s.expects}
                           </span>
                           <span className="text-sm text-muted-foreground">

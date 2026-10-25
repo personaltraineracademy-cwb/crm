@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useUser } from "@/hooks/auth/AuthProvider";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useT } from "@/hooks/i18n/useT";
@@ -16,7 +18,7 @@ import {
   type PrioridadeDaTarefa,
   type Tarefa,
 } from "@/lib/tarefas/tipos";
-import { Check, Kanban, PencilSimple, Trash, UserCircle } from "@/lib/ui/icons";
+import { Kanban, ListChecks, PencilSimple, Trash, UserCircle } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -35,10 +37,12 @@ interface Props {
 
 /** A cor é do TEMA, nunca um hex: ela tem de sobreviver ao claro e ao escuro. */
 const COR_DA_PRIORIDADE: Record<PrioridadeDaTarefa, string> = {
-  low: "bg-muted text-muted-foreground",
-  medium: "bg-primary/10 text-primary",
-  high: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
-  urgent: "bg-destructive/15 text-destructive",
+  // Cor só em "alta" (aviso) e "urgente" (perigo), DS §1 e §10.23; baixa e
+  // média ficam neutras para a cor continuar significando alguma coisa.
+  low: "border-border bg-muted text-muted-foreground",
+  medium: "border-border bg-muted text-muted-foreground",
+  high: "border-warning-border bg-warning-soft text-warning-foreground",
+  urgent: "border-danger-border bg-danger-soft text-danger-foreground",
 };
 
 function Linha({
@@ -86,27 +90,17 @@ function Linha({
   return (
     <div
       className={cn(
-        "group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/40",
+        "group flex min-h-14 items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/40",
         encerrada && "opacity-60",
       )}
     >
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={encerrada}
+      <Checkbox
+        className="mt-0.5"
+        checked={encerrada}
         aria-label={encerrada ? t("Reabrir a tarefa") : t("Marcar como concluída")}
         disabled={ocupada || !podeEditar}
-        onClick={() => comBloqueio(() => aoAlternarConcluida(tarefa))}
-        className={cn(
-          // O `before` estende a área de toque a 44px sem crescer o desenho de 16px.
-          "relative mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-md border transition-colors pointer-coarse:before:absolute pointer-coarse:before:-inset-3.5 pointer-coarse:before:content-['']",
-          encerrada
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-muted-foreground/40 hover:border-primary",
-        )}
-      >
-        {encerrada ? <Check size={12} weight="bold" aria-hidden /> : null}
-      </button>
+        onCheckedChange={() => comBloqueio(() => aoAlternarConcluida(tarefa))}
+      />
 
       <div className="min-w-0 flex-1">
         <p
@@ -121,16 +115,21 @@ function Linha({
           <p className="mt-0.5 truncate text-xs text-muted-foreground">{tarefa.description}</p>
         ) : null}
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px]">
+        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
           <span
             className={cn(
-              "rounded-full px-2 py-0.5 font-medium",
+              "rounded-md border px-2 py-0.5 font-medium",
               COR_DA_PRIORIDADE[tarefa.priority],
             )}
           >
             {rotuloDaPrioridade[tarefa.priority]}
           </span>
-          <span className={cn("text-muted-foreground", atrasada && "font-semibold text-destructive")}>
+          <span
+            className={cn(
+              "text-muted-foreground tabular-nums",
+              atrasada && "text-danger-foreground font-semibold",
+            )}
+          >
             {tarefa.due_date
               ? new Date(tarefa.due_date).toLocaleString(tag, {
                   day: "2-digit",
@@ -182,7 +181,7 @@ function Linha({
             <Button
               variant="destructive"
               size="sm"
-              className="px-2 text-[11px] md:h-7"
+              className="px-2 text-xs md:h-7"
               disabled={ocupada}
               onClick={() => comBloqueio(() => aoApagar(tarefa))}
             >
@@ -239,11 +238,14 @@ export function ListaDeTarefas({
 
   if (grupos.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-10 text-center">
-        <p className="text-sm font-medium">{t("Nenhuma tarefa por aqui")}</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("Enquanto isto estiver vazio, o que foi combinado vive só na memória de alguém.")}
-        </p>
+      <div className="rounded-xl border border-border bg-card">
+        <EmptyState
+          icon={<ListChecks aria-hidden />}
+          title={t("Nenhuma tarefa por aqui")}
+          description={t(
+            "Enquanto isto estiver vazio, o que foi combinado vive só na memória de alguém.",
+          )}
+        />
       </div>
     );
   }
@@ -254,13 +256,13 @@ export function ListaDeTarefas({
         <section key={grupo.faixa}>
           <h2
             className={cn(
-              "mb-1 px-3 text-xs font-semibold uppercase tracking-wider",
-              grupo.faixa === "atrasada" ? "text-destructive" : "text-muted-foreground",
+              "mb-2 text-xs font-medium",
+              grupo.faixa === "atrasada" ? "text-danger-foreground" : "text-muted-foreground",
             )}
           >
             {rotuloDaFaixa[grupo.faixa]}
           </h2>
-          <div className="rounded-xl border bg-card py-1">
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
             {grupo.tarefas.map((tarefa) => (
               <Linha
                 key={tarefa.id}

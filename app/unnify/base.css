@@ -1,0 +1,170 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — base global (etapa 1). DS §4, §7, §9, §15, §16 e o
+   `tokens/base.css` do pacote do Unnify.
+
+   Entra só o que o `globals.css` não faz, ou faz de outro jeito. Onde os dois
+   discordam, vence o Unnify, e o motivo de cada caso está no próprio bloco.
+   O que o `globals.css` já faz igual NÃO é repetido:
+   - `color-scheme` no `<html>` e nas subárvores `[data-theme]` (DS §15);
+   - movimento reduzido global (`*` a 0,01ms, `scroll-behavior: auto`);
+   - foco no modo de cores forçadas (`forced-colors`).
+   ───────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  /* ── Foco (DS §9.2): anel de 2px + afastamento de 2px, cor `ring` ──────────
+     Mantido como `outline`, e não o `box-shadow` do base.css do Unnify, por
+     três motivos: o DS manda `outline` para elementos nativos e legados; o
+     modo de cores forçadas apaga `box-shadow` (o `globals.css` já trata esse
+     modo pelo `outline`); e `box-shadow` brigaria com os `ring-*` e `shadow-*`
+     dos componentes.
+
+     Conflito, e vence o Unnify: o `globals.css` arredonda TODO elemento focado
+     (`border-radius: var(--radius-sm)`), o que muda a forma de um quadrado só
+     porque ele recebeu foco. `revert-layer` devolve o raio ao que o elemento
+     teria sem esta camada; o raio dado por utilitário (`rounded-*`) nem chega a
+     ser tocado, porque a camada de utilitários vence a de base.
+
+     `[data-theme] :focus-visible` tem a mesma especificidade do
+     `[data-theme="dark"] :focus-visible` do original e vem depois. */
+  :focus-visible,
+  [data-theme] :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: revert-layer;
+  }
+
+  /* ── Seleção de texto (DS §9.1): fundo `interactive-strong`, texto no azul
+     do `accent-foreground` do Unnify. Claro `#0055aa` sobre `#dceafa`, escuro
+     `#c6e0ff` sobre `#203d5c`. Substitui as duas regras do original. */
+  ::selection,
+  [data-theme] ::selection {
+    background-color: var(--interactive-strong);
+    color: var(--interactive-foreground);
+  }
+
+  /* ── Rolagem fina e discreta (DS §10.23, base.css) ─────────────────────────
+     Conflito, e vence o Unnify: o original tem 10px com polegar greige; o
+     Unnify, 6px com polegar na cor do texto a 20% (30% no hover) e
+     `scrollbar-color` na cor da borda. */
+  *,
+  [data-theme] * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb,
+  [data-theme] ::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    background-clip: border-box;
+    border: 0;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover,
+  [data-theme] ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+    background-clip: border-box;
+    border: 0;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* ── Números tabulares onde o alinhamento importa (DS §4.3, base.css) ──── */
+  table,
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="number"] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ── Alvos de toque de 44px em ponteiro grosso (DS §16) ──────────────────────
+   O Unnify põe o mínimo nas classes dos componentes dele (`.u-btn`, `.u-input`,
+   `.u-menu__item`…), que aqui não existem. O equivalente central, sem tocar em
+   componente, cobre CAMPO e ITEM DE LISTA. Botão fica de fora de propósito: o
+   `Checkbox` e o `Switch` do Radix SÃO `<button>`, e um mínimo de 44px os
+   deformaria; o `components/ui/button.tsx` já cresce o alvo abaixo de `lg`, e o
+   `.ds-alvo-44` do `globals.css` cobre o controle que não pode crescer.
+
+   Em `@layer base`: um `min-height` de utilitário no próprio elemento vence.
+   O `font-size` de 16px evita o zoom automático do iOS ao focar o campo. */
+@layer base {
+  @media (pointer: coarse) {
+    input:not(
+      [type="checkbox"],
+      [type="radio"],
+      [type="range"],
+      [type="color"],
+      [type="hidden"],
+      [type="file"]
+    ),
+    select,
+    textarea {
+      min-height: var(--touch-target);
+      font-size: 1rem;
+    }
+
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"] {
+      min-height: var(--touch-target);
+    }
+  }
+}
+
+/* ── Movimento reduzido (DS §7.3) ────────────────────────────────────────────
+   O bloco global do `globals.css` já zera transição e animação. Conflito, e
+   vence o Unnify: o original mantém o brilho do esqueleto correndo; o DS manda
+   o esqueleto virar bloco ESTÁTICO. O corpo fica na cor do próprio esqueleto
+   (`--ds-esqueleto-corpo`), que é a que o produto mediu para ser visível.
+
+   O giro do `.animate-spin` continua (exceção do original): um indicador de
+   "carregando" parado lê como travado, e o DS não fala de spinner. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-esqueleto {
+    animation: none !important;
+    background-image: none !important;
+    background-color: var(--ds-esqueleto-corpo) !important;
+  }
+}
+
+/* ── Alto contraste (DS §3.6; valores do `tokens/tokens.css` do Unnify) ───────
+   Reforça borda, borda de campo e texto secundário. Escrito nos primitivos
+   `--color-*` porque é deles que os utilitários leem; os apelidos (`--border`,
+   `--muted-foreground`) são redeclarados para não ficarem com o valor de antes. */
+@media (prefers-contrast: more) {
+  :root,
+  [data-theme="light"] {
+    --color-border: #797980;
+    --color-text-muted: #44444b;
+    --color-text-subtle: #44444b;
+    --input: #6a6a72;
+    --border: var(--color-border);
+    --muted-foreground: var(--color-text-muted);
+  }
+  [data-theme="dark"] {
+    --color-border: #92929a;
+    --color-text-muted: #d1d1d7;
+    --color-text-subtle: #d1d1d7;
+    --input: #a0a0aa;
+    --border: var(--color-border);
+    --muted-foreground: var(--color-text-muted);
+  }
+}
+
+/* ── Transparência reduzida e alto contraste (DS §3.6, §16) ─────────────────
+   O Unnify devolve a casca a sólido. Aqui, sem tocar na casca: todo elemento
+   com desfoque de fundo perde o desfoque (as barras do CRM já pintam o fundo a
+   95%). Fora de camada para vencer o utilitário `backdrop-blur`. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}

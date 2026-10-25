@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { useT } from "@/hooks/i18n/useT";
 import { loginSchema, type LoginInput } from "@/lib/auth/schemas";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,7 +73,7 @@ export function LoginForm({ next }: { next?: string }) {
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-xs text-destructive">{t(errors.email.message ?? "")}</p>
+          <p className="text-danger-foreground text-sm">{t(errors.email.message ?? "")}</p>
         )}
       </div>
       <div className="space-y-1.5">
@@ -88,7 +89,7 @@ export function LoginForm({ next }: { next?: string }) {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden focus-visible:ring-inset"
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-inset"
             aria-pressed={showPassword}
             onClick={() => setShowPassword((visible) => !visible)}
           >
@@ -98,18 +99,11 @@ export function LoginForm({ next }: { next?: string }) {
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-destructive">{t(errors.password.message ?? "")}</p>
+          <p className="text-danger-foreground text-sm">{t(errors.password.message ?? "")}</p>
         )}
       </div>
-      {serverError && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
-          {serverError}
-        </div>
-      )}
-      <Button type="submit" className="w-full" disabled={isPending}>
+      {serverError && <Alert variant="destructive">{serverError}</Alert>}
+      <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? t("Entrando...") : t("Entrar")}
       </Button>
     </form>

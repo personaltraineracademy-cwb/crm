@@ -5,6 +5,7 @@ import { loadAuthUser } from "@/lib/auth/server";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { normalizarIdioma } from "@/lib/i18n/idiomas";
 import { listarModulos } from "@/lib/modulos/service";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Módulos da instalação" };
 export const dynamic = "force-dynamic";
@@ -28,14 +29,12 @@ export default async function Page() {
 
   return (
     <div className="space-y-6" data-testid="tela-modulos-da-instalacao">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Módulos da instalação")}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-text-muted">
-          {t(
+      <PageHeader
+        title={t("Módulos da instalação")}
+        description={t(
             "Módulos opcionais com tabela própria, criados quando você instala — quem não instala não carrega as tabelas dele. Instalar aqui vale para todas as organizações desta instalação.",
           )}
-        </p>
-      </div>
+      />
       <ModulosManager inicial={modulos} />
     </div>
   );

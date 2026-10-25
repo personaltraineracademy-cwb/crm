@@ -48,7 +48,7 @@ export function PedidosPendentes({ pedidos }: { pedidos: PedidoPendente[] }) {
         {pedidos.map((pedido) => (
           <div
             key={pedido.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-muted/40 p-4"
           >
             <div className="min-w-0 space-y-0.5">
               <p className="truncate font-medium">{pedido.organizationName}</p>
@@ -70,7 +70,7 @@ export function PedidosPendentes({ pedidos }: { pedidos: PedidoPendente[] }) {
           </div>
         ))}
         {erro && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-danger-foreground text-sm" role="alert">
             {erro}
           </p>
         )}

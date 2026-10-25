@@ -55,9 +55,12 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
     else porDia.set(chave, [tarefa]);
   }
 
-  const nomeDoMes = new Intl.DateTimeFormat(tag, { month: "long", year: "numeric" }).format(
+  const mesPorExtenso = new Intl.DateTimeFormat(tag, { month: "long", year: "numeric" }).format(
     new Date(ano, mes, 1),
   );
+  // Frase normal (DS §14): só a primeira letra em maiúscula. O `capitalize`
+  // do CSS fazia "Outubro De 2026".
+  const nomeDoMes = mesPorExtenso.charAt(0).toLocaleUpperCase(tag) + mesPorExtenso.slice(1);
   const nomeDoDiaDaSemana = new Intl.DateTimeFormat(tag, { weekday: "short" });
   // 2026-03-01 é um domingo: a semana começa no índice 0 da grade.
   const cabecalhos = Array.from({ length: 7 }, (_, i) =>
@@ -71,22 +74,22 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="flex items-center justify-between border-b px-4 py-3">
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="size-8"
           aria-label={t("Mês anterior")}
           onClick={() => mover(-1)}
         >
           <CaretLeft size={16} aria-hidden />
         </Button>
-        <h2 className="text-base font-semibold capitalize">{nomeDoMes}</h2>
+        <h2 className="text-base font-semibold tabular-nums">{nomeDoMes}</h2>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="size-8"
           aria-label={t("Próximo mês")}
           onClick={() => mover(1)}
         >
@@ -98,7 +101,7 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
         {cabecalhos.map((rotulo) => (
           <div
             key={rotulo}
-            className="py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            className="py-2 text-center text-xs font-medium text-muted-foreground"
           >
             {rotulo}
           </div>
@@ -125,9 +128,9 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
             >
               <span
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center self-start rounded-full text-xs font-semibold",
+                  "flex size-6 items-center justify-center self-start rounded-full text-xs font-semibold tabular-nums",
                   chave === diaDeHoje
-                    ? "bg-primary font-bold text-primary-foreground"
+                    ? "bg-primary font-semibold text-primary-foreground"
                     : "text-muted-foreground",
                 )}
               >
@@ -144,11 +147,11 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
                     aoAbrirTarefa(tarefa);
                   }}
                   className={cn(
-                    "w-full truncate rounded-md px-1.5 py-0.5 text-left text-[10px] font-medium",
+                    "w-full truncate rounded-md px-1.5 py-0.5 text-left text-xs font-medium",
                     estaEncerrada(tarefa)
                       ? "bg-muted text-muted-foreground line-through"
                       : estaAtrasada(tarefa)
-                        ? "bg-destructive/15 font-semibold text-destructive"
+                        ? "bg-danger-soft text-danger-foreground font-semibold"
                         : "bg-primary/10 text-primary",
                   )}
                 >
@@ -157,7 +160,7 @@ export function CalendarioDeTarefas({ tarefas, podeEditar, aoAbrirTarefa, aoClic
               ))}
 
               {excedente > 0 ? (
-                <span className="pl-1 text-[10px] font-semibold text-muted-foreground">
+                <span className="pl-1 text-xs font-medium text-muted-foreground tabular-nums">
                   +{excedente} {t("mais")}
                 </span>
               ) : null}

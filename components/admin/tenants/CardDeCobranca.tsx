@@ -147,7 +147,7 @@ export function CardDeCobranca({
     <Card className="space-y-4 p-6" aria-labelledby="cobranca-do-tenant">
       <h2 id="cobranca-do-tenant" className="text-base font-semibold">{t("Cobrança")}</h2>
       {suspensaPorCobranca && (
-        <p role="status" className="text-sm text-warning-fg">
+        <p role="status" className="text-warning-foreground text-sm">
           {t("Suspensa por falta de pagamento. Dar prazo ou tornar isenta a reativa na hora.")}
         </p>
       )}
@@ -230,7 +230,7 @@ export function CardDeCobranca({
       )}
 
       {remover.length > 0 && (
-        <div role="alert" className="rounded-md border p-3 text-sm text-warning-fg">
+        <div role="alert" className="rounded-lg p-3 text-sm text-warning-foreground bg-muted/40">
           <p className="font-medium">{t("O uso atual não cabe no plano escolhido. Para trocar, primeiro:")}</p>
           <ul className="mt-1 list-disc pl-5">
             {remover.map(({ recurso, n }) => (

@@ -7,7 +7,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { format, isToday, isYesterday } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ChatCircle } from "@/lib/ui/icons";
+import { EsqueletoDoFio, ErroComAcao } from "./estados";
 import { MessageBubble } from "./MessageBubble";
 import { separarReacoes } from "@/lib/inbox/reacoes-no-fio";
 import { NoteCard } from "./NoteCard";
@@ -335,35 +337,34 @@ export function ChatThread({
 
   if (q.isLoading) {
     return (
-      <div {...sinalDoCanal} className="space-y-3 p-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-12 w-2/3" />
-        ))}
+      <div {...sinalDoCanal} className="h-full overflow-hidden">
+        <EsqueletoDoFio />
       </div>
     );
   }
 
   if (q.isError) {
     return (
-      <div
-        {...sinalDoCanal}
-        className="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground"
-      >
-        <p>{t("Erro ao carregar mensagens.")}</p>
-        <Button size="sm" variant="outline" onClick={() => q.refetch()}>
-          {t("Tentar novamente")}
-        </Button>
+      <div {...sinalDoCanal} className="flex h-full items-center justify-center">
+        <ErroComAcao
+          mensagem={t("Erro ao carregar mensagens.")}
+          acao={
+            <Button size="sm" variant="outline" onClick={() => q.refetch()}>
+              {t("Tentar novamente")}
+            </Button>
+          }
+        />
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div
-        {...sinalDoCanal}
-        className="flex h-full items-center justify-center text-sm text-muted-foreground"
-      >
-        {t("Nenhuma mensagem nesta conversa.")}
+      <div {...sinalDoCanal} className="flex h-full items-center justify-center p-6">
+        <EmptyState
+          icon={<ChatCircle size={32} aria-hidden />}
+          title={t("Nenhuma mensagem nesta conversa.")}
+        />
       </div>
     );
   }
@@ -402,7 +403,8 @@ export function ChatThread({
         {groups.map((g) => (
           <div key={g.key} className="space-y-1">
             <div className="sticky top-0 z-10 flex justify-center py-1">
-              <span className="rounded-full bg-background/80 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground backdrop-blur">
+              {/* Separador do dia: chip neutro opaco (translucidez é só da casca, DS §6.4). */}
+              <span className="rounded-md border border-border bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
                 {dayLabel(g.date, t, localeDaData)}
               </span>
             </div>

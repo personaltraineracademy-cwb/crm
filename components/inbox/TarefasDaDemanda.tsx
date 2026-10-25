@@ -101,7 +101,7 @@ function SecaoDeTarefasDaDemanda({ demandaId, contactId, leadId, podeEditar }: P
   return (
     <section data-testid="inbox-tarefas-da-demanda">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className="text-sm font-semibold text-foreground">
           {t("Tarefas desta demanda")}
           {resumo.abertas > 0 ? (
             <span className="ml-1.5 font-normal text-muted-foreground">
@@ -121,7 +121,7 @@ function SecaoDeTarefasDaDemanda({ demandaId, contactId, leadId, podeEditar }: P
             type="button"
             data-testid="inbox-nova-tarefa"
             onClick={abrirNova}
-            className="flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+            className="hover:text-primary-hover flex items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline"
           >
             <Plus size={12} aria-hidden />
             {t("Nova tarefa")}

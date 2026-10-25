@@ -3,6 +3,7 @@ import { useT } from "@/hooks/i18n/useT";
 import { Button } from "@/components/ui/button";
 import { Sparkle } from "@/lib/ui/icons";
 import { useDraftReply } from "@/hooks/inbox/useDraftReply";
+import { ACAO_DO_CAMPO } from "./acao-do-campo";
 
 interface Props {
   conversationId: string;
@@ -20,7 +21,7 @@ export function DraftReplyButton({ conversationId, onDraft, disabled }: Props) {
       type="button"
       size="icon"
       variant="ghost"
-      className="h-9 w-9 shrink-0"
+      className={ACAO_DO_CAMPO}
       aria-label={t("Sugerir resposta")}
       aria-busy={mutation.isPending}
       disabled={disabled || mutation.isPending}
@@ -30,7 +31,7 @@ export function DraftReplyButton({ conversationId, onDraft, disabled }: Props) {
         });
       }}
     >
-      <Sparkle size={18} weight={mutation.isPending ? "duotone" : "regular"} aria-hidden />
+      <Sparkle size={16} weight={mutation.isPending ? "duotone" : "regular"} aria-hidden />
     </Button>
   );
 }

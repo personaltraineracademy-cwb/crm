@@ -118,7 +118,11 @@ export function InviteForm() {
           {invite.isPending ? t("Enviando…") : t("Enviar convites")}
         </Button>
         {limiteDoPlano && (
-          <p role="alert" data-testid="convite-limite-do-plano" className="rounded-md border p-3 text-sm text-warning-fg">
+          <p
+            role="alert"
+            data-testid="convite-limite-do-plano"
+            className="text-warning-foreground rounded-lg border p-3 text-sm"
+          >
             {limiteDoPlano}
           </p>
         )}
@@ -134,7 +138,7 @@ export function InviteForm() {
                 </h2>
                 <ul className="mt-2 space-y-2 text-sm">
                   {result.sent.map((s) => (
-                    <li key={s.email} className="rounded-md border p-2">
+                    <li key={s.email} className="rounded-lg border p-2">
                       <div className="font-medium">{s.email}</div>
                       <div className="text-xs text-muted-foreground">
                         {s.email_dispatched
@@ -151,7 +155,7 @@ export function InviteForm() {
             ) : null}
             {result.failed.length > 0 ? (
               <section>
-                <h2 className="text-sm font-semibold text-destructive">
+                <h2 className="text-danger-foreground text-sm font-semibold">
                   {t("Falhas")} ({result.failed.length})
                 </h2>
                 <ul className="mt-2 space-y-1 text-sm">

@@ -165,7 +165,7 @@ export function EndForm({
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Vale para o fluxo de atendimento: o que acontece quando o cliente completa as perguntas.")}
           </p>
 
@@ -196,7 +196,7 @@ export function EndForm({
                   commit({ ...state, finishSkill: e.target.value });
                 }}
               />
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-muted-foreground">
                 {t("Ex.: fechamento-pagamento, catalogo-apresentacao.")}
               </p>
             </div>
@@ -227,7 +227,7 @@ export function EndForm({
                     ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-muted-foreground">
                 {t(
                   "Quando este fluxo terminar, o próximo começa sozinho — o que o cliente já respondeu segue valendo.",
                 )}
@@ -237,7 +237,7 @@ export function EndForm({
         </div>
       )}
 
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

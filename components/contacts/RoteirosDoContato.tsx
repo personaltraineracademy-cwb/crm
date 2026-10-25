@@ -38,7 +38,7 @@ export function RoteirosDoContato({ contactId, variante = "ficha" }: Props) {
   const conteudo = (
     <div className="space-y-4" data-testid="roteiros-do-contato">
       <h3 className="flex items-center gap-2 text-sm font-semibold">
-        <ListChecks size={16} aria-hidden className="text-text-muted" />
+        <ListChecks size={16} aria-hidden className="text-muted-foreground" />
         {t("Respostas dos roteiros de atendimento")}
       </h3>
       {data.map((roteiro) => (
@@ -50,7 +50,7 @@ export function RoteirosDoContato({ contactId, variante = "ficha" }: Props) {
           <dl className={compacto ? "space-y-1 text-sm" : "grid grid-cols-1 gap-2 text-sm md:grid-cols-2"}>
             {roteiro.campos.map((campo) => (
               <div key={campo.key} data-testid={`roteiro-campo-${campo.key}`}>
-                <dt className="text-xs uppercase text-muted-foreground">{campo.label}</dt>
+                <dt className="text-xs text-muted-foreground">{campo.label}</dt>
                 <dd className={campo.valor === null ? "text-muted-foreground" : ""}>
                   {campo.valor ?? t("não respondido")}
                 </dd>

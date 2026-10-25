@@ -88,7 +88,7 @@ export function EntregasDoAviso({
 
       {entregas.length === 0 ? (
         <p
-          className="rounded-lg border border-dashed p-4 text-xs text-muted-foreground"
+          className="rounded-xl border border-dashed p-4 text-xs text-muted-foreground"
           data-testid="entregas-vazias"
         >
           {t(
@@ -170,7 +170,7 @@ function LacoDeRetorno({ laco }: { laco: LacoDoAviso }) {
           />
         </div>
       )}
-      <p className="mt-2 text-[11px] text-muted-foreground">
+      <p className="mt-2 text-xs text-muted-foreground">
         {t(
           "Tempo típico entre o assistente travar e alguém da equipe agir, nos últimos 30 dias. Os dois grupos contam a partir do mesmo momento.",
         )}
@@ -197,7 +197,7 @@ function Medida({
       <p className="text-lg font-semibold tabular-nums">
         {minutos === null ? "—" : `${minutos} min`}
       </p>
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {respondidos}/{casos} {t("casos já tiveram uma ação da equipe")}
       </p>
     </div>

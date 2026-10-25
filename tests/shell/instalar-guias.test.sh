@@ -313,10 +313,16 @@ for doc in "$RAIZ/README.md" "$RAIZ/CHANGELOG.md" "$RAIZ"/.changes/*.md; do
   saida="$(cat "$SCRIPT" | eval "$desfaz" 2>&1)"; code=$?
   checa "[ $code = 0 ] && [ ! -e \"\$HOME/.agents/skills/deskcomm-instalar\" ]" "o comando de $(basename "$doc") desfaz de verdade (é: $desfaz)"
 done
-checa "[ $documentos -ge 2 ]" "o comando foi lido de pelo menos dois documentos (guarda de vacuidade)"
-# A outra metade que só vive em prosa: a forma de chamar em cada CLI e a defasagem da cópia.
-checa "grep -qF '\$deskcomm-instalar' \"\$RAIZ/README.md\" && ! grep -qE 'digite .?/deskcomm-' \"\$RAIZ/README.md\"" "o README ensina a forma do Codex e não manda digitar / em todos"
-checa "grep -q 'se atualizam sozinhos' \"\$RAIZ/README.md\" && grep -q 'vale mais que o do clone' \"\$RAIZ/README.md\"" "o README diz que a cópia não se atualiza sozinha e que no Claude Code ela vence o clone"
+# Um fork pode tirar do README o ensino dos guias (o script baixa do repositório do produto):
+# aí o README sai da conta e da prosa, e o piso cai para o documento que sobra. O README que
+# ensina o script continua cobrado inteiro.
+if grep -q 'instalar-guias\.sh' "$RAIZ/README.md"; then piso=2; else piso=1; fi
+checa "[ $documentos -ge $piso ]" "o comando foi lido de pelo menos $piso documento(s) (guarda de vacuidade)"
+if [ "$piso" = 2 ]; then
+  # A outra metade que só vive em prosa: a forma de chamar em cada CLI e a defasagem da cópia.
+  checa "grep -qF '\$deskcomm-instalar' \"\$RAIZ/README.md\" && ! grep -qE 'digite .?/deskcomm-' \"\$RAIZ/README.md\"" "o README ensina a forma do Codex e não manda digitar / em todos"
+  checa "grep -q 'se atualizam sozinhos' \"\$RAIZ/README.md\" && grep -q 'vale mais que o do clone' \"\$RAIZ/README.md\"" "o README diz que a cópia não se atualiza sozinha e que no Claude Code ela vence o clone"
+fi
 
 # Os deskcomm-* que sobraram nas três pastas, fora o link que a pessoa fez à mão.
 # shellcheck disable=SC2329  # chamada de dentro das condições que o `checa` avalia

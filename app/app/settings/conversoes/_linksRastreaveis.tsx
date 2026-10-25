@@ -181,7 +181,7 @@ export function LinksRastreaveis({
         )}
       </p>
       <form
-        className="max-w-2xl space-y-4 rounded-md border p-4"
+        className="max-w-2xl space-y-4 rounded-lg border p-4"
         onSubmit={(e) => {
           e.preventDefault();
           start(async () => {
@@ -238,7 +238,7 @@ export function LinksRastreaveis({
           <Label htmlFor="link-use">{t("Onde será usado")}</Label>
           <select
             id="link-use"
-            className="w-full rounded-md border bg-background p-2"
+            className="w-full rounded-lg border bg-background p-2"
             value={form.use_case}
             onChange={(e) =>
               setForm({ ...form, use_case: e.target.value as LinkInput["use_case"] })
@@ -296,7 +296,7 @@ export function LinksRastreaveis({
         </div>
       </form>
       {saved && (
-        <div className="max-w-2xl space-y-4 rounded-md border p-4">
+        <div className="max-w-2xl space-y-4 rounded-lg border p-4">
           {!saved.enabled && (
             <p role="alert">
               {t("Este link está desativado e não abre o WhatsApp. Ative e salve para usar.")}

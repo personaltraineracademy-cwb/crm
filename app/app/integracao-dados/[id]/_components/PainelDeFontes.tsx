@@ -119,7 +119,7 @@ function DetalheDaFonte({
       </label>
 
       {colunaDoCliente !== null && tabelaSemColunaDoCliente(tabela, colunaDoCliente) && (
-        <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
+        <p className="rounded-lg border border-warning-border bg-warning-soft p-2 text-xs">
           {t("Esta tabela não tem a coluna que identifica o cliente:")} <code>{colunaDoCliente}</code>.{" "}
           {t("Nas conversas, o assistente não consegue consultá-la.")}
         </p>
@@ -148,7 +148,7 @@ function DetalheDaFonte({
           <span>{t("Todas, inclusive as que forem criadas depois")}</span>
         </label>
         {todasEFuturas ? (
-          <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
+          <p className="border-warning-border bg-warning-soft rounded-lg border p-2 text-xs">
             {t("Uma coluna nova (por exemplo, uma senha) passaria a ser lida sem ninguém marcar.")}
           </p>
         ) : (
@@ -303,7 +303,7 @@ export function PainelDeFontes({ connectionId, canWrite, colunaDoCliente, aberto
               </fieldset>
 
               {atual.modo === "all" && (
-                <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                <div className="border-warning-border bg-warning-soft rounded-lg border p-3 text-sm">
                   <p className="font-medium">
                     {t("O assistente enxerga todas as tabelas que o usuário do banco enxerga.")}
                   </p>
@@ -314,7 +314,7 @@ export function PainelDeFontes({ connectionId, canWrite, colunaDoCliente, aberto
               )}
 
               {atual.modo === "list" && guardado !== null && guardado.modo === "list" && guardado.fontes.length === 0 && (
-                <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                <div className="rounded-lg border border-warning-border bg-warning-soft p-3 text-sm">
                   {t("Falta escolher o que o assistente pode ler. Até lá, ele não enxerga nada deste banco.")}
                 </div>
               )}
@@ -376,7 +376,7 @@ export function PainelDeFontes({ connectionId, canWrite, colunaDoCliente, aberto
                   )}
 
                   {catalogo.isError && (
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-destructive">
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-danger-foreground">
                       <span>{t("Não foi possível ler o catálogo do banco agora. Confira a conexão e tente de novo.")}</span>
                       <Button type="button" variant="outline" size="sm" onClick={() => catalogo.refetch()}>
                         {t("Tentar de novo")}
@@ -391,7 +391,9 @@ export function PainelDeFontes({ connectionId, canWrite, colunaDoCliente, aberto
                   <div className="max-h-[420px] space-y-3 overflow-y-auto">
                     {porSchema.map(([schema, lista]) => (
                       <div key={schema}>
-                        <p className="px-1 py-1 text-xs font-semibold uppercase text-muted-foreground">{schema}</p>
+                        <p className="px-1 py-1 text-xs font-semibold text-muted-foreground">
+                          {schema}
+                        </p>
                         <ul className="space-y-1">
                           {lista.map((tabela) => {
                             const nomeCompleto = `${tabela.schema}.${tabela.nome}`;
@@ -438,7 +440,7 @@ export function PainelDeFontes({ connectionId, canWrite, colunaDoCliente, aberto
                   </div>
 
                   {sumidas.length > 0 && (
-                    <div className="space-y-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
+                    <div className="space-y-2 rounded-lg border border-warning-border bg-warning-soft p-3">
                       <p className="text-sm font-medium">{t("Marcadas, mas não encontradas no banco")}</p>
                       <ul className="space-y-1">
                         {sumidas.map((f) => (

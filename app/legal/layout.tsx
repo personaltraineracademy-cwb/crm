@@ -41,7 +41,7 @@ export default async function LegalLayout({ children }: { children: React.ReactN
           </div>
         </header>
         <main className="mx-auto w-full max-w-3xl px-6 py-10">
-          <article className="space-y-6 rounded-lg border bg-background p-8 text-sm leading-relaxed">
+          <article className="space-y-6 rounded-xl border bg-background p-8 text-sm leading-relaxed">
             {children}
           </article>
         </main>

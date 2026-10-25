@@ -14,6 +14,7 @@ import { useT } from "@/hooks/i18n/useT";
 import { MENSAGEM_DA_RECUSA_DE_ESCRITA, ehRecusaDeEscrita } from "@/lib/auth/recusa-de-escrita-de-admin";
 import type { SmtpSecurity } from "@/lib/email/config";
 import type { Idioma } from "@/lib/i18n/idiomas";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Props {
   readonly host: string;
@@ -118,16 +119,12 @@ export function FormularioDeSmtp({
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("Servidor de e-mail desta instalação")}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Servidor de e-mail desta instalação")}
+        description={t(
             "Convite de equipe, entrega de dados de LGPD e aviso de prazo saem por aqui. Preencher esta tela é a alternativa a contratar um serviço externo de envio: o e-mail passa a sair pelo seu próprio servidor.",
           )}
-        </p>
-      </header>
+      />
 
       <Card className="flex flex-col gap-4 p-4">
         <div className="flex flex-col gap-1.5">
@@ -162,7 +159,7 @@ export function FormularioDeSmtp({
           <select
             id="smtp-security"
             data-testid="smtp-security"
-            className="w-full rounded-md border bg-background p-2 text-sm"
+            className="w-full rounded-lg border bg-background p-2 text-sm"
             value={form.security}
             onChange={(e) => setSeguranca(e.target.value)}
           >
@@ -231,7 +228,7 @@ export function FormularioDeSmtp({
         {origem === "environment" ? (
           <p
             data-testid="smtp-origem-ambiente"
-            className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+            className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
           >
             {t(
               "Estes valores vieram do arquivo de configuração do servidor. O que você salvar aqui passa a valer no lugar dele; apagar o que está aqui faz o sistema voltar a usar o arquivo.",

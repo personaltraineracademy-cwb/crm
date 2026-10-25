@@ -183,7 +183,7 @@ export function ModeloDaCampanha({
         <div className="flex flex-wrap items-center gap-2">
           <select
             id="modelo"
-            className="h-9 min-w-0 flex-1 rounded-md border border-border bg-surface px-2 text-sm"
+            className="h-9 min-w-0 flex-1 rounded-md border border-border bg-card px-2 text-sm"
             value={valor ? chaveDoModelo(valor) : ""}
             onChange={(e) => trocarModelo(e.target.value)}
             disabled={consulta.isLoading}
@@ -220,7 +220,7 @@ export function ModeloDaCampanha({
           </p>
         )}
         {!consulta.isLoading && modelos.length === 0 && (
-          <p className="text-sm text-warning-fg">
+          <p className="text-warning-foreground text-sm">
             {t(
               "Este número ainda não tem modelos. Crie um e sincronize a lista na tela de modelos.",
             )}
@@ -254,14 +254,14 @@ export function ModeloDaCampanha({
                 </div>
                 <div className="flex min-w-0 flex-col gap-1">
                   {v.origens.length === 0 ? (
-                    <p className="text-sm text-warning-fg">
+                    <p className="text-warning-foreground text-sm">
                       {t("Este tipo de variável ainda não pode ser preenchido por campanha.")}
                     </p>
                   ) : (
                     <>
                       <select
                         aria-label={`${t("Origem")}: ${v.rotulo}`}
-                        className="h-9 w-full rounded-md border border-border bg-surface px-2 text-sm"
+                        className="h-9 w-full rounded-md border border-border bg-card px-2 text-sm"
                         value={f?.kind ?? ""}
                         onChange={(e) =>
                           trocarOrigem(v, e.target.value as FonteDaCampanha["kind"] | "")
@@ -307,7 +307,7 @@ export function ModeloDaCampanha({
       )}
 
       {incompletas.length > 0 && (
-        <p className="text-sm text-warning-fg" data-testid="variaveis-incompletas">
+        <p className="text-warning-foreground text-sm" data-testid="variaveis-incompletas">
           {t("Falta escolher a origem de:")} {incompletas.map((v) => v.rotulo).join(", ")}
         </p>
       )}

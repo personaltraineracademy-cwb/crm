@@ -896,13 +896,13 @@ export function ExtensionsManager({
       className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-6"
       data-testid="extensions-manager"
     >
-      <header className="relative overflow-hidden rounded-xl border border-border bg-surface p-5 shadow-xs sm:p-7">
+      <header className="relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-xs sm:p-7">
         <div
           aria-hidden
-          className="absolute -top-16 -right-12 h-40 w-40 rounded-full bg-accent-soft/70 blur-2xl"
+          className="bg-primary/10/70 absolute -top-16 -right-12 h-40 w-40 rounded-full blur-2xl"
         />
         <div className="relative flex items-start gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-accent-200 bg-accent-soft text-accent">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-accent-200 bg-primary/10 text-primary">
             <PuzzlePiece size={24} weight="duotone" aria-hidden />
           </div>
           <div>
@@ -918,12 +918,17 @@ export function ExtensionsManager({
 
       {loadError ? (
         <Card
-          className="border-warning/40 bg-warning-bg p-4"
+          className="border-warning-border bg-warning-soft p-4"
           role="alert"
           data-testid={data ? "extensions-stale" : "extensions-unavailable"}
         >
           <div className="flex items-start gap-3">
-            <Warning size={20} weight="duotone" aria-hidden className="mt-0.5 text-warning-fg" />
+            <Warning
+              size={20}
+              weight="duotone"
+              aria-hidden
+              className="text-warning-foreground mt-0.5"
+            />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-semibold">
                 {data
@@ -941,8 +946,8 @@ export function ExtensionsManager({
       ) : null}
 
       {storageStatus === "failed" ? (
-        <Card className="border-error/40 bg-error-bg p-4" role="alert">
-          <h2 className="text-sm font-semibold text-error-fg">
+        <Card className="border-danger-border bg-danger-soft p-4" role="alert">
+          <h2 className="text-danger-foreground text-sm font-semibold">
             {t("Os pedidos estão bloqueados neste navegador")}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">{mutationBlockedReason}</p>
@@ -955,9 +960,9 @@ export function ExtensionsManager({
       ) : null}
 
       {pending.length > 0 ? (
-        <Card className="border-info/40 bg-info-bg p-4">
+        <Card className="border-info-border bg-info-soft p-4">
           <div className="flex items-start gap-3">
-            <Info size={20} weight="duotone" aria-hidden className="mt-0.5 text-info-fg" />
+            <Info size={20} weight="duotone" aria-hidden className="text-info-foreground mt-0.5" />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-semibold">{t("Pedidos aguardando confirmação")}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -970,15 +975,15 @@ export function ExtensionsManager({
                   <div
                     key={receipt.id}
                     data-testid={`extension-local-receipt-${receipt.id}`}
-                    className="flex flex-col gap-2 rounded-md border border-info/25 bg-surface/70 p-3 sm:flex-row sm:items-center sm:justify-between"
+                    className="border-info-border flex flex-col gap-2 rounded-lg border bg-card/70 p-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">
                         {tituloDoPedido(receipt.kind, t)} · {receipt.label}
                       </p>
-                      <p className="font-mono text-[11px] text-muted-foreground">{receipt.id}</p>
+                      <p className="font-mono text-xs text-muted-foreground">{receipt.id}</p>
                       {receipt.id === uncertainReceiptId ? (
-                        <p role="status" className="mt-1 text-xs text-warning-fg">
+                        <p role="status" className="text-warning-foreground mt-1 text-xs">
                           {t(
                             "A conexão caiu sem confirmação. O pedido foi preservado pelo recibo; verifique o estado antes de tentar outra vez.",
                           )}
@@ -1024,7 +1029,7 @@ export function ExtensionsManager({
           ) : null}
 
           <Tabs defaultValue="installed" className="space-y-5">
-            <TabsList aria-label={t("Seções de extensões")}>
+            <TabsList variant="line" aria-label={t("Seções de extensões")}>
               <TabsTrigger value="installed">{t("Instaladas")}</TabsTrigger>
               <TabsTrigger value="catalog">{t("Catálogo")}</TabsTrigger>
             </TabsList>

@@ -75,7 +75,7 @@ export function TeamInvitesClient({ canManage }: Props) {
     return <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>;
   }
   if (isError) {
-    return <p className="text-sm text-destructive">{t("Erro ao carregar convites.")}</p>;
+    return <p className="text-danger-foreground text-sm">{t("Erro ao carregar convites.")}</p>;
   }
   const invites = data?.data ?? [];
 
@@ -140,7 +140,7 @@ export function TeamInvitesClient({ canManage }: Props) {
                         <span className="text-sm text-muted-foreground">{t("Sim")}</span>
                       ) : (
                         <div className="flex flex-col gap-1">
-                          <span className="flex items-center gap-1 text-sm text-destructive">
+                          <span className="text-danger-foreground flex items-center gap-1 text-sm">
                             <Warning size={14} weight="fill" />
                             {t("Não saiu")}
                           </span>
@@ -208,7 +208,7 @@ export function TeamInvitesClient({ canManage }: Props) {
                                 </DropdownMenuItem>
                               ) : null}
                               <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
+                                className="text-danger-foreground focus:text-danger-foreground"
                                 onClick={() => setRevokeDialog(inv)}
                               >
                                 {t("Revogar")}

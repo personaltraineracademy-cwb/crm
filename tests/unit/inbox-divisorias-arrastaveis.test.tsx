@@ -14,7 +14,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
  *      brigam pela mesma chave) e o passo da seta.
  *
  *   2. O layout é quem entrega isso ao atendente: duas alças com
- *      `role=separator` a partir do `md`, nenhuma no celular, `aria-valuenow`
+ *      `role=separator` a partir do `lg`, nenhuma no celular, `aria-valuenow`
  *      vivo, persistência no `localStorage` e duplo clique voltando ao padrão.
  *
  * O que a tela lê de navegador está medido aqui, não presumido: `innerWidth`
@@ -187,11 +187,11 @@ describe("a regra pura — limites, piso da conversa e memória por faixa", () =
 
   it("grava e lê POR FAIXA: notebook e monitor grande não brigam pela mesma chave", () => {
     const storage = storageFalso();
-    gravarLarguras(storage, "md", { lista: 500, ficha: 300 });
+    gravarLarguras(storage, "lg", { lista: 500, ficha: 300 });
     gravarLarguras(storage, "2xl", { lista: 340, ficha: 400 });
 
-    expect(chaveDaFaixa("md")).toBe("inbox:divisorias:md");
-    expect(lerLarguras(storage, "md")).toEqual({ lista: 500, ficha: 300 });
+    expect(chaveDaFaixa("lg")).toBe("inbox:divisorias:lg");
+    expect(lerLarguras(storage, "lg")).toEqual({ lista: 500, ficha: 300 });
     expect(lerLarguras(storage, "2xl")).toEqual({ lista: 340, ficha: 400 });
     // A faixa sem nada salvo devolve `null` — o layout interpreta como CSS.
     expect(lerLarguras(storage, "xl")).toBeNull();
@@ -247,10 +247,12 @@ describe("a regra pura — limites, piso da conversa e memória por faixa", () =
     expect(moverPorSeta("lista", 300, "ArrowUp")).toBeNull();
   });
 
-  it("a faixa segue o breakpoint do Tailwind e some abaixo do md", () => {
+  it("a faixa segue o breakpoint do Tailwind e some abaixo do lg (onde o Unnify troca a casca)", () => {
     expect(faixaDaLargura(1600)?.id).toBe("2xl");
     expect(faixaDaLargura(1440)?.id).toBe("xl");
-    expect(faixaDaLargura(1024)?.id).toBe("md");
+    expect(faixaDaLargura(1024)?.id).toBe("lg");
+    // Entre 768 e 1023 a caixa de entrada é uma coluna por vez, como no celular.
+    expect(faixaDaLargura(1023)).toBeNull();
     expect(faixaDaLargura(767)).toBeNull();
     expect(faixaDaLargura(0)).toBeNull();
     expect(faixaDaLargura(Number.NaN)).toBeNull();
@@ -331,7 +333,7 @@ describe("no layout — duas divisorias arrastáveis (#2579)", () => {
     expect(screen.queryAllByRole("separator")).toEqual([]);
   });
 
-  it("a partir do md há duas divisorias com limite e valor da faixa no aria", async () => {
+  it("a partir do lg há duas divisorias com limite e valor da faixa no aria", async () => {
     montar();
     const lista = await alca(0);
     const ficha = await alca(1);
@@ -481,9 +483,9 @@ describe("no layout — duas divisorias arrastáveis (#2579)", () => {
     expect(await alca(0)).toHaveAttribute("aria-valuenow", String(LIMITES_LISTA.max));
   });
 
-  it("a faixa errada não rouba a largura da outra: xl salvo não mexe no md", async () => {
+  it("a faixa errada não rouba a largura da outra: xl salvo não mexe no lg", async () => {
     window.localStorage.setItem(CHAVE_XL, JSON.stringify({ lista: 500, ficha: 400 }));
-    janelaEm(1024); // faixa md: padrão da lista é 300, e sem ficha nenhuma
+    janelaEm(1024); // faixa lg: padrão da lista é 300, e sem ficha nenhuma
     montar();
     const lista = await alca(0);
     expect(lista).toHaveAttribute("aria-valuenow", "300");

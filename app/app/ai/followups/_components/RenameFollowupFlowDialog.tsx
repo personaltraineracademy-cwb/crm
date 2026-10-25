@@ -72,7 +72,7 @@ function RenameForm({
         />
       </div>
       {erro && (
-        <p role="alert" data-testid="rename-flow-error" className="text-sm text-error-fg">
+        <p role="alert" data-testid="rename-flow-error" className="text-danger-foreground text-sm">
           {erro}
         </p>
       )}

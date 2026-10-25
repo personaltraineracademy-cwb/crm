@@ -78,6 +78,18 @@ const GATILHO_ESPERADO: Record<string, { condicao: string | null; efeito: string
     efeito:
       "São as partes da verificação da PR de sincronização; sem elas o `verificar` não tem o que ler.",
   },
+  "verificar-na-vps.yml::verificar": {
+    condicao: null,
+    efeito:
+      "É a verificação de toda PR do crm-base, no executor da VPS (o ci.yml fica desligado lá). " +
+      "Desligá-lo deixa PR entrar na main sem nenhum teste ter rodado.",
+  },
+  "tipos.yml::typecheck": {
+    condicao: null,
+    efeito:
+      "É o typecheck do crm-base, nas máquinas do GitHub (o tsc não cabe no executor da VPS). " +
+      "Desligá-lo deixa erro de tipo chegar ao público, onde a imagem deixa de montar.",
+  },
   "testar-sincronizacao.yml::verificar": {
     condicao: "always()",
     efeito:
@@ -382,7 +394,12 @@ const legivel = (c: string | null) => (c === null ? "SEM `if:` de job" : `if: ${
  *   ignorada quando o ARQUIVO inteiro não existe. Job sumido de um arquivo que
  *   existe continua reprovando.
  */
-const SO_NO_PRIVADO = ["sincronizar-com-original.yml", "testar-sincronizacao.yml"];
+const SO_NO_PRIVADO = [
+  "sincronizar-com-original.yml",
+  "testar-sincronizacao.yml",
+  "verificar-na-vps.yml",
+  "tipos.yml",
+];
 const LISTA_DO_PRIVADO = join(process.cwd(), "scripts/unnify/so-no-privado.txt");
 const NO_PRIVADO = existsSync(LISTA_DO_PRIVADO);
 const AUSENTES_NO_PUBLICO = new Set(

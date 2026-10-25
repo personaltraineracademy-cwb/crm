@@ -289,7 +289,7 @@ export function FormularioDaMarca({
           cadastro, configuração inicial e texto legal ainda usam o valor do
           ambiente.
         */}
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t(
             "Deixe em branco para voltar ao nome padrão. Este nome já aparece no título da aba do navegador, na tela de login, nos menus laterais, nos e-mails que o sistema envia (para as empresas que não definiram um nome próprio), no aplicativo de verificação em duas etapas e no arquivo de códigos de recuperação que o usuário baixa. Ainda NÃO chega às telas de cadastro nem às da configuração inicial: essas continuam com o nome gravado no arquivo de instalação do servidor até a próxima atualização da stack.",
           )}
@@ -331,12 +331,12 @@ export function FormularioDaMarca({
               className="w-36 font-mono"
             />
             {hexLimpo.length > 0 && !hexValido ? (
-              <span className="text-sm text-error-fg">
+              <span className="text-danger-foreground text-sm">
                 {t("Use um código de cor como #7a5cd6.")}
               </span>
             ) : null}
           </div>
-          <p id="ajuda-da-cor" className="text-xs text-text-muted">
+          <p id="ajuda-da-cor" className="text-xs text-muted-foreground">
             {t("Deixe em branco para voltar à cor padrão do sistema.")}
           </p>
         </div>
@@ -383,19 +383,19 @@ export function FormularioDaMarca({
               className="w-36 font-mono"
             />
             {hexEscuroLimpo.length > 0 && !hexEscuroValido ? (
-              <span className="text-sm text-error-fg">
+              <span className="text-danger-foreground text-sm">
                 {t("Use um código de cor como #7a5cd6.")}
               </span>
             ) : null}
           </div>
-          <p id="ajuda-da-cor-escura" className="text-xs text-text-muted">
+          <p id="ajuda-da-cor-escura" className="text-xs text-muted-foreground">
             {t("Deixe em branco para os dois modos usarem a cor acima.")}
           </p>
         </div>
 
         {derivada ? (
           <div className="space-y-2">
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-muted-foreground">
               {t(
                 "A partir da sua cor o sistema monta esta escala e escolhe, dentro dela, o tom que vai nos botões:",
               )}
@@ -405,14 +405,14 @@ export function FormularioDaMarca({
                 escuro parte de um tom mais claro da escala por construção. Sem
                 esta linha, ver dois tons diferentes marcados na tira parece
                 incoerência do sistema. */}
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t(
                 "No modo escuro o sistema usa naturalmente um tom mais claro da escala, para a cor não se perder no fundo escuro.",
               )}
             </p>
           </div>
         ) : (
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             {t("Sem cor definida, o sistema usa a cor padrão dele.")}
           </p>
         )}
@@ -454,7 +454,7 @@ export function FormularioDaMarca({
 
       <div className="flex items-center justify-end gap-3">
         {erroTecnico ? (
-          <span className="font-mono text-xs text-text-muted">{erroTecnico}</span>
+          <span className="font-mono text-xs text-muted-foreground">{erroTecnico}</span>
         ) : null}
         <Button type="submit" disabled={isPending || !hexValido || !hexEscuroValido}>
           {isPending ? t("Salvando…") : t("Salvar")}

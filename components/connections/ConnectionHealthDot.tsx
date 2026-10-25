@@ -10,7 +10,7 @@ import { useT } from "@/hooks/i18n/useT";
 const DOT_COLOR: Record<ConnectionHealth, string> = {
   connected: "bg-success",
   connecting: "bg-warning",
-  down: "bg-error",
+  down: "bg-danger",
   none: "bg-muted-foreground/40",
   unknown: "bg-muted-foreground/40",
 };

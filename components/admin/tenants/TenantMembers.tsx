@@ -44,14 +44,16 @@ export function TenantMembers({ organizationId, readOnly = false }: TenantMember
   const membros = data?.data.members ?? [];
 
   return (
-    <div className="space-y-4 rounded-lg border bg-card p-5">
-      <h2 className="text-sm font-semibold tracking-wider text-muted-foreground uppercase">
+    <div className="space-y-4 rounded-xl border bg-card p-5">
+      <h2 className="text-sm font-semibold text-muted-foreground">
         {t("Membros e e-mails de acesso")}
       </h2>
 
       {isLoading && <Skeleton className="h-24 w-full" />}
       {isError && (
-        <p className="text-sm text-destructive">{t("Não foi possível carregar os membros.")}</p>
+        <p className="text-danger-foreground text-sm">
+          {t("Não foi possível carregar os membros.")}
+        </p>
       )}
       {!isLoading && !isError && membros.length === 0 && (
         <p className="text-sm text-muted-foreground">{t("Nenhum membro neste tenant.")}</p>
@@ -179,7 +181,7 @@ function TrocarEmailDialog({
               aria-invalid={email.length > 0 && !valido}
             />
             {email.length > 0 && !valido && (
-              <p className="text-xs text-destructive" role="alert">
+              <p className="text-danger-foreground text-xs" role="alert">
                 {t("E-mail inválido")}
               </p>
             )}

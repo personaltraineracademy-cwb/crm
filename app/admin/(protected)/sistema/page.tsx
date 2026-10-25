@@ -19,6 +19,7 @@ import {
 import { detectarServidor } from "@/lib/recursos-opcionais/estado";
 
 import { FormularioDeComportamento, FormularioDeModulos } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Recursos opcionais" };
 
@@ -116,15 +117,13 @@ export default async function Page() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Recursos opcionais", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Recursos opcionais", idioma)}
+        description={traduzir(
             "Tudo o que se liga e desliga nesta instalação, num lugar só. Vale para todas as empresas hospedadas aqui.",
             idioma,
           )}
-        </p>
-      </div>
+      />
 
       <section className="space-y-3" aria-labelledby="bloco-modulos">
         <h2 id="bloco-modulos" className="text-lg font-semibold">

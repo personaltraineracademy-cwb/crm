@@ -310,7 +310,10 @@ function SugestaoDeTaxa({
   const sugestao = taxa.sugestao;
   return (
     <div className="space-y-1">
-      <p className="text-xs leading-snug text-text-muted" data-testid={`taxa-${taxa.etapa_id}`}>
+      <p
+        className="text-xs leading-snug text-muted-foreground"
+        data-testid={`taxa-${taxa.etapa_id}`}
+      >
         {fraseDaTaxa(taxa, t)} {periodoDaTaxa(inicio, fim, t)}
         {truncado ? ` ${t("Amostra limitada: este número cobre só parte do período.")}` : ""}
       </p>
@@ -357,14 +360,14 @@ export function StagesSection({
 
   if (consulta.isError) {
     return (
-      <p className="text-sm text-text-muted" data-testid="etapas-erro-leitura">
+      <p className="text-sm text-muted-foreground" data-testid="etapas-erro-leitura">
         {t("Não foi possível carregar as etapas deste funil agora. Recarregue a página.")}
       </p>
     );
   }
   if (!consulta.data) {
     return (
-      <p className="text-sm text-text-muted" data-testid="etapas-carregando">
+      <p className="text-sm text-muted-foreground" data-testid="etapas-carregando">
         {t("Carregando as etapas deste funil…")}
       </p>
     );
@@ -458,12 +461,12 @@ export function StagesSection({
     <div className="space-y-4" id={ancoraDasEtapas(pipelineId)} data-testid={`etapas-${pipelineId}`}>
       <div className="space-y-1">
         <h3 className="text-sm font-semibold">{t("Etapas deste funil")}</h3>
-        <p className="max-w-3xl text-sm leading-relaxed text-text-muted">
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           {t(
             "Estas são as colunas do seu quadro, na ordem em que o cliente avança. Você pode renomear, criar, reordenar e arquivar.",
           )}
         </p>
-        <p className="max-w-3xl text-sm leading-relaxed text-text-muted">
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           {t("Duas colunas têm papel especial: a")} <strong>{t("de fechamento")}</strong>{" "}
           {t("é onde o negócio vira venda, e a")} <strong>{t("de perda")}</strong>{" "}
           {t(
@@ -483,7 +486,7 @@ export function StagesSection({
           o conteúdo dela 1px para dentro. Sem a mesma borda aqui, cada rótulo
           fica 1px à direita do controle que nomeia — medido, não estimado. */}
       <div
-        className="hidden gap-3 border border-transparent px-4 text-xs font-medium text-text-muted sm:flex"
+        className="hidden gap-3 border border-transparent px-4 text-xs font-medium text-muted-foreground sm:flex"
         data-testid="etapas-cabecalho"
       >
         <span className="w-6 shrink-0" />
@@ -514,14 +517,14 @@ export function StagesSection({
               data-testid={`etapa-${etapa.id}`}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <span className="w-6 shrink-0 text-xs tabular-nums text-text-muted">
+                <span className="w-6 shrink-0 text-xs text-muted-foreground tabular-nums">
                   {i + 1}.
                 </span>
 
                 {/* No empilhado, cada controle carrega o rótulo que no desktop
                     vive no cabeçalho — mesmas constantes, `sm:hidden`. */}
                 <div className="min-w-0 flex-1 space-y-1">
-                  <span className="block text-xs font-medium text-text-muted sm:hidden">
+                  <span className="block text-xs font-medium text-muted-foreground sm:hidden">
                     {t(ROTULO.nome)}
                   </span>
                   <NomeDaEtapa
@@ -535,7 +538,7 @@ export function StagesSection({
                     100 e 0 NA REGRA, então o campo fica desabilitado ali —
                     digitar um número seria uma promessa que a regra ignora. */}
                 <div className={`${LARGURA.chance} shrink-0 space-y-1`}>
-                  <span className="block text-xs font-medium text-text-muted sm:hidden">
+                  <span className="block text-xs font-medium text-muted-foreground sm:hidden">
                     {t(ROTULO.chance)}
                   </span>
                   <ProbabilidadeDaEtapa
@@ -564,7 +567,7 @@ export function StagesSection({
                       tempo dela é tempo desde o desfecho, não espera. */}
                   {!etapa.is_won && !etapa.is_lost && fraseDeTempo ? (
                     <p
-                      className="text-xs leading-snug text-text-muted"
+                      className="text-xs leading-snug text-muted-foreground"
                       data-testid={`tempo-etapa-${etapa.id}`}
                     >
                       {fraseDeTempo}
@@ -584,7 +587,7 @@ export function StagesSection({
                 <div
                   className={`flex flex-col gap-1 ${LARGURA.ordem} shrink-0 sm:flex-row sm:items-center sm:justify-center sm:gap-1`}
                 >
-                  <span className="text-xs font-medium text-text-muted sm:hidden">
+                  <span className="text-xs font-medium text-muted-foreground sm:hidden">
                     {t(ROTULO.ordem)}
                   </span>
                   <div className="flex items-center gap-1">
@@ -616,7 +619,7 @@ export function StagesSection({
                 </div>
 
                 <div className={`w-full shrink-0 space-y-1 ${LARGURA.papel} sm:space-y-0`}>
-                  <span className="block text-xs font-medium text-text-muted sm:hidden">
+                  <span className="block text-xs font-medium text-muted-foreground sm:hidden">
                     {t(ROTULO.papel)}
                   </span>
                   <Select
@@ -661,7 +664,7 @@ export function StagesSection({
                   rótulo próprio. Ganhar uma coluna no cabeçalho exigiria
                   medir `LARGURA` em dois lugares e apertar uma linha que já
                   carrega nome, chance, ordem, papel e arquivar. */}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-text-muted">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span className="font-medium">
                   {t("Janela de esfriando (vazio = 24 h de padrão)")}
                 </span>
@@ -685,7 +688,7 @@ export function StagesSection({
               {/* Numa venda com pagamento na entrega o momento que pede ação é o
                   pedido confirmado, não o ganho — e quem sabe qual etapa é essa é
                   a organização. Ver a migration 0440. */}
-              <label className="flex items-center gap-2 text-xs text-text-muted">
+              <label className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Switch
                   checked={etapa.avisar_na_central === true}
                   onCheckedChange={(v) => aplicar(etapa.id, { avisar_na_central: v })}
@@ -697,7 +700,7 @@ export function StagesSection({
               </label>
 
               {passo && (
-                <p className="text-xs text-text-muted" data-testid={`passo-de-${etapa.id}`}>
+                <p className="text-xs text-muted-foreground" data-testid={`passo-de-${etapa.id}`}>
                   {t("O assistente usa esta etapa para")} «{t(ROTULO_DO_PASSO[passo])}».{" "}
                   <a className="underline underline-offset-2" href={`#${ancoraMapeamento}`}>
                     {t("Mudar isso")}
@@ -707,7 +710,7 @@ export function StagesSection({
 
               {confirmandoAqui && (
                 <Card
-                  className="flex flex-col gap-3 border-warning bg-warning-bg p-4"
+                  className="border-warning-border bg-warning-soft flex flex-col gap-3 p-4"
                   data-testid={`confirmar-papel-${etapa.id}`}
                 >
                   <p className="text-sm leading-relaxed">{confirmandoAqui.texto}</p>
@@ -799,7 +802,7 @@ export function StagesSection({
                       contar metade. */}
                   {passo && !arquivandoAqui.erro && (
                     <p
-                      className="text-sm leading-relaxed text-warning-fg"
+                      className="text-warning-foreground text-sm leading-relaxed"
                       data-testid={`arquivar-perde-passo-${etapa.id}`}
                     >
                       {t("Esta etapa é a que o assistente usa para")} «{t(ROTULO_DO_PASSO[passo])}».{" "}
@@ -841,10 +844,14 @@ export function StagesSection({
 
               {erroDaLinha && (
                 <Card
-                  className="flex items-start gap-3 border-warning bg-warning-bg p-4"
+                  className="border-warning-border bg-warning-soft flex items-start gap-3 p-4"
                   data-testid={`etapa-erro-${etapa.id}`}
                 >
-                  <Warning size={18} className="mt-0.5 shrink-0 text-warning-fg" aria-hidden />
+                  <Warning
+                    size={18}
+                    className="text-warning-foreground mt-0.5 shrink-0"
+                    aria-hidden
+                  />
                   <p className="text-sm leading-relaxed">
                     {erroDaLinha}
                     {passo && erro?.sobrePapel && (
@@ -901,10 +908,10 @@ export function StagesSection({
 
       {erro?.etapaId === null && (
         <Card
-          className="flex items-start gap-3 border-warning bg-warning-bg p-4"
+          className="border-warning-border bg-warning-soft flex items-start gap-3 p-4"
           data-testid="etapas-erro"
         >
-          <Warning size={18} className="mt-0.5 shrink-0 text-warning-fg" aria-hidden />
+          <Warning size={18} className="text-warning-foreground mt-0.5 shrink-0" aria-hidden />
           <p className="text-sm leading-relaxed">{erro.texto}</p>
         </Card>
       )}

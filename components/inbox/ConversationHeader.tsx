@@ -46,6 +46,8 @@ import type { ConversationWithContact } from "@/hooks/inbox/useConversationsReal
 import { rotuloParaAEquipe } from "@/lib/contacts/rotulo-do-contato";
 import { phoneForDisplay } from "@/lib/channels/phone-variants";
 import { rotuloDoCanalDaConversa } from "@/lib/channels/estado";
+import { tomDoCanal } from "./tons";
+import { cn } from "@/lib/utils";
 
 interface Props {
   conversation: ConversationWithContact;
@@ -235,7 +237,7 @@ export function ConversationHeader({
     //
     // NO CELULAR a quebra vira o problema oposto: com ~390px de largura a barra
     // descia em três ou quatro fileiras de botões e comia metade da tela,
-    // deixando quase nada para as mensagens. Abaixo do `md` a barra é UMA
+    // deixando quase nada para as mensagens. Abaixo do `lg` a barra é UMA
     // fileira que rola na horizontal — a mesma régua de não esconder ação, sem
     // pagar em altura. `py-2` pelo mesmo motivo: cada pixel de altura ali é
     // tirado da conversa.
@@ -250,8 +252,13 @@ export function ConversationHeader({
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-1.5">
           <ChannelLogo channel={conversation.channel_sessions} size={20} />
-          <h2 className="min-w-0 truncate text-sm font-semibold" title={displayName}>{displayName}</h2>
-          <Badge variant="outline" className="h-4 shrink-0 px-1.5 text-[10px]">
+          <h2
+            className="min-w-0 truncate text-base font-semibold text-foreground"
+            title={displayName}
+          >
+            {displayName}
+          </h2>
+          <Badge variant="outline" className="h-5 min-h-5 shrink-0 rounded-md px-1.5 text-xs">
             {t(STATUS_LABEL[status] ?? status)}
           </Badge>
           {/* Ao lado do estado, não escondido num painel: a pergunta "dá para
@@ -279,7 +286,11 @@ export function ConversationHeader({
           {rotuloCanal && (
             <Badge
               variant="outline"
-              className="h-4 min-w-0 max-w-[9rem] truncate px-1.5 text-[10px]"
+              // Chip de tom do canal: a MESMA cor da linha da lista (`tomDoCanal`).
+              className={cn(
+                "h-5 min-h-5 max-w-36 min-w-0 truncate rounded-md border-transparent px-1.5 text-xs",
+                tomDoCanal(conversation.channel_session_id ?? rotuloCanal),
+              )}
               title={`${t("Entrou por")} ${rotuloCanal}`}
               data-testid="canal-da-conversa"
             >
@@ -307,8 +318,9 @@ export function ConversationHeader({
         {phone && (
           // No celular o telefone sai: cada linha do cabeçalho é altura tirada
           // do fio, e o número continua na Ficha.
-          <p className="mt-0.5 flex min-w-0 items-center gap-1 truncate text-xs text-muted-foreground max-md:hidden">
-            <Phone size={11} weight="regular" aria-hidden /> {phone}
+          <p className="mt-0.5 flex min-w-0 items-center gap-1 truncate text-xs text-muted-foreground max-lg:hidden">
+            <Phone size={12} weight="regular" aria-hidden />{" "}
+            <span className="tabular-nums">{phone}</span>
           </p>
         )}
       </div>
@@ -324,9 +336,9 @@ export function ConversationHeader({
           fica com a altura (`data-teclado-aberto`, de `useAlturaVisivel`); a
           máscara apaga a borda direita para dizer que a fileira rola, e o `pr-8`
           deixa o último botão fora da máscara quando rolado até o fim. Tudo
-          `max-md:` — no computador encolher a janela não é teclado. */}
-      <div className="flex min-w-0 flex-col items-end gap-1 max-md:w-full max-md:items-stretch max-md:group-data-[teclado-aberto]/conversa:hidden">
-      <div className="flex min-w-0 flex-wrap items-center gap-1.5 max-md:flex-nowrap max-md:overflow-x-auto max-md:pb-1 max-md:pr-8 max-md:[&>*]:shrink-0 max-md:[mask-image:linear-gradient(to_right,black_calc(100%_-_2rem),transparent)]">
+          `max-lg:` — no computador encolher a janela não é teclado. */}
+      <div className="flex min-w-0 flex-col items-end gap-1 max-lg:w-full max-lg:items-stretch max-lg:group-data-[teclado-aberto]/conversa:hidden">
+      <div className="flex min-w-0 flex-wrap items-center gap-1.5 max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:pb-1 max-lg:pr-8 max-lg:[&>*]:shrink-0 max-lg:[mask-image:linear-gradient(to_right,black_calc(100%_-_2rem),transparent)]">
         {/* Primeira da barra e sem rótulo escrito: é ferramenta de LEITURA, não
             ação de atendimento, e não muda de lugar com o estado da conversa.
             Só o ícone porque a barra já quebrou a caixa útil em 1280px uma vez
@@ -378,7 +390,7 @@ export function ConversationHeader({
             variant="default"
             // No celular, a ação que a pessoa veio fazer abre a fileira — sem
             // rolar para achá-la. Só CSS: a ordem do DOM não muda.
-            className="max-md:order-first"
+            className="max-lg:order-first"
             disabled={claim.isPending}
             // O rótulo NÃO muda (é contrato: `inbox-header-nao-trava` e o
             // dicionário de espanhol o citam). O que faltava era a consequência
@@ -399,7 +411,7 @@ export function ConversationHeader({
           <Button
             size="sm"
             variant="outline"
-            className="max-md:order-first"
+            className="max-lg:order-first"
             disabled={release.isPending}
             // GUIA CURTA (#3003): o rótulo diz o GESTO, não a consequência. "Liberar"
             // não conta para onde a conversa vai — de volta ao automático ou para a
@@ -595,7 +607,7 @@ export function ConversationHeader({
             a mesma cara de uma conversa normal. O testid é contrato:
             `escalacao-ciclo.spec.ts` o clica. */}
         {motivo !== null && (
-          <Badge variant="outline" className="h-4 w-fit max-w-full truncate px-1.5 text-[10px]"
+          <Badge variant="outline" className="h-5 min-h-5 w-fit max-w-full truncate rounded-md px-1.5 text-xs"
             title={t(ROTULO_DO_MOTIVO[motivo])} data-testid="badge-atendimento-humano">
             {t(ROTULO_DO_MOTIVO[motivo])}
           </Badge>

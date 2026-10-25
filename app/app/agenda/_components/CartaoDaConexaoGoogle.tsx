@@ -75,7 +75,7 @@ export function CartaoDaConexaoGoogle({
             {falta.length > 0 ? (
               <>
                 {" "}
-                <span data-testid="o-que-falta" className="font-mono text-[11px]">
+                <span data-testid="o-que-falta" className="font-mono text-xs">
                   {falta.join(` ${t("e")} `)}
                 </span>
               </>
@@ -88,7 +88,7 @@ export function CartaoDaConexaoGoogle({
           <a
             href={linkDeConfiguracao}
             data-testid="ir-configurar-google"
-            className="mt-2 inline-block text-xs font-medium text-accent underline underline-offset-2 hover:text-accent-strong"
+            className="mt-2 inline-block text-xs font-medium text-primary underline decoration-primary/45 underline-offset-2 hover:decoration-primary"
           >
             {t("Cadastrar as credenciais do Google")}
           </a>
@@ -105,7 +105,7 @@ export function CartaoDaConexaoGoogle({
             <span className="font-medium">{t("exatamente assim")}</span>:{" "}
             <code
               data-testid="endereco-de-retorno"
-              className="select-all break-all font-mono text-[11px] text-text"
+              className="font-mono text-xs break-all text-text select-all"
             >
               {enderecoDeRetorno}
             </code>

@@ -87,7 +87,7 @@ export function FormularioDeDestinosInternos({ listaInicial, vemDoPiso }: Props)
         {vemDoPiso && listaInicial.length > 0 ? (
           <p
             data-testid="destinos-vem-do-env"
-            className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+            className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
           >
             {t(
               "Esta lista ainda vem do arquivo de configuração do servidor, porque nunca foi salva por aqui. Ao salvar, passa a valer o que está nesta tela, e o arquivo deixa de ser consultado.",
@@ -107,12 +107,12 @@ export function FormularioDeDestinosInternos({ listaInicial, vemDoPiso }: Props)
         </div>
 
         {erro ? (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-danger-foreground text-sm" role="alert">
             {erro}
           </p>
         ) : null}
 
-        <p className="rounded-md border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm dark:border-amber-500/30 dark:bg-amber-950/20">
+        <p className="border-warning-border bg-warning-soft rounded-lg border px-4 py-3 text-sm">
           {t(
             "Cada endereço aqui é uma porta que este servidor passa a poder abrir para dentro da própria rede, levando junto a chave da instalação. Declare o endereço do serviço que você mesmo colocou lá — nunca uma faixa inteira por conveniência.",
           )}

@@ -56,42 +56,46 @@ export function GavetaDeNavegacao({ comoAba = false }: { comoAba?: boolean }) {
           className={cn(
             comoAba
               ? // Como aba: ocupa a vaga inteira na fila do rodapé, ícone em
-                // cima e rótulo embaixo, igual às outras quatro.
-                "flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1 text-muted-foreground"
-              : // Como hambúrguer: 44px de alvo, e só no celular — acima de `md`
-                // a barra lateral já está na tela.
-                "h-11 w-11 md:hidden",
+                // cima e rótulo embaixo, igual às outras quatro (DS §5.6,
+                // barra ancorada: altura mínima 56, raio 12, `xs`/500).
+                "flex h-auto min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5 text-muted-foreground hover:bg-transparent"
+              : // Como hambúrguer: 44px de alvo, e só abaixo de `lg` — dali
+                // para cima a barra lateral já está na tela.
+                "h-11 w-11 shrink-0 lg:hidden",
           )}
           // Como aba, o nome acessível é o rótulo visível "Mais". Herdar
           // "Abrir navegação" deixava DOIS controles com o mesmo nome na tela de
           // celular (este e o hambúrguer da barra de cima).
           aria-label={comoAba ? undefined : t("Abrir navegação")}
         >
-          {comoAba ? <DotsThree size={22} aria-hidden /> : <List size={22} aria-hidden />}
+          {comoAba ? <DotsThree size={20} aria-hidden /> : <List size={20} aria-hidden />}
           {comoAba ? (
-            <span className="w-full truncate text-center text-[10px] leading-tight">
+            <span className="w-full truncate text-center text-xs leading-tight font-medium">
               {t("Mais")}
             </span>
           ) : null}
         </Button>
       </SheetTrigger>
+      {/*
+        A gaveta É a barra lateral (DS §5.6): o mesmo conteúdo, com itens de 48
+        e o campo de busca no alto. 280px de largura, e nunca mais que a tela
+        menos 2rem — o pedaço de página que sobra à direita é o que diz "isto
+        fecha".
+      */}
       <SheetContent
         side="left"
-        className="flex w-72 max-w-[calc(100vw-2rem)] flex-col gap-0 p-0 sm:max-w-xs [&_a]:min-h-11 [&_h2>button]:min-h-11"
+        className="bg-sidebar flex w-[280px] max-w-[calc(100vw-2rem)] flex-col gap-0 p-0"
       >
         <SheetTitle className="sr-only">{t("Navegação principal")}</SheetTitle>
-        <SidebarContent
-          collapsed={false}
-          showCollapseControl={false}
-          onNavigate={() => setOpen(false)}
-        />
+        <SidebarContent collapsed={false} naGaveta onNavigate={() => setOpen(false)} />
       </SheetContent>
     </Sheet>
   );
 }
 
 /**
- * Navegação mobile do app autenticado — o hambúrguer da barra de cima.
+ * Navegação mobile do app autenticado — o hambúrguer da barra de cima, abaixo
+ * de 1024px (o corte da casca do Unnify, DS §5.4).
  *
  * Continua existindo ao lado da barra de abas de propósito: a gaveta é o
  * inventário COMPLETO (todos os grupos, todas as telas), e a barra de baixo é

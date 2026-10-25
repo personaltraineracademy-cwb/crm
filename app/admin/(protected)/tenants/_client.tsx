@@ -10,6 +10,7 @@ import {
 } from "@/components/admin/tenants/TenantsTable";
 import { useAdminTenants, type AdminTenantsFilters } from "@/hooks/useAdminTenants";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function TenantsClient() {
   const t = useT();
@@ -23,21 +24,22 @@ export function TenantsClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Tenants")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+      <PageHeader
+        title={t("Tenants")}
+        meta={
+          <span className="tabular-nums">
             {isLoading ? t("Carregando...") : `${total} tenant${total !== 1 ? "s" : ""}${hasNextPage ? "+" : ""}`}
-          </p>
-        </div>
-        <Button asChild size="sm" className="shrink-0">
-          <Link href="/admin/tenants/new">
-            <Plus size={16} aria-hidden />
-            {t("Novo tenant")}
-          </Link>
-        </Button>
-      </div>
+          </span>
+        }
+        actions={
+          <Button asChild size="sm">
+            <Link href="/admin/tenants/new">
+              <Plus size={16} aria-hidden />
+              {t("Novo tenant")}
+            </Link>
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <TenantsFilters filters={filters} onChange={setFilters} />

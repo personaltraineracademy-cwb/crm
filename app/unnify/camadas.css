@@ -1,0 +1,172 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — movimento das CAMADAS (etapa 5).
+
+   Diálogo, painel lateral, popover, menu e dica, com os números do Work
+   (DS §7.1 e §7.2). Mora aqui, e não no `app/globals.css`, pela regra da
+   etapa 1: o `globals.css` do DeskcommCRM fica intocado e o Unnify vem por
+   cima, neste diretório. As classes `ds-modal`, `ds-gaveta`, `ds-cortina` e
+   `ds-painel` continuam lá para quem ainda as usa (o seletor, a vitrine de
+   `/design`); os primitivos de `components/ui/` passaram a usar estas.
+
+   Por que `animation` e não `transition`: o `Presence` do Radix só segura o
+   nó na árvore até o `animationend`. Com `transition`, a saída não existe.
+
+   Propriedades individuais (`translate`, `scale`), nunca `transform`: o
+   Tailwind 4 centraliza o diálogo com `translate` individual, e `transform`
+   SOMARIA ao `-50% -50%` (o porquê inteiro está no bloco do modal do
+   `globals.css`). Aqui o diálogo nem anima `translate`: só opacidade e
+   escala, então quem ancora fora do centro (a paleta, a 12vh) não precisa
+   declarar nada.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ---- Sobreposição (overlay + desfoque, DS §6.3) ------------------------- */
+@keyframes camada-cortina-entra {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes camada-cortina-sai {
+  to {
+    opacity: 0;
+  }
+}
+.camada-cortina[data-state="open"] {
+  animation: camada-cortina-entra var(--duration-fast) var(--ease-out) both;
+}
+.camada-cortina[data-state="closed"] {
+  animation: camada-cortina-sai var(--duration-fast) var(--ease-out) both;
+}
+
+/* ---- Diálogo (Work): fade + zoom 0,985, 120ms, emphasized --------------- */
+@keyframes camada-dialogo-entra {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+@keyframes camada-dialogo-sai {
+  to {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+.camada-dialogo[data-state="open"] {
+  animation: camada-dialogo-entra var(--duration-fast) var(--ease-out-slow) both;
+}
+.camada-dialogo[data-state="closed"] {
+  animation: camada-dialogo-sai var(--duration-fast) var(--ease-out-slow) both;
+}
+
+/* ---- Painel lateral: desliza 2,5rem + opacidade, 180ms, standard --------
+   O lado vem de `data-lado` (o `Dialog.Content` do Radix não emite
+   `data-side`). Com 2,5rem, e não 100%, a gaveta PRECISA da opacidade: ela
+   nasce a 40px do lugar e chega ao mesmo tempo em que aparece. */
+.camada-gaveta {
+  --camada-gaveta-de: 2.5rem 0;
+}
+.camada-gaveta[data-lado="left"] {
+  --camada-gaveta-de: -2.5rem 0;
+}
+.camada-gaveta[data-lado="top"] {
+  --camada-gaveta-de: 0 -2.5rem;
+}
+.camada-gaveta[data-lado="bottom"] {
+  --camada-gaveta-de: 0 2.5rem;
+  /* A gaveta de baixo encosta no indicador de home: reserva a área segura.
+     Classe + atributo vence o `p-6` da base por especificidade. */
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+}
+@keyframes camada-gaveta-entra {
+  from {
+    opacity: 0;
+    translate: var(--camada-gaveta-de);
+  }
+}
+@keyframes camada-gaveta-sai {
+  to {
+    opacity: 0;
+    translate: var(--camada-gaveta-de);
+  }
+}
+.camada-gaveta[data-state="open"] {
+  animation: camada-gaveta-entra var(--duration-base) var(--ease-out) both;
+}
+.camada-gaveta[data-state="closed"] {
+  animation: camada-gaveta-sai var(--duration-base) var(--ease-out) both;
+}
+
+/* ---- Popover e menu: fade + zoom 95% + 8px da borda, 150ms -------------
+   O deslocamento aponta para o gatilho (`data-side` do popper do Radix). */
+.camada-painel {
+  --camada-painel-de: 0 -0.5rem;
+}
+.camada-painel[data-side="top"] {
+  --camada-painel-de: 0 0.5rem;
+}
+.camada-painel[data-side="left"] {
+  --camada-painel-de: 0.5rem 0;
+}
+.camada-painel[data-side="right"] {
+  --camada-painel-de: -0.5rem 0;
+}
+@keyframes camada-painel-entra {
+  from {
+    opacity: 0;
+    scale: 0.95;
+    translate: var(--camada-painel-de);
+  }
+}
+@keyframes camada-painel-sai {
+  to {
+    opacity: 0;
+    scale: 0.95;
+  }
+}
+.camada-painel[data-state="open"] {
+  animation: camada-painel-entra 150ms var(--ease-out) both;
+}
+.camada-painel[data-state="closed"] {
+  animation: camada-painel-sai 150ms var(--ease-out) both;
+}
+
+/* ---- Dica: fade + zoom, 100ms ------------------------------------------
+   O Radix abre a dica com `data-state="delayed-open"` ou `instant-open`. */
+@keyframes camada-dica-entra {
+  from {
+    opacity: 0;
+    scale: 0.95;
+  }
+}
+@keyframes camada-dica-sai {
+  to {
+    opacity: 0;
+    scale: 0.95;
+  }
+}
+.camada-dica[data-state="delayed-open"],
+.camada-dica[data-state="instant-open"] {
+  animation: camada-dica-entra 100ms var(--ease-out) both;
+}
+.camada-dica[data-state="closed"] {
+  animation: camada-dica-sai 100ms var(--ease-out) both;
+}
+
+/* ---- Movimento reduzido (DS §7.3): nasce no lugar, sem percurso --------
+   `none`, e não só a duração mínima da regra global: sem animação o
+   `Presence` desmonta na hora, e o nó já pinta no estado final. */
+@media (prefers-reduced-motion: reduce) {
+  .camada-cortina,
+  .camada-dialogo,
+  .camada-gaveta,
+  .camada-painel,
+  .camada-dica {
+    animation: none !important;
+  }
+}
+
+/* ---- Transparência reduzida (DS §6.4): sobreposição sem desfoque ------- */
+@media (prefers-reduced-transparency: reduce) {
+  .camada-cortina {
+    backdrop-filter: none;
+  }
+}

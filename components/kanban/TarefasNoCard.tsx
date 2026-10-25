@@ -33,8 +33,8 @@ export function TarefasNoCard({ tarefas }: { tarefas?: ResumoDasTarefas }) {
       aria-label={descricao}
       title={descricao}
       className={cn(
-        "flex shrink-0 items-center gap-0.5 text-[11px] tabular-nums",
-        tarefas.atrasadas > 0 ? "font-semibold text-destructive" : "text-text-muted",
+        "flex shrink-0 items-center gap-0.5 text-xs tabular-nums",
+        tarefas.atrasadas > 0 ? "text-danger-foreground font-semibold" : "text-muted-foreground",
       )}
     >
       <ListChecks size={12} aria-hidden />

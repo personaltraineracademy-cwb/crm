@@ -128,7 +128,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
     return (
       <div
         data-testid="conhecimento-chave-conferindo"
-        className="flex items-center gap-2 text-xs text-text-muted"
+        className="flex items-center gap-2 text-xs text-muted-foreground"
       >
         <KeyRound className="h-3.5 w-3.5 animate-pulse" aria-hidden />
         <span>{t("Conferindo a chave de embedding — leva alguns segundos.")}</span>
@@ -140,9 +140,9 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
     return (
       <div
         data-testid="conhecimento-chave-ok"
-        className="flex flex-wrap items-center gap-2 text-xs text-text-muted"
+        className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
       >
-        <CheckCircle2 className="h-3.5 w-3.5 text-success-fg" aria-hidden />
+        <CheckCircle2 className="text-success-foreground h-3.5 w-3.5" aria-hidden />
         <span>
           {t("Pronto para preparar material.")}{" "}
           {estado.chave_em_uso ? (
@@ -159,7 +159,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
           )}
         </span>
         {estado.avisos.map((a) => (
-          <span key={a} className="w-full text-warning-fg">
+          <span key={a} className="text-warning-foreground w-full">
             {t(a)}
           </span>
         ))}
@@ -177,10 +177,10 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
   return (
     <Card
       data-testid="conhecimento-sem-chave"
-      className="space-y-3 border-warning-bg bg-warning-bg/20 p-4"
+      className="border-warning-soft bg-warning-soft/20 space-y-3 p-4"
     >
       <div className="flex items-start gap-2">
-        <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-fg" aria-hidden />
+        <TriangleAlert className="text-warning-foreground mt-0.5 h-4 w-4 shrink-0" aria-hidden />
         <div className="space-y-1">
           <h3 className="text-sm font-medium">
             {semChave === "google"
@@ -189,7 +189,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
                 ? t("A base é preparada pela OpenAI, e não há mais chave da OpenAI utilizável")
                 : t("Falta uma chave de embedding para o agente aprender o seu material")}
           </h3>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {semChave
               ? // Falha aberta na informação: outra chave cadastrada NÃO assume
                 // sozinha — perguntar com outro modelo não acharia nada do que
@@ -252,7 +252,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
                 Google
               </label>
             </div>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t("O texto dos materiais é enviado ao provedor escolhido para preparar a busca.")}
             </p>
           </fieldset>
@@ -278,7 +278,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
               disabled={enviando}
               autoComplete="off"
             />
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t("Você pega em")}{" "}
               <a
                 href={ONDE_PEGAR[provedor].url}
@@ -316,7 +316,7 @@ export function ChaveDeConhecimento({ estado, onChaveCadastrada }: Props) {
             <KeyRound className="mr-2 h-3.5 w-3.5" aria-hidden />
             {t("Cadastrar a chave aqui")}
           </Button>
-          <span className="text-xs text-text-muted">
+          <span className="text-xs text-muted-foreground">
             {t("ou veja todas em")}{" "}
             <Link
               href="/app/ai/credentials"

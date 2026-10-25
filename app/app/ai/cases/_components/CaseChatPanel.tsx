@@ -195,7 +195,7 @@ export function CaseChatPanel({ caseId }: { caseId: string }) {
         tabIndex={0}
         aria-live="polite"
         aria-relevant="additions"
-        className="flex max-h-[22rem] flex-col gap-3 overflow-y-auto focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-soft"
+        className="flex max-h-[22rem] flex-col gap-3 overflow-y-auto focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
       >
         {mensagens.length === 0 && !ask.isPending ? (
           <div className="flex flex-col gap-2 py-2">
@@ -209,7 +209,7 @@ export function CaseChatPanel({ caseId }: { caseId: string }) {
                     // `t(s)`, não `s`: quem lê em espanhol clicaria num botão em
                     // espanhol e veria o campo preencher em português.
                     onClick={() => setPergunta(t(s))}
-                    className="rounded-sm border border-border px-3 py-1.5 text-left text-xs text-text transition-colors hover:border-accent hover:text-accent"
+                    className="rounded-sm border border-border px-3 py-1.5 text-left text-xs text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
                     {t(s)}
                   </button>
@@ -262,7 +262,7 @@ export function CaseChatPanel({ caseId }: { caseId: string }) {
               "Nenhum provedor de IA está configurado. Peça a quem administra para configurar em IA › Provedores.",
             )}
           </p>
-          <a className="text-sm text-accent underline underline-offset-2" href="/app/ai/providers">
+          <a className="text-sm text-primary underline underline-offset-2" href="/app/ai/providers">
             {t("Abrir IA › Provedores")}
           </a>
         </div>
@@ -317,10 +317,10 @@ function Moldura({ t, children }: { t: (s: string) => string; children: ReactNod
   return (
     <section
       data-testid="case-chat"
-      className="flex flex-col gap-3 rounded-lg border border-border p-4"
+      className="flex flex-col gap-3 rounded-xl border border-border p-4"
     >
       <div className="flex items-center gap-2">
-        <ChatCircle weight="duotone" aria-hidden className="size-4 text-accent" />
+        <ChatCircle weight="duotone" aria-hidden className="size-4 text-primary" />
         <h3 className="text-sm font-semibold">{t("Conversar sobre o caso")}</h3>
       </div>
       {/* O antídoto do modo de falha "a IA já avisou o cliente". Permanente de
@@ -350,13 +350,13 @@ function Moldura({ t, children }: { t: (s: string) => string; children: ReactNod
  */
 function Pensando({ t }: { t: (s: string) => string }) {
   return (
-    <div className="flex items-center gap-2 self-start rounded-sm border-l-2 border-accent bg-accent-soft px-3 py-2">
+    <div className="bg-interactive flex items-center gap-2 self-start rounded-sm border-l-2 border-primary px-3 py-2">
       <span aria-hidden className="flex items-center gap-1">
         {[0, 150, 300].map((atraso) => (
           <span
             key={atraso}
             style={{ animationDelay: `${atraso}ms` }}
-            className="size-1.5 animate-pulse rounded-full bg-accent motion-reduce:animate-none"
+            className="size-1.5 animate-pulse rounded-full bg-primary motion-reduce:animate-none"
           />
         ))}
       </span>
@@ -370,7 +370,7 @@ function Faixa({ tom, children }: { tom: "neutro" | "aviso"; children: ReactNode
     <p
       className={cn(
         "rounded-sm px-3 py-2 text-xs",
-        tom === "aviso" ? "bg-warning-bg text-text" : "bg-accent-soft text-text",
+        tom === "aviso" ? "bg-warning-soft text-foreground" : "bg-interactive text-foreground",
       )}
     >
       {children}
@@ -399,8 +399,8 @@ function Bolha({
         falhou
           ? "border border-destructive/40"
           : daIa
-            ? "border-l-2 border-accent bg-accent-soft"
-            : "self-end border border-border bg-surface-elevated",
+            ? "bg-interactive border-l-2 border-primary"
+            : "self-end border border-border bg-muted",
       )}
     >
       <div className="flex items-center gap-2 text-xs text-muted-foreground">

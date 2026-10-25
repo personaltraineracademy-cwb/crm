@@ -41,10 +41,10 @@ const ROTULO_DA_SITUACAO: Record<Situacao, string> = {
 };
 
 const ESTILO_DA_SITUACAO: Record<Exclude<Situacao, "todas">, string> = {
-  entregue: "border-emerald-500/40 bg-emerald-500/10",
-  falha: "border-destructive/40 bg-destructive/10",
-  aguardando: "border-sky-500/40 bg-sky-500/10",
-  nao_enviado: "border-amber-500/40 bg-amber-500/10",
+  entregue: "border-success-border bg-success-soft",
+  falha: "border-danger-border bg-danger-soft",
+  aguardando: "border-info-border bg-info-soft",
+  nao_enviado: "border-warning-border bg-warning-soft",
 };
 
 const ROTULO_CURTO: Record<Exclude<Situacao, "todas">, string> = {
@@ -89,14 +89,14 @@ export function HistoricoDeEnvios({
 
   return (
     <section className="flex flex-col gap-4" data-testid="historico-de-envios">
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-md border p-4">
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-lg border p-4">
         <input type="hidden" name="aba" value="historico" />
         <label className="flex flex-col gap-1 text-xs">
           {t("Período")}
           <select
             name="periodo"
             defaultValue={filtros.periodo}
-            className="rounded-md border bg-background p-2 text-sm"
+            className="rounded-lg border bg-background p-2 text-sm"
           >
             {PERIODOS.map((p) => (
               <option key={p} value={p}>
@@ -110,7 +110,7 @@ export function HistoricoDeEnvios({
           <select
             name="situacao"
             defaultValue={filtros.situacao}
-            className="rounded-md border bg-background p-2 text-sm"
+            className="rounded-lg border bg-background p-2 text-sm"
           >
             {(Object.keys(ROTULO_DA_SITUACAO) as Situacao[]).map((s) => (
               <option key={s} value={s}>
@@ -124,7 +124,7 @@ export function HistoricoDeEnvios({
           <select
             name="evento"
             defaultValue={filtros.evento}
-            className="rounded-md border bg-background p-2 text-sm"
+            className="rounded-lg border bg-background p-2 text-sm"
           >
             <option value="">{t("Todos os eventos")}</option>
             {eventos.map((e) => (
@@ -139,7 +139,7 @@ export function HistoricoDeEnvios({
           <select
             name="plataforma"
             defaultValue={filtros.plataforma}
-            className="rounded-md border bg-background p-2 text-sm"
+            className="rounded-lg border bg-background p-2 text-sm"
           >
             <option value="">{t("Todas")}</option>
             <option value="google_ads">Google Ads</option>
@@ -152,12 +152,12 @@ export function HistoricoDeEnvios({
             name="busca"
             defaultValue={filtros.busca}
             placeholder={t("Nome do negócio")}
-            className="rounded-md border bg-background p-2 text-sm"
+            className="rounded-lg border bg-background p-2 text-sm"
           />
         </label>
         <button
           type="submit"
-          className="rounded-md border bg-primary px-4 py-2 text-sm text-primary-foreground"
+          className="rounded-lg border bg-primary px-4 py-2 text-sm text-primary-foreground"
         >
           {t("Filtrar")}
         </button>
@@ -168,7 +168,7 @@ export function HistoricoDeEnvios({
       </p>
 
       {linhas.length === 0 ? (
-        <p className="rounded-md border p-4 text-sm text-muted-foreground">
+        <p className="rounded-lg border p-4 text-sm text-muted-foreground">
           {t("Nenhum envio com estes filtros.")}
         </p>
       ) : (

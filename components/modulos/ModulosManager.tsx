@@ -68,7 +68,7 @@ export function ModulosManager({ inicial }: { inicial: ListagemDeModulos }) {
   return (
     <div className="space-y-4">
       {erro ? (
-        <p role="alert" className="text-sm text-destructive" data-testid="modulos-erro">
+        <p role="alert" className="text-danger-foreground text-sm" data-testid="modulos-erro">
           {erro}
         </p>
       ) : null}
@@ -86,9 +86,9 @@ export function ModulosManager({ inicial }: { inicial: ListagemDeModulos }) {
                     </Badge>
                   ) : null}
                 </div>
-                <p className="mt-1 max-w-xl text-sm text-text-muted">{t(modulo.descricao)}</p>
+                <p className="mt-1 max-w-xl text-sm text-muted-foreground">{t(modulo.descricao)}</p>
                 {instalado?.motivo_suspensao ? (
-                  <p className="mt-1 text-xs text-destructive">
+                  <p className="text-danger-foreground mt-1 text-xs">
                     {t("Suspenso")}: {instalado.motivo_suspensao}
                   </p>
                 ) : null}

@@ -22,6 +22,7 @@ import {
   LgpdRequestsTableSkeleton,
 } from "@/components/admin/lgpd/LgpdRequestsTable";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 const NONE = "__none__";
 
@@ -72,14 +73,16 @@ export function LgpdAdminClient() {
       <LgpdRiskBanner requests={bannerRows} />
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("LGPD — Cross-tenant")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {isLoading
-            ? t("Carregando...")
-            : `${total} ${total !== 1 ? t("solicitações") : t("solicitação")}${hasNextPage ? "+" : ""}`}
-        </p>
-      </div>
+      <PageHeader
+        title={t("LGPD — Cross-tenant")}
+        meta={
+          <span className="tabular-nums">
+            {isLoading
+              ? t("Carregando...")
+              : `${total} ${total !== 1 ? t("solicitações") : t("solicitação")}${hasNextPage ? "+" : ""}`}
+          </span>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">

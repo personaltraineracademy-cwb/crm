@@ -1,6 +1,7 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { RedesSociaisClient } from "./RedesSociaisClient";
@@ -84,8 +85,10 @@ export function ConexoesShell({
   };
 
   return (
-    <Tabs value={aba} onValueChange={(v) => irPara(v, sub)} className="flex flex-col gap-4">
-      <TabsList className="h-auto max-w-full flex-wrap justify-start">
+    <Tabs value={aba} onValueChange={(v) => irPara(v, sub)} className="flex flex-col gap-6">
+      {/* Um nível de abas `line` por página (DS §1.2); o segundo nível
+          (conexão × modelos) é controle segmentado. */}
+      <TabsList variant="line" className="max-w-full justify-start">
         {/* Rótulos pelo que o usuário RECONHECE, não pelo nome técnico do motor por
             trás: ele sabe se leu um QR ou se tem conta na Meta; a sigla do provedor
             não diz nada a quem instalou o sistema para vender.
@@ -127,22 +130,27 @@ export function ConexoesShell({
           {/* Sub-abas como nas demais: conectar e gerenciar modelos são tarefas
               diferentes. O componente de modelos é o MESMO do outro parceiro,
               apontado para a rota desta fonte. */}
-          <Tabs value={sub} onValueChange={(v) => irPara("graph", v)} className="flex flex-col gap-4">
-            <TabsList>
-              <TabsTrigger value="conexao">{t("Conexão")}</TabsTrigger>
-              <TabsTrigger value="templates">{t("Modelos")}</TabsTrigger>
-            </TabsList>
-            <TabsContent value="conexao" className="mt-0">
-              <CanalGraphParceiroClient />
-            </TabsContent>
-            <TabsContent value="templates" className="mt-0">
+          <div className="flex flex-col gap-4">
+            <SegmentedControl
+              aria-label={graphParceiro.label}
+              value={sub}
+              onValueChange={(v) => irPara("graph", v)}
+              options={[
+                { value: "conexao", label: t("Conexão") },
+                { value: "templates", label: t("Modelos") },
+              ]}
+            />
+            {sub === "conexao" ? <CanalGraphParceiroClient /> : null}
+            {sub === "templates" ? (
+              <>
               {/* Editar e apagar valem aqui como no outro parceiro: desde a
                   #1734 o alvo resolve o id da variante (nome + idioma) antes de
                   falar com a plataforma, então a tela apaga UMA tradução, não
                   todas (#1728 era este o motivo de ficar desligado). */}
               <TemplatesParceiroClient rota={rotaDeTemplates("graph")} />
-            </TabsContent>
-          </Tabs>
+              </>
+            ) : null}
+          </div>
         </TabsContent>
       )}
 
@@ -152,39 +160,39 @@ export function ConexoesShell({
             só faz a segunda sumir abaixo da dobra. O rótulo diz "do parceiro"
             para não colidir com "Templates" da barra lateral, que significa
             OUTRA coisa (respostas rápidas do atendente). */}
-        <Tabs value={sub} onValueChange={(v) => irPara("parceiro", v)} className="flex flex-col gap-4">
-          <TabsList>
-            <TabsTrigger value="conexao">{t("Conexão")}</TabsTrigger>
-            <TabsTrigger value="templates">{t("Modelos do parceiro")}</TabsTrigger>
-          </TabsList>
-          <TabsContent value="conexao" className="mt-0">
-            <CanalParceiroClient />
-          </TabsContent>
-          <TabsContent value="templates" className="mt-0">
-            <TemplatesParceiroClient />
-          </TabsContent>
-        </Tabs>
+        <div className="flex flex-col gap-4">
+          <SegmentedControl
+            aria-label={t("Provedor parceiro")}
+            value={sub}
+            onValueChange={(v) => irPara("parceiro", v)}
+            options={[
+              { value: "conexao", label: t("Conexão") },
+              { value: "templates", label: t("Modelos do parceiro") },
+            ]}
+          />
+          {sub === "conexao" ? <CanalParceiroClient /> : <TemplatesParceiroClient />}
+        </div>
       </TabsContent>
 
       <TabsContent value="oficial" className="mt-0">
-        <Tabs value={sub} onValueChange={(v) => irPara("oficial", v)} className="flex flex-col gap-4">
-          <TabsList>
-            <TabsTrigger value="conexao">{t("Conexão")}</TabsTrigger>
-            {/* "Templates da Meta", não "Templates": a barra lateral já tem um item
-                com esse nome que significa OUTRA coisa — respostas rápidas salvas
-                pelo atendente (`/app/templates`). Dois conceitos com o mesmo rótulo
-                fazem o operador clicar no errado e concluir que a tela está quebrada.
-                A colisão é anterior a esta mudança; o que dá para fazer aqui é não
-                agravá-la. */}
-            <TabsTrigger value="templates">{t("Templates da Meta")}</TabsTrigger>
-          </TabsList>
-          <TabsContent value="conexao" className="mt-0">
-            <CanalOficialClient />
-          </TabsContent>
-          <TabsContent value="templates" className="mt-0">
-            <TemplatesClient />
-          </TabsContent>
-        </Tabs>
+        <div className="flex flex-col gap-4">
+          <SegmentedControl
+            aria-label={t("API Oficial (Meta)")}
+            value={sub}
+            onValueChange={(v) => irPara("oficial", v)}
+            options={[
+              { value: "conexao", label: t("Conexão") },
+              /* "Templates da Meta", não "Templates": a barra lateral já tem um item
+                  com esse nome que significa OUTRA coisa — respostas rápidas salvas
+                  pelo atendente (`/app/templates`). Dois conceitos com o mesmo rótulo
+                  fazem o operador clicar no errado e concluir que a tela está quebrada.
+                  A colisão é anterior a esta mudança; o que dá para fazer aqui é não
+                  agravá-la. */
+              { value: "templates", label: t("Templates da Meta") },
+            ]}
+          />
+          {sub === "conexao" ? <CanalOficialClient /> : <TemplatesClient />}
+        </div>
       </TabsContent>
     </Tabs>
   );

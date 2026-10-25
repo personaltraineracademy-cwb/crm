@@ -27,6 +27,10 @@ import { existeConexaoDeLeitura } from "@/lib/plataformas-de-anuncio/credenciais
 import { createAdminClient } from "@/lib/supabase/admin";
 
 import { MetaAdsClient } from "./_components/MetaAdsClient";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
+import { Megaphone } from "@/lib/ui/icons";
 
 export const metadata = { title: "Meta Ads" };
 export const dynamic = "force-dynamic";
@@ -58,39 +62,39 @@ export default async function MetaAdsPage() {
     */
     <div
       data-superficie="clara"
-      className="-m-4 flex min-h-[calc(100%+2rem)] flex-col gap-6 bg-bg p-4 text-text sm:-m-6 sm:min-h-[calc(100%+3rem)] sm:p-6"
+      className="-m-4 flex min-h-[calc(100%+2rem)] flex-col gap-6 bg-background p-4 text-foreground sm:-m-6 sm:min-h-[calc(100%+3rem)] sm:p-6"
     >
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Meta Ads")}</h1>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Meta Ads")}
+        description={t(
             "O desempenho das campanhas que estão trazendo gente para cá. Os números vêm da plataforma no momento em que você clica em Atualizar — nada fica guardado aqui.",
           )}
-        </p>
-      </header>
+      />
 
       {conexao.conectada ? (
         <MetaAdsClient contaPadrao={conexao.contaPadrao} idioma={idioma} />
       ) : (
-        <div className="rounded-md border p-6 text-sm">
-          <p className="font-medium">{t("Nenhuma conta de anúncios conectada.")}</p>
-          <p className="mt-1 text-muted-foreground">
-            {podeConectar
-              ? t(
-                  "Conecte um token de acesso com permissão de leitura de anúncios para ver as campanhas aqui.",
-                )
-              : t(
-                  "Peça a quem administra a organização para conectar a conta de anúncios em Configurações.",
-                )}
-          </p>
-          {podeConectar && (
-            <a
-              className="mt-4 inline-block rounded-md border px-4 py-2 font-medium underline-offset-2 hover:bg-muted"
-              href="/app/settings/meta-ads"
-            >
-              {t("Conectar conta de anúncios")}
-            </a>
-          )}
+        <div className="rounded-xl border border-border bg-card">
+          <EmptyState
+            icon={Megaphone}
+            title={t("Nenhuma conta de anúncios conectada.")}
+            description={
+              podeConectar
+                ? t(
+                    "Conecte um token de acesso com permissão de leitura de anúncios para ver as campanhas aqui.",
+                  )
+                : t(
+                    "Peça a quem administra a organização para conectar a conta de anúncios em Configurações.",
+                  )
+            }
+            action={
+              podeConectar ? (
+                <Button asChild>
+                  <a href="/app/settings/meta-ads">{t("Conectar conta de anúncios")}</a>
+                </Button>
+              ) : undefined
+            }
+          />
         </div>
       )}
     </div>

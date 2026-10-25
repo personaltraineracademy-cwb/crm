@@ -5,9 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  Background,
   ConnectionLineType,
-  Controls,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -21,6 +19,12 @@ import {
 import "@xyflow/react/dist/style.css";
 import { toast } from "sonner";
 
+import {
+  CLASSE_DO_CANVAS,
+  ControlesDoFluxo,
+  FundoDoFluxo,
+  ROTULO_DA_ARESTA,
+} from "@/components/fluxo/tema-do-fluxo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,6 +184,7 @@ export function CanvasDaAutomacao({ regra }: Props) {
         return {
           ...l,
           type: "smoothstep" as const,
+          ...ROTULO_DA_ARESTA,
           label: origem?.data.kind === "condicoes" ? t("se atender") : undefined,
           selected: l.id === ligacaoSelecionada,
         };
@@ -423,7 +428,7 @@ export function CanvasDaAutomacao({ regra }: Props) {
         }
       }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Button type="button" variant="ghost" size="icon" asChild>
             <Link href={VOLTAR} aria-label={t("Voltar para as automações")}>
@@ -469,7 +474,7 @@ export function CanvasDaAutomacao({ regra }: Props) {
             {salvando ? t("Salvando…") : regra ? t("Salvar alterações") : t("Criar automação")}
           </Button>
           {regra ? (
-            <label className="flex items-center gap-2 text-sm text-text">
+            <label className="flex items-center gap-2 text-sm text-foreground">
               <Switch
                 checked={ativo}
                 disabled={atualizar.isPending}
@@ -483,7 +488,10 @@ export function CanvasDaAutomacao({ regra }: Props) {
       </div>
 
       {preservadas ? (
-        <div role="note" className="border-b border-border bg-muted px-4 py-2 text-xs text-text-muted">
+        <div
+          role="note"
+          className="border-b border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground"
+        >
           {t(
             "Esta automação combina as condições por um grupo (qualquer uma, ou um grupo dentro de outro). Este desenho não edita esse grupo: ele é gravado como está.",
           )}
@@ -524,6 +532,7 @@ export function CanvasDaAutomacao({ regra }: Props) {
             nodes={nosNaTela}
             edges={ligacoesNaTela}
             nodeTypes={nodeTypes}
+            className={CLASSE_DO_CANVAS}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -537,8 +546,8 @@ export function CanvasDaAutomacao({ regra }: Props) {
             fitView
             fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
           >
-            <Background />
-            <Controls />
+            <FundoDoFluxo />
+            <ControlesDoFluxo />
           </ReactFlow>
           <Button
             type="button"
@@ -557,8 +566,8 @@ export function CanvasDaAutomacao({ regra }: Props) {
         <aside
           className={
             painel
-              ? "fixed inset-x-0 bottom-0 z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg border-t border-border bg-surface shadow-lg lg:static lg:z-auto lg:h-full lg:w-96 lg:max-h-none lg:shrink-0 lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none"
-              : "hidden lg:flex lg:h-full lg:w-96 lg:shrink-0 lg:flex-col lg:border-l lg:border-border lg:bg-surface"
+              ? "fixed inset-x-0 bottom-0 z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-card shadow-lg lg:static lg:z-auto lg:h-full lg:max-h-none lg:w-96 lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-l lg:shadow-none"
+              : "hidden lg:flex lg:h-full lg:w-96 lg:shrink-0 lg:flex-col lg:border-l lg:border-border lg:bg-card"
           }
           data-testid="designer-painel"
         >

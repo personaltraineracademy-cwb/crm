@@ -34,6 +34,7 @@
 import type { Idioma } from "./idiomas";
 import { TEXTOS_AGENDA_CONFIGURACAO } from "./agenda-configuracao";
 import { TEXTOS_AGENDA_SERVICOS } from "./agenda-servicos";
+import { TEXTOS_TELAS_GERAIS } from "./telas-gerais";
 
 /** `pt-BR` não aparece: é a chave. Só o que DIFERE precisa de linha. */
 type Traducoes = Record<string, Partial<Record<Exclude<Idioma, "pt-BR">, string>>>;
@@ -65,6 +66,7 @@ export const DICIONARIO: Traducoes = {
   "Só é possível encaminhar mensagens de texto ou mídia.": { es: "Solo se pueden reenviar mensajes de texto o multimedia." },
   ...TEXTOS_AGENDA_SERVICOS,
   ...TEXTOS_AGENDA_CONFIGURACAO,
+  ...TEXTOS_TELAS_GERAIS,
   "Etiquetas de contato interno": { es: "Etiquetas de contacto interno" },
   "Contato marcado com uma destas etiquetas não vira card no funil e não recebe resposta da IA — equipe, sócio, família, fornecedor. A conversa continua normal na Inbox, inclusive para envio manual. Uma etiqueta por linha.": {
     es: "Contacto marcado con una de estas etiquetas no se convierte en tarjeta en el embudo y no recibe respuesta de la IA — equipo, socio, familia, proveedor. La conversación sigue normal en la Bandeja de entrada, incluso para el envío manual. Una etiqueta por línea.",
@@ -1987,6 +1989,10 @@ export const DICIONARIO: Traducoes = {
   // molde de vazio/erro das outras telas.
   "Carregando o desempenho": { es: "Cargando el rendimiento" },
   "Expandir sidebar": { es: "Expandir barra lateral" },
+  // Etapa 6 (casca do Unnify) — tema escolhido no menu da conta.
+  Tema: { es: "Tema" },
+  Claro: { es: "Claro" },
+  Escuro: { es: "Oscuro" },
   "Recolher sidebar": { es: "Contraer barra lateral" },
   Versão: { es: "Versión" },
   versão: { es: "versión" },
@@ -17843,6 +17849,11 @@ export const DICIONARIO: Traducoes = {
   "Parâmetro inválido.": {
     es: "Parámetro no válido.",
   },
+  // ═══ Etapa 8B (Unnify): funil e agenda ═══
+  "Recolher etapa": { es: "Contraer etapa" },
+  "Expandir etapa": { es: "Expandir etapa" },
+  Amanhã: { es: "Mañana" },
+  Visualização: { es: "Visualización" },
 };
 
 /**

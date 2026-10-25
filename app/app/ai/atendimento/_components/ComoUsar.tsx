@@ -13,12 +13,12 @@ type Traduzir = (texto: string) => string;
  */
 export function ComoUsar({ t }: { t: Traduzir }) {
   return (
-    <details className="group rounded-md border border-border bg-surface p-4" data-testid="como-usar">
+    <details className="group rounded-xl border border-border bg-card p-4" data-testid="como-usar">
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-        <Info size={16} aria-hidden className="text-accent" />
+        <Info size={16} aria-hidden className="text-primary" />
         {t("Como usar os fluxos de atendimento (guia rápido)")}
       </summary>
-      <div className="mt-3 space-y-4 text-sm text-text-muted">
+      <div className="mt-3 space-y-4 text-sm text-muted-foreground">
         <p>
           {t(
             "É um roteiro de perguntas que a IA segue durante a conversa: ela pergunta uma coisa por vez, entende a resposta e guarda o dado no cadastro do cliente.",
@@ -26,7 +26,7 @@ export function ComoUsar({ t }: { t: Traduzir }) {
         </p>
 
         <div>
-          <p className="font-medium text-text">{t("Montando o roteiro")}</p>
+          <p className="font-medium text-foreground">{t("Montando o roteiro")}</p>
           <ol className="mt-1 list-decimal space-y-1 pl-5">
             <li>{t("Crie o roteiro e dê um nome.")}</li>
             <li>
@@ -50,7 +50,7 @@ export function ComoUsar({ t }: { t: Traduzir }) {
         </div>
 
         <div>
-          <p className="font-medium text-text">{t("Como a IA se comporta")}</p>
+          <p className="font-medium text-foreground">{t("Como a IA se comporta")}</p>
           <ul className="mt-1 list-disc space-y-1 pl-5">
             <li>{t("Só grava uma resposta que esteja escrita na mensagem do cliente.")}</li>
             <li>{t("Se o cliente já disser um dado antes de ser perguntado, ela registra sem perguntar.")}</li>

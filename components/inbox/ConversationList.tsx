@@ -4,8 +4,8 @@ import { useEffect, useMemo } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import type { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Check } from "@/lib/ui/icons";
+import { Checkbox } from "@/components/ui/checkbox";
+import { EsqueletoDaLista, ErroComAcao } from "./estados";
 import { useChannelSessions } from "@/hooks/channels/useChannelSessions";
 
 import { useAutomaticoAtivo } from "@/hooks/ai/useAutomaticoAtivo";
@@ -159,11 +159,8 @@ export function ConversationList({
   // dado), então a regra do #2366 segue de pé: sem dado é primeira carga.
   if (q.isPending && items.length === 0) {
     return (
-      <div className="space-y-3 p-3">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} className="h-16 w-full" />
-        ))}
-      </div>
+      // Unnify §10.21: esqueleto com a forma final — 8 linhas de 56.
+      <EsqueletoDaLista />
     );
   }
 
@@ -176,17 +173,14 @@ export function ConversationList({
   // sendo tudo o que existe para mostrar, com o botão de tentar de novo.
   if (q.isError && q.data === undefined) {
     return (
-      <div className="p-4 text-center text-sm text-muted-foreground">
-        <p>{t("Erro ao carregar conversas.")}</p>
-        <Button
-          size="sm"
-          variant="outline"
-          className="mt-2"
-          onClick={() => q.refetch()}
-        >
-          Tentar novamente
-        </Button>
-      </div>
+      <ErroComAcao
+        mensagem={t("Erro ao carregar conversas.")}
+        acao={
+          <Button size="sm" variant="outline" onClick={() => q.refetch()}>
+            {t("Tentar novamente")}
+          </Button>
+        }
+      />
     );
   }
 
@@ -218,7 +212,7 @@ export function ConversationList({
             Sem esta linha o operador só ouve "Nenhuma conversa com esses
             filtros" e acha o botão quebrado (issue #2103). */}
         {items.length === 0 && filters.is_group && (
-          <p className="px-6 pb-6 text-center text-xs text-text-subtle">
+          <p className="px-6 pb-6 text-center text-xs text-muted-foreground">
             {t("Só entram na inbox os grupos ligados em Conexões › Grupos, e cada um aparece aqui a partir da primeira mensagem recebida depois de ligar (o histórico anterior não entra).")}
           </p>
         )}
@@ -226,26 +220,20 @@ export function ConversationList({
             está na tela. Some com a lista vazia — oferecer "selecionar todas"
             quando não há nenhuma é botão de mentira. */}
         {onAlternarSelecao && items.length > 0 && (
-          <div className="flex items-center gap-2 border-b border-border/70 px-3 py-1.5">
-            <button
-              type="button"
-              role="checkbox"
-              aria-checked={
-                selecionados
-                  ? items.every((c) => selecionados.has(c.id))
-                  : false
-              }
+          // Cabeçalho de colunas da lista do Work (Unnify §10.12): `muted/40` + `xs`.
+          <div className="flex h-10 items-center gap-2 border-b border-border bg-muted/40 px-3">
+            <Checkbox
+              checked={selecionados ? items.every((c) => selecionados.has(c.id)) : false}
+              onCheckedChange={() => onSelecionarTodosVisiveis?.()}
               aria-label={t("Selecionar todas as conversas visíveis")}
               title={t("Selecionar todas")}
               data-testid="selecionar-todas-visiveis"
-              onClick={onSelecionarTodosVisiveis}
-              className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-muted-foreground bg-background transition-colors hover:bg-surface-elevated focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              {selecionados && items.every((c) => selecionados.has(c.id)) && (
-                <Check size={12} weight="bold" aria-hidden />
-              )}
-            </button>
-            <span className="text-xs text-text-muted">{t("Selecionar todas")}</span>
+              // 3:1 na borda desmarcada (#2990); ver a caixa da linha.
+              className="border-muted-foreground"
+            />
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("Selecionar todas")}
+            </span>
           </div>
         )}
         {items.map((c, i) => (

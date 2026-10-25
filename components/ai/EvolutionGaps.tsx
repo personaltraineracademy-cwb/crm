@@ -201,7 +201,7 @@ export function EvolutionGaps({
   if (lacunas.length === 0) {
     return (
       <Card className="flex items-start gap-3 p-5" data-testid="gaps-vazio">
-        <CheckCircle size={20} className="mt-0.5 shrink-0 text-success-fg" aria-hidden />
+        <CheckCircle size={20} className="text-success-foreground mt-0.5 shrink-0" aria-hidden />
         <p className="text-sm leading-relaxed">
           {boaNoticia(buscas, decisoes, gaps.pipelines_evaluated)}
         </p>
@@ -214,13 +214,13 @@ export function EvolutionGaps({
       {lacunas.map((l) => (
         <li key={l.chave}>
           <Card className="flex items-start gap-3 p-5">
-            <Warning size={20} className="mt-0.5 shrink-0 text-warning-fg" aria-hidden />
+            <Warning size={20} className="text-warning-foreground mt-0.5 shrink-0" aria-hidden />
             <div className="min-w-0 flex-1">
               <p className="text-sm leading-relaxed">{l.texto}</p>
               {l.href && (
                 <Link
                   href={l.href}
-                  className="mt-2 inline-block text-sm font-medium text-accent underline underline-offset-4"
+                  className="mt-2 inline-block text-sm font-medium text-primary underline underline-offset-4"
                 >
                   {l.cta}
                 </Link>

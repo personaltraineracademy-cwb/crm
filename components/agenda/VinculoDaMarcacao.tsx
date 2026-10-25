@@ -3,6 +3,7 @@ import { useId, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 import { useT } from "@/hooks/i18n/useT";
+import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { NewContactDialog } from "@/components/contacts/NewContactDialog";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export function VinculoDaMarcacao({
   onChange: (contact: string, conversation: string) => void;
 }) {
   const t = useT();
+  const tagDeIdioma = useTagDeIdioma();
   const listaId = useId();
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState(false);
@@ -130,7 +132,7 @@ export function VinculoDaMarcacao({
             <ul
               id={listaId}
               role="listbox"
-              className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-surface shadow-md"
+              className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-border bg-popover p-1 shadow-md"
               onMouseDown={(e) => e.preventDefault()}
             >
               {opcoes.map((opcao, i) => (
@@ -140,8 +142,8 @@ export function VinculoDaMarcacao({
                   role="option"
                   aria-selected={opcao.id === contactId}
                   className={cn(
-                    "cursor-pointer px-3 py-2 text-sm",
-                    i === destacado && "bg-accent text-accent-foreground",
+                    "cursor-pointer rounded-lg px-2.5 py-2 text-sm",
+                    i === destacado && "bg-surface-hover text-foreground",
                   )}
                   onMouseEnter={() => setDestacado(i)}
                   onClick={() => escolher(opcao.id, opcao.name)}
@@ -178,7 +180,12 @@ export function VinculoDaMarcacao({
             <option value="">{t("Sem conversa vinculada")}</option>
             {ficha.data?.conversations.map((c, i) => (
               <option key={c.id} value={c.id}>
-                {t("Conversa")} {i + 1} · {new Date(c.created_at).toLocaleDateString()}
+                {t("Conversa")} {i + 1} ·{" "}
+                {new Date(c.created_at).toLocaleDateString(tagDeIdioma, {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
               </option>
             ))}
           </select>

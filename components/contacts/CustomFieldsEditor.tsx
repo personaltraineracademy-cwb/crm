@@ -172,10 +172,10 @@ export function CustomFieldsEditor({ fields, value, onChange, mode, disabled, cl
           <>
             <Label htmlFor={id}>
               {f.label}
-              {f.required && <span className="ml-1 text-error-fg">*</span>}
+              {f.required && <span className="text-danger-foreground ml-1">*</span>}
             </Label>
             {textoDoErro && (
-              <p id={`${id}-erro`} role="alert" className="text-sm text-error-fg">
+              <p id={`${id}-erro`} role="alert" className="text-danger-foreground text-sm">
                 {textoDoErro}
               </p>
             )}
@@ -395,13 +395,13 @@ export function CustomFieldsEditor({ fields, value, onChange, mode, disabled, cl
                       return (
                         <li
                           key={valor}
-                          className="flex items-center gap-1 rounded-sm border border-border bg-surface px-2 py-0.5 text-xs"
+                          className="flex items-center gap-1 rounded-sm border border-border bg-card px-2 py-0.5 text-xs"
                         >
                           {rotulo}
                           <button
                             type="button"
                             aria-label={`${t("Remover")} ${rotulo}`}
-                            className="text-text-muted hover:text-error-fg"
+                            className="text-muted-foreground hover:text-danger-foreground"
                             onClick={() => set(f.key, escolhidos.filter((x) => x !== valor))}
                             disabled={disabled}
                           >
@@ -478,7 +478,7 @@ export function CustomFieldsEditor({ fields, value, onChange, mode, disabled, cl
                     <ul
                       id={listaId}
                       role="listbox"
-                      className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-surface shadow-md"
+                      className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-card shadow-md"
                       onMouseDown={(e) => e.preventDefault()}
                     >
                       {resultados.map((o, i) => (
@@ -490,8 +490,8 @@ export function CustomFieldsEditor({ fields, value, onChange, mode, disabled, cl
                           className={cn(
                             "flex min-h-11 cursor-pointer items-center px-3 py-2 text-sm",
                             i === destacado
-                              ? "bg-accent text-accent-foreground"
-                              : "hover:bg-accent/50",
+                              ? "bg-primary text-primary-foreground"
+                              : "hover:bg-interactive/50",
                           )}
                           onClick={() => escolher(o.value)}
                         >
@@ -502,7 +502,7 @@ export function CustomFieldsEditor({ fields, value, onChange, mode, disabled, cl
                   )}
                 </div>
                 {recusados[f.key] && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-danger-foreground text-xs">
                     {t("Esse valor não está na lista. Escolha uma das opções.")}
                   </p>
                 )}

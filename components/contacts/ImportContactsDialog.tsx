@@ -110,14 +110,14 @@ export function ImportContactsDialog({ open, onOpenChange }: Props) {
           {resumo && (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2 text-sm">
-                <span className="rounded-md bg-surface px-2 py-1">
+                <span className="rounded-md bg-card px-2 py-1">
                   {resumo.total_linhas} {t("linha(s) lidas")}
                 </span>
                 <span className="rounded-md px-2 py-1 font-medium">
                   {resumo.imported} {t("importado(s)")}
                 </span>
                 {resumo.skipped_duplicates > 0 && (
-                  <span className="rounded-md bg-surface px-2 py-1">
+                  <span className="rounded-md bg-card px-2 py-1">
                     {resumo.skipped_duplicates} {t("já existente(s)")}
                   </span>
                 )}
@@ -129,7 +129,7 @@ export function ImportContactsDialog({ open, onOpenChange }: Props) {
               </div>
 
               {resumo.errors.length > 0 && (
-                <div className="max-h-48 space-y-1 overflow-y-auto rounded-md border border-border p-2 text-sm">
+                <div className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-border p-2 text-sm">
                   {resumo.errors.map((err) => (
                     <p key={err.linha}>
                       {t("Linha")} {err.linha}: {err.motivo}

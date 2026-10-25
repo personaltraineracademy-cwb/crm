@@ -7,6 +7,7 @@ import { traduzir } from "@/lib/i18n/dicionario";
 import { createClient } from "@/lib/supabase/server";
 
 import { Faturamento } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -42,12 +43,10 @@ export default async function Page() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">{t("Faturamento")}</h1>
-        <p className="text-sm text-text-muted">
-          {t("Quanto entrou, de que forma, e quanto cada pessoa tem a receber.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Faturamento")}
+        description={t("Quanto entrou, de que forma, e quanto cada pessoa tem a receber.")}
+      />
       <Faturamento podeLancar={ROLE_RANK[org.role] >= ROLE_RANK.agent} moedaDaOrg={moedaDaOrg} />
     </div>
   );

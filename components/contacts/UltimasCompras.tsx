@@ -41,9 +41,9 @@ export function UltimasCompras({
   if (erro) {
     return (
       <section data-testid="ultimas-compras">
-        <h3 className="text-xs font-semibold text-text">{t("Últimas compras")}</h3>
+        <h3 className="text-xs font-semibold text-foreground">{t("Últimas compras")}</h3>
         <div className="mt-2 space-y-1">
-          <p className="text-xs text-error-fg">{t("Não consegui ler as compras.")}</p>
+          <p className="text-danger-foreground text-xs">{t("Não consegui ler as compras.")}</p>
           {onTentarDeNovo && (
             <Button size="sm" variant="outline" onClick={onTentarDeNovo}>
               {t("Tentar de novo")}
@@ -60,13 +60,13 @@ export function UltimasCompras({
 
   return (
     <section data-testid="ultimas-compras">
-      <h3 className="text-xs font-semibold text-text">{t("Últimas compras")}</h3>
+      <h3 className="text-xs font-semibold text-foreground">{t("Últimas compras")}</h3>
       <ul className="mt-2 space-y-1.5">
         {compras.map((compra) => (
           <li
             key={compra.id}
             data-testid={`compra-${compra.id}`}
-            className="rounded-md border border-border p-2 text-xs"
+            className="rounded-lg border border-border p-2 text-xs"
           >
             <div className="flex items-baseline justify-between gap-2">
               <span className="min-w-0 truncate font-medium" data-testid="compra-titulo">

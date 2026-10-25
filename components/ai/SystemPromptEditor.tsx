@@ -53,15 +53,15 @@ export function SystemPromptEditor({ value, onChange, disabled }: Props) {
         </p>
       </div>
 
-      <aside className="space-y-2 rounded-md border bg-muted/30 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <aside className="space-y-2 rounded-lg border bg-muted/30 p-3">
+        <p className="text-xs font-medium text-muted-foreground">
           {t("Placeholders")}
         </p>
         <ul className="space-y-1.5">
           {SYSTEM_PROMPT_PLACEHOLDERS.map((p) => (
             <li key={p.token} className="flex flex-col gap-1">
               <div className="flex items-center justify-between gap-2">
-                <code className="rounded-md bg-background px-1.5 py-0.5 text-[11px]">{p.token}</code>
+                <code className="rounded-md bg-background px-1.5 py-0.5 text-xs">{p.token}</code>
                 <Button
                   type="button"
                   size="sm"
@@ -73,7 +73,7 @@ export function SystemPromptEditor({ value, onChange, disabled }: Props) {
                   {t("Inserir")}
                 </Button>
               </div>
-              <span className="text-[11px] text-muted-foreground">{t(p.description)}</span>
+              <span className="text-xs text-muted-foreground">{t(p.description)}</span>
             </li>
           ))}
         </ul>

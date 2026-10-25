@@ -172,18 +172,18 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
                     data-testid={`material-tipo-${tf.id}`}
                     className={[
                       "rounded-lg border p-3 text-left text-sm transition",
-                      marcado ? "border-accent bg-accent/10" : "border-border hover:bg-surface",
+                      marcado ? "border-primary bg-primary/10" : "border-border hover:bg-card",
                       rotina ? "cursor-not-allowed opacity-50" : "",
                     ].join(" ")}
                   >
                     <span className="font-medium">{t(tf.rotulo)}</span>
-                    <span className="mt-1 block text-xs text-text-muted">{t(tf.oQueE)}</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">{t(tf.oQueE)}</span>
                   </button>
                 );
               })}
             </div>
             {porRotina && meta?.comoChega ? (
-              <p className="text-xs text-text-muted">{t(meta.comoChega)}</p>
+              <p className="text-xs text-muted-foreground">{t(meta.comoChega)}</p>
             ) : null}
           </div>
 
@@ -211,7 +211,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
                 onChange={(e) => setArquivo(e.target.files?.[0] ?? null)}
                 disabled={enviando}
               />
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-muted-foreground">
                 {t(
                   "PDF, Markdown, CSV ou texto, até 20 MB. Um PDF só de imagens escaneadas não tem letra nenhuma para ler — envie uma versão com texto selecionável. Planilha Excel? Salve como CSV primeiro.",
                 )}
@@ -234,7 +234,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
                 disabled={enviando}
               />
               {ePerguntaEResposta(tipo) ? (
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-muted-foreground">
                   {t("Uma linha")} <code>## Pergunta:</code> {t("e uma")}{" "}
                   <code>## Resposta:</code> {t("por item, separados por uma linha em branco.")}
                 </p>
@@ -243,7 +243,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
           ) : null}
 
           {!podeIndexar ? (
-            <p className="text-xs text-warning-fg" data-testid="material-aviso-sem-chave">
+            <p className="text-warning-foreground text-xs" data-testid="material-aviso-sem-chave">
               {t(
                 "Sem uma chave de embedding, o material fica guardado e esperando — o agente só passa a conhecê-lo depois que a chave for cadastrada.",
               )}

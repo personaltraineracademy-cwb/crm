@@ -9,6 +9,7 @@ import { empresaExigeMfa, politicaDaEmpresa, type PapelMinimoDeMfa } from "@/lib
 import { listarDispositivosConfiaveis } from "@/lib/auth/dispositivo-confiavel";
 import { SecurityClient } from "./_client";
 import { traduzir } from "@/lib/i18n/dicionario";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -76,15 +77,13 @@ export default async function SecurityPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Segurança", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Segurança", idioma)}
+        description={traduzir(
             "A verificação em duas etapas da sua conta, os códigos de recuperação e as sessões abertas.",
             idioma,
           )}
-        </p>
-      </header>
+      />
 
       <SecurityClient
         mfaEnrolled={enrolled}

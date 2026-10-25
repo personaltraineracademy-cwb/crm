@@ -67,13 +67,18 @@ function StatCard({ label, value, warning }: { label: string; value: number; war
   const t = useT();
   return (
     <div className={[
-      "rounded-lg border p-4 flex flex-col gap-1",
-      warning && value > 0 ? "border-amber-300 bg-amber-50/50 dark:border-amber-700 dark:bg-amber-950/20" : "bg-card",
+      "rounded-xl border p-4 flex flex-col gap-1",
+      warning && value > 0 ? "border-warning-border bg-warning-soft" : "bg-card",
     ].join(" ")}>
-      <span className="text-2xl font-bold tabular-nums">{value.toLocaleString("pt-BR")}</span>
+      <span className="text-2xl font-semibold tabular-nums">{value.toLocaleString("pt-BR")}</span>
       <span className="text-xs text-muted-foreground leading-tight">{label}</span>
       {warning && value > 0 && (
-        <Warning size={14} weight="fill" className="text-amber-500 mt-0.5" aria-label={t("Atenção")} />
+        <Warning
+          size={14}
+          weight="fill"
+          className="text-warning-foreground mt-0.5"
+          aria-label={t("Atenção")}
+        />
       )}
     </div>
   );
@@ -113,8 +118,8 @@ export function TenantOverview({ organization, counts, integrations, cobrancaLig
   return (
     <div className="space-y-6">
       {/* Info card */}
-      <div className="rounded-lg border bg-card p-5">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+      <div className="rounded-xl border bg-card p-5">
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">
           {t("Informações")}
         </h2>
         <div>
@@ -133,7 +138,7 @@ export function TenantOverview({ organization, counts, integrations, cobrancaLig
 
       {/* Counts row */}
       <div>
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">
           {t("Volumes")}
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -147,8 +152,8 @@ export function TenantOverview({ organization, counts, integrations, cobrancaLig
 
       {/* Integrations + WAHA */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border bg-card p-5">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <div className="rounded-xl border bg-card p-5">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-3">
             {t("Integrações")}
           </h2>
           <div>
@@ -169,8 +174,8 @@ export function TenantOverview({ organization, counts, integrations, cobrancaLig
         </div>
 
         {/* LGPD + AI */}
-        <div className="rounded-lg border bg-card p-5">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <div className="rounded-xl border bg-card p-5">
+          <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
             {t("Compliance & IA")}
           </h2>
           <div>
@@ -178,11 +183,22 @@ export function TenantOverview({ organization, counts, integrations, cobrancaLig
               label={t("Solicitações LGPD pendentes")}
               value={
                 <span className="flex items-center gap-1.5">
-                  <span className={counts.lgpd_requests_pending > 0 ? "text-amber-600 font-semibold" : ""}>
+                  <span
+                    className={
+                      counts.lgpd_requests_pending > 0
+                        ? "text-warning-foreground font-semibold"
+                        : ""
+                    }
+                  >
                     {counts.lgpd_requests_pending}
                   </span>
                   {counts.lgpd_requests_pending > 0 && (
-                    <Warning size={14} weight="fill" className="text-amber-500" aria-label={t("Pendências LGPD")} />
+                    <Warning
+                      size={14}
+                      weight="fill"
+                      className="text-warning-foreground"
+                      aria-label={t("Pendências LGPD")}
+                    />
                   )}
                 </span>
               }

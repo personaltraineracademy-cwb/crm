@@ -65,17 +65,17 @@ function SeletorDeModelo({
   const listasLidas = (soAprovados || textos.isSuccess) && aprovados.isSuccess;
   const indisponivel = listasLidas && valor !== "" && !prontos.some((m) => m.id === valor) && !doCanal.some((m) => m.id === valor);
   const aviso = indisponivel && (
-    <p role="alert" className="text-xs text-warning-fg">
+    <p role="alert" className="text-xs text-warning-foreground">
       {t("O modelo que estava aqui não está disponível nesta conta. Escolha um modelo para este passo.")}
     </p>
   );
 
   if ((!soAprovados && textos.isLoading) || aprovados.isLoading) {
-    return <p className="text-xs text-text-muted">{t("Carregando seus modelos…")}</p>;
+    return <p className="text-xs text-muted-foreground">{t("Carregando seus modelos…")}</p>;
   }
   if ((soAprovados || textos.isError) && aprovados.isError) {
     return (
-      <p className="text-xs text-error-fg">
+      <p className="text-danger-foreground text-xs">
         {t("Não consegui carregar seus modelos de mensagem. Recarregue a página.")}
       </p>
     );
@@ -87,7 +87,7 @@ function SeletorDeModelo({
     return (
       <div className="space-y-2">
         {aviso}
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Você ainda não tem modelos de mensagem. Crie um em Ajustes → Modelos e ele aparece aqui.")}
         </p>
       </div>
@@ -130,9 +130,11 @@ function SeletorDeModelo({
         </SelectContent>
       </Select>
       {aviso}
-      {escolhido && <p className="whitespace-pre-line text-xs text-text-muted">{escolhido.texto}</p>}
+      {escolhido && (
+        <p className="text-xs whitespace-pre-line text-muted-foreground">{escolhido.texto}</p>
+      )}
       {soAprovados && doCanal.length === 0 && (
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Nenhum modelo aprovado no WhatsApp ainda. Crie um em Conexões → Modelos e ele aparece aqui quando for aprovado.")}
         </p>
       )}
@@ -172,7 +174,7 @@ function MapaDeVariaveis({
   const definir = (chave: string, fonte: FonteDeVariavel) => onChange({ ...valor, [chave]: fonte });
 
   return (
-    <div className="space-y-3 rounded-md border border-border p-3">
+    <div className="space-y-3 rounded-lg border border-border p-3">
       <p className="text-sm font-medium">{t("De onde sai cada variável")}</p>
       {variaveis.map((v) => {
         const fonte = valor[v.chave];
@@ -193,7 +195,7 @@ function MapaDeVariaveis({
               <span className="font-mono">{v.marcador}</span>
               {v.noCabecalho ? ` · ${t("no cabeçalho")}` : ""}
               {v.antes || v.depois ? (
-                <span className="ml-1 text-text-muted">
+                <span className="ml-1 text-muted-foreground">
                   «…{v.antes.slice(-24)} <span className="font-mono">{v.marcador}</span> {v.depois.slice(0, 24)}…»
                 </span>
               ) : null}
@@ -231,7 +233,11 @@ function MapaDeVariaveis({
           </div>
         );
       })}
-      <p className={faltando.length > 0 ? "text-xs text-error-fg" : "text-xs text-text-muted"}>
+      <p
+        className={
+          faltando.length > 0 ? "text-danger-foreground text-xs" : "text-xs text-muted-foreground"
+        }
+      >
         {t(
           "Se faltar a origem de alguma variável, ou se o dado estiver vazio no contato, o passo é pulado e o motivo aparece na linha do tempo.",
         )}
@@ -352,7 +358,7 @@ export function ActionForm({
               commit({ mode, ...fields, body: e.target.value });
             }}
           />
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Sai exatamente assim, sem IA. No laço,")} {t("{{volta}}")} {t("e")} {t("{{voltas}}")} {t("viram o número da volta.")}
           </p>
           <div className="space-y-2">
@@ -368,7 +374,7 @@ export function ActionForm({
                 commit({ mode, ...fields, mediaUrl: e.target.value });
               }}
             />
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t("Com uma imagem, um vídeo, um áudio ou um documento, o texto acima vira a legenda do arquivo (o áudio sai como mensagem de voz, sem legenda — o texto não vai junto). Depois de 24 horas sem resposta do cliente, a mídia não sai — só um modelo aprovado chega até ele.")}
             </p>
           </div>
@@ -426,12 +432,12 @@ export function ActionForm({
               }}
             />
           )}
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Depois de 24 horas sem resposta do cliente, só um modelo aprovado no WhatsApp chega até ele.")}
           </p>
         </div>
       )}
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

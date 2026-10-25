@@ -74,7 +74,7 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
       <StatusDaBase materiais={lista} podeIndexar={estado.pode_indexar} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {lista.length === 0
             ? t("Nenhum material ainda.")
             : `${lista.length} ${lista.length === 1 ? t("material") : t("materiais")} ${t("no acervo.")}`}
@@ -114,7 +114,7 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
           data-testid="acervo-vazio"
         >
           <p className="text-sm font-medium">{t("O agente ainda não conhece o seu negócio")}</p>
-          <p className="mx-auto mt-1 max-w-prose text-sm text-text-muted">
+          <p className="mx-auto mt-1 max-w-prose text-sm text-muted-foreground">
             {t(
               "Comece pelo que ele mais vai precisar: as perguntas que se repetem, e a política que você mais explica. Ele passa a consultar isso antes de responder, em vez de improvisar.",
             )}
@@ -141,19 +141,19 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
       )}
 
       {arquivados.length > 0 ? (
-        <details className="rounded-lg border border-border p-4" data-testid="acervo-arquivados">
+        <details className="rounded-xl border border-border p-4" data-testid="acervo-arquivados">
           <summary className="cursor-pointer text-sm font-medium">
             {arquivados.length}{" "}
             {arquivados.length === 1 ? t("arquivado") : t("arquivados")}
           </summary>
-          <p className="mt-2 text-xs text-text-muted">
+          <p className="mt-2 text-xs text-muted-foreground">
             {t(
               "Material arquivado não é consultado por nenhum assistente, e não é apagado — o histórico do que o agente já soube continua existindo.",
             )}
           </p>
           <ul className="mt-3 space-y-1 text-sm">
             {arquivados.map((s) => (
-              <li key={s.id} className="text-text-muted">
+              <li key={s.id} className="text-muted-foreground">
                 {s.name}
               </li>
             ))}

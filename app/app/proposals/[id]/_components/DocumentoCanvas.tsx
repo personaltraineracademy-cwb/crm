@@ -273,7 +273,7 @@ export function DocumentoCanvas({ propostaId, podeRevisar = false, emRascunho = 
   if (!doc.modeloSlug) {
     const rotuloSugerido = doc.modeloSlugSugerido ? opcoesDeModelo.find(([s]) => s === doc.modeloSlugSugerido)?.[1] : null;
     return (
-      <div className="rounded-lg border border-dashed p-4 text-sm text-gray-600 space-y-3">
+      <div className="space-y-3 rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
         {doc.modeloSlugSugerido ? (
           <p>
             {t("A IA sugeriu o modelo")} <strong>{rotuloSugerido ?? doc.modeloSlugSugerido}</strong>.
@@ -287,7 +287,7 @@ export function DocumentoCanvas({ propostaId, podeRevisar = false, emRascunho = 
               type="button"
               disabled={ocupado}
               onClick={() => void confirmarModelo(doc.modeloSlugSugerido!)}
-              className="rounded-md bg-gray-900 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+              className="rounded-lg bg-foreground px-3 py-1.5 text-sm text-background disabled:opacity-50"
             >
               {t("Usar este modelo")}
             </button>
@@ -323,7 +323,7 @@ export function DocumentoCanvas({ propostaId, podeRevisar = false, emRascunho = 
   };
 
   return (
-    <div className="rounded-lg border p-4 space-y-4">
+    <div className="space-y-4 rounded-xl border p-4">
       {editavel && (
         <div className="flex items-center gap-2 text-sm">
           <span>{t("Modelo do documento")}</span>
@@ -344,7 +344,10 @@ export function DocumentoCanvas({ propostaId, podeRevisar = false, emRascunho = 
       )}
 
       {totalDePendencias > 0 && (
-        <div role="alert" className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 space-y-2">
+        <div
+          role="alert"
+          className="border-warning-border bg-warning-soft text-warning-foreground space-y-2 rounded-lg border p-3 text-sm"
+        >
           <p className="font-medium">
             {t("Não é possível enviar")} — {totalDePendencias} {t("pendência(s)")}
           </p>
@@ -356,7 +359,9 @@ export function DocumentoCanvas({ propostaId, podeRevisar = false, emRascunho = 
                   <Button size="sm" variant="outline" disabled={preenchendo || ocupado} onClick={preencherComConversa}>
                     {preenchendo ? t("Lendo a conversa…") : t("Preencher com a conversa")}
                   </Button>
-                  {avisoDeSugestao && <span className="text-gray-500">{avisoDeSugestao}</span>}
+                  {avisoDeSugestao && (
+                    <span className="text-muted-foreground">{avisoDeSugestao}</span>
+                  )}
                 </div>
               )}
               <ul className="space-y-2">

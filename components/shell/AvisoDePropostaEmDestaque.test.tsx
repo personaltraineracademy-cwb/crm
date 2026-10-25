@@ -211,14 +211,16 @@ describe("aviso de proposta em destaque", () => {
   it("no celular o cartão fica ACIMA da barra de abas, pela reserva do rodapé", async () => {
     // `bottom-4` sozinho punha o cartão em cima do "Inbox"/"Mais" da barra de
     // baixo. A reserva vem da mesma variável que a casca desconta
-    // (`lib/ui/rodape-ocupado.tsx`); acima de md não há barra e fica `bottom-4`.
+    // (`lib/ui/rodape-ocupado.tsx`); de lg para cima não há barra e fica
+    // `bottom-4`. O corte era `md` até a etapa 6, quando a casca passou ao do
+    // Unnify (`lg` = 1024, DS §5.4) e a barra de abas passou a existir até 1023.
     caixa.data = abertos([ANTIGO]);
     const { rerender } = render(<AvisoDePropostaEmDestaque />);
     caixa.data = abertos([ANTIGO, NOVO]);
     rerender(<AvisoDePropostaEmDestaque />);
 
     const c = ((await screen.findByTestId("aviso-proposta-destaque")).getAttribute("class") ?? "").split(/\s+/);
-    expect(c).toContain("max-md:bottom-[calc(var(--rodape-ocupado,0px)+1rem)]");
+    expect(c).toContain("max-lg:bottom-[calc(var(--rodape-ocupado,0px)+1rem)]");
     expect(c).toContain("bottom-4");
   });
 

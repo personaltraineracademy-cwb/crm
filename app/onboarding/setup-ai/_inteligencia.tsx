@@ -102,7 +102,7 @@ export function InteligenciaDele({ inicial }: { inicial: EstadoDaChave }) {
 
   if (!temChave) {
     return (
-      <section className="space-y-3 rounded-lg border border-amber-500/40 bg-amber-500/5 p-5">
+      <section className="border-warning-border bg-warning-soft space-y-3 rounded-xl border p-5">
         <div>
           <h3 className="text-sm font-medium">{t("Ele ainda não tem cérebro")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -119,7 +119,7 @@ export function InteligenciaDele({ inicial }: { inicial: EstadoDaChave }) {
               id="provedor_da_ia"
               value={provedor}
               onChange={(e) => setProvedor(e.target.value)}
-              className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+              className="h-9 w-full rounded-lg border bg-background px-3 text-sm"
             >
               {/* A assinatura do ChatGPT nunca: ela não se cola, conecta-se pelo login em Credenciais. */}
               {PROVEDORES.filter((p) => p.id !== PROVEDOR_POR_ASSINATURA || p.id === provedor).map((p) => (
@@ -207,7 +207,7 @@ export function InteligenciaDele({ inicial }: { inicial: EstadoDaChave }) {
   }
 
   return (
-    <section className="space-y-1 rounded-lg border bg-background p-5">
+    <section className="space-y-1 rounded-xl border border-border bg-card p-5">
       <h3 className="text-sm font-medium">
         {t("O cérebro dele:")} {chave.rotulo}
         {chave.final ? (
@@ -222,7 +222,7 @@ export function InteligenciaDele({ inicial }: { inicial: EstadoDaChave }) {
         {prova?.estado === "problema" && (
           <>
             {t("A chave foi aceita, mas o teste não passou:")}{" "}
-            <span className="text-amber-700 dark:text-amber-500">
+            <span className="text-warning-foreground">
               {t(explicacaoParaQuemInstala(prova.codigo))}
             </span>
           </>

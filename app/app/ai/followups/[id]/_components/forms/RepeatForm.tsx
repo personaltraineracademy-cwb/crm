@@ -43,10 +43,10 @@ export function RepeatForm({
         value={maxCount}
         onChange={(e) => commit(e.target.value)}
       />
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t("A última resposta vira o número de voltas (ex.: 4 filhos). O teto evita um loop sem fim.")}
       </p>
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

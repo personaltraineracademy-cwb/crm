@@ -49,7 +49,7 @@ export function FormularioDeCadastro({ modoInicial }: { modoInicial: ModoDeCadas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="so-convite" className="text-base">
               {t("Cadastro apenas por convite")}
@@ -80,7 +80,7 @@ export function FormularioDeCadastro({ modoInicial }: { modoInicial: ModoDeCadas
         {/* A chave do recorte do PR #714 (migration 0383). Nasce desligada, e
             fica inerte com o convite obrigatório: nesse modo ninguém sem
             convite chega a pedir empresa. */}
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="com-aprovacao" className="text-base">
               {t("Cadastro com aprovação")}
@@ -105,13 +105,13 @@ export function FormularioDeCadastro({ modoInicial }: { modoInicial: ModoDeCadas
         </div>
 
         {erro && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-danger-foreground text-sm" role="alert">
             {erro}
           </p>
         )}
 
         {modo === "so_convite" && (
-          <p className="rounded-md border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm dark:border-amber-500/30 dark:bg-amber-950/20">
+          <p className="border-warning-border bg-warning-soft rounded-lg border px-4 py-3 text-sm">
             {t(
               "Com isto ligado, a única porta de entrada é o convite — inclusive para você, se um dia precisar de uma conta nova. Convide pela tela de Equipe antes de precisar.",
             )}

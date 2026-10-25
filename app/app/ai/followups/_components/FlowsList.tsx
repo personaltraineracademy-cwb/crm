@@ -116,11 +116,11 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
     return (
       <>
         <Card className="flex flex-col items-center gap-3 p-10 text-center">
-          <FlowArrow size={36} aria-hidden className="text-text-muted" />
+          <FlowArrow size={36} aria-hidden className="text-muted-foreground" />
           <h2 className="font-medium">
             {deAtendimento ? t("Nenhum fluxo de atendimento ainda") : t("Nenhum fluxo de follow-up ainda")}
           </h2>
-          <p className="max-w-sm text-sm text-text-muted">
+          <p className="max-w-sm text-sm text-muted-foreground">
             {deAtendimento
               ? t(
                   "Os fluxos de atendimento cadastram as perguntas que a IA faz durante a conversa e o que acontece ao concluir — os dados ficam guardados por cliente.",
@@ -159,7 +159,7 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {flows.map((flow) => (
           <li key={flow.id}>
-            <Card className="flex h-full flex-col gap-3 p-4 transition-colors hover:border-accent-400">
+            <Card className="flex h-full flex-col gap-3 p-4 transition-colors hover:border-interactive-border">
               <Link href={`${baseHref}/${flow.id}`} className="flex flex-1 flex-col gap-3">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="min-w-0 flex-1 truncate font-medium" title={flow.name}>
@@ -169,17 +169,17 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
                 </div>
                 <dl className="grid grid-cols-2 gap-2 pt-1 text-xs">
                   <div>
-                    <dt className="text-text-muted">{t("Versão")}</dt>
+                    <dt className="text-muted-foreground">{t("Versão")}</dt>
                     <dd className="font-mono">{flow.active_version_id ? t("publicada") : "—"}</dd>
                   </div>
                   <div>
-                    <dt className="text-text-muted">{t("Handoff")}</dt>
+                    <dt className="text-muted-foreground">{t("Handoff")}</dt>
                     <dd className="font-mono">
                       {t(HANDOFF_EM_PALAVRA[flow.handoff_policy] ?? flow.handoff_policy)}
                     </dd>
                   </div>
                 </dl>
-                <p className="mt-auto pt-2 text-xs text-text-muted">
+                <p className="mt-auto pt-2 text-xs text-muted-foreground">
                   {t("Atualizado em")} {formatUpdatedAt(flow.updated_at, tagDoIdioma)}
                 </p>
               </Link>

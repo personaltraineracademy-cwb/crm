@@ -116,8 +116,12 @@ export function BarraDeProgressoNavegacao() {
         ninguém vê — e o único sinal de que a navegação está em curso desaparece
         justamente no aparelho em que a espera é mais longa. Fora do iOS em tela
         cheia o termo vale `0px` e nada muda.
+
+        Camada 70, a mais alta da escala do Unnify (DS §5.5, a da dica): a
+        faixa de 2px não recebe clique e tem de aparecer por cima de faixas,
+        barras e diálogos. Antes era um `9999` fora de qualquer escala.
       */
-      className="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top,0px)] z-[9999] h-[2px] bg-transparent"
+      className="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top,0px)] z-70 h-[2px] bg-transparent"
     >
       <div
         /*
@@ -126,8 +130,10 @@ export function BarraDeProgressoNavegacao() {
           `all` é anti-pattern declarado em
           `docs/design-system/07-motion-language.md`. E `duration-base` em vez
           do `duration-200` literal — mesmo número, vindo de `--duration-base`.
+          Sem o brilho (sombra na cor primária) que havia: no Unnify sombra é
+          só de elemento flutuante (DS §6.3), e o brilho era enfeite.
         */
-        className="h-full bg-primary shadow-[0_0_8px_var(--color-primary)] transition-[width,opacity] duration-base ease-out"
+        className="h-full bg-primary transition-[width,opacity] duration-base ease-out"
         style={{
           width: `${progresso}%`,
           opacity: progresso === 100 ? 0 : 1,

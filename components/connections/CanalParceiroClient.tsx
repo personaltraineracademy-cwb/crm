@@ -62,7 +62,7 @@ function ParaColar({ rotulo, valor }: { rotulo: string; valor: string }) {
   const t = useT();
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <span className="text-xs font-medium text-muted-foreground">
         {rotulo}
       </span>
       <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export function CanalParceiroClient() {
         </div>
 
         {conectado && (
-          <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
+          <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
             <p className="font-medium">{estado?.display_name ?? t("Número conectado")}</p>
             <p className="text-xs text-muted-foreground">
               {estado?.phone_number ?? t("sem número informado")} · {estado?.status ?? "—"}
@@ -216,7 +216,7 @@ export function CanalParceiroClient() {
       {/* Só depois de conectar: antes disso não há URL nem segredo a mostrar, e
           um passo 2 vazio faz parecer que falta algo que ainda não podia existir. */}
       {recemConectado && (
-        <Card className="flex flex-col gap-4 border-warning/40 bg-warning-bg p-4">
+        <Card className="border-warning-border bg-warning-soft flex flex-col gap-4 p-4">
           <div>
             <h3 className="text-sm font-semibold">{t("Falta ligar a volta")}</h3>
             <p className="text-xs text-muted-foreground">

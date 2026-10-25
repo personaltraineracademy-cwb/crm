@@ -21,7 +21,10 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "ds-painel z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden",
+        // DS §10.16 (Work): raio 12, padding 12, largura 288 (no máximo a tela
+        // − 32), sombra `md`, altura limitada ao espaço disponível com
+        // rolagem. Movimento `camada-painel` (`app/unnify/camadas.css`).
+        "camada-painel z-50 max-h-(--radix-popover-content-available-height) w-72 max-w-[calc(100vw-2rem)] origin-(--radix-popover-content-transform-origin) overflow-y-auto overscroll-contain rounded-xl border bg-popover p-3 text-sm text-popover-foreground shadow-md outline-hidden",
         className,
       )}
       {...props}

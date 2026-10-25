@@ -13,6 +13,10 @@ import Link from "next/link";
 import { verifyInviteToken } from "@/lib/auth/invite-token";
 import { authRateLimited, AUTH_LIMITS } from "@/lib/auth/rate-limit";
 import { createClient } from "@/lib/supabase/server";
+import { TelaDeAcesso } from "@/components/auth/TelaDeAcesso";
+import { Button } from "@/components/ui/button";
+import { marcaDaSaida } from "@/lib/branding/saida";
+import type { MarcaDeSaida } from "@/lib/branding/saida";
 import { AcceptInviteForm } from "./AcceptInviteForm";
 import { IdiomaProvider } from "@/lib/i18n/IdiomaProvider";
 import { idiomaDoVisitante } from "@/lib/i18n/idiomaAnonimo";
@@ -42,6 +46,9 @@ export default async function AcceptInvitePage({ params }: PageProps) {
     (user?.user_metadata?.locale as string | undefined) ?? null,
   );
   const t = (texto: string) => traduzir(texto, idioma);
+  // A marca da moldura (DS §11.9): a mesma resolução das telas de `(public)`,
+  // sem organização — quem abre o convite ainda não entrou em nenhuma.
+  const marca = await marcaDaSaida(null);
 
   // O gargalo de enumeração é AQUI, não no aceite: a rota é pública e cada
   // GET testa um token. Sem teto, varrer o espaço de tokens sai de graça
@@ -49,9 +56,11 @@ export default async function AcceptInvitePage({ params }: PageProps) {
   // entre token válido e inválido para quem está varrendo.
   if (await authRateLimited("invite_accept", null, AUTH_LIMITS.invite_accept)) {
     return (
-      <Shell idioma={idioma}>
-        <h1 className="text-xl font-semibold">{t("Muitas tentativas")}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <Shell idioma={idioma} marca={marca}>
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {t("Muitas tentativas")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("Aguarde alguns minutos e abra o link do convite de novo.")}
         </p>
       </Shell>
@@ -62,9 +71,11 @@ export default async function AcceptInvitePage({ params }: PageProps) {
 
   if (!payload) {
     return (
-      <Shell idioma={idioma}>
-        <h1 className="text-xl font-semibold">{t("Convite inválido ou expirado")}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <Shell idioma={idioma} marca={marca}>
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {t("Convite inválido ou expirado")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {t(
             "Este link não é válido ou já passou da janela de 24h. Peça um novo convite ao admin do tenant.",
           )}
@@ -76,19 +87,18 @@ export default async function AcceptInvitePage({ params }: PageProps) {
   if (!user) {
     const next = encodeURIComponent(`/team/accept-invite/${token}`);
     return (
-      <Shell idioma={idioma}>
-        <h1 className="text-xl font-semibold">{t("Você foi convidado")}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <Shell idioma={idioma} marca={marca}>
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {t("Você foi convidado")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("Para aceitar o convite como")} <strong>{payload.role}</strong>,{" "}
           {t("faça login com o email")} <strong>{payload.email}</strong>.
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Link
-            href={`/login?next=${next}`}
-            className="inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-          >
-            {t("Fazer login")}
-          </Link>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <Button asChild size="lg">
+            <Link href={`/login?next=${next}`}>{t("Fazer login")}</Link>
+          </Button>
           {/*
             O caminho que faltava. Quem é convidado e ainda NÃO tem conta só
             tinha "Fazer login" — então criava conta pelo caminho comum, e o
@@ -110,29 +120,28 @@ export default async function AcceptInvitePage({ params }: PageProps) {
   const userEmail = (user.email ?? "").trim().toLowerCase();
   if (userEmail !== payload.email.trim().toLowerCase()) {
     return (
-      <Shell idioma={idioma}>
-        <h1 className="text-xl font-semibold">{t("Email não corresponde")}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <Shell idioma={idioma} marca={marca}>
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {t("Email não corresponde")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("Você está logado como")} <strong>{user.email}</strong>,{" "}
           {t("mas o convite foi enviado para")} <strong>{payload.email}</strong>.{" "}
           {t("Saia e faça login com o email correto.")}
         </p>
-        <form action="/api/auth/signout" method="post" className="mt-4">
-          <button
-            type="submit"
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
-          >
+        <form action="/api/auth/signout" method="post" className="mt-6">
+          <Button type="submit" variant="outline" size="lg">
             {t("Sair")}
-          </button>
+          </Button>
         </form>
       </Shell>
     );
   }
 
   return (
-    <Shell idioma={idioma}>
-      <h1 className="text-xl font-semibold">{t("Aceitar convite")}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+    <Shell idioma={idioma} marca={marca}>
+      <h1 className="text-2xl font-semibold tracking-tight text-balance">{t("Aceitar convite")}</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         {t("Você foi convidado para entrar como")} <strong>{payload.role}</strong>.{" "}
         {t("Confirme abaixo para ativar seu acesso.")}
       </p>
@@ -145,12 +154,23 @@ export default async function AcceptInvitePage({ params }: PageProps) {
 // `IdiomaProvider` — o único que acerta o `lang` do documento (ver
 // `admin/forbidden/page.tsx`). Sem ele, o convite em espanhol saía com
 // `lang="pt-BR"`, na primeira tela que o convidado vê.
-function Shell({ idioma, children }: { idioma: Idioma; children: React.ReactNode }) {
+//
+// A moldura é a das telas de acesso (DS §11.9): painel de marca à esquerda a
+// partir de 1024 e o conteúdo direto no fundo, sem cartão em volta.
+function Shell({
+  idioma,
+  marca,
+  children,
+}: {
+  idioma: Idioma;
+  marca: MarcaDeSaida;
+  children: React.ReactNode;
+}) {
   return (
     <IdiomaProvider locale={idioma}>
-      <div className="flex min-h-screen items-center justify-center p-6">
-        <div className="w-full max-w-md rounded-lg border bg-card p-8 shadow-sm">{children}</div>
-      </div>
+      <TelaDeAcesso marca={marca} idioma={idioma}>
+        {children}
+      </TelaDeAcesso>
     </IdiomaProvider>
   );
 }

@@ -29,6 +29,7 @@ import {
 } from "@/lib/recursos-opcionais/catalogo";
 import { fontesDaEmpresa } from "@/lib/recursos-opcionais/estado";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Recursos opcionais" };
@@ -79,15 +80,13 @@ export default async function RecursosOpcionaisPage() {
 
   return (
     <div className="flex h-full flex-col gap-8 overflow-y-auto p-6">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Recursos opcionais", idioma)}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Recursos opcionais", idioma)}
+        description={traduzir(
             "Tudo o que se liga e desliga, num lugar só. Cada recurso continua sendo ligado na tela dele: o botão Ajustar leva até lá.",
             idioma,
           )}
-        </p>
-      </header>
+      />
 
       <section className="space-y-3" aria-labelledby="recursos-modulos">
         <div className="space-y-1">

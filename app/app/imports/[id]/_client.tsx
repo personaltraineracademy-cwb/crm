@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -12,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function ImportDetailClient({ id }: { id: string }) {
   const t = useT();
@@ -37,16 +37,17 @@ export function ImportDetailClient({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div>
-        <Link href="/app/imports" className="text-sm text-muted-foreground hover:underline">
-          ← {t("Importações")}
-        </Link>
-        <h1 className="text-xl font-semibold">{batch.filename as string}</h1>
-        <p className="text-sm text-muted-foreground">
-          {batch.status as string} · {batch.successful_rows as number} {t("certas")} ·{" "}
-          {batch.conflict_rows as number} {t("conflitos")} · {batch.failed_rows as number} {t("falhas")}
-        </p>
-      </div>
+      <PageHeader
+        back={{ href: "/app/imports", label: t("Importações") }}
+        title={batch.filename as string}
+        meta={
+          <span className="tabular-nums">
+            {batch.status as string} · {batch.successful_rows as number} {t("certas")} ·{" "}
+            {batch.conflict_rows as number} {t("conflitos")} · {batch.failed_rows as number}{" "}
+            {t("falhas")}
+          </span>
+        }
+      />
 
       <label className="flex items-center gap-2 text-sm">
         <input

@@ -72,7 +72,10 @@ export function Honorarios({ podeGerenciar }: { podeGerenciar: boolean }) {
 
   if (naoInstalado) {
     return (
-      <p className="rounded-md border border-border p-3 text-sm text-text-muted" role="status">
+      <p
+        className="rounded-lg border border-border p-3 text-sm text-muted-foreground"
+        role="status"
+      >
         {(contratos.error as ApiError).message}
       </p>
     );
@@ -80,7 +83,9 @@ export function Honorarios({ podeGerenciar }: { podeGerenciar: boolean }) {
 
   if (contratos.isError) {
     return (
-      <p className="text-sm text-danger">{t("Não foi possível carregar os contratos.")}</p>
+      <p className="text-danger-foreground text-sm">
+        {t("Não foi possível carregar os contratos.")}
+      </p>
     );
   }
 
@@ -93,10 +98,10 @@ export function Honorarios({ podeGerenciar }: { podeGerenciar: boolean }) {
         />
       ) : null}
 
-      <section className="rounded-md border border-border p-3">
+      <section className="rounded-lg border border-border p-3">
         <h2 className="mb-2 text-sm font-semibold">{t("Contratos")}</h2>
         {(contratos.data ?? []).length === 0 ? (
-          <p className="text-sm text-text-muted">{t("Nenhum contrato ainda.")}</p>
+          <p className="text-sm text-muted-foreground">{t("Nenhum contrato ainda.")}</p>
         ) : (
           <table className="w-full text-sm">
             <tbody>
@@ -104,14 +109,14 @@ export function Honorarios({ podeGerenciar }: { podeGerenciar: boolean }) {
                 <tr
                   key={c.id}
                   className={`cursor-pointer border-b border-border/60 ${
-                    selecionado === c.id ? "bg-surface-elevated" : ""
+                    selecionado === c.id ? "bg-muted" : ""
                   }`}
                   onClick={() => setSelecionado(c.id)}
                   data-testid={`contrato-${c.id}`}
                 >
                   <td className="py-2">{rotuloDoModelo(c.modelo, t)}</td>
                   <td className="py-2 tabular-nums">{resumoDoValor(c, t)}</td>
-                  <td className="py-2 text-right text-xs text-text-muted">
+                  <td className="py-2 text-right text-xs text-muted-foreground">
                     {new Date(c.created_at).toLocaleDateString(tagDoIdioma)}
                   </td>
                 </tr>
@@ -152,7 +157,7 @@ function FormularioDeContrato({
 
   return (
     <form
-      className="flex flex-wrap items-end gap-2 rounded-md border border-border p-3"
+      className="flex flex-wrap items-end gap-2 rounded-lg border border-border p-3"
       onSubmit={(e) => {
         e.preventDefault();
         if (!pode) return;
@@ -169,13 +174,13 @@ function FormularioDeContrato({
         setRepasse("");
       }}
     >
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Modelo")}
         <select
           value={modelo}
           data-testid="contrato-modelo"
           onChange={(e) => setModelo(e.target.value as Modelo)}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         >
           <option value="fixo">{t("Fixo")}</option>
           <option value="exito">{t("Êxito")}</option>
@@ -184,7 +189,7 @@ function FormularioDeContrato({
       </label>
 
       {precisaFixo ? (
-        <label className="flex flex-col gap-1 text-xs text-text-muted">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           {t("Valor fixo")}
           <input
             value={valorFixo}
@@ -192,13 +197,13 @@ function FormularioDeContrato({
             placeholder="0,00"
             data-testid="contrato-valor-fixo"
             onChange={(e) => setValorFixo(e.target.value)}
-            className="w-28 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+            className="w-28 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
           />
         </label>
       ) : null}
 
       {precisaExito ? (
-        <label className="flex flex-col gap-1 text-xs text-text-muted">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           {t("% de êxito")}
           <input
             value={percentual}
@@ -206,12 +211,12 @@ function FormularioDeContrato({
             placeholder="10"
             data-testid="contrato-percentual-exito"
             onChange={(e) => setPercentual(e.target.value)}
-            className="w-20 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+            className="w-20 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
           />
         </label>
       ) : null}
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Repasse ao advogado (%)")}
         <input
           value={repasse}
@@ -219,18 +224,18 @@ function FormularioDeContrato({
           placeholder={t("opcional")}
           data-testid="contrato-repasse"
           onChange={(e) => setRepasse(e.target.value)}
-          className="w-24 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="w-24 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("ID do lead (opcional)")}
         <input
           value={leadId}
           placeholder={t("cole o ID do lead")}
           data-testid="contrato-lead-id"
           onChange={(e) => setLeadId(e.target.value)}
-          className="w-48 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="w-48 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 

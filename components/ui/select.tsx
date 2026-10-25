@@ -6,6 +6,8 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { CAMPO_BASE } from "./input";
+
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
@@ -14,27 +16,39 @@ const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+    /** `sm` (32) é o da barra de ferramentas, do cabeçalho e dos filtros (DS §5.2). */
+    size?: "sm" | "default";
+  }
+>(({ className, children, size = "default", ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
+    data-slot="select-trigger"
+    data-size={size}
     className={cn(
-      // `min-h-11 lg:min-h-0` — 44px de altura onde o dedo aciona.
-      //
-      // `h-9` são 36px, e o gatilho do seletor é porta de decisão: medido em
-      // 360px, o fuso em Configurações, o período em Atividades e o filtro em
-      // Tarefas estavam todos abaixo do piso. `min-h` em vez de trocar o
-      // `h-9`: assim o seletor que o chamador dimensionou à mão não muda.
-      //
-      // `lg:` é o mesmo corte de `components/ui/button.tsx`.
-      "flex h-9 min-h-11 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-sm ring-offset-background focus:ring-1 focus:ring-ring focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-muted-foreground lg:min-h-0 [&>span]:line-clamp-1",
+      // Gatilho idêntico ao campo (DS §10.3): as classes vêm de `CAMPO_BASE`.
+      // Aberto, ele fica no estado de hover do Work (borda e fundo `interactive`).
+      CAMPO_BASE,
+      // `text-sm` sempre: o gatilho é botão, não recebe digitação, e o zoom de
+      // foco do iPhone não se aplica a ele.
+      "flex items-center justify-between gap-2 px-3 py-2 text-left text-sm whitespace-nowrap",
+      // Altura sem variante `data-[size]`: a variante pesaria mais que o `h-*`
+      // que o chamador passa em `className`, e o `cn` não conseguiria resolver.
+      size === "sm" ? "h-8" : "h-9",
+      "hover:bg-interactive/55 hover:text-interactive-foreground",
+      "data-[state=open]:border-interactive-border data-[state=open]:bg-interactive data-[state=open]:text-interactive-foreground",
+      "data-[placeholder]:text-muted-foreground",
+      // 44px onde o dedo aciona (DS §5.2). `min-h` em vez de trocar a altura:
+      // o seletor que o chamador dimensionou à mão continua com a medida dele.
+      "max-sm:min-h-11 pointer-coarse:min-h-11",
+      "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&>span]:line-clamp-1",
       className,
     )}
     {...props}
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
+      <ChevronDown aria-hidden="true" className="size-4 text-muted-foreground" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -46,10 +60,10 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    className={cn("flex cursor-default items-center justify-center bg-popover py-1", className)}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <ChevronUp aria-hidden="true" className="size-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -60,10 +74,10 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    className={cn("flex cursor-default items-center justify-center bg-popover py-1", className)}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <ChevronDown aria-hidden="true" className="size-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -75,8 +89,10 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
+      data-slot="select-content"
       className={cn(
-        "ds-painel relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
+        // DS §10.3: `popover`, borda `border`, raio 12, padding 4, sombra `md` (Work).
+        "ds-painel relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl border border-border bg-popover text-popover-foreground shadow-md",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
@@ -106,7 +122,8 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+    data-slot="select-label"
+    className={cn("px-2.5 py-1.5 text-xs font-semibold text-muted-foreground", className)}
     {...props}
   />
 ));
@@ -118,15 +135,22 @@ const SelectItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
+    data-slot="select-item"
     className={cn(
-      "relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11",
+      // DS §10.3: altura mínima 40, raio 8, padding 8 na vertical, 10 à esquerda
+      // e 32 à direita (a marca de seleção de 16). Realce SUAVE: no CRM
+      // `bg-accent` é a ação cheia; o `accent` do Unnify aqui se chama `interactive`.
+      "relative flex min-h-10 w-full cursor-default items-center gap-1.5 rounded-lg py-2 pr-8 pl-2.5 text-sm outline-hidden select-none",
+      "focus:bg-interactive focus:text-interactive-foreground",
+      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11",
+      "[&_svg]:pointer-events-none [&_svg]:shrink-0",
       className,
     )}
     {...props}
   >
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute right-2 flex size-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check aria-hidden="true" className="size-4" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>
@@ -143,7 +167,8 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    data-slot="select-separator"
+    className={cn("-mx-1 my-1 h-px bg-border", className)}
     {...props}
   />
 ));

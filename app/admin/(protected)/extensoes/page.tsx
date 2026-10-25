@@ -6,6 +6,7 @@ import { loadAuthUser } from "@/lib/auth/server";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { normalizarIdioma } from "@/lib/i18n/idiomas";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Extensões da instalação" };
 export const dynamic = "force-dynamic";
@@ -81,23 +82,21 @@ export default async function Page() {
 
   return (
     <div className="space-y-6" data-testid="tela-extensoes-da-instalacao">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Extensões da instalação")}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-text-muted">
-          {t(
+      <PageHeader
+        title={t("Extensões da instalação")}
+        description={t(
             "O que este servidor conhece, de onde veio e quem está usando. Instalar e configurar continua sendo feito dentro de cada empresa.",
           )}
-        </p>
-      </div>
+      />
 
       <Card className="p-5">
         <h2 className="text-base font-semibold">{t("De onde vêm as extensões")}</h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("O catálogo admitido neste servidor. É a origem que o instalador aceita.")}
         </p>
         <div className="mt-3 space-y-3">
           {(catalogos.data ?? []).length === 0 ? (
-            <p data-testid="extensoes-sem-catalogo" className="text-sm text-text-muted">
+            <p data-testid="extensoes-sem-catalogo" className="text-sm text-muted-foreground">
               {t(
                 "Nenhum catálogo admitido ainda — enquanto não houver, não há extensão para instalar.",
               )}
@@ -106,7 +105,7 @@ export default async function Page() {
             (catalogos.data ?? []).map((c) => (
               <div key={c.id} data-testid={`catalogo-${c.id}`} className="text-sm">
                 <p className="font-medium break-all">{c.origin}</p>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-muted-foreground">
                   {t("Revisão")} {c.revision} · {t("admitido em")} {dataLegivel(c.admitted_at)} ·{" "}
                   {/* Os 12 primeiros do digest: identifica a revisão numa conversa de suporte
                       sem virar uma parede de 64 caracteres na tela. */}
@@ -120,12 +119,12 @@ export default async function Page() {
 
       <Card className="p-5">
         <h2 className="text-base font-semibold">{t("Instaladas neste servidor")}</h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Cada extensão é instalada uma vez no servidor e ligada por empresa.")}
         </p>
         <div className="mt-3 space-y-3">
           {(instalacoes.data ?? []).length === 0 ? (
-            <p data-testid="extensoes-sem-instalacao" className="text-sm text-text-muted">
+            <p data-testid="extensoes-sem-instalacao" className="text-sm text-muted-foreground">
               {t("Nenhuma extensão instalada ainda.")}
             </p>
           ) : (
@@ -135,9 +134,9 @@ export default async function Page() {
                 <div key={e.id} data-testid={`extensao-${e.publisher}-${e.name}`} className="text-sm">
                   <p className="font-medium">
                     {e.publisher}/{e.name}{" "}
-                    <span className="font-normal text-text-muted">v{e.version}</span>
+                    <span className="font-normal text-muted-foreground">v{e.version}</span>
                   </p>
-                  <p className="text-xs text-text-muted">
+                  <p className="text-xs text-muted-foreground">
                     {/* A contagem separa LIGADA de apenas vinculada: uma extensão
                         presente em dez empresas e ligada em nenhuma é um dado
                         diferente de "ninguém instalou", e some se a tela contar só
@@ -155,12 +154,12 @@ export default async function Page() {
         </div>
       </Card>
 
-      <p className="text-sm text-text-muted">
+      <p className="text-sm text-muted-foreground">
         {t("Para instalar ou configurar uma extensão, entre na empresa:")}{" "}
         <Link
           href="/app/extensions"
           data-testid="ponteiro-extensoes-da-empresa"
-          className="font-medium text-text underline underline-offset-4"
+          className="font-medium text-foreground underline underline-offset-4"
         >
           {t("Extensões da empresa →")}
         </Link>

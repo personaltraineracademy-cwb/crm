@@ -83,12 +83,12 @@ describe("DialogContent base tem teto de altura (#2044)", () => {
 
   it("mantém o botão de fechar (X) no componente base", () => {
     expect(fonte).toMatch(/DialogPrimitive\.Close/);
-    // `right-4` e `top-4` no MESMO className, em qualquer ordem — pelo mesmo
-    // motivo do caso acima: o prettier reordena, e `top-4 right-4` posiciona o
-    // X exatamente onde `right-4 top-4` posicionava.
+    // `right-3` e `top-3` no MESMO className, em qualquer ordem — pelo mesmo
+    // motivo do caso acima: o prettier reordena. 12px do canto é o do Unnify
+    // (DS §10.14: botão `ghost` `icon-sm` a 12px do canto).
     const fechar = literais.find((literal) => {
       const classes = new Set(literal.split(/\s+/));
-      return classes.has("absolute") && classes.has("right-4") && classes.has("top-4");
+      return classes.has("absolute") && classes.has("right-3") && classes.has("top-3");
     });
     expect(fechar, "o X do diálogo base perdeu a âncora no canto").toBeTruthy();
   });

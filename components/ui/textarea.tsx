@@ -2,24 +2,22 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+import { CAMPO_BASE } from "./input";
+
+/**
+ * Área de texto do Unnify (DESIGN-SYSTEM.md §10.2): o mesmo estilo do campo,
+ * altura mínima de 120 e redimensionável só na vertical. Fonte 16px no celular e
+ * 14px a partir de `md`, pelo motivo escrito em `components/ui/input.tsx`.
+ *
+ * Quem precisa de uma área mais baixa (o compositor da conversa, que começa em
+ * uma linha) passa o próprio `min-h-*` em `className`, e ele vence.
+ */
 const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
   ({ className, ...props }, ref) => {
     return (
       <textarea
-        className={cn(
-          "flex min-h-[80px] w-full rounded-sm border border-border bg-bg px-4 py-3",
-          // `text-base md:text-sm` — pelo mesmo motivo do `components/ui/input.tsx`:
-          // o Safari do iPhone dá zoom na página quando o campo recebe foco com
-          // fonte menor que 16px, e `text-sm` são 14. A régua inteira está no
-          // comentário daquele arquivo.
-          "text-base leading-relaxed text-text placeholder:text-text-muted md:text-sm",
-          "transition-[border-color,box-shadow] duration-fast ease-out",
-          "hover:border-border-strong",
-          "focus-visible:border-accent-500 focus-visible:ring-2 focus-visible:ring-accent-soft focus-visible:outline-hidden",
-          "disabled:cursor-not-allowed disabled:opacity-55",
-          "aria-[invalid=true]:border-error aria-[invalid=true]:focus-visible:ring-error-bg",
-          className,
-        )}
+        data-slot="textarea"
+        className={cn(CAMPO_BASE, "flex min-h-30 resize-y px-3 py-2", className)}
         ref={ref}
         {...props}
       />

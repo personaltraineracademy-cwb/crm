@@ -18,6 +18,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Dados externos" };
 export const dynamic = "force-dynamic";
@@ -44,15 +45,13 @@ export default async function IntegracaoDeDadosPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Dados externos", idioma)}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Dados externos", idioma)}
+        description={traduzir(
             "Conecte um banco de dados de outro sistema — o seu segundo CRM, um ERP, uma planilha num banco PostgreSQL ou MySQL — e o agente passa a consultá-lo em tempo real. A conexão é sempre somente leitura: nada que o agente faz altera o banco de origem.",
             idioma,
           )}
-        </p>
-      </header>
+      />
       <ListaDeConexoes initialData={conexoes} canWrite={canWrite} />
     </div>
   );

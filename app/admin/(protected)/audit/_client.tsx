@@ -8,6 +8,7 @@ import {
   AuditTableSkeleton,
 } from "@/components/admin/audit/AuditTable";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function AuditClient() {
   const t = useT();
@@ -30,14 +31,16 @@ export function AuditClient() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Audit Log")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {isLoading
-            ? t("Carregando...")
-            : `${total} ${total !== 1 ? t("eventos") : t("evento")}${hasNextPage ? "+" : ""}`}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Audit Log")}
+        meta={
+          <span className="tabular-nums">
+            {isLoading
+              ? t("Carregando...")
+              : `${total} ${total !== 1 ? t("eventos") : t("evento")}${hasNextPage ? "+" : ""}`}
+          </span>
+        }
+      />
 
       {/* Filters */}
       <AuditFiltersAdmin filters={filters} onChange={setFilters} tenants={tenants} />

@@ -141,7 +141,7 @@ export function CanalVozClient({ wacallsConfigured }: { wacallsConfigured: boole
 
   if (!wacallsConfigured) {
     return (
-      <div className="rounded-md border border-warning bg-warning-bg p-4 text-sm text-warning-fg">
+      <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-4 text-sm">
         <p className="font-medium">{t("A chamada de voz não está configurada.")}</p>
         <p className="mt-1">
           {t("Falta o endereço do serviço (")}
@@ -154,7 +154,7 @@ export function CanalVozClient({ wacallsConfigured }: { wacallsConfigured: boole
 
   if (vozLigada === false) {
     return (
-      <div className="rounded-md border border-border bg-surface p-4 text-sm">
+      <div className="rounded-lg border border-border bg-card p-4 text-sm">
         <p className="font-medium">{t("A chamada de voz está desligada nesta empresa.")}</p>
         <p className="mt-1 text-muted-foreground">
           {t(
@@ -186,7 +186,7 @@ export function CanalVozClient({ wacallsConfigured }: { wacallsConfigured: boole
       </div>
 
       {conectado && (
-        <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
+        <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
           <p className="font-medium">{estado?.jid ?? t("Aparelho pareado")}</p>
         </div>
       )}
@@ -202,7 +202,7 @@ export function CanalVozClient({ wacallsConfigured }: { wacallsConfigured: boole
           <img
             src={qrDataUrl}
             alt={t("QR Code para parear chamada de voz")}
-            className="h-64 w-64 rounded-md border bg-white p-2"
+            className="h-64 w-64 rounded-lg border bg-white p-2"
           />
         </div>
       ) : pareando ? (
@@ -223,7 +223,7 @@ export function CanalVozClient({ wacallsConfigured }: { wacallsConfigured: boole
           </p>
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-sm font-medium text-success-fg">
+        <div className="text-success-foreground flex items-center gap-2 text-sm font-medium">
           <CheckCircle size={18} weight="fill" aria-hidden />
           {t("Pronto para ligar — o botão de chamar aparece nos contatos com telefone.")}
         </div>

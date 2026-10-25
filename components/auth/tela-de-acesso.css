@@ -1,0 +1,48 @@
+/* Telas de acesso — entrada dos campos em sequência (Unnify DS §11.9).
+
+   O DS manda os campos entrarem "em sequência, com deslize de 10px e leve
+   escala" (`pta-auth-field-in` do Work). Aqui a regra mira os filhos diretos
+   do formulário dentro da moldura (`TelaDeAcesso`), e não uma classe em cada
+   campo: são oito formulários, e uma classe por campo seria esquecida no
+   próximo campo que alguém acrescentar.
+
+   CSS à mão porque `tailwindcss-animate` não está instalado (ver o comentário
+   em `app/globals.css`, bloco "MOVIMENTO DOS SOBREPOSTOS"). */
+@keyframes tela-de-acesso-campo-entra {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0) scale(1.015);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.tela-de-acesso-formulario form > * {
+  animation: tela-de-acesso-campo-entra var(--duration-slow, 220ms) var(--ease-out, ease-out) both;
+}
+
+.tela-de-acesso-formulario form > :nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.tela-de-acesso-formulario form > :nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.tela-de-acesso-formulario form > :nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.tela-de-acesso-formulario form > :nth-child(n + 5) {
+  animation-delay: 160ms;
+}
+
+/* O destino é o mesmo; só chega sem o percurso (DS §7.3). */
+@media (prefers-reduced-motion: reduce) {
+  .tela-de-acesso-formulario form > * {
+    animation: none;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useT } from "@/hooks/i18n/useT";
 import { Funnel } from "@/lib/ui/icons";
 
@@ -27,21 +28,21 @@ interface Props {
 export function EmptyPorFiltro({ filtros, onLimpar }: Props) {
   const t = useT();
   return (
-    <div className="flex flex-col items-center justify-center gap-3 p-6 text-center">
-      <Funnel size={28} className="text-text-subtle" weight="regular" aria-hidden />
-      <p className="text-sm font-medium text-text">
-        {t("Nenhuma conversa com esses filtros")}
-      </p>
-      {filtros.length > 0 && (
-        <p className="text-xs text-text-muted">
-          {t("Ativos:")} {filtros.map((f) => t(f)).join(" · ")}
-        </p>
-      )}
-      {onLimpar && (
-        <Button size="sm" variant="outline" onClick={onLimpar}>
-          {t("Limpar filtros")}
-        </Button>
-      )}
-    </div>
+    // Vazio compacto do Unnify (§10.21): ícone de 32, a frase, no máximo 1 ação.
+    <EmptyState
+      className="p-6"
+      icon={<Funnel size={32} weight="regular" aria-hidden />}
+      title={t("Nenhuma conversa com esses filtros")}
+      description={
+        filtros.length > 0 ? `${t("Ativos:")} ${filtros.map((f) => t(f)).join(" · ")}` : undefined
+      }
+      action={
+        onLimpar ? (
+          <Button size="sm" variant="outline" onClick={onLimpar}>
+            {t("Limpar filtros")}
+          </Button>
+        ) : undefined
+      }
+    />
   );
 }

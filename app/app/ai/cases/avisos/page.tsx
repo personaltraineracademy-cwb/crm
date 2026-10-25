@@ -30,6 +30,7 @@ import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { AvisoNoWhatsApp } from "./_components/AvisoNoWhatsApp";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Aviso no WhatsApp" };
@@ -48,17 +49,13 @@ export default async function AvisoDeCasoPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {traduzir("Aviso no WhatsApp", idioma)}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
-            "Escolha um número da equipe para receber uma mensagem toda vez que o assistente travar e precisar de uma pessoa.",
-            idioma,
-          )}
-        </p>
-      </header>
+      <PageHeader
+        title={traduzir("Aviso no WhatsApp", idioma)}
+        description={traduzir(
+          "Escolha um número da equipe para receber uma mensagem toda vez que o assistente travar e precisar de uma pessoa.",
+          idioma,
+        )}
+      />
       <AvisoNoWhatsApp />
     </div>
   );

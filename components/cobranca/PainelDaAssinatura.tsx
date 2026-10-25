@@ -52,7 +52,11 @@ export function PainelDaAssinatura({ dados, idioma }: { dados: DadosDoPainel; id
           {t("Novo plano a partir de")} {dia(a.proximo_vencimento)}: {a.plano_agendado.nome}
         </p>
       )}
-      {a.modo === "teste" && <p className="text-xs text-warning-fg">{t("Modo de teste: nenhum pagamento aqui é real.")}</p>}
+      {a.modo === "teste" && (
+        <p className="text-warning-foreground text-xs">
+          {t("Modo de teste: nenhum pagamento aqui é real.")}
+        </p>
+      )}
       {a.prazo_extra_ate && (
         <p className="text-sm">
           {t("Prazo extra até")} {data.format(new Date(a.prazo_extra_ate))}

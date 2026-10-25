@@ -100,7 +100,10 @@ function AvisoVisivel() {
     <div
       role="alert"
       data-testid="aviso-proposta-destaque"
-      className="fixed right-4 bottom-4 z-50 w-80 max-md:bottom-[calc(var(--rodape-ocupado,0px)+1rem)] rounded-lg border border-border bg-card p-4 shadow-lg"
+      // Elemento FLUTUANTE do Unnify (DS §6.3 e §10.16): `popover`, raio 12,
+      // borda de 1px e `shadow-md`, camada 50. Abaixo de 1024 ele sobe acima da
+      // barra ancorada pelo contrato do rodapé (`--rodape-ocupado`).
+      className="fixed right-4 bottom-4 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-md max-lg:bottom-[calc(var(--rodape-ocupado,0px)+1rem)]"
     >
       {/* O TÍTULO sai como veio — é linha de `agent_inbox_items`, com dado de
           gente (nome da proposta, do cliente). Mesma regra do AgentInboxList:

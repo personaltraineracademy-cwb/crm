@@ -5,6 +5,8 @@ import { useState } from "react";
 
 import { EmptyState } from "@/components/empty";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
+import { Alert } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -36,9 +38,9 @@ function MarcadorDeAtor({ forma }: { forma: LinhaDeAtor["forma"] }) {
       aria-hidden
       className={cn(
         "h-2 w-2 shrink-0",
-        forma === "filled" && "rounded-full bg-accent",
-        forma === "ring" && "rounded-full border border-accent bg-surface",
-        forma === "dashed" && "rounded-full border border-dashed border-border-strong",
+        forma === "filled" && "rounded-full bg-primary",
+        forma === "ring" && "rounded-full border border-primary bg-card",
+        forma === "dashed" && "rounded-full border border-dashed border-input",
       )}
     />
   );
@@ -47,7 +49,7 @@ function MarcadorDeAtor({ forma }: { forma: LinhaDeAtor["forma"] }) {
 function BarraDeLinha({ fatia }: { fatia: number }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-      <div className="h-full rounded-full bg-accent" style={{ width: `${fatia}%` }} />
+      <div className="h-full rounded-full bg-primary" style={{ width: `${fatia}%` }} />
     </div>
   );
 }
@@ -70,17 +72,17 @@ function SerieDiaria({ dias }: { dias: LinhaDoDia[] }) {
       {dias.map((d) => (
         <div key={d.data} className="flex min-w-[18px] flex-1 flex-col items-center gap-1">
           <div
-            className="w-full rounded-sm bg-accent/70"
+            className="w-full rounded-sm bg-primary/70"
             style={{ height: `${Math.max(2, (d.quantidade / teto) * 72)}px` }}
             title={`${d.rotulo}: ${d.quantidade}`}
             data-dia={d.data}
             data-quantidade={d.quantidade}
           />
-          <span className="text-[10px] tabular-nums text-muted-foreground">{d.rotulo}</span>
+          <span className="text-xs text-muted-foreground tabular-nums">{d.rotulo}</span>
           {/* O número do dia, escrito. Com mouse ele mora no `title` da barra
               (passar o cursor mostra); no dedo não há hover, e a altura da
               barra sozinha não diz quanto foi. */}
-          <span className="text-[10px] tabular-nums [@media(hover:hover)]:sr-only">
+          <span className="text-xs tabular-nums [@media(hover:hover)]:sr-only">
             {d.quantidade}
           </span>
         </div>
@@ -98,7 +100,7 @@ export function ActivityReportClient() {
 
   const seletor = (
     <Select value={String(dias)} onValueChange={(v) => setDias(Number(v))}>
-      <SelectTrigger className="w-44" aria-label={t("Período")}>
+      <SelectTrigger className="h-8 w-44" aria-label={t("Período")}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -115,7 +117,15 @@ export function ActivityReportClient() {
     return (
       <div className="flex flex-col gap-6">
         {seletor}
-        <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>
+        <div
+          className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4"
+          aria-busy="true"
+          aria-label={t("Carregando…")}
+        >
+          <StatCard loading label="" value="" />
+          <StatCard loading label="" value="" />
+          <StatCard loading label="" value="" />
+        </div>
       </div>
     );
   }
@@ -124,7 +134,7 @@ export function ActivityReportClient() {
     return (
       <div className="flex flex-col gap-6">
         {seletor}
-        <p className="text-sm text-destructive">{t("Erro ao carregar o relatório.")}</p>
+        <Alert variant="destructive">{t("Erro ao carregar o relatório.")}</Alert>
       </div>
     );
   }
@@ -156,7 +166,7 @@ export function ActivityReportClient() {
         <>
           {/* A PERGUNTA, respondida em três números: quanto foi gente, quanto
               foi agente, quanto não foi nem um nem outro. */}
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4">
             <CartaoDeOrigem
               rotulo={t("A equipe")}
               valor={resumo.pessoas}
@@ -226,11 +236,15 @@ export function ActivityReportClient() {
               <CardTitle className="text-base">{t("Linha do tempo da operação")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="flex flex-col gap-2" data-testid="lista-de-atividades">
+              {/* Linhas separadas por um fio, sem caixa dentro do cartão (DS §1). */}
+              <ul
+                className="flex flex-col divide-y divide-border"
+                data-testid="lista-de-atividades"
+              >
                 {atividades.map((i: LinhaDeAtividade) => (
                   <li
                     key={i.id}
-                    className="flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-md border border-border p-2 text-sm"
+                    className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-2.5 text-sm"
                   >
                     <span className="shrink-0 tabular-nums text-xs text-muted-foreground">
                       {quandoLegivel(i.quando, "pt-BR")}
@@ -243,7 +257,7 @@ export function ActivityReportClient() {
                     {i.negocioId && (
                       <Link
                         href={`/app/leads/${i.negocioId}`}
-                        className="text-xs text-accent underline underline-offset-2 max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                        className="text-xs text-primary underline underline-offset-2 max-md:inline-flex max-md:min-h-11 max-md:items-center"
                       >
                         {i.negocioTitulo ?? `${vocabulario.deal} ${i.negocioId.slice(0, 8)}`}
                       </Link>
@@ -289,16 +303,19 @@ function CartaoDeOrigem({
 }) {
   const fatia = total > 0 ? Math.round((valor / total) * 100) : 0;
   return (
-    <Card data-testid={`origem-${forma}`}>
-      <CardContent className="flex flex-col gap-1 p-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    // KPI no `StatCard` do DS (§10.11): rótulo com o marcador do ator, valor e
+    // a fatia do total no contexto.
+    <StatCard
+      data-testid={`origem-${forma}`}
+      label={
+        <span className="inline-flex items-center gap-2">
           <MarcadorDeAtor forma={forma} />
           {rotulo}
-        </div>
-        <div className="text-2xl font-semibold tabular-nums">{valor}</div>
-        <div className="text-xs text-muted-foreground tabular-nums">{fatia}%</div>
-      </CardContent>
-    </Card>
+        </span>
+      }
+      value={valor}
+      context={<span className="tabular-nums">{fatia}%</span>}
+    />
   );
 }
 

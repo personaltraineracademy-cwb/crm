@@ -43,7 +43,7 @@ function SlaTimelineInline({ received_at, due_at, request_type }: SlaTimelinePro
   const daysElapsed = Math.floor(elapsed / (1000 * 60 * 60 * 24));
 
   const progressColor =
-    progress >= 1 ? "bg-red-500" : progress >= 0.75 ? "bg-yellow-500" : "bg-emerald-500";
+    progress >= 1 ? "bg-danger" : progress >= 0.75 ? "bg-warning" : "bg-success";
 
   const milestones =
     request_type === "data_request"
@@ -91,7 +91,7 @@ function SlaTimelineInline({ received_at, due_at, request_type }: SlaTimelinePro
           const isPast = milestoneDate.getTime() < now.getTime();
           const isLast = idx === milestones.length - 1;
           const dotColor = isPast
-            ? "bg-emerald-500 border-emerald-500"
+            ? "bg-success border-success-border"
             : "bg-muted border-border";
 
           return (
@@ -243,7 +243,7 @@ export function LgpdRequestAdminDetail({ id }: Props) {
 
   if (error || !data) {
     return (
-      <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+      <div className="border-danger-border bg-danger-soft text-danger-foreground rounded-md border px-4 py-3 text-sm">
         {t("Falha ao carregar solicitação.")}
       </div>
     );
@@ -351,9 +351,9 @@ export function LgpdRequestAdminDetail({ id }: Props) {
               />
             )}
             {request.error_message && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/5 px-2 py-1">
+              <div className="border-danger-border bg-danger-soft rounded-md border px-2 py-1">
                 <p className="text-xs text-muted-foreground">{t("Erro")}</p>
-                <p className="text-destructive text-xs">{request.error_message}</p>
+                <p className="text-danger-foreground text-xs">{request.error_message}</p>
               </div>
             )}
           </CardContent>

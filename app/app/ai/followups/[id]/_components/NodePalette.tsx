@@ -6,6 +6,7 @@ import type { NodeType } from "@/lib/followup/graph-schema";
 import { useT } from "@/hooks/i18n/useT";
 import { NOS_DA_SUPERFICIE } from "@/lib/followup/validate-publish";
 import type { FollowupFlowSurface } from "@/lib/followup/api-schemas";
+import { BLOCO_DE_ICONE_PEQUENO } from "@/components/fluxo/tema-do-fluxo";
 import { NODE_VISUALS } from "./nodes/nodeVisuals";
 
 interface Props {
@@ -31,11 +32,11 @@ export function NodePalette({ onAdd, variant = "desktop", surface = "followup" }
         "flex flex-col gap-1.5 overflow-y-auto p-3",
         isMobile
           ? "h-full w-full"
-          : "hidden w-56 shrink-0 border-r border-border bg-surface lg:flex",
+          : "hidden w-56 shrink-0 border-r border-border bg-card lg:flex",
       )}
       data-testid="node-palette"
     >
-      <h2 className="px-1 pb-1 text-xs font-medium uppercase tracking-wide text-text-muted">
+      <h2 className="px-1 pb-1 text-xs font-medium text-muted-foreground">
         {t("Adicionar nó")}
       </h2>
       {NOS_DA_SUPERFICIE[surface].map((tipo) => {
@@ -45,9 +46,9 @@ export function NodePalette({ onAdd, variant = "desktop", surface = "followup" }
           <Button
             key={visual.type}
             type="button"
-            variant="secondary"
+            variant="ghost"
             size="sm"
-            className="justify-start gap-2"
+            className="h-auto min-h-9 justify-start gap-2 py-1 text-left font-normal"
             draggable
             onDragStart={(e) => {
               e.dataTransfer.setData("application/x-followup-node-type", visual.type);
@@ -56,12 +57,10 @@ export function NodePalette({ onAdd, variant = "desktop", surface = "followup" }
             onClick={() => onAdd(visual.type)}
             data-testid={`palette-add-${visual.type}`}
           >
-            <span
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${visual.chipClassName}`}
-            >
+            <span className={BLOCO_DE_ICONE_PEQUENO}>
               <Icon size={14} aria-hidden />
             </span>
-            {t(visual.paletteLabel)}
+            <span className="whitespace-normal">{t(visual.paletteLabel)}</span>
           </Button>
         );
       })}

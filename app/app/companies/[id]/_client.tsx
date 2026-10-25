@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/auth/AuthProvider";
 import { useT } from "@/hooks/i18n/useT";
 import { ROLE_RANK } from "@/lib/auth/types";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Props {
   id: string;
@@ -157,38 +158,35 @@ export function CompanyDetailClient({ id }: Props) {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <Link href="/app/companies" className="text-sm text-muted-foreground hover:underline">
-            ← {t("Empresas")}
-          </Link>
-          <h1 className="text-xl font-semibold">
-            {(c.trade_name as string) || (c.legal_name as string) || t("Empresa")}
-          </h1>
-          <p className="font-mono text-sm text-muted-foreground">{(c.cnpj as string) || "—"}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={() => void enrich()} disabled={enriching}>
-            {enriching ? t("Enriquecendo…") : t("Enriquecer CNPJ")}
-          </Button>
-          {podeEditar ? (
-            <Button variant="outline" onClick={abrirEdicao}>
-              {t("Editar empresa")}
+      <PageHeader
+        back={{ href: "/app/companies", label: t("Empresas") }}
+        title={(c.trade_name as string) || (c.legal_name as string) || t("Empresa")}
+        description={<span className="font-mono tabular-nums">{(c.cnpj as string) || "—"}</span>}
+        actions={
+          <>
+            <Button size="sm" variant="outline" onClick={() => void enrich()} disabled={enriching}>
+              {enriching ? t("Enriquecendo…") : t("Enriquecer CNPJ")}
             </Button>
-          ) : null}
-          {podeExcluir ? (
-            <Button
-              variant="destructive"
-              onClick={() => {
-                setDeleteError(null);
-                setDeleteOpen(true);
-              }}
-            >
-              {t("Excluir empresa")}
-            </Button>
-          ) : null}
-        </div>
-      </div>
+            {podeEditar ? (
+              <Button size="sm" variant="outline" onClick={abrirEdicao}>
+                {t("Editar empresa")}
+              </Button>
+            ) : null}
+            {podeExcluir ? (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  setDeleteError(null);
+                  setDeleteOpen(true);
+                }}
+              >
+                {t("Excluir empresa")}
+              </Button>
+            ) : null}
+          </>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="space-y-2 p-4">
@@ -255,7 +253,7 @@ export function CompanyDetailClient({ id }: Props) {
           ) : (
             <ul className="grid gap-2 sm:grid-cols-2 text-sm">
               {data.contacts.map((ct) => (
-                <li key={ct.id as string} className="rounded-md border px-3 py-2">
+                <li key={ct.id as string} className="rounded-lg border px-3 py-2">
                   <Link href={`/app/contacts/${ct.id}`} className="font-mono hover:underline">
                     {(ct.phone_number as string) || "—"}
                   </Link>
@@ -388,7 +386,7 @@ export function CompanyDetailClient({ id }: Props) {
               </div>
             </div>
             {editError ? (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-danger-foreground text-sm" role="alert">
                 {editError}
               </p>
             ) : null}
@@ -426,7 +424,10 @@ export function CompanyDetailClient({ id }: Props) {
               {c.cnpj ? ` — ${c.cnpj as string}` : ""}
             </p>
             {deleteError ? (
-              <p className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-destructive" role="alert">
+              <p
+                className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3"
+                role="alert"
+              >
                 {deleteError}
               </p>
             ) : null}
@@ -435,7 +436,7 @@ export function CompanyDetailClient({ id }: Props) {
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>
               {t("Cancelar")}
             </Button>
-            <Button variant="destructive" onClick={() => void excluir()} disabled={deleting}>
+            <Button variant="destructive-solid" onClick={() => void excluir()} disabled={deleting}>
               {deleting ? t("Excluindo…") : t("Excluir")}
             </Button>
           </DialogFooter>

@@ -92,10 +92,10 @@ export function RegrasDeComissao({
   return (
     <section className="space-y-3 rounded-xl border p-4">
       <h2 className="font-semibold">{t("Comissão")}</h2>
-      <p className="text-sm text-text-muted">
+      <p className="text-sm text-muted-foreground">
         {t("Quanto cada pessoa recebe por atendimento. Sem regra, a comissão é zero.")}
       </p>
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t(
           "A regra mais específica vence: pessoa e serviço vence pessoa, que vence serviço. Não é o maior percentual que ganha.",
         )}
@@ -105,7 +105,7 @@ export function RegrasDeComissao({
         <div className="flex flex-wrap items-end gap-2">
           <select
             aria-label={t("Pessoa")}
-            className="min-h-11 rounded-md border p-2"
+            className="min-h-11 rounded-lg border p-2"
             value={pessoaId}
             onChange={(e) => setPessoaId(e.target.value)}
           >
@@ -119,7 +119,7 @@ export function RegrasDeComissao({
 
           <select
             aria-label={t("Serviço")}
-            className="min-h-11 rounded-md border p-2"
+            className="min-h-11 rounded-lg border p-2"
             value={servicoId}
             onChange={(e) => setServicoId(e.target.value)}
           >
@@ -133,7 +133,7 @@ export function RegrasDeComissao({
 
           <input
             aria-label={t("Percentual")}
-            className="min-h-11 w-24 rounded-md border p-2"
+            className="min-h-11 w-24 rounded-lg border p-2"
             placeholder="30"
             inputMode="decimal"
             value={percentual}
@@ -165,7 +165,7 @@ export function RegrasDeComissao({
           ) : null}
 
           {!temAlvo ? (
-            <p className="w-full text-xs text-text-muted">
+            <p className="w-full text-xs text-muted-foreground">
               {t("Escolha ao menos uma pessoa ou um serviço.")}
             </p>
           ) : null}
@@ -173,9 +173,9 @@ export function RegrasDeComissao({
       ) : null}
 
       {carregando ? (
-        <p className="text-sm text-text-muted">{t("Carregando...")}</p>
+        <p className="text-sm text-muted-foreground">{t("Carregando...")}</p>
       ) : regras.length === 0 ? (
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Nenhuma regra de comissão. Todo item entra com zero.")}
         </p>
       ) : (
@@ -183,7 +183,7 @@ export function RegrasDeComissao({
           {regras.map((r) => (
             <li
               key={r.id}
-              className="flex items-center justify-between rounded-md border border-border p-2 text-sm"
+              className="flex items-center justify-between rounded-lg border border-border p-2 text-sm"
             >
               <span>
                 {rotuloDe(r)} · {r.percent}%
@@ -208,7 +208,7 @@ export function RegrasDeComissao({
                     type="button"
                     aria-label={t("Remover regra")}
                     onClick={() => onInativar(r.id)}
-                    className="text-text-muted hover:text-text"
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     ×
                   </button>

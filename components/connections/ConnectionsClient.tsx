@@ -32,9 +32,12 @@ import { ChannelAcervo } from "./ChannelAcervo";
 import { ChannelHistorico } from "./ChannelHistorico";
 import { ChannelAiAccess } from "./ChannelAiAccess";
 import { ParaIntegrar } from "./ParaIntegrar";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -53,7 +56,6 @@ import {
   ShieldCheck,
   Trash,
   UsersThree,
-  Warning,
 } from "@/lib/ui/icons";
 import { canalDesativado } from "@/lib/channels/desativado";
 import { lerEstadoDoCanal } from "@/lib/channels/estado";
@@ -494,13 +496,13 @@ export function ConnectionsClient({ wahaConfigured }: { wahaConfigured: boolean 
           }
         />
       ) : null}
-      {connectionDetail && <details className="rounded-md border p-3 text-sm"><summary>{t("Detalhes para suporte")}</summary><pre className="mt-2 whitespace-pre-wrap break-words">{connectionDetail}</pre><Button variant="outline" size="sm" onClick={async () => {
+      {connectionDetail && <details className="rounded-lg border p-3 text-sm"><summary>{t("Detalhes para suporte")}</summary><pre className="mt-2 whitespace-pre-wrap break-words">{connectionDetail}</pre><Button variant="outline" size="sm" onClick={async () => {
         if (await copyToClipboard(connectionDetail)) toast.success(t("Copiado!"));
         else toast.error(t("Não foi possível copiar. Selecione e copie manualmente."));
       }}>{t("Copiar detalhes")}</Button></details>}
       <Link href="/app/settings/atendimento" className="text-sm underline max-md:flex max-md:min-h-11 max-md:items-center">{t("Configurar responsáveis por número")}</Link>
       {!wahaConfigured && (
-        <div className="rounded-md border border-warning bg-warning-bg p-4 text-sm text-warning-fg">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-4 text-sm">
           <p className="font-medium">{t("O serviço do WhatsApp não está configurado.")}</p>
           <p className="mt-1">
             {t("Faltam o endereço e a chave do serviço (")}
@@ -520,7 +522,7 @@ export function ConnectionsClient({ wahaConfigured }: { wahaConfigured: boolean 
       )}
 
       {schemaOutdated && (
-        <div className="rounded-md border border-warning bg-warning-bg p-4 text-sm text-warning-fg">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-4 text-sm">
           <p className="font-medium">{t("Esta instalação está com o banco atrasado.")}</p>
           <p className="mt-1">
             {t(
@@ -531,34 +533,40 @@ export function ConnectionsClient({ wahaConfigured }: { wahaConfigured: boolean 
       )}
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">{t("Carregando conexões…")}</p>
+        // A forma final: a grade de cartões de número.
+        <div
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+          aria-busy="true"
+          aria-label={t("Carregando conexões…")}
+        >
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-40 w-full rounded-xl" />
+          ))}
+        </div>
       ) : isError ? (
         // Lista vazia por falha de carregamento renderizava a tela de primeira
         // instalação ("conecte seu primeiro número") para quem já tem número no
         // ar — o convite exato para parear de novo um aparelho que já está
         // conectado. Erro tem que aparecer como erro.
-        <Card className="flex flex-col items-center gap-3 p-8 text-center">
-          <Warning size={28} className="text-error-fg" aria-hidden />
-          <p className="text-sm text-error-fg">
-            {t(
-              "Não foi possível carregar seus números — esta lista não está mostrando o que existe.",
-            )}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {t(
-              "Não conecte um número novo por causa disto: recarregue a página. Se persistir, o servidor do sistema está fora do ar.",
-            )}
-          </p>
-        </Card>
+        <Alert
+          variant="destructive"
+          title={t(
+            "Não foi possível carregar seus números — esta lista não está mostrando o que existe.",
+          )}
+        >
+          {t(
+            "Não conecte um número novo por causa disto: recarregue a página. Se persistir, o servidor do sistema está fora do ar.",
+          )}
+        </Alert>
       ) : list.length === 0 ? (
-        <Card className="flex flex-col items-center gap-3 p-8 text-center">
-          <Phone size={28} className="text-muted-foreground" aria-hidden />
-          <p className="text-sm text-muted-foreground">
-            {t("Conecte seu primeiro número de WhatsApp para começar a atender.")}
-          </p>
-        </Card>
+        <div className="rounded-xl border border-border bg-card">
+          <EmptyState
+            icon={<Phone aria-hidden />}
+            title={t("Conecte seu primeiro número de WhatsApp para começar a atender.")}
+          />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {list.map((c) => {
             const info = statusInfo(c.status, t);
             const pausado = canalDesativado(c.metadata);
@@ -591,7 +599,7 @@ export function ConnectionsClient({ wahaConfigured }: { wahaConfigured: boolean 
                   <Badge variant={info.variant}>{info.label}</Badge>
                   {pausado && <Badge variant="neutral">{t("Pausado")}</Badge>}
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {c.last_health_check_at
                     ? `${t("Verificado")} ${new Date(c.last_health_check_at).toLocaleString(tagDoIdioma)}`
                     : t("Ainda não verificado")}
@@ -870,7 +878,7 @@ function ExcluirCanalDialog({
           {/* Enquanto o preflight não volta, confirmar seria confirmar no escuro:
               o diálogo ainda não sabe o que vai acontecer, então não pode pedir
               a decisão. */}
-          <Button variant="destructive" disabled={excluindo || isPending} onClick={excluir}>
+          <Button variant="destructive-solid" disabled={excluindo || isPending} onClick={excluir}>
             {excluindo ? (
               <CircleNotch size={14} className="animate-spin" aria-hidden />
             ) : (
@@ -975,11 +983,11 @@ function QrDialog({
             <img
               src={`/api/v1/channel-sessions/${sessionId}/qr?t=${tick}`}
               alt={t("QR Code para conectar WhatsApp")}
-              className="h-64 w-64 rounded-md border bg-white p-2"
+              className="h-64 w-64 rounded-lg border bg-white p-2"
             />
             } />
           ) : status === "WORKING" ? (
-            <div className="flex flex-col items-center gap-2 text-sm font-medium text-success-fg">
+            <div className="text-success-foreground flex flex-col items-center gap-2 text-sm font-medium">
               <CheckCircle size={28} weight="fill" aria-hidden />
               {t("Conectado!")}
             </div>
@@ -990,7 +998,7 @@ function QrDialog({
             // Reconectar" levava de volta ao mesmo FAILED); agora ela oferece a
             // única ação que de fato resolve.
             <div className="flex flex-col items-center gap-3 text-center">
-              <p className="text-sm text-error-fg">
+              <p className="text-danger-foreground text-sm">
                 {t(
                   "Este número foi desvinculado do WhatsApp. Para usá-lo de novo é preciso parear outra vez.",
                 )}

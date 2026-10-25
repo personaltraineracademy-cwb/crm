@@ -113,7 +113,7 @@ export function EnderecoDaMarcacao({
           <ul
             id={listaId}
             role="listbox"
-            className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-surface shadow-md"
+            className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-border bg-popover p-1 shadow-md"
             onMouseDown={(e) => e.preventDefault()}
           >
             {conhecidos.map((opcao, i) => (
@@ -123,8 +123,8 @@ export function EnderecoDaMarcacao({
                 role="option"
                 aria-selected={opcao === value}
                 className={cn(
-                  "cursor-pointer px-3 py-2 text-sm",
-                  i === destacado && "bg-accent text-accent-foreground",
+                  "cursor-pointer rounded-lg px-2.5 py-2 text-sm",
+                  i === destacado && "bg-surface-hover text-foreground",
                 )}
                 onMouseEnter={() => setDestacado(i)}
                 onClick={() => escolher(opcao)}
@@ -140,8 +140,8 @@ export function EnderecoDaMarcacao({
                 aria-selected={false}
                 aria-disabled={salvar.isPending || undefined}
                 className={cn(
-                  "min-h-11 cursor-pointer px-3 py-2 text-sm",
-                  destacado === conhecidos.length && "bg-accent text-accent-foreground",
+                  "min-h-11 cursor-pointer rounded-lg px-2.5 py-2 text-sm",
+                  destacado === conhecidos.length && "bg-surface-hover text-foreground",
                 )}
                 onMouseEnter={() => setDestacado(conhecidos.length)}
                 onClick={() => {

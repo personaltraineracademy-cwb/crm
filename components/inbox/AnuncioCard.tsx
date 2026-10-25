@@ -41,7 +41,7 @@ export function AnuncioCard({
   return (
     <div
       data-testid="anuncio-card"
-      className={cn("flex gap-2 rounded-md border border-current/15 bg-current/5 p-2 text-xs", className)}
+      className={cn("flex gap-2 rounded-lg bg-muted/40 p-2 text-xs", className)}
     >
       {miniatura ? (
         // eslint-disable-next-line @next/next/no-img-element -- imagem externa e efêmera da Meta; o otimizador do Next não ajuda e exigiria liberar o domínio
@@ -51,26 +51,31 @@ export function AnuncioCard({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setSemImagem(true)}
-          className={cn("shrink-0 rounded-sm object-cover", compacto ? "h-10 w-10" : "h-14 w-14")}
+          className={cn("shrink-0 rounded-md object-cover", compacto ? "size-10" : "size-14")}
         />
       ) : (
         <span
           aria-hidden
           className={cn(
-            "flex shrink-0 items-center justify-center rounded-sm bg-current/10",
-            compacto ? "h-10 w-10" : "h-14 w-14",
+            "flex shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary",
+            compacto ? "size-10" : "size-14",
           )}
         >
           <Megaphone size={compacto ? 16 : 20} weight="duotone" />
         </span>
       )}
       <div className="min-w-0 flex-1 space-y-0.5">
-        <div className="text-[10px] font-medium uppercase tracking-wide opacity-70">
+        <div className="font-medium text-muted-foreground">
           {t("Anúncio da Meta")}
         </div>
-        {anuncio.titulo && <div className="truncate font-semibold">{anuncio.titulo}</div>}
+        {anuncio.titulo && <div className="truncate font-semibold text-foreground">{anuncio.titulo}</div>}
         {anuncio.texto && (
-          <p className={cn("wrap-anywhere whitespace-pre-line opacity-80", compacto ? "line-clamp-2" : "line-clamp-4")}>
+          <p
+            className={cn(
+              "wrap-anywhere whitespace-pre-line text-muted-foreground",
+              compacto ? "line-clamp-2" : "line-clamp-4",
+            )}
+          >
             {anuncio.texto}
           </p>
         )}
@@ -79,10 +84,10 @@ export function AnuncioCard({
             href={anuncio.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-medium underline underline-offset-2"
+            className="hover:text-primary-hover inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline"
           >
             {t("Ver anúncio")}
-            <ArrowSquareOut size={11} aria-hidden />
+            <ArrowSquareOut size={12} aria-hidden />
           </a>
         )}
       </div>

@@ -68,13 +68,13 @@ export function MediaRenderer({
             <>
               <span
                 data-testid="rotulo-transcricao"
-                className="text-[10px] uppercase tracking-wide opacity-70"
+                className="text-xs font-medium text-muted-foreground"
               >
                 {t("Transcrição")}
               </span>
               <p
                 data-testid="transcricao-de-audio"
-                className="text-sm leading-relaxed opacity-80"
+                className="text-sm leading-relaxed text-foreground"
               >
                 {texto}
               </p>
@@ -82,7 +82,7 @@ export function MediaRenderer({
           ) : pendente ? (
             <p
               data-testid="transcricao-de-audio-pendente"
-              className="text-sm leading-relaxed opacity-60"
+              className="text-sm leading-relaxed text-muted-foreground"
             >
               {t("Transcrevendo…")}
             </p>

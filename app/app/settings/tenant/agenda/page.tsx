@@ -12,6 +12,7 @@ import { rotulosDosResponsaveisDaAgenda } from "@/lib/agenda/rotulos-dos-respons
 import { rotuloDoResponsavel } from "@/lib/agenda/identidade-do-responsavel";
 
 import { TiposDeAgendamentoClient, type TipoRow } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -98,14 +99,12 @@ export default async function TiposDeAgendamentoPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{tituloDaAgenda(org?.settings) ?? t("Agendamentos")}</h1>
-        <p className="mt-1 text-sm text-text-muted">
-          {t(
-            "O que se pode marcar, quanto dura e quem atende. É isto que a tela de marcar e o agente de IA oferecem ao cliente.",
-          )}
-        </p>
-      </header>
+      <PageHeader
+        title={tituloDaAgenda(org?.settings) ?? t("Agendamentos")}
+        description={t(
+          "O que se pode marcar, quanto dura e quem atende. É isto que a tela de marcar e o agente de IA oferecem ao cliente.",
+        )}
+      />
       <TiposDeAgendamentoClient
         tituloDaAgenda={tituloDaAgenda(org?.settings)}
         tiposIniciais={(tipos ?? []) as TipoRow[]}

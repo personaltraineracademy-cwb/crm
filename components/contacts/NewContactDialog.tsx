@@ -193,7 +193,7 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
             />
           </div>
           {serverError && (
-            <p className="text-sm text-error-fg">{serverError}</p>
+            <p className="text-sm text-danger-foreground">{serverError}</p>
           )}
           <DialogFooter>
             <Button

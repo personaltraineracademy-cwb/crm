@@ -74,7 +74,7 @@ export function FollowupWindowEditor({ value, onChange, disabled }: Props) {
   }
 
   return (
-    <div className="space-y-2 rounded-md border border-border/60 p-3">
+    <div className="space-y-2 rounded-lg border border-border/60 p-3">
       <div className="flex items-center gap-2">
         <Switch
           id="followup_window_enabled"

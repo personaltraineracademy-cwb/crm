@@ -18,14 +18,16 @@
  * decide o momento — misturar os dois ensinaria o operador a aplicar plano na
  * mão e a confiar na marca de idempotência só metade das vezes.
  */
-import Link from "next/link";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -40,7 +42,7 @@ import { useT } from "@/hooks/i18n/useT";
 import { apiClient } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/types";
 import { randomId } from "@/lib/random-id";
-import { ArrowBendUpLeft } from "@/lib/ui/icons";
+import { ListChecks } from "@/lib/ui/icons";
 import { LIMITES_DO_PLANO } from "@/lib/tarefas/limites-do-plano";
 import type { PassoDePlano, PlanoDeTarefas } from "@/lib/tarefas/plano";
 import { explicarRecusaDoPlano, frasePrazoDoPasso } from "@/lib/tarefas/recusa-do-plano";
@@ -152,43 +154,29 @@ export function PlanosDeTarefa() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-6">
-      <div>
-        <Link
-          href="/app/tasks"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-text"
-        >
-          <ArrowBendUpLeft size={14} aria-hidden />
-          {t("Tarefas")}
-        </Link>
-      </div>
+    <div className="space-y-6 p-6">
+      <PageHeader
+        back={{ href: "/app/tasks", label: t("Tarefas") }}
+        title={t("Planos de tarefa")}
+        description={t(
+          "Monte a sequência uma vez; a ação Aplicar um plano de tarefas aplica o plano ao negócio.",
+        )}
+        actions={
+          <Button
+            type="button"
+            size="sm"
+            disabled={!listaLida}
+            onClick={() => {
+              setErro(null);
+              setRascunho(novoPlano());
+            }}
+          >
+            {t("Novo plano")}
+          </Button>
+        }
+      />
 
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Planos de tarefa")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t(
-              "Monte a sequência uma vez; a ação Aplicar um plano de tarefas aplica o plano ao negócio.",
-            )}
-          </p>
-        </div>
-        <Button
-          type="button"
-          disabled={!listaLida}
-          onClick={() => {
-            setErro(null);
-            setRascunho(novoPlano());
-          }}
-        >
-          {t("Novo plano")}
-        </Button>
-      </header>
-
-      {erro ? (
-        <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm">
-          {erro}
-        </p>
-      ) : null}
+      {erro ? <Alert variant="destructive">{erro}</Alert> : null}
 
       {rascunho ? (
         <Editor
@@ -203,32 +191,45 @@ export function PlanosDeTarefa() {
         />
       ) : null}
 
-      {q.isLoading ? <Skeleton className="h-40 w-full" /> : null}
+      {q.isLoading ? (
+        <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3" aria-busy="true">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+        </div>
+      ) : null}
 
       {q.isError && !listaLida ? (
-        <Card role="alert" className="space-y-2 p-4 text-sm">
-          <p>
-            {t(
-              "Não foi possível carregar os planos. Para não apagar os que já existem, criar e salvar ficam desativados até a lista carregar.",
-            )}
-          </p>
-          <Button type="button" variant="outline" onClick={() => void q.refetch()}>
-            {t("Tentar de novo")}
-          </Button>
-        </Card>
+        <Alert
+          variant="destructive"
+          action={
+            <Button type="button" size="sm" variant="outline" onClick={() => void q.refetch()}>
+              {t("Tentar de novo")}
+            </Button>
+          }
+        >
+          {t(
+            "Não foi possível carregar os planos. Para não apagar os que já existem, criar e salvar ficam desativados até a lista carregar.",
+          )}
+        </Alert>
       ) : null}
 
       {listaLida && planos.length === 0 && !rascunho ? (
-        <Card className="p-4 text-sm text-muted-foreground">
-          {t("Nenhum plano cadastrado ainda.")}
-        </Card>
+        <div className="rounded-xl border border-border bg-card">
+          <EmptyState
+            icon={<ListChecks aria-hidden />}
+            title={t("Nenhum plano cadastrado ainda.")}
+          />
+        </div>
       ) : null}
 
+      <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       {planos.map((plano) => (
         <Card key={plano.id} className="space-y-2 p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="truncate font-medium">{plano.nome}</h2>
+              <h2 className="truncate text-base font-semibold" title={plano.nome}>
+                {plano.nome}
+              </h2>
               {plano.descricao ? (
                 <p className="break-words text-sm text-muted-foreground">{plano.descricao}</p>
               ) : null}
@@ -237,6 +238,7 @@ export function PlanosDeTarefa() {
               <Button
                 type="button"
                 variant="ghost"
+                size="sm"
                 onClick={() => {
                   setErro(null);
                   setRascunho({ ...plano, descricao: plano.descricao, passos: plano.passos.map((p) => ({ ...p })) });
@@ -244,7 +246,7 @@ export function PlanosDeTarefa() {
               >
                 {t("Editar")}
               </Button>
-              <Button type="button" variant="ghost" onClick={() => excluir(plano)}>
+              <Button type="button" variant="ghost" size="sm" onClick={() => excluir(plano)}>
                 {t("Excluir")}
               </Button>
             </div>
@@ -258,6 +260,7 @@ export function PlanosDeTarefa() {
           </ol>
         </Card>
       ))}
+      </div>
     </div>
   );
 }
@@ -286,7 +289,9 @@ function Editor({
   }
 
   return (
-    <Card className="space-y-4 p-4">
+    // Formulário: contêiner de leitura de 768 (max-w-3xl), a exceção à largura
+    // total que o DS admite para formulários.
+    <Card className="max-w-3xl space-y-4 p-4">
       <div className="space-y-1">
         <Label htmlFor="plano-nome">{t("Nome do plano")}</Label>
         <Input
@@ -315,7 +320,7 @@ function Editor({
       <div className="space-y-3">
         <h3 className="text-sm font-medium">{t("Passos do plano")}</h3>
         {plano.passos.map((passo, indice) => (
-          <div key={indice} className="space-y-2 rounded-md border p-3">
+          <div key={indice} className="space-y-2 rounded-lg bg-muted/40 p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm font-medium">
                 {t("Passo")} {indice + 1}

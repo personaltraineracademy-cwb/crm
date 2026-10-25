@@ -33,7 +33,7 @@ function ParaColar({
   if (!valor) {
     return (
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <span className="text-xs font-medium text-muted-foreground">
           {rotulo}
         </span>
         {semValor}
@@ -42,7 +42,7 @@ function ParaColar({
   }
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <span className="text-xs font-medium text-muted-foreground">
         {rotulo}
       </span>
       <div className="flex items-center gap-2">
@@ -137,10 +137,10 @@ export function CanalOficialClient() {
             verdadeiro — a tela nunca diz "registrado" sem ter registrado.
           */}
           {estado.webhookRegistro && !estado.webhookRegistro.registrado ? (
-            <div className="flex flex-wrap items-center gap-2 rounded-md border border-amber-500/40 bg-amber-500/5 p-3">
+            <div className="border-warning-border bg-warning-soft flex flex-wrap items-center gap-2 rounded-lg border p-3">
               <Badge
                 variant="outline"
-                className="border-amber-500/60 font-normal text-amber-700 dark:text-amber-400"
+                className="border-warning-border text-warning-foreground font-normal"
               >
                 {t("Webhook pendente")}
               </Badge>
@@ -175,7 +175,7 @@ export function CanalOficialClient() {
                     {t("Já cadastrado na administração da instalação. Ele aparece uma vez só, quando é gerado — se não foi guardado, quem administra a instalação gera outro em Admin › API Oficial (Meta).")}
                   </span>
                 ) : (
-                  <span className="text-sm text-destructive" data-testid="token-nao-configurado">
+                  <span className="text-sm text-danger-foreground" data-testid="token-nao-configurado">
                     {t("Ainda não configurado. Quem administra a instalação cadastra em Admin › API Oficial (Meta), e o token aparece lá pronto para copiar.")}
                   </span>
                 )}
@@ -192,7 +192,7 @@ export function CanalOficialClient() {
             }
           />
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <span className="text-xs font-medium text-muted-foreground">
               {t("Campos a assinar")}
             </span>
             <div className="flex flex-wrap gap-1">

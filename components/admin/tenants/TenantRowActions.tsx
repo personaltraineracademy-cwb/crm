@@ -55,7 +55,7 @@ export function TenantRowActions({ row }: TenantRowActionsProps) {
       <div className="flex justify-end">
         <Link
           href={`/admin/tenants/${row.id}`}
-          className="text-xs font-medium text-accent hover:underline"
+          className="text-xs font-medium text-primary hover:underline"
         >
           {t("Ver")}
         </Link>
@@ -115,7 +115,7 @@ export function TenantRowActions({ row }: TenantRowActionsProps) {
             variant="ghost"
             size="icon"
             className={
-              suspenso ? "h-8 w-8" : "h-8 w-8 text-muted-foreground hover:text-destructive"
+              suspenso ? "h-8 w-8" : "hover:text-danger-foreground h-8 w-8 text-muted-foreground"
             }
             title={ciclo}
             aria-label={ciclo}

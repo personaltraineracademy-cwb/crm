@@ -118,7 +118,7 @@ export function SuspendDialog({
             aria-describedby={error ? "suspend-reason-error" : undefined}
           />
           {error && (
-            <p id="suspend-reason-error" className="text-xs text-destructive" role="alert">
+            <p id="suspend-reason-error" className="text-danger-foreground text-xs" role="alert">
               {error}
             </p>
           )}

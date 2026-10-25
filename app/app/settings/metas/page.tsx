@@ -23,6 +23,7 @@ import { mesLocal } from "@/lib/metas/periodo";
 import { createClient } from "@/lib/supabase/server";
 
 import { FormularioDaMeta } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Meta de vendas" };
 export const dynamic = "force-dynamic";
@@ -53,14 +54,12 @@ export default async function MetaDeVendasPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Meta de vendas")}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Meta de vendas")}
+        description={t(
             "Quanto a empresa quer vender neste mês. O Desempenho passa a mostrar o quanto já foi feito contra esse número — o realizado, o percentual e o quanto falta.",
           )}
-        </p>
-      </header>
+      />
 
       <FormularioDaMeta mes={mes} alvoAtual={alvoAtual} />
 

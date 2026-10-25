@@ -137,7 +137,7 @@ export function RequestsTable({
       {!q.isLoading && rows.length > 0 && <SlaBanner requests={rows} />}
 
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2">
         <Select
           value={status ?? ALL}
           onValueChange={(v) => {
@@ -247,7 +247,12 @@ export function RequestsTable({
               <TableRow>
                 <TableCell colSpan={8} className="text-center">
                   <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
-                    <Warning size={24} weight="fill" className="text-red-500" aria-hidden />
+                    <Warning
+                      size={24}
+                      weight="fill"
+                      className="text-danger-foreground"
+                      aria-hidden
+                    />
                     <p>{t("Erro ao carregar solicitações.")}</p>
                     <Button size="sm" variant="outline" onClick={() => q.refetch()}>
                       {t("Tentar novamente")}
@@ -297,7 +302,7 @@ export function RequestsTable({
                     </TableCell>
                     <TableCell
                       data-rotulo={t("Vence")}
-                      className={`whitespace-nowrap text-xs font-medium max-md:p-0 max-md:before:mr-1.5 max-md:before:text-muted-foreground max-md:before:content-[attr(data-rotulo)] ${due.urgent ? "text-red-600 dark:text-red-400" : "text-muted-foreground"}`}
+                      className={`text-xs font-medium whitespace-nowrap max-md:p-0 max-md:before:mr-1.5 max-md:before:text-muted-foreground max-md:before:content-[attr(data-rotulo)] ${due.urgent ? "text-danger-foreground" : "text-muted-foreground"}`}
                     >
                       {due.label}
                     </TableCell>

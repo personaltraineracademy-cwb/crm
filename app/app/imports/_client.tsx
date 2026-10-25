@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface BatchRow {
   id: string;
@@ -67,12 +68,10 @@ export function ImportsListClient() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div>
-        <h1 className="text-xl font-semibold">{t("Importações")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t("CSV ou XLSX com empresa, CNPJ, pessoa, cargo, telefone e e-mail.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Importações")}
+        description={t("CSV ou XLSX com empresa, CNPJ, pessoa, cargo, telefone e e-mail.")}
+      />
 
       <Card className="flex flex-wrap items-end gap-3 p-4">
         <div className="grid gap-1.5">

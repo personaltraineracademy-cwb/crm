@@ -98,7 +98,7 @@ export function TimelineView({ contactId, types }: Props) {
   if (q.isError) {
     return (
       <Card className="p-4">
-        <p className="text-sm text-error-fg">{t("Erro ao carregar timeline.")}</p>
+        <p className="text-danger-foreground text-sm">{t("Erro ao carregar timeline.")}</p>
         <Button size="sm" variant="outline" className="mt-2" onClick={() => q.refetch()}>
           {t("Tentar novamente")}
         </Button>
@@ -120,7 +120,7 @@ export function TimelineView({ contactId, types }: Props) {
         const date = diaLocalDaChave(key);
         return (
           <section key={key} className="space-y-2">
-            <h3 className="sticky top-0 z-10 bg-background py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h3 className="sticky top-0 z-10 bg-background py-1 text-xs font-semibold text-muted-foreground">
               {dayHeader(date, t, localeDaData)}
             </h3>
             <ul className="space-y-2">
@@ -142,21 +142,22 @@ export function TimelineView({ contactId, types }: Props) {
                 return (
                   <li
                     key={it.id}
-                    className="flex items-start gap-3 rounded-md border border-border bg-card p-3"
+                    className="flex items-start gap-3 rounded-lg border border-border bg-card p-3"
                   >
                     {/* Marcador por ator (BRIEFING §5): preenchido = humano,
                         anel = agente, quadrado = sistema. Mesma geometria do
                         OwnerBadge no card — forma, nunca cor. */}
                     <div
                       className={cn(
-                        "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-accent",
-                        forma === "filled" && "rounded-full bg-accent-soft",
-                        forma === "ring" && "rounded-full border border-accent bg-surface ring-1 ring-inset ring-accent/40",
+                        "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-primary",
+                        forma === "filled" && "rounded-full bg-primary/10",
+                        forma === "ring" &&
+                          "rounded-full border border-primary bg-card ring-1 ring-ring/40 ring-inset",
                         // Sistema, automação ou autor não registrado: o mesmo
                         // tracejado do "Sem responsável" no card. Três formas nas
                         // duas telas — quem distingue "automação" de "não sei
                         // quem" é o texto ao lado, não um quarto desenho.
-                        forma === "dashed" && "rounded-full border border-dashed border-border-strong",
+                        forma === "dashed" && "rounded-full border border-dashed border-input",
                       )}
                       aria-hidden
                     >

@@ -56,7 +56,7 @@ export function CanaisPanel({ owner }: Props) {
           <CardTitle className="text-base">{t("Por canal")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-destructive">{t("Erro ao carregar os canais.")}</p>
+          <p className="text-danger-foreground text-sm">{t("Erro ao carregar os canais.")}</p>
         </CardContent>
       </Card>
     );

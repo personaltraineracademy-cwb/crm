@@ -1,0 +1,43 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — escala de raio do Unnify (etapa 3A, decisão do dono).
+
+   DS §6.1: sm 4 · md 6 · lg 8 · xl 12 · 2xl 16 (o 16 só em diálogo, painel
+   lateral e barra lateral). O CRM vinha com md 8 · lg 12 · xl 16, então TODO
+   `rounded-md|lg|xl` desce um degrau: quem queria "controle" (8) e escrevia
+   `rounded-md` passa a 6, e quem queria "cartão" (12) e escrevia `rounded-lg`
+   passa a 8. Os componentes de `components/ui/` foram reescritos na escala
+   nova; as telas são das outras frentes.
+
+   ─── Por que `:root` E `@theme inline`, e não só o `@theme` ───────────────
+   O `globals.css` declara os valores no `:root` SEM camada e o `@theme inline`
+   dele aponta cada chave para a própria variável (`--radius-md:
+   var(--radius-md)`). O utilitário sai como `border-radius: var(--radius-md)`
+   e quem decide o número é o `:root` sem camada. Um `@theme` com número literal
+   mudaria o utilitário e deixaria `var(--radius-md)` (anel de foco base,
+   controles do React Flow, CSS personalizado da organização) no valor antigo:
+   duas escalas ao mesmo tempo. Aqui o `:root` vem depois e vence pela ordem, e
+   o `@theme inline` repete a ponte para registrar o `2xl`, que no CRM era o
+   `1rem` literal do tema padrão do Tailwind.
+
+   `--radius` (base shadcn, lida por CSS personalizado de organização) continua
+   sendo o raio de CONTROLE: 8, que agora se chama `lg`.
+
+   Efeito medido e guardado por `tests/unit/unnify-raios.test.ts`.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius: var(--radius-lg);
+}
+
+@theme inline {
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+}

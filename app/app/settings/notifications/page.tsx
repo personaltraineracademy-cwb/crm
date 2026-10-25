@@ -9,6 +9,7 @@ import { PushProntoNesteEndereco } from "./_push-neste-endereco";
 import { TaskReminderPrefs } from "./_tarefas";
 import { SonsDosAvisos } from "./_sons";
 import { ConteudoNaTelaBloqueada } from "./_tela-bloqueada";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -56,17 +57,19 @@ export default async function NotificationsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Notificações")}</h1>
-        <p className="text-sm text-muted-foreground">{t("Canais e categorias.")}</p>
-        <Link
-          href="/app/settings/aplicativo"
-          data-testid="link-app-no-celular"
-          className="inline-flex min-h-11 items-center text-sm font-medium text-accent underline-offset-4 hover:underline"
-        >
-          {t("Receber no celular: instalar o app")}
-        </Link>
-      </header>
+      <PageHeader
+        title={t("Notificações")}
+        description={t("Canais e categorias.")}
+        meta={
+          <Link
+            href="/app/settings/aplicativo"
+            data-testid="link-app-no-celular"
+            className="inline-flex min-h-11 items-center text-xs font-medium text-primary underline-offset-4 hover:underline lg:min-h-0"
+          >
+            {t("Receber no celular: instalar o app")}
+          </Link>
+        }
+      />
 
       {pushPronto ? (
         // O par é a metade do servidor; a do navegador (https) só o cliente vê.
@@ -74,7 +77,7 @@ export default async function NotificationsPage() {
       ) : (
         <Card
           data-testid="push-status-faltando-chaves"
-          className="border-amber-500/40 bg-amber-50/40 p-4 text-sm dark:bg-amber-900/10"
+          className="border-warning-border bg-warning-soft p-4 text-sm"
         >
           <p className="font-medium">
             {t("Nesta instalação, os avisos só aparecem com o site aberto.")}

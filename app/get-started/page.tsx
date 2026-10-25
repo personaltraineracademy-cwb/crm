@@ -4,6 +4,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { createClient } from "@/lib/supabase/server";
 import { marcaDaSaida } from "@/lib/branding/saida";
 import { RecoverOrganizationForm } from "@/components/auth/RecoverOrganizationForm";
+import { TelaDeAcesso } from "@/components/auth/TelaDeAcesso";
 import { modoDeCadastro } from "@/lib/auth/politica-de-cadastro";
 import { estadoDoPedido } from "@/lib/auth/registration-requests";
 import { traduzir } from "@/lib/i18n/dicionario";
@@ -69,13 +70,12 @@ export default async function GetStartedPage() {
 
   return (
     <IdiomaProvider locale={user.idioma}>
-      <main className="bg-muted/40 flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md space-y-6 rounded-lg border bg-background p-6 shadow-sm">
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">
-              {marca.nome}
-            </p>
-            <h1 className="text-2xl font-semibold tracking-tight">
+      {/* A moldura das telas de acesso (DS §11.9) já mostra a marca, então o
+          sobretítulo com o nome saiu: ele repetia a marca em caixa-alta. */}
+      <TelaDeAcesso marca={marca} idioma={user.idioma}>
+        <div className="space-y-6">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold tracking-tight text-balance">
               {pedido === "pending"
                 ? t("Pedido enviado")
                 : pedido === "rejected"
@@ -103,13 +103,13 @@ export default async function GetStartedPage() {
           {!aguardando && (
             <RecoverOrganizationForm nomeSugerido={nomeSugerido} comAprovacao={comAprovacao} planos={planos} planoInicial={planoInicial} />
           )}
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="border-t border-border pt-6 text-sm text-muted-foreground">
             {t(
               "Se você recebeu um convite, não crie uma organização nova. Use o link do convite ou peça ao administrador para reenviá-lo.",
             )}
           </p>
         </div>
-      </main>
+      </TelaDeAcesso>
     </IdiomaProvider>
   );
 }

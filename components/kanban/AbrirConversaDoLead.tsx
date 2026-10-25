@@ -130,7 +130,7 @@ export function AbrirConversaDoLead({ contactId, phone, variante = "card" }: Pro
                 : t("Abrir conversa")}
           </span>
           {!podeAbrir && (
-            <span className="block text-[11px] text-text-muted">{semTelefone}</span>
+            <span className="block text-xs text-text-muted">{semTelefone}</span>
           )}
         </span>
         {podeAbrir && !abrindo && (
@@ -159,7 +159,7 @@ export function AbrirConversaDoLead({ contactId, phone, variante = "card" }: Pro
       aria-busy={abrindo}
       title={podeAbrir ? t("Abrir conversa no Inbox") : semTelefone}
       className={cn(
-        "group/conversa mt-1 flex w-full items-center gap-1.5 rounded-md px-1 py-0.5 text-left text-[11px]",
+        "group/conversa mt-1 flex w-full items-center gap-1.5 rounded-md px-1 py-0.5 text-left text-xs",
         "transition-colors",
         podeAbrir
           ? "text-text-muted hover:bg-muted hover:text-foreground"

@@ -11,6 +11,7 @@ import { normalizarIdioma } from "@/lib/i18n/idiomas";
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { PainelDeConfiguracao } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Configuração da instalação" };
 export const dynamic = "force-dynamic";
@@ -91,17 +92,13 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {traduzir("Configuração da instalação", idioma)}
-        </h1>
-        <p className="mt-1 max-w-2xl text-sm text-text-muted">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Configuração da instalação", idioma)}
+        description={traduzir(
             "O que este servidor precisa saber para funcionar. O que dá para trocar aqui, você troca e vale na hora — sem mexer no servidor.",
             idioma,
           )}
-        </p>
-      </div>
+      />
 
       <PainelDeConfiguracao grupos={grupos} idioma={idioma} />
     </div>

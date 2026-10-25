@@ -16,6 +16,7 @@ import { normalizarIdioma } from "@/lib/i18n/idiomas";
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { FormularioDaMarca } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Marca da instalação" };
 export const dynamic = "force-dynamic";
@@ -87,15 +88,13 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Marca", idioma)}</h1>
-        <p className="mt-1 text-sm text-text-muted">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Marca", idioma)}
+        description={traduzir(
             "O nome e a cor que este sistema mostra para todo mundo que usa esta instalação.",
             idioma,
           )}
-        </p>
-      </div>
+      />
 
       <FormularioDaMarca
         gravada={{

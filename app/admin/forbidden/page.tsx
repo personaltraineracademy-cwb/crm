@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { IdiomaProvider } from "@/lib/i18n/IdiomaProvider";
 import { normalizarIdioma } from "@/lib/i18n/idiomas";
@@ -29,8 +28,10 @@ export default async function AdminForbiddenPage() {
   return (
     <IdiomaProvider locale={idioma}>
       <main className="flex min-h-screen items-center justify-center p-8">
-        <Card className="w-full max-w-lg p-8 text-center">
-          <h1 className="text-2xl font-semibold">{traduzir("Acesso negado", idioma)}</h1>
+        <div className="w-full max-w-md text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-balance">
+            {traduzir("Acesso negado", idioma)}
+          </h1>
           <p className="mt-3 text-sm text-muted-foreground">
             {traduzir(
               "Esta área é restrita a administradores da plataforma com MFA ativo. Se você acredita que isso é um erro, contate o time de operações.",
@@ -45,7 +46,7 @@ export default async function AdminForbiddenPage() {
               <Link href="/app">{traduzir("Voltar para /app", idioma)}</Link>
             </Button>
           </div>
-        </Card>
+        </div>
       </main>
     </IdiomaProvider>
   );

@@ -298,13 +298,17 @@ describe("Inbox — recolher o painel do contato (#3004)", () => {
     );
   });
 
-  it("recolhido numa tela sem ficha em coluna (768–1279px): nenhuma trilha vazia à direita", async () => {
-    // Entre 768 e 1279px a ficha abre como painel deslizante, não como coluna.
-    // O trilho recolhido só existe onde a ficha existe; sem esta guarda a grade
-    // ganhava uma terceira trilha de 2.75rem vazia.
-    window.innerWidth = 1000;
+  it("recolhido numa tela sem ficha em coluna (1024–1279px): nenhuma trilha vazia à direita", async () => {
+    // Entre 1024 e 1279px (faixa `lg`; abaixo dela a caixa é uma coluna só) a
+    // ficha abre como painel deslizante, não como coluna. O trilho recolhido
+    // só existe onde a ficha existe; sem esta guarda a grade ganhava uma
+    // terceira trilha de 2.75rem vazia.
+    window.innerWidth = 1100;
     try {
-      window.localStorage.setItem("inbox:divisorias:md", JSON.stringify({ lista: 320, ficha: 300 }));
+      window.localStorage.setItem(
+        "inbox:divisorias:lg",
+        JSON.stringify({ lista: 320, ficha: 300 }),
+      );
       montar(true);
       await waitFor(() => expect(grade().style.gridTemplateColumns).toBe("320px minmax(0,1fr)"));
     } finally {

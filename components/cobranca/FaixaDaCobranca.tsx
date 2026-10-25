@@ -22,7 +22,7 @@ export function FaixaDaCobranca({ faixa, fuso = null }: { faixa: Exclude<Faixa, 
   if (faixa.tipo === "teste") return <FaixaDoTesteGratis dias={faixa.dias} />;
 
   const urgente = faixa.tipo === "atraso" || faixa.tipo === "teste_acabou" || faixa.tipo === "avise_o_admin";
-  const estilo = urgente || faixa.tipo === "cancelada" ? "border-error-fg/30 bg-error-bg text-error-fg" : "border-info-fg/30 bg-info-bg text-info-fg";
+  const estilo = urgente || faixa.tipo === "cancelada" ? "border-danger-border bg-danger-soft text-danger-foreground" : "border-info-border bg-info-soft text-info-foreground";
   const texto =
     faixa.tipo === "atraso"
       ? faixa.desde

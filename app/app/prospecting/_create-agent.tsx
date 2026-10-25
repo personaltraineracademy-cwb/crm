@@ -588,7 +588,7 @@ export function ProspectingAgentBuilder(props: Props) {
         </AgentSetupSummary>
       </div>
       {(error || store.error || session.uncertain) && (
-        <div role="alert" className="space-y-2 rounded-lg border border-destructive/50 p-3 text-sm">
+        <div role="alert" className="border-danger-border space-y-2 rounded-lg border p-3 text-sm">
           {(error || store.error) && <p>{error || store.error}</p>}
           {session.uncertain && (
             <p>

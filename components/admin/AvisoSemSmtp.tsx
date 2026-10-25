@@ -35,8 +35,12 @@ import { useT } from "@/hooks/i18n/useT";
 export function AvisoSemSmtp() {
   const t = useT();
   return (
-    <div role="status" aria-label={t("Aviso: sem SMTP na instalação")} className="sticky top-10 z-30 w-full bg-bg">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-warning/35 bg-warning-bg px-4 py-2 text-sm text-warning-fg">
+    <div
+      role="status"
+      aria-label={t("Aviso: sem SMTP na instalação")}
+      className="sticky top-10 z-30 w-full bg-background"
+    >
+      <div className="border-warning-border bg-warning-soft text-warning-foreground flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2 text-sm">
         <span className="flex items-center gap-2">
           <Warning size={18} weight="fill" aria-hidden />
           <span className="font-semibold tracking-tight">{t("Sem SMTP configurado")}</span>

@@ -112,7 +112,7 @@ export function ConexaoDaCobranca({
     <Card className="max-w-2xl space-y-4 p-6">
       {urlDoEscolhido === null && (
         // Antes do clique, não depois de um 422: o endereço vem da instalação, fora desta tela.
-        <p role="alert" className="rounded-md border p-3 text-sm">
+        <p role="alert" className="rounded-lg bg-muted/40 p-3 text-sm">
           {asaas
             ? t("O Asaas só avisa pagamentos num endereço https público (ex.: https://crm.example.com). Configure o domínio do sistema com HTTPS e volte aqui.")
             : t("A Stripe só avisa pagamentos num endereço https público (ex.: https://crm.example.com). Configure o domínio do sistema com HTTPS e volte aqui.")}
@@ -168,12 +168,12 @@ export function ConexaoDaCobranca({
         </p>
       </div>
       {erro && (
-        <p role="alert" className="text-sm text-error-fg">
+        <p role="alert" className="text-danger-foreground text-sm">
           {erro}
         </p>
       )}
       {aPublicar !== null && (
-        <div role="alert" className="space-y-2 rounded-md border p-3 text-sm">
+        <div role="alert" className="space-y-2 rounded-lg bg-muted/40 p-3 text-sm">
           <p>
             {(aPublicar === 1 ? t("{n} empresa assinou em modo de teste. Ao publicar, ela volta para o teste grátis e precisa assinar de novo com um cartão de verdade.") : t("{n} empresas assinaram em modo de teste. Ao publicar, elas voltam para o teste grátis e precisam assinar de novo com um cartão de verdade.")).replace(
               "{n}",
@@ -196,7 +196,7 @@ export function ConexaoDaCobranca({
       {manual && (
         <section
           aria-label={t("Falta um passo: cadastre o aviso de pagamento no Asaas")}
-          className="space-y-3 rounded-md border bg-warning-bg p-4 text-sm text-warning-fg"
+          className="bg-warning-soft text-warning-foreground space-y-3 rounded-lg border p-4 text-sm"
         >
           <h3 className="font-semibold">{t("Falta um passo: cadastre o aviso de pagamento no Asaas")}</h3>
           <p>

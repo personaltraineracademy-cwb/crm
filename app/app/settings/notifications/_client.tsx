@@ -142,7 +142,7 @@ export function NotificationPrefsClient() {
                 ) : null}
                 {cat === "message" && recusaDoPush !== null ? (
                   <div
-                    className={`mt-1 text-xs ${pushNaoEntrega(recusaDoPush) ? "text-destructive" : "text-muted-foreground"}`}
+                    className={`mt-1 text-xs ${pushNaoEntrega(recusaDoPush) ? "text-danger-foreground" : "text-muted-foreground"}`}
                     data-testid="push-recusado"
                     data-motivo={
                       recusaDoPush.situacao === "ignorado"

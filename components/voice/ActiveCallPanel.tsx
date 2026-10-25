@@ -146,9 +146,9 @@ export function ActiveCallPanel() {
       // aqui, então o painel de uma chamada em andamento aparecia de um quadro
       // para o outro — sem aviso de movimento para uma peça que SURGE em cima
       // do que a pessoa estava fazendo. A régua está em `app/globals.css`.
-      className="ds-surge fixed right-4 z-50 flex w-[min(320px,calc(100%-2rem))] items-center gap-3 rounded-xl border border-border bg-popover p-3 shadow-2xl"
+      className="ds-surge fixed right-4 z-50 flex w-[min(320px,calc(100%-2rem))] items-center gap-3 rounded-xl border border-border bg-popover p-3 shadow-md"
     >
-      <Avatar className="h-10 w-10 shrink-0">
+      <Avatar className="size-10 shrink-0">
         {contact?.id ? (
           <AvatarImage
             src={`/api/v1/contacts/${contact.id}/avatar`}
@@ -156,7 +156,7 @@ export function ActiveCallPanel() {
             className="object-cover"
           />
         ) : null}
-        <AvatarFallback className="bg-primary/15 text-sm font-semibold text-primary">
+        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
           {inicial}
         </AvatarFallback>
       </Avatar>
@@ -171,14 +171,14 @@ export function ActiveCallPanel() {
         {avisoDeMidia ? (
           <p
             role="status"
-            className={`flex items-center gap-1 text-[11px] ${
-              avisoDeMidia.grave ? "font-medium text-destructive" : "text-muted-foreground"
+            className={`flex items-center gap-1 text-xs ${
+              avisoDeMidia.grave ? "text-danger-foreground font-medium" : "text-muted-foreground"
             }`}
           >
             {avisoDeMidia.grave ? (
-              <Warning size={11} weight="fill" className="shrink-0" aria-hidden />
+              <Warning size={12} weight="fill" className="shrink-0" aria-hidden />
             ) : (
-              <CircleNotch size={11} weight="bold" className="shrink-0 animate-spin" aria-hidden />
+              <CircleNotch size={12} weight="bold" className="shrink-0 animate-spin" aria-hidden />
             )}
             <span className="truncate">{avisoDeMidia.texto}</span>
             {avisoDeMidia.ouvirAqui ? (

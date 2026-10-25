@@ -163,7 +163,7 @@ export function NewProposalClient({
             {initialLeads.length === 0 ? (
               <div
                 role="alert"
-                className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300"
+                className="border-warning-border bg-warning-soft text-warning-foreground rounded-xl border p-4 text-sm"
               >
                 <p className="font-medium">
                   {t("Nenhum negócio elegível encontrado")}
@@ -179,7 +179,7 @@ export function NewProposalClient({
             {/* Seleção do Negócio (Lead) */}
             <div className="space-y-2">
               <Label htmlFor="lead-select">
-                {t("Negócio (Lead)")} <span className="text-destructive">*</span>
+                {t("Negócio (Lead)")} <span className="text-danger-foreground">*</span>
               </Label>
 
               {initialLeads.length > 5 ? (
@@ -226,7 +226,7 @@ export function NewProposalClient({
             {/* Título da Proposta */}
             <div className="space-y-2">
               <Label htmlFor="titulo-input">
-                {t("Título da proposta")} <span className="text-destructive">*</span>
+                {t("Título da proposta")} <span className="text-danger-foreground">*</span>
               </Label>
               <Input
                 id="titulo-input"

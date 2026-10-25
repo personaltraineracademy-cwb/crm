@@ -56,7 +56,9 @@ interface Props {
 }
 
 /** Player de voz estilo WhatsApp: play/pause, progresso seekável, tempo, 1x/1.5x/2x. */
-export function AudioPlayer({ messageId, isOutbound, src, mime }: Props) {
+// `isOutbound` continua no contrato, mas não muda mais a cor: nenhum balão é
+// sólido (o da equipe é `interactive`), então o player é o mesmo nos dois lados.
+export function AudioPlayer({ messageId, src, mime }: Props) {
   const t = useT();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -200,10 +202,7 @@ export function AudioPlayer({ messageId, isOutbound, src, mime }: Props) {
         aria-busy={carregando || undefined}
         onClick={toggle}
         className={cn(
-          "flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors lg:h-9 lg:w-9",
-          isOutbound
-            ? "bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30"
-            : "bg-primary/10 text-primary hover:bg-primary/20",
+          "flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20 lg:size-9",
         )}
       >
         {carregando ? (
@@ -224,9 +223,9 @@ export function AudioPlayer({ messageId, isOutbound, src, mime }: Props) {
           step="0.1"
           value={current}
           onChange={(e) => seek(Number(e.target.value))}
-          className="h-1 w-full cursor-pointer accent-current"
+          className="h-1 w-full cursor-pointer accent-primary"
         />
-        <span className="text-[10px] tabular-nums opacity-70">
+        <span className="text-xs text-muted-foreground tabular-nums">
           {fmt(current)} / {fmt(safeDuration)}
         </span>
       </div>
@@ -239,10 +238,7 @@ export function AudioPlayer({ messageId, isOutbound, src, mime }: Props) {
       >
         <span
           className={cn(
-            "rounded-full px-2 py-0.5 text-[10px] font-semibold tabular-nums transition-colors",
-            isOutbound
-              ? "bg-primary-foreground/20 text-primary-foreground"
-              : "bg-primary/10 text-primary",
+            "rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary tabular-nums transition-colors",
           )}
         >
           {RATES[rateIdx]}x

@@ -102,14 +102,14 @@ function QueueStatusBadge({ status }: { status: string }) {
 
 function NextFireCell({ iso }: { iso: string | null }) {
   const localeDaData = useLocaleDeData();
-  if (!iso) return <span className="text-text-muted">—</span>;
+  if (!iso) return <span className="text-muted-foreground">—</span>;
   const d = new Date(iso);
   const relative = formatDistanceToNowStrict(d, { addSuffix: true, locale: localeDaData });
   const absolute = format(d, "dd/MM/yyyy HH:mm", { locale: localeDaData });
   return (
     <div title={absolute} className="flex flex-col">
       <span className="text-sm">{relative}</span>
-      <span className="text-xs text-text-muted">{absolute}</span>
+      <span className="text-xs text-muted-foreground">{absolute}</span>
     </div>
   );
 }
@@ -150,7 +150,7 @@ export function QueueTab({ canWrite }: Props) {
         <div className="relative w-full sm:w-56">
           <MagnifyingGlass
             size={14}
-            className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted"
+            className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted-foreground"
             aria-hidden
           />
           <Input
@@ -193,9 +193,9 @@ export function QueueTab({ canWrite }: Props) {
 
       {!isLoading && rows.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-md border border-border py-16 text-center">
-          <Clock size={36} className="text-text-muted" aria-hidden />
+          <Clock size={36} className="text-muted-foreground" aria-hidden />
           <h2 className="font-medium">{t("Nenhum item na fila")}</h2>
-          <p className="max-w-sm text-sm text-text-muted">
+          <p className="max-w-sm text-sm text-muted-foreground">
             {t("Enrollments ativos e promessas de retorno agendadas pela IA aparecem aqui.")}
           </p>
         </div>
@@ -242,9 +242,15 @@ export function QueueTab({ canWrite }: Props) {
                     </TableCell>
                     <TableCell className="max-md:basis-full max-md:p-0 max-md:text-xs">
                       <div className="flex flex-col">
-                        <span>{row.flow_name ?? <span className="text-text-muted">{t("Promessa")}</span>}</span>
+                        <span>
+                          {row.flow_name ?? (
+                            <span className="text-muted-foreground">{t("Promessa")}</span>
+                          )}
+                        </span>
                         {row.agent_name && (
-                          <span className="text-xs text-text-muted">{t("agente")} {row.agent_name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {t("agente")} {row.agent_name}
+                          </span>
                         )}
                       </div>
                     </TableCell>
@@ -272,7 +278,8 @@ export function QueueTab({ canWrite }: Props) {
                             }
                             onClick={() => setPendingCancel(row)}
                           >
-                            <Trash size={14} aria-hidden className="mr-1 text-error" /> {t("Cancelar")}
+                            <Trash size={14} aria-hidden className="text-danger-foreground mr-1" />{" "}
+                            {t("Cancelar")}
                           </Button>
                         )}
                       </TableCell>
@@ -310,7 +317,7 @@ export function QueueTab({ canWrite }: Props) {
           <AlertDialogFooter>
             <AlertDialogCancel>{t("Voltar")}</AlertDialogCancel>
             <AlertDialogAction
-              className={buttonVariants({ variant: "destructive" })}
+              className={buttonVariants({ variant: "destructive-solid" })}
               onClick={() => {
                 if (pendingCancel?.source === "promise") cancelPromise.mutate(pendingCancel.id);
                 else if (pendingCancel) cancelEnrollment.mutate(pendingCancel.id);

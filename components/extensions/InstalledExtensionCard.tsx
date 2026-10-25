@@ -134,7 +134,7 @@ export function InstalledExtensionCard({
   const deactivatedByRemoval =
     !extension.enabled && extension.deactivated_by_removal_at ? (
       <p
-        className="mt-4 rounded-md border border-info/30 bg-info-bg p-3 text-sm"
+        className="border-info-border bg-info-soft mt-4 rounded-lg border p-3 text-sm"
         data-testid={`extension-reactivate-${extension.id}`}
       >
         {(!extension.compatible
@@ -162,7 +162,7 @@ export function InstalledExtensionCard({
   return (
     <Card className="flex h-full flex-col p-5" data-testid={`extension-installed-${extension.id}`}>
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Icon size={22} weight="duotone" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
@@ -175,12 +175,14 @@ export function InstalledExtensionCard({
           </p>
           {localize(extension.display.title, locale).fallback ||
           localize(extension.display.summary, locale).fallback ? (
-            <p className="mt-1 text-xs text-warning-fg">{t("Texto disponível em português.")}</p>
+            <p className="text-warning-foreground mt-1 text-xs">
+              {t("Texto disponível em português.")}
+            </p>
           ) : null}
         </div>
       </div>
 
-      <dl className="mt-4 grid gap-2 rounded-md border border-border bg-surface-elevated/55 p-3 text-xs sm:grid-cols-2">
+      <dl className="mt-4 grid gap-2 rounded-lg border border-border bg-muted/55 p-3 text-xs sm:grid-cols-2">
         <div>
           <dt className="text-muted-foreground">{t("Versão")}</dt>
           <dd className="mt-0.5 font-mono">{extension.version}</dd>
@@ -202,8 +204,10 @@ export function InstalledExtensionCard({
       ) : null}
 
       {!extension.compatible ? (
-        <div className="mt-4 rounded-md border border-error/30 bg-error-bg p-3 text-sm">
-          <p className="font-medium text-error-fg">{t("Esta versão não pode ser ativada")}</p>
+        <div className="border-danger-border bg-danger-soft mt-4 rounded-lg border p-3 text-sm">
+          <p className="text-danger-foreground font-medium">
+            {t("Esta versão não pode ser ativada")}
+          </p>
           <p className="mt-1 text-muted-foreground">
             {extension.compatibility_reason
               ? t(extension.compatibility_reason)
@@ -278,7 +282,7 @@ export function InstalledExtensionCard({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between gap-4 rounded-md border border-border p-3">
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
               <Label htmlFor={`description-${extension.id}`} className="leading-snug">
                 {t("Mostrar descrição nos cards")}
               </Label>
@@ -395,7 +399,7 @@ function PlatformBlock({
       : null;
   return (
     <section
-      className="mt-4 space-y-3 rounded-md border border-border bg-surface-elevated/40 p-3"
+      className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-3"
       data-testid={`extension-platform-${extension.id}`}
     >
       <div>
@@ -420,7 +424,7 @@ function PlatformBlock({
         <Button
           variant="outline"
           size="sm"
-          className="text-error-fg"
+          className="text-danger-foreground"
           data-testid={`extension-remove-${extension.id}`}
           disabled={blocked}
           onClick={() => setDialog("remove")}
@@ -525,7 +529,7 @@ function PlatformBlock({
             <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
             <AlertDialogAction
               data-testid={`extension-remove-confirm-${extension.id}`}
-              className={buttonVariants({ variant: "destructive" })}
+              className={buttonVariants({ variant: "destructive-solid" })}
               disabled={blocked}
               onClick={() => void onRemove(extension)}
             >

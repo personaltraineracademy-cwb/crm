@@ -4,6 +4,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { ProposalsList } from "./_components/ProposalsList";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -28,15 +29,13 @@ export default async function ProposalsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Propostas", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
-            "Próximos passos que o assistente sugeriu e esperam sua decisão. Aprovar e ignorar são registrados — ignorar é uma decisão, não a falta dela.",
-            idioma,
-          )}
-        </p>
-      </header>
+      <PageHeader
+        title={traduzir("Propostas", idioma)}
+        description={traduzir(
+          "Próximos passos que o assistente sugeriu e esperam sua decisão. Aprovar e ignorar são registrados — ignorar é uma decisão, não a falta dela.",
+          idioma,
+        )}
+      />
       <ProposalsList canDecide={canDecide} />
     </div>
   );

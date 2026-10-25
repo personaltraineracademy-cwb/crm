@@ -23,7 +23,8 @@ export function DocumentCard({
   mime,
   sizeBytes,
   storagePath,
-  isOutbound,
+  // `isOutbound` segue no contrato; a cor não depende mais do lado (nenhum
+  // balão é sólido).
   fileName,
   src,
 }: Props) {
@@ -36,16 +37,12 @@ export function DocumentCard({
       rel="noreferrer"
       aria-label={`${t("Baixar")} ${label} (${formatBytes(sizeBytes)})`}
       className={cn(
-        "flex w-60 items-center gap-3 rounded-lg p-2 transition-colors",
-        isOutbound
-          ? "bg-primary-foreground/10 hover:bg-primary-foreground/20"
-          : "bg-background/60 hover:bg-background",
+        "hover:border-interactive-border hover:bg-interactive flex w-60 items-center gap-3 rounded-lg border border-border bg-card p-2 text-card-foreground transition-colors",
       )}
     >
       <span
         className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-          isOutbound ? "bg-primary-foreground/20" : "bg-primary/10 text-primary",
+          "flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary",
         )}
       >
         <FileText size={20} weight="duotone" aria-hidden />
@@ -54,9 +51,11 @@ export function DocumentCard({
         <span className="block truncate text-sm font-medium" title={label}>
           {label}
         </span>
-        <span className="block text-xs opacity-70">{formatBytes(sizeBytes)}</span>
+        <span className="block text-xs text-muted-foreground tabular-nums">
+          {formatBytes(sizeBytes)}
+        </span>
       </span>
-      <DownloadSimple size={18} className="shrink-0 opacity-70" aria-hidden />
+      <DownloadSimple size={16} className="shrink-0 text-muted-foreground" aria-hidden />
     </a>
   );
 }

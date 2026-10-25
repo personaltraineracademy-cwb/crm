@@ -16,7 +16,8 @@ import {
   type DecisaoPassada,
   type PropostaPendente,
 } from "@/hooks/leads/useProposals";
-import { Check, X } from "@/lib/ui/icons";
+import { Check, Sparkle, X } from "@/lib/ui/icons";
+import { ChipDeEstado } from "@/components/ai/chip-de-estado";
 import { useT } from "@/hooks/i18n/useT";
 
 function quando(iso: string, locale: Locale): string {
@@ -86,29 +87,54 @@ function Pendentes({
   }
 
   return (
-    <ul className="divide-y divide-border rounded-lg border border-border">
+    // Cada proposta é um cartão com UMA ação primária (Aprovar); ignorar é
+    // secundária. O texto da proposta vai num bloco `muted/40` (agrupador
+    // dentro do cartão, §1) e as ações no rodapé `muted/30` (§10.9).
+    <ul className="grid gap-4 md:grid-cols-2">
       {itens.map((p) => (
-        <li key={`${p.lead_id}-${p.seq}`} className="flex flex-col gap-3 p-4">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <span className="text-sm font-medium">{p.lead_title}</span>
-            {p.contact_name && (
-              <span className="text-xs text-muted-foreground">· {p.contact_name}</span>
-            )}
-            {p.stage_name && (
-              <Badge variant="secondary" className="text-[11px]">
-                {p.stage_name}
-              </Badge>
-            )}
-            {/* Há quanto tempo espera é a informação que decide a ORDEM de quem
-                olha — por isso fica na linha do título, não escondida embaixo. */}
-            <span className="text-xs text-muted-foreground">
-              {t("proposta")} {quando(p.proposed_at, localeDaData)}
-            </span>
+        <li
+          key={`${p.lead_id}-${p.seq}`}
+          className="flex flex-col overflow-hidden rounded-xl border border-border bg-card"
+        >
+          <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Sparkle size={16} aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-foreground" title={p.lead_title}>
+                  {p.lead_title}
+                </p>
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                  {p.contact_name && <span className="truncate">{p.contact_name}</span>}
+                  {/* Há quanto tempo espera é a informação que decide a ORDEM de quem
+                      olha — por isso fica junto do título, não escondida embaixo. */}
+                  <span className="tabular-nums">
+                    {t("proposta")} {quando(p.proposed_at, localeDaData)}
+                  </span>
+                </p>
+              </div>
+              {p.stage_name && (
+                <Badge variant="secondary" className="shrink-0">
+                  {p.stage_name}
+                </Badge>
+              )}
+            </div>
+
+            <p className="rounded-lg bg-muted/40 p-3 text-sm text-foreground">{p.next_action}</p>
           </div>
 
-          <p className="text-sm text-foreground/90">{p.next_action}</p>
-
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-end gap-2 border-t border-border bg-muted/30 px-4 py-3 sm:px-5">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={!canDecide || pending}
+              onClick={() => onDecidir(p.lead_id, "dismiss", p.seq)}
+              aria-label={`${t("Ignorar")}: ${p.next_action}`}
+            >
+              <X size={14} aria-hidden />
+              {t("Ignorar")}
+            </Button>
             <Button
               size="sm"
               disabled={!canDecide || pending}
@@ -117,16 +143,6 @@ function Pendentes({
             >
               <Check size={14} aria-hidden />
               {t("Aprovar")}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={!canDecide || pending}
-              onClick={() => onDecidir(p.lead_id, "dismiss", p.seq)}
-              aria-label={`${t("Ignorar")}: ${p.next_action}`}
-            >
-              <X size={14} aria-hidden />
-              {t("Ignorar")}
             </Button>
           </div>
         </li>
@@ -150,18 +166,18 @@ function Historico({ itens }: { itens: DecisaoPassada[] }) {
   }
 
   return (
-    <ul className="divide-y divide-border rounded-lg border border-border">
+    <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
       {itens.map((d) => (
-        <li key={d.activity_id} className="flex flex-col gap-1.5 p-4">
+        <li key={d.activity_id} className="flex flex-col gap-1.5 px-4 py-3">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             {/* IGNORAR NÃO É "NADA ACONTECEU": ganha o mesmo destaque visual de
                 aprovar, porque a wave 4 existe exatamente para que a recusa
                 seja uma decisão registrada e não uma ausência. */}
-            <Badge variant={d.decision === "approve" ? "success" : "secondary"}>
+            <ChipDeEstado tom={d.decision === "approve" ? "sucesso" : "neutro"}>
               {d.decision === "approve" ? t("Aprovada") : t("Ignorada")}
-            </Badge>
-            <span className="text-sm font-medium">{d.lead_title}</span>
-            <span className="text-xs text-muted-foreground">
+            </ChipDeEstado>
+            <span className="text-sm font-medium text-foreground">{d.lead_title}</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
               {t("por")} {d.decided_by ?? "—"} · {quando(d.decided_at, localeDaData)}
             </span>
           </div>
@@ -175,7 +191,8 @@ function Historico({ itens }: { itens: DecisaoPassada[] }) {
 function Vazio({ titulo, detalhe }: { titulo: string; detalhe: string }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">
-      <p className="text-sm font-medium">{titulo}</p>
+      <Sparkle size={32} aria-hidden className="text-muted-foreground" />
+      <p className="text-sm font-medium text-foreground">{titulo}</p>
       <p className="max-w-md text-xs text-muted-foreground">{detalhe}</p>
     </div>
   );

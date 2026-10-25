@@ -31,9 +31,9 @@ import { motivosDoFallback, type Aviso, type Tom } from "@/lib/branding/linguage
 import { useT } from "@/hooks/i18n/useT";
 
 const CLASSE_DO_TOM: Record<Tom, string> = {
-  informativo: "text-text-muted",
-  atencao: "text-warning-fg",
-  problema: "text-error-fg",
+  informativo: "text-muted-foreground",
+  atencao: "text-warning-foreground",
+  problema: "text-danger-foreground",
 };
 
 interface Props {
@@ -76,9 +76,9 @@ function LinhaDeContraste({ rotulo, tokens }: { rotulo: string; tokens: TokensDo
   if (!par) return null;
   return (
     <li className="flex flex-wrap items-baseline gap-x-2">
-      <span className="text-text-muted">{rotulo}:</span>
-      <span className="font-mono text-text">{par.razao.toFixed(1).replace(".", ",")}:1</span>
-      <span className={par.passa ? "text-success-fg" : "text-error-fg"}>
+      <span className="text-muted-foreground">{rotulo}:</span>
+      <span className="font-mono text-foreground">{par.razao.toFixed(1).replace(".", ",")}:1</span>
+      <span className={par.passa ? "text-success-foreground" : "text-danger-foreground"}>
         {par.passa ? t("passa em AA") : t("abaixo do mínimo AA")}
       </span>
     </li>
@@ -105,8 +105,8 @@ function origemEmPortugues(
 function LinhaDeOrigem({ campo, valor }: { campo: string; valor: string }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border py-2 last:border-b-0">
-      <span className="text-sm text-text">{campo}</span>
-      <span className="text-sm text-text-muted">{valor}</span>
+      <span className="text-sm text-foreground">{campo}</span>
+      <span className="text-sm text-muted-foreground">{valor}</span>
     </div>
   );
 }
@@ -125,10 +125,10 @@ export function EstadoDaMarca({
   return (
     <section className="space-y-4" aria-labelledby="estado-da-marca">
       <div>
-        <h2 id="estado-da-marca" className="text-base font-semibold tracking-tight text-text">
+        <h2 id="estado-da-marca" className="text-base font-semibold tracking-tight text-foreground">
           {t("Como está agora")}
         </h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("O que o sistema está usando, o que ele mediu e o que ele ajustou sozinho.")}
         </p>
       </div>
@@ -139,28 +139,28 @@ export function EstadoDaMarca({
           Tailwind 3.4 — aquelas telas estão sem borda e ninguém percebeu. Um
           alarme não é o lugar de repetir esse erro. */}
       {fallbackEm ? (
-        <Card className="border-error bg-error-bg p-4">
-          <p className="text-sm font-semibold text-error-fg">
+        <Card className="border-danger-border bg-danger-soft p-4">
+          <p className="text-danger-foreground text-sm font-semibold">
             {t("A sua marca não está sendo aplicada.")}
           </p>
-          <p className="mt-1 text-sm text-text">
+          <p className="mt-1 text-sm text-foreground">
             {t("Desde")} {fallbackEm} {t("o sistema voltou a usar as cores padrão dele.")}
           </p>
           <ul className="mt-2 space-y-1">
             {motivosDoFallback(fallbackMotivo).map((aviso) => (
-              <li key={aviso.texto} className="text-sm text-text-muted">
+              <li key={aviso.texto} className="text-sm text-muted-foreground">
                 {t(aviso.texto)}
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-sm text-text-muted">
+          <p className="mt-2 text-sm text-muted-foreground">
             {t("Salvar uma cor válida aqui apaga este alerta.")}
           </p>
         </Card>
       ) : null}
 
       <Card className="p-4">
-        <h3 className="text-sm font-medium text-text">{t("De onde vem cada coisa")}</h3>
+        <h3 className="text-sm font-medium text-foreground">{t("De onde vem cada coisa")}</h3>
         <div className="mt-2">
           <LinhaDeOrigem
             campo={t("Nome do sistema")}
@@ -175,7 +175,7 @@ export function EstadoDaMarca({
             valor={origemEmPortugues(origens.cor, definidoNestaTela, t)}
           />
         </div>
-        <p className="mt-3 text-xs text-text-muted">
+        <p className="mt-3 text-xs text-muted-foreground">
           {t(
             "O logo ainda é trocado no arquivo de instalação do servidor. Esta tela mostra de onde ele vem para que o valor não pareça ter sumido.",
           )}
@@ -184,8 +184,8 @@ export function EstadoDaMarca({
 
       {derivada ? (
         <Card className="p-4">
-          <h3 className="text-sm font-medium text-text">{t("O texto em cima dos botões")}</h3>
-          <p className="mt-1 text-xs text-text-muted">
+          <h3 className="text-sm font-medium text-foreground">{t("O texto em cima dos botões")}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
             {t(
               "Quanto maior o número, mais fácil de ler. AA é o mínimo recomendado internacionalmente para texto.",
             )}
@@ -195,13 +195,15 @@ export function EstadoDaMarca({
             <LinhaDeContraste rotulo={t("No modo escuro")} tokens={(derivadaEscura ?? derivada).escuro} />
           </ul>
 
-          <h3 className="mt-5 text-sm font-medium text-text">{t("O que o sistema ajustou")}</h3>
+          <h3 className="mt-5 text-sm font-medium text-foreground">
+            {t("O que o sistema ajustou")}
+          </h3>
           {/* O caso "nada mudou" NÃO diz "sua cor é usada exatamente como você
               escolheu": no modo escuro o produto usa um tom mais claro da
               escala por desenho, e a frase absoluta seria desmentida pela
               própria tira logo acima. */}
           {avisos.length === 0 ? (
-            <p className="mt-1 text-sm text-text-muted">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("Nada foi ajustado — a escala acima mostra onde a sua cor entra.")}
             </p>
           ) : (
@@ -215,7 +217,7 @@ export function EstadoDaMarca({
           )}
 
           {!seriaAplicada ? (
-            <p className="mt-3 text-sm text-error-fg">
+            <p className="text-danger-foreground mt-3 text-sm">
               {t(
                 "Do jeito que está, esta cor não chegaria à tela: o sistema continuaria com as cores padrão dele.",
               )}

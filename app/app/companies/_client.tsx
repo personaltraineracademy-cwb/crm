@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface CompanyRow {
   id: string;
@@ -168,18 +169,18 @@ export function CompaniesListClient() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">{t("Empresas")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Cadastro B2B com CNPJ e enriquecimento via BrasilAPI.")}
-          </p>
-        </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-2 size-4" />
-          {t("Nova empresa")}
-        </Button>
-      </div>
+      <PageHeader
+        title={t("Empresas")}
+        description={t("Cadastro B2B com CNPJ e enriquecimento via BrasilAPI.")}
+        actions={
+          <>
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-2 size-4" />
+              {t("Nova empresa")}
+            </Button>
+          </>
+        }
+      />
 
       <div className="relative max-w-sm">
         <MagnifyingGlass className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
@@ -356,13 +357,13 @@ export function CompaniesListClient() {
             {aviso ? (
               <p
                 role="status"
-                className="rounded-md border border-warning/40 bg-warning-bg p-3 text-sm text-warning-fg"
+                className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm"
               >
                 {aviso}
               </p>
             ) : null}
             {error ? (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-danger-foreground text-sm" role="alert">
                 {error}
               </p>
             ) : null}

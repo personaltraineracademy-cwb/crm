@@ -44,13 +44,13 @@ export function ChannelRoutingForm({ initial }: { initial: ChannelRoutingSetting
     <h2 id="channel-routing-title" className="text-lg font-semibold">{t("Responsáveis por número")}</h2>
     <p className="text-sm text-muted-foreground">{t("A capacidade e o horário de cada pessoa valem para todos os números. A distribuição automática respeita os responsáveis de cada canal.")}</p>
     {!channels.length && <Link className="underline" href="/app/connections">{t("Conecte um número para escolher os responsáveis.")}</Link>}
-    {channels.map((channel) => <fieldset key={channel.id} className="rounded-lg border p-4 space-y-3" disabled={busy !== null}>
+    {channels.map((channel) => <fieldset key={channel.id} className="rounded-xl border p-4 space-y-3" disabled={busy !== null}>
       <legend className="px-2 font-medium">{t(nomeDoCanal(channel))}</legend>
       <p className="text-sm" data-testid="channel-routing-state">{t(channel.mode === "legacy_unconfigured" ? "Usa todos os atendentes elegíveis da organização." : channel.mode === "restricted_empty" ? "Ninguém configurado — as conversas ficarão na fila." : "Somente as pessoas selecionadas recebem este número.")}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <label className="block text-sm font-medium" htmlFor={`modo-${channel.id}`}>{t("Como este número distribui")}</label>
-          <select id={`modo-${channel.id}`} data-testid={`modo-do-numero-${channel.id}`} className="w-full rounded-md border bg-background p-2 text-sm"
+          <select id={`modo-${channel.id}`} data-testid={`modo-do-numero-${channel.id}`} className="w-full rounded-lg border bg-background p-2 text-sm"
             value={channel.distribution_mode ?? ""} onChange={(e) => trocarModo(channel.id, e.target.value)}>
             <option value="">{t("Usar o padrão da organização")}</option>
             {ROUTING_MODES.map((m) => <option key={m} value={m}>{t(MODO_COPY[m].titulo)}</option>)}
@@ -59,7 +59,7 @@ export function ChannelRoutingForm({ initial }: { initial: ChannelRoutingSetting
         </div>
         <div className="space-y-1">
           <label className="block text-sm font-medium" htmlFor={`destino-${channel.id}`}>{t("Atendente de destino padrão")}</label>
-          <select id={`destino-${channel.id}`} data-testid={`destino-do-numero-${channel.id}`} className="w-full rounded-md border bg-background p-2 text-sm"
+          <select id={`destino-${channel.id}`} data-testid={`destino-do-numero-${channel.id}`} className="w-full rounded-lg border bg-background p-2 text-sm"
             value={channel.default_assignee_user_id ?? ""} onChange={(e) => trocarDestino(channel.id, e.target.value)} disabled={!channel.distribution_mode}>
             <option value="">{t("Nenhum — distribuir pelo modo")}</option>
             {initial.members.map((member) => <option key={member.id} value={member.id}>{t(member.name)}</option>)}

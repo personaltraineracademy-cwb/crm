@@ -25,6 +25,7 @@ import { RepeatForm } from "./forms/RepeatForm";
 import { SkillForm } from "./forms/SkillForm";
 import { WaitForm } from "./forms/WaitForm";
 import type { ConfigOf } from "./forms/shared";
+import { BLOCO_DE_ICONE } from "@/components/fluxo/tema-do-fluxo";
 import { NODE_VISUALS } from "./nodes/nodeVisuals";
 
 interface Props {
@@ -81,13 +82,13 @@ export function NodeConfigPanel({
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto" data-testid="node-config-panel">
       <div className="space-y-1">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-text">
-          <span className={`flex h-6 w-6 items-center justify-center rounded-full ${visual.chipClassName}`}>
-            <Icon size={14} aria-hidden />
+        <h2 className="flex items-center gap-3 text-lg font-semibold text-foreground">
+          <span className={BLOCO_DE_ICONE}>
+            <Icon size={16} aria-hidden />
           </span>
           {t(visual.paletteLabel)}
         </h2>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {t("Alterações aplicam no rascunho ao digitar — salve na barra de publicação.")}
         </p>
       </div>
@@ -100,13 +101,13 @@ export function NodeConfigPanel({
           maxLength={60}
           onChange={(e) => commitLabel(e.target.value)}
         />
-        {labelError && <p className="text-xs text-error-fg">{labelError}</p>}
+        {labelError && <p className="text-danger-foreground text-xs">{labelError}</p>}
       </div>
 
       <div className="space-y-4 border-t border-border pt-4">
         {type === "trigger" && surface !== "atendimento" && (
           <div className="space-y-4">
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-muted-foreground">
               {t(
                 "Início do fluxo — sem configuração adicional. O disparo (manual, mudança de etapa, silêncio ou fim de conversa) é definido nas configurações do fluxo.",
               )}
@@ -243,9 +244,9 @@ function MarcadorDeSomenteInterno({
             onSettingsChange?.(resto);
           }}
         />
-        <span className="text-sm font-medium text-text">{t("Somente interno")}</span>
+        <span className="text-sm font-medium text-foreground">{t("Somente interno")}</span>
       </label>
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t(
           "O fluxo inteiro não fala com o cliente: a publicação recusa qualquer nó que envie mensagem.",
         )}
@@ -277,7 +278,7 @@ function ConfiguracoesDoRoteiro({
 
   return (
     <div className="space-y-4" data-testid="configuracoes-do-roteiro">
-      <p className="text-sm text-text-muted">
+      <p className="text-sm text-muted-foreground">
         {t(
           "O roteiro começa quando a mensagem do cliente tem uma palavra-gatilho, ou quando um roteador de intenção o aponta.",
         )}
@@ -312,7 +313,7 @@ function ConfiguracoesDoRoteiro({
             if (n !== null) gravar({ max_tentativas_pergunta: n });
           }}
         />
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Depois de tantas vezes sem resposta, a pergunta é encerrada como não respondida e deixa de ser feita.")}
         </p>
       </div>
@@ -335,7 +336,9 @@ function ConfiguracoesDoRoteiro({
             if (n !== null) gravar({ expira_em_horas: n });
           }}
         />
-        <p className="text-xs text-text-muted">{t("Em branco, o roteiro encerra depois de 72 horas sem resposta.")}</p>
+        <p className="text-xs text-muted-foreground">
+          {t("Em branco, o roteiro encerra depois de 72 horas sem resposta.")}
+        </p>
       </div>
       {/* #1130 (@vgamkt): o padrão é NÃO recomeçar para quem já concluiu. */}
       <div className="space-y-1" data-testid="roteiro-pode-recomecar">
@@ -352,11 +355,11 @@ function ConfiguracoesDoRoteiro({
               onSettingsChange?.(resto);
             }}
           />
-          <span className="text-sm font-medium text-text">
+          <span className="text-sm font-medium text-foreground">
             {t("Pode recomeçar para quem já concluiu")}
           </span>
         </label>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t(
             "Desligado, o cliente que já respondeu tudo não recebe as mesmas perguntas de novo, mesmo repetindo a palavra-gatilho. Ligue para roteiros que se repetem, como agendamento.",
           )}

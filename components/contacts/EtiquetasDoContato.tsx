@@ -265,7 +265,7 @@ export function EtiquetasDoContato({
                   onClick={() => remover(tag)}
                   disabled={disabled}
                   aria-label={`${t("Remover etiqueta")} ${tag}`}
-                  className="ml-1 rounded-sm hover:text-destructive"
+                  className="hover:text-danger-foreground ml-1 rounded-sm"
                 >
                   <X size={10} weight="bold" aria-hidden />
                 </button>
@@ -335,7 +335,7 @@ export function EtiquetasDoContato({
                 }
               }}
               className={cn(
-                "border-dashed px-2 py-0.5 text-[10px]",
+                "border-dashed px-2 py-0.5 text-xs",
                 disabled || noTeto ? "opacity-50" : "cursor-pointer hover:border-solid",
               )}
             >
@@ -348,7 +348,7 @@ export function EtiquetasDoContato({
               onClick={confirmarDigitado}
               disabled={disabled || noTeto}
               data-testid="criar-etiqueta"
-              className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:border-solid hover:text-foreground disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-solid hover:text-foreground disabled:opacity-50"
             >
               <Plus size={10} weight="bold" aria-hidden />
               {t("Criar etiqueta")} “{draft.trim()}”

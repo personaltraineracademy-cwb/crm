@@ -127,9 +127,13 @@ export function AttachmentPreviewDialog({
         <div className="relative flex items-center justify-center rounded-lg bg-muted/40 p-3">
           {remover(0)}
           {isImage && capa.url && (
-            <img src={capa.url} alt={capa.file.name} className="max-h-64 rounded-md object-contain" />
+            <img
+              src={capa.url}
+              alt={capa.file.name}
+              className="max-h-64 rounded-lg object-contain"
+            />
           )}
-          {isVideo && capa.url && <video src={capa.url} controls className="max-h-64 rounded-md" />}
+          {isVideo && capa.url && <video src={capa.url} controls className="max-h-64 rounded-lg" />}
           {!isImage && !isVideo && (
             <div className="flex items-center gap-3 py-4">
               <FileText size={28} weight="duotone" className="text-primary" aria-hidden />
@@ -154,10 +158,10 @@ export function AttachmentPreviewDialog({
                   <img
                     src={item.url}
                     alt={item.file.name}
-                    className="size-14 rounded-md border border-border object-cover"
+                    className="size-14 rounded-lg border border-border object-cover"
                   />
                 ) : (
-                  <div className="flex size-14 items-center justify-center rounded-md border border-border bg-muted/40">
+                  <div className="flex size-14 items-center justify-center rounded-lg border border-border bg-muted/40">
                     <FileText size={18} weight="duotone" className="text-muted-foreground" aria-hidden />
                   </div>
                 )}

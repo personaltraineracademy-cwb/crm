@@ -14,7 +14,10 @@ import type { Idioma } from "@/lib/i18n/idiomas";
 export function FaixaDoModoDeTeste({ modo, idioma }: { modo: string | null; idioma: Idioma }) {
   if (modo !== "teste") return null;
   return (
-    <p role="alert" className="rounded-md border border-warning/40 bg-warning-bg p-3 text-sm text-warning-fg">
+    <p
+      role="alert"
+      className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm"
+    >
       {traduzir(
         "Modo de teste: suas empresas reais ainda não conseguem pagar. Quando a compra de teste der certo, troque para a chave de produção em Conexão.",
         idioma,
@@ -69,7 +72,10 @@ export function VisaoGeral({
         <ol className="space-y-3">
           {checklist.map((p) => (
             <li key={p.id} data-passo={p.id} data-feito={String(p.feito)} className="flex gap-3">
-              <span aria-hidden className={p.feito ? "text-success-fg" : "text-muted-foreground"}>
+              <span
+                aria-hidden
+                className={p.feito ? "text-success-foreground" : "text-muted-foreground"}
+              >
                 {p.feito ? "✓" : "○"}
               </span>
               <div className="space-y-1">
@@ -95,7 +101,7 @@ export function VisaoGeral({
           {t("Último aviso do provedor:")}{" "}
           {dados.ultimoAvisoEm ? quando.format(new Date(dados.ultimoAvisoEm)) : t("nenhum nos últimos 90 dias")}
         </p>
-        <p className={atrasada ? "text-sm text-error-fg" : "text-sm"}>
+        <p className={atrasada ? "text-danger-foreground text-sm" : "text-sm"}>
           {t("Última leitura bem-sucedida:")}{" "}
           {dados.ultimaLeituraEm ? quando.format(new Date(dados.ultimaLeituraEm)) : t("nenhuma ainda")}
           {atrasada && ` — ${t("mais de 7 horas: confira se o agendador está rodando.")}`}

@@ -70,8 +70,8 @@ export function ConversaSlot({
       onClick={(e: MouseEvent) => e.stopPropagation()}
       onPointerDown={(e: MouseEvent) => e.stopPropagation()}
       className={cn(
-        "group/conversa mt-1 flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[11px]",
-        "text-text-muted transition-colors hover:bg-muted hover:text-foreground",
+        "group/conversa mt-1 flex items-center gap-1.5 rounded-md px-1 py-0.5 text-xs",
+        "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
       )}
       title={t("Abrir esta conversa no Inbox")}
     >
@@ -83,7 +83,7 @@ export function ConversaSlot({
         // O número, não um ponto: "3 sem ler" e "12 sem ler" pedem urgências
         // diferentes, e um ponto colapsa as duas.
         <span
-          className="ml-auto shrink-0 rounded-full bg-primary px-1.5 text-[10px] font-medium text-primary-foreground tabular-nums"
+          className="ml-auto shrink-0 rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground tabular-nums"
           aria-label={`${conversa.unread} ${t("sem ler")}`}
         >
           {conversa.unread}

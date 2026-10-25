@@ -1,5 +1,5 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
+import { ChipDeEstado, type TomDeEstado } from "@/components/ai/chip-de-estado";
 import { estadoDoAgente } from "@/lib/ai/agents/no-ar";
 import type { AgentRow } from "@/hooks/ai/useAgent";
 import { useT } from "@/hooks/i18n/useT";
@@ -54,19 +54,21 @@ const LABEL: Record<AgentStatus, string> = {
   invalid: "Inválido",
 };
 
-const VARIANT: Record<AgentStatus, "default" | "secondary" | "outline" | "destructive"> = {
-  published: "default",
-  draft: "secondary",
-  paused: "outline",
-  archived: "outline",
-  invalid: "destructive",
+// Estado pelo trio do Unnify (§3.3): no ar é sucesso, inválido é perigo,
+// pausado é aviso; rascunho e arquivado ficam neutros.
+const TOM: Record<AgentStatus, TomDeEstado> = {
+  published: "sucesso",
+  draft: "neutro",
+  paused: "aviso",
+  archived: "neutro",
+  invalid: "perigo",
 };
 
 export function AgentStatusBadge({ status }: { status: AgentStatus }) {
   const t = useT();
   return (
-    <Badge variant={VARIANT[status]} aria-label={`status: ${t(LABEL[status])}`}>
+    <ChipDeEstado tom={TOM[status]} aria-label={`status: ${t(LABEL[status])}`}>
       {t(LABEL[status])}
-    </Badge>
+    </ChipDeEstado>
   );
 }

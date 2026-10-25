@@ -40,13 +40,17 @@ function VisibleAlertsBell() {
           : t("Central de avisos")
       }
       data-testid="alerts-bell"
-      className="relative inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:h-9 lg:w-9"
+      className="hover:bg-interactive hover:text-interactive-foreground relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-fast lg:h-9 lg:w-9"
     >
       <Bell size={18} aria-hidden />
       {count > 0 ? (
         <span
           data-testid="alerts-bell-count"
-          className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-destructive-foreground"
+          // Selo `primary` com texto de 12px (DS §10.6 e §10.20), e não mais o
+          // vermelho de 10px: aviso em aberto é trabalho a fazer, não erro, e o
+          // vermelho nesta casa é reservado a `destructive`. O anel na cor do
+          // fundo separa o selo do desenho do sino.
+          className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs leading-none font-medium text-primary-foreground tabular-nums ring-2 ring-background"
         >
           {count > 99 ? "99+" : count}
         </span>

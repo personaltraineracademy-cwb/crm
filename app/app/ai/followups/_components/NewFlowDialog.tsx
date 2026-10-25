@@ -93,7 +93,7 @@ export function NewFlowDialog({ open, onOpenChange, surface }: Props) {
             />
           </div>
           {erro && (
-            <p role="alert" data-testid="new-flow-error" className="text-sm text-error-fg">
+            <p role="alert" data-testid="new-flow-error" className="text-danger-foreground text-sm">
               {erro}
             </p>
           )}

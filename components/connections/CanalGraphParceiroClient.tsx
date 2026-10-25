@@ -53,7 +53,7 @@ function ParaColar({ rotulo, valor }: { rotulo: string; valor: string }) {
   const t = useT();
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <span className="text-xs font-medium text-muted-foreground">
         {rotulo}
       </span>
       <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export function CanalGraphParceiroClient() {
         </div>
 
         {conectado && (
-          <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
+          <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
             <p className="font-medium">{nomeDoCanal(estado ?? {}, t)}</p>
             <p className="text-xs text-muted-foreground">
               {estado?.phone_number ?? t("sem número informado")} · {estado?.status ?? "—"}
@@ -185,7 +185,7 @@ export function CanalGraphParceiroClient() {
           className={
             estado.has_signing_secret
               ? "flex flex-col gap-4 p-4"
-              : "flex flex-col gap-4 border-warning/40 bg-warning-bg p-4"
+              : "border-warning-border bg-warning-soft flex flex-col gap-4 p-4"
           }
         >
           <div className="flex items-start justify-between gap-3">

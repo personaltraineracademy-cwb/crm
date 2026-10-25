@@ -21,6 +21,7 @@ vi.mock("@/hooks/inbox/useSendMessage", () => ({
 
 import { Composer } from "@/components/inbox/Composer";
 import { Button } from "@/components/ui/button";
+import { ACAO_DO_CAMPO } from "@/components/inbox/composer/acao-do-campo";
 
 function renderComposer() {
   const qc = new QueryClient();
@@ -60,12 +61,18 @@ describe("Composer + anexos", () => {
     // jsdom não calcula layout: o que dá para afirmar é o que DECIDE a altura —
     // (1) o botão segue filho DIRETO da linha (`flex items-end gap-2`), ou seja,
     // Provider/Tooltip/Trigger não inseriram nó nenhum na fileira; (2) a classe
-    // do botão é a MESMA de um Button size="icon" sem Tooltip — comparada
-    // inteira, e não por um pedaço como "h-9", que segue presente quando alguém
-    // força um tamanho fixo e tira o alvo de 44px do toque.
+    // do botão é a MESMA de um Button sem Tooltip com a classe de ação do grupo
+    // do campo (`ACAO_DO_CAMPO`, o `xs` do Unnify com alvo de 44 no toque) —
+    // comparada inteira, e não por um pedaço.
     expect(botao.parentElement?.className).toContain("items-end");
     const { getByRole } = render(
-      <Button type="button" size="icon" variant="ghost" className="shrink-0" aria-label="referência" />,
+      <Button
+        type="button"
+        size="icon"
+        variant="ghost"
+        className={ACAO_DO_CAMPO}
+        aria-label="referência"
+      />,
     );
     expect(botao.className).toBe(getByRole("button", { name: "referência" }).className);
     // E o balão fechado não ocupa lugar nenhum no lugar do ícone.

@@ -128,7 +128,7 @@ export function AgentPreview({
         )}
       </div>
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-danger-foreground text-sm">
           {error}
         </p>
       )}
@@ -150,13 +150,13 @@ export function AgentPreview({
             <p
               key={`${item.code}:${index}`}
               role="status"
-              className="text-amber-700 dark:text-amber-400"
+              className="text-warning-foreground"
             >
               {item.message}
             </p>
           ))}
           {result.impediments?.map((item, index) => (
-            <p key={`${item.code}:${index}`} className="text-destructive">
+            <p key={`${item.code}:${index}`} className="text-danger-foreground">
               {item.message}
             </p>
           ))}
@@ -164,7 +164,7 @@ export function AgentPreview({
           {result.guardrails &&
             !result.guardrails.passou &&
             result.guardrails.termos.length > 0 && (
-              <p className="text-destructive">
+              <p className="text-danger-foreground">
                 {t("Revise a resposta: ela contém termos internos do sistema.")}{" "}
                 {result.guardrails.termos.join(", ")}
               </p>

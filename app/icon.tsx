@@ -1,9 +1,10 @@
 import { ImageResponse } from "next/og";
 
 import { marcaEhADoProduto } from "@/lib/branding";
-import { CORES_DA_MARCA, SIMBOLO } from "@/lib/branding/desenho";
+import { lerAtivoDaMarca } from "@/lib/branding/ativos-da-marca";
+import { ICONE_DO_APP } from "@/lib/branding/desenho";
 import { letraDoIcone } from "@/lib/branding/icone";
-import { marcaDaSaida, NEUTROS_DE_SAIDA } from "@/lib/branding/saida";
+import { marcaDaSaida } from "@/lib/branding/saida";
 
 /**
  * O ícone da aba, DESENHADO em runtime com a marca da instalação.
@@ -35,15 +36,14 @@ import { marcaDaSaida, NEUTROS_DE_SAIDA } from "@/lib/branding/saida";
  * e-mails (`marcaDaSaida`) e a fonte (`Geist-Regular.ttf`) vem embutida no
  * `@vercel/og` que o Next já traz — nenhuma dependência nova, nenhum download.
  *
- * ─── O símbolo do produto, quando a marca é a do produto ────────────────────
+ * ─── O ícone do produto, quando ninguém configurou logo ─────────────────────
  *
- * Sem nome nem logo configurados (`marcaEhADoProduto`), o ladrilho é o símbolo
- * de `lib/branding/desenho.ts` sobre o creme da régua — o mesmo desenho que a
- * barra lateral e a fachada mostram, para a aba e a tela contarem a mesma
- * marca. O satori aceita `<svg>` inline (medido: 1.135 bytes de PNG válido com
- * o símbolo, em 2026-09-08), então continua sem rede e sem arquivo em `public/`.
- * Quem configurou um nome próprio segue com cor + inicial: o símbolo soletra
- * "D", e um "D" na aba de quem se chama "Acme" seria a nossa marca vazando.
+ * Sem logo configurado (`marcaEhADoProduto`), a aba mostra o ícone de app do
+ * Unnify CRM: o PNG de 64 px do pacote de marca (`public/marca/unnify-crm/`),
+ * servido tal como veio, lido do disco e não por rede. É o mesmo arquivo que o
+ * designer exportou para esse tamanho — redesenhá-lo aqui seria uma segunda
+ * fonte da arte. Quem configurou logo próprio segue com cor + inicial: o ícone
+ * do produto na aba de quem tem marca própria seria a nossa marca vazando.
  *
  * ─── `force-dynamic` não é zelo ─────────────────────────────────────────────
  *
@@ -79,31 +79,14 @@ export default async function Icon() {
   const marca = await marcaDaSaida(null);
 
   if (marcaEhADoProduto({ name: marca.nome, logoUrl: marca.logoUrl })) {
-    // 78% da aresta: o D ocupa ~75% do próprio viewBox, então sobra o mesmo
-    // respiro que a letra tem no ramo de baixo.
-    const lado = Math.round(size.width * 0.78);
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: NEUTROS_DE_SAIDA.fundo,
-          }}
-        >
-          <svg viewBox={SIMBOLO.viewBox} width={lado} height={lado}>
-            <g fill={CORES_DA_MARCA.claro.simbolo} transform={SIMBOLO.transform}>
-              <path d={SIMBOLO.d} />
-              <rect {...SIMBOLO.modulo} />
-            </g>
-          </svg>
-        </div>
-      ),
-      { ...size, headers: CACHE },
-    );
+    // Se o arquivo faltar (imagem montada sem `public/`), cai na inicial: um
+    // `/icon` com erro deixaria a aba sem ícone nenhum.
+    const png = await lerAtivoDaMarca(ICONE_DO_APP.png[64]).catch(() => null);
+    if (png) {
+      return new Response(new Uint8Array(png), {
+        headers: { "content-type": contentType, ...CACHE },
+      });
+    }
   }
 
   const letra = letraDoIcone(marca.nome);

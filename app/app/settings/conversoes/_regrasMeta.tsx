@@ -151,7 +151,11 @@ export function RegrasDeConversaoMeta({
         {etapas.map((e) => {
           const r = rascunhos[e.id]!;
           return (
-            <li key={e.id} className="rounded-md border p-4" data-testid={`regra-meta-${e.id}`}>
+            <li
+              key={e.id}
+              className="rounded-lg bg-muted/40 p-4"
+              data-testid={`regra-meta-${e.id}`}
+            >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{e.nome}</p>
@@ -173,7 +177,7 @@ export function RegrasDeConversaoMeta({
                   <Label htmlFor={`evento-meta-${e.id}`}>{t("Evento enviado à Meta")}</Label>
                   <select
                     id={`evento-meta-${e.id}`}
-                    className="rounded-md border bg-background p-2 text-sm"
+                    className="rounded-lg border bg-background p-2 text-sm"
                     value={r.metaEvent}
                     onChange={(ev) => mudar(e.id, { metaEvent: ev.target.value as EventoDaMeta })}
                   >
@@ -197,7 +201,7 @@ export function RegrasDeConversaoMeta({
                 <p
                   role="alert"
                   data-testid={`aviso-evento-fora-do-canal-${e.id}`}
-                  className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm"
+                  className="border-warning-border bg-warning-soft mt-2 rounded-lg border p-3 text-sm"
                 >
                   {t(
                     "Este evento não sai pelo canal da conversa. Para esta etapa, escolha um destes",

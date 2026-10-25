@@ -207,26 +207,26 @@ export function CatalogAdmission({
             {busy ? t("Admitindo…") : t("Admitir catálogo")}
           </Button>
           {error ? (
-            <p className="mt-2 text-sm text-error-fg" role="alert">
+            <p className="text-danger-foreground mt-2 text-sm" role="alert">
               {error}
             </p>
           ) : blockedReason ? (
             <p className="mt-2 text-xs text-muted-foreground">{blockedReason}</p>
           ) : null}
         </div>
-        <div className="border-t border-accent-200 bg-accent-soft/45 p-5 sm:p-6 md:border-t-0 md:border-l">
+        <div className="bg-primary/10/45 border-t border-accent-200 p-5 sm:p-6 md:border-t-0 md:border-l">
           <h3 className="text-sm font-semibold">{t("Antes de admitir")}</h3>
           <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
             <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 shrink-0 text-accent" aria-hidden />
+              <CheckCircle className="mt-0.5 shrink-0 text-primary" aria-hidden />
               {t("Registra quem admitiu, quando, a origem e a revisão do arquivo.")}
             </li>
             <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 shrink-0 text-accent" aria-hidden />
+              <CheckCircle className="mt-0.5 shrink-0 text-primary" aria-hidden />
               {t("Confere que o arquivo não mudou antes de qualquer instalação.")}
             </li>
             <li className="flex gap-2">
-              <X className="mt-0.5 shrink-0 text-error" aria-hidden />
+              <X className="text-danger-foreground mt-0.5 shrink-0" aria-hidden />
               {t("O arquivo não comprova quem o publicou. Confirme a fonte antes de escolher.")}
             </li>
           </ul>
@@ -305,7 +305,7 @@ export function CatalogExtensionCard({
       data-testid={`extension-catalog-${identidade}`}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-elevated text-muted-foreground">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted text-muted-foreground">
           <Icon size={22} weight="duotone" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
@@ -315,11 +315,13 @@ export function CatalogExtensionCard({
           </p>
           {localize(entry.display.title, locale).fallback ||
           localize(entry.display.summary, locale).fallback ? (
-            <p className="mt-1 text-xs text-warning-fg">{t("Texto disponível em português.")}</p>
+            <p className="text-warning-foreground mt-1 text-xs">
+              {t("Texto disponível em português.")}
+            </p>
           ) : null}
         </div>
       </div>
-      <dl className="mt-4 space-y-2 rounded-md bg-surface-elevated/55 p-3 text-xs">
+      <dl className="mt-4 space-y-2 rounded-md bg-muted/55 p-3 text-xs">
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">{t("Identidade")}</dt>
           <dd className="text-right font-mono break-all">
@@ -355,11 +357,11 @@ export function CatalogExtensionCard({
       ) : null}
       <div className="mt-auto pt-4">
         {sameVersion ? (
-          <div className="rounded-md border border-border p-3 text-sm">
+          <div className="rounded-lg border border-border p-3 text-sm">
             <p className="font-medium">{t("Esta versão já está instalada.")}</p>
           </div>
         ) : identity.kind === "other_origin" ? (
-          <div className="rounded-md border border-border p-3 text-sm">
+          <div className="rounded-lg border border-border p-3 text-sm">
             <p className="font-medium">
               {t("Já instalada a partir de outra origem ({origem}, versão {versao}).")
                 .replace("{origem}", identity.origin)
@@ -513,7 +515,7 @@ export function ExtensionLoadingState() {
 export function ExtensionEmptyList({ title, description }: { title: string; description: string }) {
   return (
     <Card className="flex flex-col items-center px-5 py-12 text-center">
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-elevated text-muted-foreground">
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <PuzzlePiece size={22} weight="duotone" aria-hidden />
       </div>
       <h2 className="mt-3 text-base font-semibold">{title}</h2>

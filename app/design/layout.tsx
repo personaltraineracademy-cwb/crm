@@ -4,7 +4,8 @@ import { VariantProvider } from "./lib/variant-context";
 import "./showcase.css";
 
 export const metadata: Metadata = {
-  title: "Design Showcase — DeskcommCRM",
+  // O layout raiz acrescenta o nome da instalação (`template: "%s · {nome}"`).
+  title: "Design Showcase",
   description: "Painel navegável de design system. Soft-tech / calmo.",
   robots: { index: false, follow: false },
 };

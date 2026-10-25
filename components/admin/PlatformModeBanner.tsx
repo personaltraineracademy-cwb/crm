@@ -32,8 +32,12 @@ import { useT } from "@/hooks/i18n/useT";
 export function PlatformModeBanner() {
   const t = useT();
   return (
-    <div role="region" aria-label={t("Modo Plataforma")} className="sticky top-0 z-40 w-full bg-bg">
-      <div className="flex h-10 w-full items-center justify-between border-b border-warning/35 bg-warning-bg px-4 text-warning-fg">
+    <div
+      role="region"
+      aria-label={t("Modo Plataforma")}
+      className="sticky top-0 z-40 w-full bg-background"
+    >
+      <div className="border-warning-border bg-warning-soft text-warning-foreground flex h-10 w-full items-center justify-between border-b px-4">
         <div className="flex items-center gap-2 text-sm">
           <Buildings size={18} weight="fill" aria-hidden />
           <span className="font-semibold tracking-tight">{t("MODO PLATAFORMA")}</span>
@@ -43,7 +47,7 @@ export function PlatformModeBanner() {
           {/* 40px de tarja não comportam os 44px de alvo de toque do `size="icon"`.
               O mesmo já valia para o link ao lado, que é `text-xs`: quem opera o
               modo plataforma está num desktop, com cursor. */}
-          <ThemeToggle className="h-7 w-7 text-warning-fg lg:h-7 lg:w-7" />
+          <ThemeToggle className="text-warning-foreground h-7 w-7 lg:h-7 lg:w-7" />
           <Link
             href="/app"
             className="rounded-md px-2 py-1 text-xs font-medium underline-offset-2 hover:underline"

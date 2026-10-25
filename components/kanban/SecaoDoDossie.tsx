@@ -140,7 +140,7 @@ export function SecaoDoDossie({
       data-recolhida={recolhida ? "sim" : "nao"}
       className={cn("border-b border-border py-3", className)}
     >
-      <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-text-muted">
+      <h3 className="mb-2 text-xs font-medium text-text-muted">
         <button
           type="button"
           onClick={() => aoAlternar(id)}
@@ -150,7 +150,7 @@ export function SecaoDoDossie({
           <span>{titulo}</span>
           {/* Mesmo sinal da timeline: `+` fechado, `−` aberto. O `aria-expanded`
               é quem fala a verdade para quem não vê o sinal. */}
-          <span aria-hidden className="ml-auto text-[10px]">
+          <span aria-hidden className="ml-auto text-xs">
             {recolhida ? "+" : "−"}
           </span>
         </button>

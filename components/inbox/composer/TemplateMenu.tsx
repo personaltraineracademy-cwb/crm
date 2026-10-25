@@ -27,18 +27,20 @@ export function TemplateMenu({ open, query, templates, onPick, onClose: _onClose
   );
   return (
     <div
-      className="absolute bottom-14 left-3 z-20 max-h-64 w-80 overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-lg"
+      className="absolute bottom-14 left-3 z-20 max-h-64 w-80 max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md"
       role="listbox"
       aria-label={t("Templates de script")}
     >
       {filtered.length === 0 ? (
-        <div className="px-3 py-2 text-xs text-muted-foreground">{t("Nenhum template. Crie em Configurações.")}</div>
+        <div className="px-2.5 py-2 text-xs text-muted-foreground">
+          {t("Nenhum template. Crie em Configurações.")}
+        </div>
       ) : (
         filtered.map((tpl) => (
           <button
             key={tpl.id}
             type="button"
-            className="flex w-full flex-col items-start gap-0.5 rounded-md px-3 py-2 text-left hover:bg-muted"
+            className="hover:bg-interactive focus-visible:bg-interactive flex min-h-9 w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-1.5 text-left transition-colors focus-visible:outline-hidden"
             onClick={() => onPick(tpl)}
           >
             <span className="text-sm font-medium">{tpl.title}</span>

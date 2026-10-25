@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { useT } from "@/hooks/i18n/useT";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -57,7 +58,7 @@ export function RecoveryForm({ next }: RecoveryFormProps) {
           maxLength={12}
           required
           placeholder="ABCD2345"
-          className="font-mono uppercase tracking-widest"
+          className="font-mono"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
         />
@@ -67,15 +68,12 @@ export function RecoveryForm({ next }: RecoveryFormProps) {
       </div>
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-        >
+        <Alert variant="destructive">
           {error}
-        </div>
+        </Alert>
       )}
 
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? t("Validando…") : t("Recuperar acesso")}
       </Button>
     </form>

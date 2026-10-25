@@ -6,6 +6,7 @@ import { useTransition, useState } from "react";
 
 import { useT } from "@/hooks/i18n/useT";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@/lib/auth/schemas";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +57,7 @@ export function ForgotPasswordForm() {
   if (sent) {
     return (
       <div
-        className="space-y-2 rounded-md border bg-muted/40 px-4 py-6 text-center"
+        className="space-y-2 rounded-lg border border-border bg-muted/40 px-4 py-6 text-center"
         role="status"
       >
         <p className="text-sm font-medium">{t("Verifique seu e-mail")}</p>
@@ -80,18 +81,15 @@ export function ForgotPasswordForm() {
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-xs text-destructive">{t(errors.email.message ?? "")}</p>
+          <p className="text-danger-foreground text-sm">{t(errors.email.message ?? "")}</p>
         )}
       </div>
       {serverError && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {serverError}
-        </div>
+        </Alert>
       )}
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? t("Enviando...") : t("Enviar link de redefinição")}
       </Button>
     </form>

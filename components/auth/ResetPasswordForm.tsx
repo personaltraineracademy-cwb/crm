@@ -82,7 +82,7 @@ export function ResetPasswordForm() {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden focus-visible:ring-inset"
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-inset"
             aria-label={t(showPassword ? "Ocultar nova senha" : "Mostrar nova senha")}
             aria-pressed={showPassword}
             onClick={() => setShowPassword((visible) => !visible)}
@@ -91,7 +91,7 @@ export function ResetPasswordForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-destructive">{t(errors.password.message ?? "")}</p>
+          <p className="text-danger-foreground text-sm">{t(errors.password.message ?? "")}</p>
         )}
         <PasswordStrength password={password} />
       </div>
@@ -108,7 +108,7 @@ export function ResetPasswordForm() {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden focus-visible:ring-inset"
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-inset"
             aria-label={t(
               showPasswordConfirm ? "Ocultar confirmação da senha" : "Mostrar confirmação da senha",
             )}
@@ -123,7 +123,9 @@ export function ResetPasswordForm() {
           </button>
         </div>
         {errors.password_confirm && (
-          <p className="text-xs text-destructive">{t(errors.password_confirm.message ?? "")}</p>
+          <p className="text-danger-foreground text-sm">
+            {t(errors.password_confirm.message ?? "")}
+          </p>
         )}
       </div>
       {needsMfa && (
@@ -142,13 +144,13 @@ export function ResetPasswordForm() {
       )}
       {serverError && (
         <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border px-3 py-2 text-sm"
           role={needsMfa ? "status" : "alert"}
         >
           {serverError}
         </div>
       )}
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? t("Salvando...") : t("Definir nova senha")}
       </Button>
     </form>

@@ -139,7 +139,7 @@ export function ModelosDialog({ open, onOpenChange, nomesExistentes }: Props) {
               <li
                 key={modelo.id}
                 data-testid={`modelo-${modelo.id}`}
-                className="flex flex-col gap-3 rounded-lg border border-border p-4"
+                className="flex flex-col gap-3 rounded-xl border border-border p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -147,12 +147,12 @@ export function ModelosDialog({ open, onOpenChange, nomesExistentes }: Props) {
                       <Badge variant="neutral">{t(modelo.jornada)}</Badge>
                       <h3 className="font-medium">{modelo.nome}</h3>
                     </div>
-                    <p className="mt-1 text-sm text-text-muted">{t(modelo.resumo)}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{t(modelo.resumo)}</p>
                   </div>
                   {jaInstalado && <Badge variant="success">{t("Já instalado")}</Badge>}
                 </div>
 
-                <dl className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-text-muted">
+                <dl className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1.5">
                     <PaperPlaneTilt size={13} aria-hidden />
                     <dt className="sr-only">{t("Mensagens")}</dt>
@@ -169,8 +169,8 @@ export function ModelosDialog({ open, onOpenChange, nomesExistentes }: Props) {
                   </div>
                 </dl>
 
-                <p className="text-xs text-text-muted">
-                  <span className="font-medium text-text">{t("Dispara quando")}:</span>{" "}
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">{t("Dispara quando")}:</span>{" "}
                   {t(modelo.oQueDispara)}
                 </p>
 
@@ -211,7 +211,11 @@ export function ModelosDialog({ open, onOpenChange, nomesExistentes }: Props) {
                 )}
 
                 {erro?.modelo === modelo.id && (
-                  <p role="alert" data-testid="erro-do-modelo" className="text-sm text-error-fg">
+                  <p
+                    role="alert"
+                    data-testid="erro-do-modelo"
+                    className="text-danger-foreground text-sm"
+                  >
                     {erro.mensagem}
                   </p>
                 )}
@@ -230,7 +234,7 @@ export function ModelosDialog({ open, onOpenChange, nomesExistentes }: Props) {
           })}
         </ul>
 
-        <p className="rounded-md bg-surface-elevated p-3 text-xs text-text-muted">
+        <p className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
           {t(
             "Depois de instalar: revise os textos no construtor, clique em Publicar e ligue o fluxo no seu agente (Agentes › Follow-up). Sem um agente publicado armando o fluxo, o gatilho automático não dispara.",
           )}

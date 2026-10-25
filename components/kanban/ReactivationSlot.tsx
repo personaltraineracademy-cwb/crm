@@ -74,8 +74,8 @@ export function ReactivationSlot({
           onClick={(e) => decide(e, "accept")}
           aria-label={t("Retomar contato com este negócio")}
           className={cn(
-            "rounded-md px-1.5 py-0.5 text-[11px] font-medium transition-colors",
-            "bg-warning-fg/10 text-warning-fg hover:bg-warning-fg/20",
+            "rounded-md px-1.5 py-0.5 text-xs font-medium transition-colors",
+            "bg-warning-soft text-warning-foreground hover:bg-warning/20",
             "disabled:opacity-50",
           )}
         >
@@ -90,8 +90,8 @@ export function ReactivationSlot({
           // de negócio esquecido.
           aria-label={t("Encerrar: não retomar este negócio")}
           className={cn(
-            "rounded-md px-1.5 py-0.5 text-[11px] transition-colors",
-            "text-text-muted hover:bg-surface-muted hover:text-text",
+            "rounded-md px-1.5 py-0.5 text-xs transition-colors",
+            "text-muted-foreground hover:bg-muted hover:text-foreground",
             "disabled:opacity-50",
           )}
         >

@@ -31,6 +31,7 @@ import { ChannelRoutingForm } from "./_channels-form";
 import { AtendimentoForm } from "./_form";
 import { TelefoneDeFichaVazia } from "./_telefoneDeFichaVazia";
 import { traduzir } from "@/lib/i18n/dicionario";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -73,17 +74,13 @@ export default async function AtendimentoSettingsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {traduzir("Distribuição de atendimento", idioma)}
-        </h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Distribuição de atendimento", idioma)}
+        description={traduzir(
             "Quem recebe cada cliente novo, e o que cada atendente enxerga. As duas decisões andam juntas: distribuir sem restringir deixa todo mundo vendo a carteira do colega; restringir sem distribuir deixa o funil de cada um vazio.",
             idioma,
           )}
-        </p>
-      </header>
+      />
 
       <AtendimentoForm
         initial={{ ...routing, visibility_mode: settings.visibility_mode ?? DEFAULT_VISIBILITY_MODE }}

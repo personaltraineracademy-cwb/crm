@@ -68,7 +68,7 @@ export function LgpdRequestDetail({ id, hrefDaLista = "/app/lgpd/requests" }: Pr
 
   if (error || !data) {
     return (
-      <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+      <div className="border-danger-border bg-danger-soft text-danger-foreground rounded-md border px-4 py-3 text-sm">
         {t("Falha ao carregar solicitação.")}
       </div>
     );
@@ -186,9 +186,9 @@ export function LgpdRequestDetail({ id, hrefDaLista = "/app/lgpd/requests" }: Pr
               />
             )}
             {request.error_message && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/5 px-2 py-1">
+              <div className="border-danger-border bg-danger-soft rounded-md border px-2 py-1">
                 <p className="text-xs text-muted-foreground">{t("Erro")}</p>
-                <p className="text-destructive text-xs">{request.error_message}</p>
+                <p className="text-danger-foreground text-xs">{request.error_message}</p>
               </div>
             )}
           </CardContent>

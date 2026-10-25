@@ -35,6 +35,8 @@ import { MoveToOtherPipelineDialog } from "./MoveToOtherPipelineDialog";
 import { EditLeadDialog } from "./EditLeadDialog";
 import type { Lead } from "@/lib/types/leads";
 import type { Stage } from "@/lib/kanban/types";
+import { cn } from "@/lib/utils";
+import { TOM_MARCADOR, tomDaEtapa } from "./tons";
 
 interface KanbanCardActionsProps {
   lead: Lead;
@@ -166,7 +168,7 @@ export function KanbanCardActions({ lead, pipelineId, etapas, onMoverPara }: Kan
                   >
                     {a.name}
                     {a.version_number != null && (
-                      <span className="ml-1.5 font-mono text-[10px] text-text-muted">
+                      <span className="ml-1.5 font-mono text-xs text-muted-foreground">
                         v{a.version_number}
                       </span>
                     )}
@@ -197,10 +199,19 @@ export function KanbanCardActions({ lead, pipelineId, etapas, onMoverPara }: Kan
               {destinos.map((e) => (
                 <DropdownMenuItem
                   key={e.id}
-                  className="min-h-11 lg:min-h-0"
+                  className="min-h-11 gap-2 lg:min-h-0"
                   onSelect={() => onMoverPara(lead, e.id)}
                 >
-                  {e.name}
+                  {/* O mesmo marcador de tom do cabeçalho da coluna: a etapa
+                      se reconhece pela cor antes do nome. */}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "size-2 shrink-0 rounded-full",
+                      TOM_MARCADOR[tomDaEtapa(e, etapas?.indexOf(e) ?? 0)],
+                    )}
+                  />
+                  <span className="truncate">{e.name}</span>
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
@@ -225,7 +236,7 @@ export function KanbanCardActions({ lead, pipelineId, etapas, onMoverPara }: Kan
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-error-fg"
+                className="text-danger-foreground focus:text-danger-foreground focus:bg-destructive/10"
                 disabled={bulk.isPending}
                 onSelect={() => {
                   setDeleteOpen(true);
@@ -273,7 +284,7 @@ export function KanbanCardActions({ lead, pipelineId, etapas, onMoverPara }: Kan
               isso é o `disabled`.
             */}
             <AlertDialogAction
-              className={buttonVariants({ variant: "destructive" })}
+              className={buttonVariants({ variant: "destructive-solid" })}
               disabled={bulk.isPending}
               onClick={(e) => {
                 e.preventDefault();

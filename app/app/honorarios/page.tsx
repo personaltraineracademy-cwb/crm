@@ -5,6 +5,7 @@ import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { Honorarios } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +26,10 @@ export default async function Page() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">{t("Honorários")}</h1>
-        <p className="text-sm text-text-muted">
-          {t("O modelo de cobrança de cada caso e o calendário de parcelas.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Honorários")}
+        description={t("O modelo de cobrança de cada caso e o calendário de parcelas.")}
+      />
       <Honorarios podeGerenciar={ROLE_RANK[org.role] >= ROLE_RANK.manager} />
     </div>
   );

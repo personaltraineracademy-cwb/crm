@@ -46,6 +46,18 @@ import { PROXIMO_PASSO_DA_MENSAGEM_NOVA } from "@/lib/atendimento/proximo-passo-
 import { rotuloParaAEquipe } from "@/lib/contacts/rotulo-do-contato";
 import { phoneForDisplay } from "@/lib/channels/phone-variants";
 
+/**
+ * O PAINEL DO CONTATO no padrão de painel lateral do Unnify (DS §10.15 e
+ * §11.8): corpo com 20 entre seções, título de seção `sm`/600, metadado `xs`
+ * tabular, e cada item como um cartão de raio 12 (borda 1px, sem sombra) sobre
+ * o fundo da página — nunca cartão dentro de cartão.
+ */
+const TITULO_DA_SECAO = "text-sm font-semibold text-foreground";
+const ITEM_DA_SECAO = "rounded-xl border p-3 text-xs";
+/** Campo de edição em linha: o `Input` do Unnify (36, raio 8; 16px no celular). */
+const CAMPO =
+  "h-9 w-full rounded-lg border border-input bg-card px-3 text-base text-foreground hover:border-interactive-border focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden md:text-sm";
+
 interface Props {
   conversation: ConversationWithContact | null;
   /**
@@ -157,7 +169,7 @@ function EncerrarDemanda({ draft, onAbrir, onAlterar, onFechar, onPronto }: {
     finally { onAlterar({ salvando: false }); }
   }}>
     <label className="block">{t("Desfecho")}
-      <select aria-label={t("Desfecho da demanda")} className="mt-1 w-full rounded-md border bg-background p-2" value={draft.desfecho} onChange={(e) => onAlterar({ desfecho: e.target.value })}>
+      <select aria-label={t("Desfecho da demanda")} className={cn("mt-1", CAMPO)} value={draft.desfecho} onChange={(e) => onAlterar({ desfecho: e.target.value })}>
         <option value="resolvida">{t("Resolvida")}</option><option value="convertida">{t("Convertida")}</option>
         <option value="nao_procede">{t("Não procede")}</option><option value="encerrada_pelo_cliente">{t("Encerrada pelo cliente")}</option>
         <option value="perdida">{t("Perdida")}</option><option value="expirada_sem_resposta">{t("Expirada sem resposta")}</option>
@@ -249,7 +261,7 @@ function MarcarProximoPasso({ demandaId, onPronto }: { demandaId: string; onPron
         placeholder={t("O que acontece a seguir?")}
         aria-label={t("Próximo passo desta demanda")}
         data-testid="campo-proximo-passo"
-        className="w-full rounded-md border border-input bg-background px-2 py-1 text-base focus:outline-hidden focus:ring-1 focus:ring-ring md:text-xs"
+        className={CAMPO}
       />
       <div className="flex gap-1.5">
         <Button
@@ -315,7 +327,7 @@ function SemLista({
   if (!erro) return <p className="mt-2 text-xs text-muted-foreground">{t(vazio)}</p>;
   return (
     <div className="mt-2 space-y-1">
-      <p className="text-xs text-error-fg">{t("Não consegui ler estes dados.")}</p>
+      <p className="text-danger-foreground text-xs">{t("Não consegui ler estes dados.")}</p>
       <Button size="sm" variant="outline" onClick={onTentarDeNovo}>
         {t("Tentar de novo")}
       </Button>
@@ -405,8 +417,11 @@ function InboxLeadEditor({
                   aria-pressed={marcado}
                   onClick={() => onSelecionar(l.id)}
                   className={cn(
-                    "w-full rounded-md border p-2 text-left text-xs",
-                    marcado ? "border-accent bg-accent/10" : "border-border",
+                    // Selecionado = fundo `interactive` com a borda de hover do Unnify.
+                    "w-full rounded-lg border p-2.5 text-left text-xs transition-colors",
+                    marcado
+                      ? "border-interactive-border bg-interactive"
+                      : "border-border bg-card hover:bg-muted/40",
                   )}
                 >
                   <div className="truncate font-medium">{l.title}</div>
@@ -504,7 +519,7 @@ function EtapaDoNegocio({ lead, onMovido }: { lead: LeadRow; onMovido: () => voi
 
   return (
     <div className="space-y-1" data-testid="inbox-etapa-do-negocio">
-      <label className="block text-xs font-medium text-text" htmlFor={`etapa-${lead.id}`}>
+      <label className="block text-xs font-medium text-foreground" htmlFor={`etapa-${lead.id}`}>
         {t("Etapa do funil")}
       </label>
       <Select value={lead.stage_id} onValueChange={(v) => void escolher(v)} disabled={mover.isPending}>
@@ -686,7 +701,7 @@ function BotaoDeRecolherDoPainel({
       onClick={onAlternar}
       // Vocabulário e ícone iguais aos do menu da esquerda (`BotaoDeRecolher`).
       className={cn(
-        "flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+        "ds-alvo-44 hover:bg-interactive hover:text-interactive-foreground flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
         recolhido && "justify-center",
       )}
       aria-label={rotulo}
@@ -942,7 +957,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   }
 
   return (
-    <aside className="flex h-full flex-col gap-4 overflow-y-auto border-l border-border bg-background p-4">
+    <aside className="flex h-full flex-col gap-5 overflow-y-auto border-l border-border bg-background p-4">
       {/*
         O CONTROLE DE RECOLHER, NO ALTO (issue #3004) — mesmo lugar do recolher
         do menu da esquerda. `sticky` para não rolar para fora com o conteúdo, e
@@ -957,23 +972,38 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
         </div>
       )}
       <section>
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className={TITULO_DA_SECAO}>
           {t("Contato")}
         </h3>
         <Card className="mt-2 space-y-2 p-3 text-sm">
-          <div className="font-medium">{displayName}</div>
+          <div className="text-base font-semibold break-words text-card-foreground">
+            {displayName}
+          </div>
           {contact?.phone_number && (
-            <div className="text-xs text-muted-foreground">{phoneForDisplay(contact.phone_number)}</div>
+            <div className="text-xs text-muted-foreground tabular-nums">
+              {phoneForDisplay(contact.phone_number)}
+            </div>
           )}
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {tags.map((t) => (
-                <ChipDeEtiqueta key={t} tag={t} className="h-4 px-1.5 text-[10px]" />
+                <ChipDeEtiqueta
+                  key={t}
+                  tag={t}
+                  className="h-5 rounded-md px-1.5 text-xs leading-4"
+                />
               ))}
             </div>
           )}
           <div className="flex flex-wrap gap-2 pt-1">
-            {contactId&&conversation?<Link className="underline" href={`/app/agenda?contato=${contactId}&conversa=${conversation.id}`}>{t("Marcar compromisso")}</Link>:null}
+            {contactId && conversation ? (
+              <Link
+                className="hover:text-primary-hover inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-primary underline-offset-4 hover:underline"
+                href={`/app/agenda?contato=${contactId}&conversa=${conversation.id}`}
+              >
+                {t("Marcar compromisso")}
+              </Link>
+            ) : null}
             <Button
               size="sm"
               variant="outline"
@@ -1083,7 +1113,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
           conversa está atendendo alguém que pediu alguma coisa — a primeira
           pergunta a responder é o que ainda está pendente, não quanto vale. */}
       <section data-testid="inbox-demandas">
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className={TITULO_DA_SECAO}>
           {t("Demandas abertas")}
         </h3>
         {sectionsLoading ? (
@@ -1097,8 +1127,8 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
                   key={d.id}
                   data-testid={semPasso ? "demanda-sem-proximo-passo" : "demanda-com-proximo-passo"}
                   className={cn(
-                    "rounded-md border p-2 text-xs",
-                    semPasso ? "border-warning-border bg-warning-bg/40" : "border-border",
+                    ITEM_DA_SECAO,
+                    semPasso ? "border-warning-border bg-warning-soft" : "border-border bg-card",
                   )}
                 >
                   <div className="flex items-baseline justify-between gap-2">
@@ -1182,7 +1212,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
       <Separator />
 
       <section data-testid="inbox-memoria">
-        <h3 className="text-xs font-semibold">{t("Memória do contato")}</h3>
+        <h3 className={TITULO_DA_SECAO}>{t("Memória do contato")}</h3>
         <p className="mt-1 text-xs text-muted-foreground">{t("Fatos duráveis registrados nas notas. Pendências pertencem à demanda vigente.")}</p>
         {!sectionsLoading && fatos.map((f) => <details key={f.id} className="mt-2 text-xs"><summary className="wrap-anywhere">{f.headline}</summary><p className="mt-1 whitespace-pre-wrap wrap-anywhere">{f.body}</p></details>)}
         {!sectionsLoading && fatos.length === 0 && <p className="mt-2 text-xs text-muted-foreground">{t("Nenhum fato durável registrado.")}</p>}
@@ -1195,7 +1225,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
       {contactId && !contact?.is_anonymized && <RoteirosDoContato contactId={contactId} variante="painel" />}
 
       <section data-testid="inbox-campos-lead">
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className={TITULO_DA_SECAO}>
           {t("Leads recentes")}
         </h3>
         {sectionsLoading ? (
@@ -1224,7 +1254,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
       <Separator />
 
       <section>
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className={TITULO_DA_SECAO}>
           {t("Pedidos recentes")}
         </h3>
         {sectionsLoading ? (
@@ -1234,14 +1264,17 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
             {orders.map((o) => (
               <li
                 key={o.id}
-                className="flex items-center justify-between rounded-md border border-border p-2 text-xs"
+                className={cn(
+                  ITEM_DA_SECAO,
+                  "flex items-center justify-between border-border bg-card",
+                )}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-1 truncate font-medium">
-                    <Receipt size={11} weight="regular" aria-hidden />
+                    <Receipt size={12} weight="regular" aria-hidden />
                     {o.external_id ?? o.id.slice(0, 8)}
                   </div>
-                  <div className="text-muted-foreground">
+                  <div className="text-muted-foreground tabular-nums">
                     {o.status ?? "—"} · {formatMoney(o.total_cents, o.currency)}
                   </div>
                 </div>
@@ -1256,7 +1289,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
       <Separator />
 
       <section>
-        <h3 className="text-xs font-semibold text-text">
+        <h3 className={TITULO_DA_SECAO}>
           {t("Atividade")}
         </h3>
         {sectionsLoading ? (
@@ -1264,17 +1297,17 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
         ) : activities && activities.length > 0 ? (
           <ul className="mt-2 space-y-1.5">
             {activities.map((a) => (
-              <li key={a.id} className="rounded-md border border-border p-2 text-xs">
+              <li key={a.id} className={cn(ITEM_DA_SECAO, "border-border bg-card")}>
                 {/* Rótulo do vocabulário único (activity-vocabulary), nunca o
                     tipo cru: a tela e o banco divergiram justamente por manter
                     duas listas. Marcador por ator, forma e não cor (§5). */}
                 <div className="flex items-center gap-1.5 font-medium">
                   <span
                     className={cn(
-                      "h-2 w-2 shrink-0",
-                      actorShape(a.actor_kind) === "filled" && "rounded-full bg-accent",
+                      "size-2 shrink-0",
+                      actorShape(a.actor_kind) === "filled" && "rounded-full bg-primary",
                       actorShape(a.actor_kind) === "ring" &&
-                        "rounded-full border border-accent bg-surface",
+                        "rounded-full border border-primary bg-card",
                       actorShape(a.actor_kind) === "dashed" &&
                         "rounded-full border border-dashed border-border-strong",
                     )}
@@ -1283,7 +1316,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
                   {t(activityLabel(a.type))}
                 </div>
                 {a.reason && <div className="mt-0.5 truncate text-muted-foreground">{t(a.reason)}</div>}
-                <div className="text-muted-foreground">
+                <div className="tabular-nums text-muted-foreground">
                   {a.performed_by_name ?? t(actorLabel(a.actor_kind))} · {shortDate(a.performed_at, localeDaData)}
                 </div>
               </li>
@@ -1302,7 +1335,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
           DEPOIS das seções de trabalho: é consulta, não é o que o atendente abre
           a conversa para fazer. */}
       <section>
-        <h3 className="text-xs font-semibold">{t("Acervo")}</h3>
+        <h3 className={TITULO_DA_SECAO}>{t("Acervo")}</h3>
         <p className="mt-1 mb-2 text-xs text-muted-foreground">
           {t("Pergunte como a IA perguntaria — a resposta vem com a origem de cada trecho.")}
         </p>

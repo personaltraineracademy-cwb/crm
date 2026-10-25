@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Smiley } from "@/lib/ui/icons";
+import { ACAO_DO_CAMPO } from "./acao-do-campo";
 
 // Lazy: o picker (+dados) só carrega quando o usuário abre — zero peso no bundle do inbox.
 const Picker = lazy(() => import("@emoji-mart/react"));
@@ -36,17 +37,17 @@ export function EmojiButton({ disabled, onPick }: Props) {
                 variant="ghost"
                 // Some no toque: o teclado do sistema já tem emoji, e o seletor de
                 // 352px disputa largura num celular de 390.
-                className="shrink-0 pointer-coarse:hidden"
+                className={`${ACAO_DO_CAMPO} pointer-coarse:hidden`}
                 aria-label={t("Emoji")}
                 disabled={disabled}
               >
-                <Smiley size={18} weight="regular" aria-hidden />
+                <Smiley size={16} weight="regular" aria-hidden />
               </Button>
             </PopoverTrigger>
           </TooltipTrigger>
           <TooltipContent>{t("Emoji")}</TooltipContent>
         </Tooltip>
-        <PopoverContent align="start" side="top" className="w-auto border-none p-0 shadow-lg">
+        <PopoverContent align="start" side="top" className="w-auto border-none p-0 shadow-md">
           {open && (
             <Suspense fallback={<Skeleton className="h-[420px] w-[352px]" />}>
               <EmojiPickerLazy onPick={onPick} />

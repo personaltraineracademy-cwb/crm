@@ -294,7 +294,9 @@ export function ExploradorDeDados({ connectionId, soLiberadas = false }: Props) 
             </div>
           )}
           {catalogo.isError && (
-            <p className="p-3 text-sm text-destructive">{t("Não foi possível ler o catálogo.")}</p>
+            <p className="text-danger-foreground p-3 text-sm">
+              {t("Não foi possível ler o catálogo.")}
+            </p>
           )}
           {catalogo.isSuccess && porSchema.length === 0 && (
             <p className="p-3 text-sm text-muted-foreground">
@@ -305,7 +307,7 @@ export function ExploradorDeDados({ connectionId, soLiberadas = false }: Props) 
           )}
           {porSchema.map(([schema, tabelas]) => (
             <div key={schema} className="mb-3">
-              <p className="px-2 py-1 text-xs font-semibold uppercase text-muted-foreground">{schema}</p>
+              <p className="px-2 py-1 text-xs font-semibold text-muted-foreground">{schema}</p>
               <ul className="space-y-0.5">
                 {tabelas.map((tabela) => {
                   const ativa =
@@ -315,8 +317,8 @@ export function ExploradorDeDados({ connectionId, soLiberadas = false }: Props) 
                       <button
                         type="button"
                         onClick={() => selecionar(tabela)}
-                        className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent-soft ${
-                          ativa ? "bg-accent-soft font-medium" : ""
+                        className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-left text-sm hover:bg-primary/10 ${
+                          ativa ? "bg-primary/10 font-medium" : ""
                         }`}
                       >
                         <span className="truncate">{tabela.nome}</span>
@@ -400,7 +402,7 @@ export function ExploradorDeDados({ connectionId, soLiberadas = false }: Props) 
               )}
 
               {dados.isError && !dados.isLoading && (
-                <p className="p-6 text-sm text-destructive">
+                <p className="text-danger-foreground p-6 text-sm">
                   {t("Não foi possível consultar esta tabela agora.")}
                 </p>
               )}
@@ -434,7 +436,7 @@ export function ExploradorDeDados({ connectionId, soLiberadas = false }: Props) 
                               title={ehPk ? t("Chave primária") : undefined}
                             >
                               {ehPk && (
-                                <span className="rounded-md bg-surface-elevated px-1 text-[10px] font-semibold text-text-muted">
+                                <span className="rounded-md bg-muted px-1 text-xs font-semibold text-muted-foreground">
                                   PK
                                 </span>
                               )}

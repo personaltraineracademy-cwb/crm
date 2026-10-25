@@ -318,9 +318,9 @@ function CamadaDeMarcacao({
             onClick={livre ? () => interacao.onMarcarEm(livre.instante) : undefined}
             className={cn(
               "absolute inset-x-0 z-0 transition-colors duration-fast ease-out",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-500",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
               livre
-                ? "cursor-pointer hover:bg-accent-soft"
+                ? "hover:bg-interactive cursor-pointer"
                 : // Sem cor de bloqueio: pintar o vazio indisponível encheria a
                   // grade de faixas cinzas e faria o que ESTÁ livre desaparecer
                   // no meio. O sinal fica na ausência de resposta ao passar o
@@ -426,9 +426,14 @@ function BlocoDeAgendamento({
         doGoogle ? `, ${t("ocupado na agenda do Google")}` : ""
       }`}
       className={cn(
-        "absolute flex flex-col items-start overflow-hidden rounded-sm px-1.5 py-0.5 text-left",
-        "border border-border/60 transition-colors duration-fast ease-out",
-        doGoogle ? "cursor-default" : "cursor-pointer hover:border-border-strong",
+        // Bloco de evento (DS §3.3 e inventário §2.11): a cor da pessoa a 12%
+        // com o marcador sólido de 3px à esquerda (receita do tom; a cor ainda
+        // é a trilha própria, ver `paleta.ts`). Raio 8, o de controle: é um bloco compacto, não um cartão.
+        "absolute flex flex-col items-start overflow-hidden rounded-lg py-0.5 pr-1.5 pl-2 text-left",
+        "border border-transparent transition-colors duration-fast ease-out",
+        doGoogle
+          ? "cursor-default border-border"
+          : "hover:border-interactive-border cursor-pointer",
         // `grab` só quando remarcar é possível: o cursor é a única pista de que
         // o card se move, e prometê-la num card que não se move (ocupação do
         // Google, compromisso cancelado) é o controle decorativo de novo.
@@ -465,22 +470,23 @@ function BlocoDeAgendamento({
           ? // Hachura: diz "ocupado" sem fingir que é um agendamento nosso. A cor
             // é neutra de propósito — a agenda de fora não pertence a ninguém da
             // equipe, então não recebe trilha.
-            "repeating-linear-gradient(135deg, var(--color-surface-elevated) 0 6px, var(--color-surface) 6px 12px)"
+            "repeating-linear-gradient(135deg, var(--muted) 0 6px, var(--card) 6px 12px)"
           : fundoDaTrilha(trilha),
+        color: doGoogle ? "var(--muted-foreground)" : "var(--foreground)",
         opacity: doGoogle ? 0.75 : undefined,
       }}
     >
       <span
         aria-hidden
         data-testid={`faixa-${agendamento.id}`}
-        className="absolute inset-y-0 left-0 w-[3px] rounded-l-sm"
-        style={{ backgroundColor: doGoogle ? "var(--color-border-strong)" : corDaTrilha(trilha) }}
+        className="absolute inset-y-0 left-0 w-[3px]"
+        style={{ backgroundColor: doGoogle ? "var(--border-strong)" : corDaTrilha(trilha) }}
       />
-      <span className="ml-1 truncate text-[11px] font-semibold leading-4 text-text">
+      <span className="w-full truncate text-xs leading-4 font-medium">
         {agendamento.titulo}
       </span>
       {duracao >= 45 && (
-        <span className="ml-1 truncate text-[10px] leading-3 tabular-nums text-text-muted">
+        <span className="w-full truncate text-xs leading-4 tabular-nums opacity-80">
           {rotuloHora(comeca, fuso)}
           {agendamento.quemSeraAtendido ? ` · ${agendamento.quemSeraAtendido}` : ""}
         </span>
@@ -500,28 +506,32 @@ function ReguaDoAgora({ agora, fuso }: { agora: Date; fuso: string }) {
       className="pointer-events-none absolute inset-x-0 z-10 flex items-center"
       style={{ top: pixelsDe(minutos) }}
     >
-      {/* Vermelho, e não a accent: a accent é trocável pelo revendedor e além
-          disso é a cor de "nosso", não de "agora". Vermelho para a linha do
-          instante é convenção de calendário há vinte anos — aqui no tom terroso
-          do produto (`--color-error`), não no vermelho puro que a doutrina bane. */}
-      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-error" />
-      <span className="h-px flex-1 bg-error" />
+      {/* `primary`, como na grade do Work (DS §10.23, etapa 8B). Era vermelho
+          (`--color-error`) pela convenção de calendário, mas no Unnify vermelho
+          é estado de erro, e uma linha vermelha permanente na grade lia como
+          alerta. O ponto é maior que a linha para ela não sumir sobre um bloco. */}
+      <span className="-ml-1 size-2 shrink-0 rounded-full bg-primary" />
+      <span className="h-0.5 flex-1 bg-primary" />
     </div>
   );
 }
 
 function ColunaDeHoras() {
   return (
-    <div className="w-12 shrink-0 select-none border-r border-border" aria-hidden>
-      <div className="h-8 border-b border-border" />
+    <div
+      className="sticky left-0 z-30 w-14 shrink-0 border-r border-border bg-card select-none"
+      aria-hidden
+    >
+      <div className="sticky top-0 z-10 h-16 border-b border-border bg-card" />
       {HORAS.map((h) => (
         <div
           key={h}
           className="relative border-b border-border/50 text-right"
           style={{ height: ALTURA_DA_HORA }}
         >
-          <span className="absolute -top-1.5 right-1 text-[10px] tabular-nums text-text-subtle">
-            {String(h).padStart(2, "0")}h
+          {/* 24 h, `HH:mm` (DS §13). */}
+          <span className="absolute top-0.5 right-2 text-xs text-muted-foreground tabular-nums">
+            {String(h).padStart(2, "0")}:00
           </span>
         </div>
       ))}
@@ -561,14 +571,14 @@ function FantasmaDoArraste({
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-x-0.5 z-20 rounded-sm border-2 border-dashed px-1.5 py-0.5",
-        valido ? "border-accent bg-accent-soft" : "border-error bg-error-bg",
+        valido ? "bg-interactive border-primary" : "border-danger bg-danger-soft",
       )}
       style={{
         top: pixelsDe(proposta.minuto - PRIMEIRA_HORA * 60),
         height: Math.max(pixelsDe(duracaoMin) - 2, 18),
       }}
     >
-      <span className="truncate text-[10px] font-semibold leading-4 text-text">
+      <span className="truncate text-xs leading-4 font-medium text-foreground">
         {valido
           ? rotuloHora(new Date(proposta.instante!), fuso)
           : t(proposta.razao)}
@@ -623,24 +633,35 @@ function ColunaDeDia({
   return (
     <div
       data-testid={`coluna-dia-${format(dia, "yyyy-MM-dd")}`}
+      data-hoje={ehHoje || undefined}
       className={cn(
-        "relative min-w-0 flex-1 border-r border-border last:border-r-0",
+        // Coluna da grade semanal do Work (DS §5.3 e §10.23): no mínimo 180px
+        // a partir de `md` (abaixo disso a semana mostra um dia por vez), com
+        // divisor de 1px. Hoje: `primary` a 3% sobre o cartão.
+        "relative min-w-0 flex-1 border-r border-border last:border-r-0 md:min-w-[180px]",
         soNoDesktop && "max-md:hidden",
-        destacado && "bg-surface-elevated/40",
+        destacado && "bg-primary/3",
       )}
     >
       <div
         className={cn(
-          "sticky top-0 z-20 flex h-8 items-center justify-center gap-1.5 border-b border-border bg-surface px-2",
+          "sticky top-0 z-20 flex h-16 items-center justify-center gap-2 border-b border-border px-2",
+          // Opaco: os blocos rolam por baixo do cabeçalho. O de hoje leva os
+          // mesmos 3% de `primary`, já misturados com o cartão.
+          destacado ? "bg-[color-mix(in_srgb,var(--primary)_3%,var(--card))]" : "bg-card",
         )}
       >
-        <span className="truncate text-[11px] font-semibold uppercase tracking-wide text-text-muted">
+        {/* Dia da semana em frase normal ("Seg"), sem caixa-alta (DS §4.3). */}
+        <span className="truncate text-xs font-medium text-muted-foreground first-letter:uppercase">
           {format(dia, "EEE", { locale: localeDaData }).replace(".", "")}
         </span>
+        {/* Número do dia: a exceção tipográfica da grade semanal (DS §4.2,
+            28px/500, tracking -0,06em), num círculo de 42; hoje em `primary`. */}
         <span
+          data-numero-do-dia
           className={cn(
-            "flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] tabular-nums",
-            ehHoje ? "bg-accent text-accent-foreground font-semibold" : "text-text",
+            "inline-grid size-[42px] shrink-0 place-items-center rounded-full text-[28px] leading-none font-medium tracking-[-0.06em] tabular-nums",
+            ehHoje ? "bg-primary text-primary-foreground" : "text-foreground",
           )}
         >
           {format(dia, "d")}
@@ -737,7 +758,7 @@ function VisaoDeMes({
         {semanas[0]?.map((d) => (
           <div
             key={`cab-${d.toISOString()}`}
-            className="px-2 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-text-muted"
+            className="px-2 py-2 text-center text-xs font-medium text-muted-foreground first-letter:uppercase"
           >
             {format(d, "EEEEEE", { locale: localeDaData }).replace(".", "")}
           </div>
@@ -755,24 +776,24 @@ function VisaoDeMes({
               data-testid={`celula-mes-${format(d, "yyyy-MM-dd")}`}
               className={cn(
                 "min-h-20 border-b border-r border-border p-1",
-                !doMes && "bg-surface-elevated/30",
+                !doMes && "bg-muted/30",
               )}
             >
               <div className="mb-1 flex items-center justify-between px-0.5">
                 <span
                   className={cn(
-                    "flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] tabular-nums",
+                    "flex size-6 items-center justify-center rounded-full text-xs tabular-nums",
                     chaveDoDia(d) === chaveDoDiaDoInstante(agora, fuso)
-                      ? "bg-accent font-semibold text-accent-foreground"
+                      ? "bg-primary font-medium text-primary-foreground"
                       : doMes
-                        ? "text-text"
-                        : "text-text-subtle",
+                        ? "text-foreground"
+                        : "text-muted-foreground",
                   )}
                 >
                   {format(d, "d")}
                 </span>
                 {doDia.length > 2 && (
-                  <span className="text-[10px] tabular-nums text-text-subtle">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     +{doDia.length - 2}
                   </span>
                 )}
@@ -796,15 +817,15 @@ function VisaoDeMes({
                       // AFIRMA, e um seletor que repete a asserção não prova
                       // nada.
                       data-origem={c.origem}
-                      className="flex items-center gap-1 rounded-sm px-1 py-0.5"
-                      style={{ background: fundoDaTrilha(trilha, 14) }}
+                      className="flex items-center gap-1 rounded-md px-1 py-0.5"
+                      style={{ background: fundoDaTrilha(trilha), color: "var(--foreground)" }}
                     >
                       <span
                         aria-hidden
-                        className="h-1.5 w-1.5 shrink-0 rounded-full"
+                        className="size-1.5 shrink-0 rounded-full"
                         style={{ backgroundColor: corDaTrilha(trilha) }}
                       />
-                      <span className="truncate text-[10px] leading-4 text-text">
+                      <span className="truncate text-xs leading-4 tabular-nums">
                         {rotuloHora(new Date(c.comeca), fuso)} {c.titulo}
                       </span>
                     </div>
@@ -1061,7 +1082,8 @@ export function GradeDaAgenda({
       data-testid="grade-da-agenda"
       data-visao={visao}
       className={cn(
-        "flex min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-surface",
+        // Grade semanal do Work (DS §10.23): borda 1px, raio 12, fundo `card`.
+        "flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card",
         className,
       )}
     >
@@ -1079,7 +1101,7 @@ export function GradeDaAgenda({
         // largura simplesmente sumiria pela direita, sem barra para trazê-la de volta.
         <div ref={gradeRef} className="flex min-h-0 flex-1 overflow-auto">
           <ColunaDeHoras />
-          <div className="flex min-w-0 flex-1">
+          <div className="flex flex-1">
             {dias.map((d) => (
               <ColunaDeDia
                 key={d.toISOString()}

@@ -85,7 +85,9 @@ describe("os elos que somem sem barulho", () => {
   it("a aba existe dentro do canal do parceiro", () => {
     // Sem porta, a tela não é alcançável — e o CI já reprova tela sem porta.
     const fonte = readFileSync("components/connections/ConexoesShell.tsx", "utf8");
-    expect(fonte).toMatch(/\n\s*<TemplatesParceiroClient \/>/);
+    // Hoje a aba vem num ternário com a conexão (controle segmentado da etapa 7);
+    // o que importa é o cliente sem `rota` estar montado, não a linha própria.
+    expect(fonte).toMatch(/<TemplatesParceiroClient \/>/);
     expect(fonte).toMatch(/Modelos do parceiro/);
   });
 

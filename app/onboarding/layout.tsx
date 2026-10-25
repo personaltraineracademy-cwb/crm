@@ -57,9 +57,13 @@ export default async function OnboardingLayout({ children }: { children: React.R
     iconeUrl === ICONE_DESENHADO &&
     marcaEhADoProduto({ name: marcaDoIcone.nome, logoUrl: marcaDoIcone.logoUrl });
 
+  // O assistente em etapas não tem padrão no DS (inventário §2.10). Adaptado:
+  // coluna de leitura de 768 (max-w-3xl) centrada, porque é uma sequência de
+  // formulários lidos de cima para baixo; o fundo é o da página e cada etapa é
+  // um cartão (card, borda, raio 12, sem sombra).
   return (
     <IdiomaProvider locale={user.idioma}>
-      <div className="flex min-h-screen flex-col bg-muted/40">
+      <div className="flex min-h-screen flex-col bg-background">
         <header className="border-b bg-background">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-6 py-4">
             <div className="flex items-center gap-3">
@@ -76,11 +80,11 @@ export default async function OnboardingLayout({ children }: { children: React.R
                   alt=""
                   aria-hidden
                   decoding="async"
-                  className="h-9 w-9 rounded-md object-contain"
+                  className="h-9 w-9 rounded-lg object-contain"
                 />
               )}
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">{marcaDoIcone.nome}</p>
+                <p className="text-xs text-muted-foreground">{marcaDoIcone.nome}</p>
                 <h1 className="text-lg font-semibold tracking-tight">{activeOrg.name}</h1>
               </div>
             </div>

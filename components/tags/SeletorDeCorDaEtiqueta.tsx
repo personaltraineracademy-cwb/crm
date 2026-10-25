@@ -80,7 +80,7 @@ export function SeletorDeCorDaEtiqueta({ cor, onChange, tag, disabled, rotulo }:
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto p-3">
-        <p className="mb-2 text-xs font-semibold text-text">{rotuloDoGatilho}</p>
+        <p className="mb-2 text-xs font-semibold text-foreground">{rotuloDoGatilho}</p>
         <div className="flex flex-wrap items-center gap-2">
           {PALETA_DE_ETIQUETAS.map((tom) => (
             <button

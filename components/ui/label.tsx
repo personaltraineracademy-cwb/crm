@@ -21,14 +21,20 @@ import { cn } from "@/lib/utils"
 //
 // `inline-block` e não `block`, por duas medidas: o rótulo continua com largura
 // shrink-to-fit (é o que `inline` dava, e `block` esticaria para a linha
-// inteira), e a caixa do grupo fica a 4px do que o Tailwind 3 rendia, contra
-// 10px do `block`. A diferença residual é o `leading-none` desta mesma classe
-// finalmente valendo: enquanto o rótulo era `inline`, quem mandava na altura da
-// linha era o strut do pai, e o token era ignorado. Fechar esses 4px exige tirar
-// o `leading-none` — decisão de design, não de migração, e por isso não foi
-// tomada aqui.
+// inteira), e `inline-block` respeita a margem do `space-y-*`.
+//
+// Etapa 3A (Unnify, DS §4.2 e §10.2): rótulo de campo é `sm`/500 com a
+// entrelinha do degrau, 20px (`leading-5`). O `leading-none` que vinha daqui
+// deixava a caixa do rótulo com 14px; com o rótulo `inline-block`, o token passou
+// a valer, e a escolha que a migração do Tailwind 4 deixou em aberto ("decisão de
+// design, não de migração") foi tomada pelo DS: cada grupo rótulo + campo cresce
+// 6px. Desabilitado a 0,5, como todo controle (DS §9.1).
+//
+// `flex` (o rótulo do Work) ficou de fora de propósito: com ele, todo filho do
+// rótulo vira item flexível, e o texto corrido com link ou negrito no meio
+// ("Aceito os <a>termos</a>") perderia os espaços entre as palavras.
 const labelVariants = cva(
-  "inline-block text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  "inline-block text-sm leading-5 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
 )
 
 const Label = React.forwardRef<
@@ -38,6 +44,7 @@ const Label = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
+    data-slot="label"
     className={cn(labelVariants(), className)}
     {...props}
   />

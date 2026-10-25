@@ -181,12 +181,12 @@ describe("a visão de semana", () => {
       negocio("l2", "Sem data marcada", {}),
     ]);
 
-    await userEvent.click(screen.getByTestId("calendario-semana"));
+    await userEvent.click(screen.getByRole("button", { name: "Semana" }));
 
     expect(screen.getByText("Retorno de hoje")).toBeInTheDocument();
     expect(screen.queryByText("Sem data marcada")).not.toBeInTheDocument();
-    expect(screen.getByTestId("calendario-mes")).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByTestId("calendario-semana")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Mês" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Semana" })).toHaveAttribute("aria-pressed", "true");
   });
 });
 

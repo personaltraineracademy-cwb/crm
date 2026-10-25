@@ -26,6 +26,7 @@ import { FilterBar } from "@/components/kanban/FilterBar";
 import { BulkActionBar } from "@/components/kanban/BulkActionBar";
 import { NewLeadDialog } from "@/components/kanban/NewLeadDialog";
 import { Button } from "@/components/ui/button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   Select,
   SelectContent,
@@ -38,7 +39,6 @@ import type { LeadFilters } from "@/lib/kanban/filters";
 import { applyFilters, filtersFromParams, filtersToParams } from "@/lib/kanban/filters";
 import { categoriaDoMotivo } from "@/lib/leads/motivos-de-perda-do-funil";
 import { ROLE_RANK, type Role } from "@/lib/auth/types";
-import { cn } from "@/lib/utils";
 
 export function PipelinePageClient({
   pipelineId,
@@ -205,36 +205,15 @@ export function PipelinePageClient({
           é a mesma lógica do interruptor Lista/Calendário da tela de Tarefas.
         */}
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <div className="flex items-center gap-0.5 rounded-md border bg-muted p-0.5">
-            <button
-              type="button"
-              data-testid="visao-quadro"
-              aria-pressed={visao === "quadro"}
-              onClick={() => setVisao("quadro")}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
-                visao === "quadro"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("Quadro")}
-            </button>
-            <button
-              type="button"
-              data-testid="visao-calendario"
-              aria-pressed={visao === "calendario"}
-              onClick={() => setVisao("calendario")}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
-                visao === "calendario"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("Calendário")}
-            </button>
-          </div>
+          <SegmentedControl
+            aria-label={t("Visualização")}
+            value={visao}
+            onValueChange={setVisao}
+            options={[
+              { value: "quadro", label: t("Quadro") },
+              { value: "calendario", label: t("Calendário") },
+            ]}
+          />
           <Button onClick={() => setNewOpen(true)} disabled={!data} className="shrink-0">
             <Plus size={16} className="mr-2" /> {t("Novo Lead")}
           </Button>

@@ -96,21 +96,27 @@ describe("a citação de uma mensagem APAGADA não devolve o texto", () => {
 /**
  * A TELA EM BRANCO DO CELULAR.
  *
- * A regra é invariante, não gosto: abaixo do `md` cabe UMA coluna, e uma tem de
+ * A regra é invariante, não gosto: abaixo do `lg` cabe UMA coluna, e uma tem de
  * aparecer. "Nenhuma das duas" é o defeito, e ele existia porque as duas
  * decidiam por dados diferentes — a lista pelo id, a conversa pelo objeto já
  * carregado. Este bloco cobre os dois estados possíveis, não um caso feliz.
  */
 /**
- * O que o navegador aplica abaixo do `md`: as classes sem prefixo e as com
- * `max-md:` (sem o prefixo); as demais variantes não valem. `invisible` conta
+ * O que o navegador aplica abaixo do `lg`: as classes sem prefixo e as com
+ * `max-lg:` (sem o prefixo); as demais variantes não valem. `invisible` conta
  * como escondida — é como a lista sai da frente sem perder a rolagem.
  */
 function visivelNoCelular(classes: string): boolean {
-  const abaixoDoMd = classes
+  const abaixoDoLg = classes
     .split(/\s+/)
-    .flatMap((c) => (c.startsWith("max-md:") ? [c.slice("max-md:".length)] : c.includes(":") ? [] : [c]));
-  return abaixoDoMd.includes("flex") && !abaixoDoMd.includes("hidden") && !abaixoDoMd.includes("invisible");
+    .flatMap((c) =>
+      c.startsWith("max-lg:") ? [c.slice("max-lg:".length)] : c.includes(":") ? [] : [c],
+    );
+  return (
+    abaixoDoLg.includes("flex") &&
+    !abaixoDoLg.includes("hidden") &&
+    !abaixoDoLg.includes("invisible")
+  );
 }
 
 describe("no celular sempre há exatamente UMA coluna na tela", () => {
@@ -135,8 +141,8 @@ describe("no celular sempre há exatamente UMA coluna na tela", () => {
     for (const temSelecao of [false, true]) {
       const { lista, conversa } = colunasDoCelular(temSelecao);
       for (const c of [lista, conversa]) {
-        expect(c.split(/\s+/).includes("hidden") ? c : `${c} md:flex`).toContain("md:flex");
-        // Camada e invisibilidade valem SÓ abaixo do `md`: sem prefixo, o
+        expect(c.split(/\s+/).includes("hidden") ? c : `${c} lg:flex`).toContain("lg:flex");
+        // Camada e invisibilidade valem SÓ abaixo do `lg`: sem prefixo, o
         // computador ganharia uma conversa por cima da lista.
         const semPrefixo = c.split(/\s+/).filter((x) => !x.includes(":"));
         expect(semPrefixo).not.toContain("fixed");
@@ -151,13 +157,13 @@ describe("no celular sempre há exatamente UMA coluna na tela", () => {
     // o aviso de canal caído é o único sinal de que nada entra nem sai.
     const { conversa } = colunasDoCelular(true);
     const classes = conversa.split(/\s+/);
-    expect(classes).toContain("max-md:fixed");
-    expect(classes).toContain("max-md:inset-x-0");
-    expect(classes).toContain("max-md:z-[45]");
-    expect(conversa).toContain("max-md:top-[max(var(--vv-topo,0px),var(--faixas-de-cima,0px))]");
-    expect(conversa).toMatch(/max-md:h-\[calc\(var\(--vv-topo,0px\)\+var\(--vv-altura,100dvh\)-/);
-    expect(classes).toContain("max-md:pb-[env(safe-area-inset-bottom)]");
+    expect(classes).toContain("max-lg:fixed");
+    expect(classes).toContain("max-lg:inset-x-0");
+    expect(classes).toContain("max-lg:z-[45]");
+    expect(conversa).toContain("max-lg:top-[max(var(--vv-topo,0px),var(--faixas-de-cima,0px))]");
+    expect(conversa).toMatch(/max-lg:h-\[calc\(var\(--vv-topo,0px\)\+var\(--vv-altura,100dvh\)-/);
+    expect(classes).toContain("max-lg:pb-[env(safe-area-inset-bottom)]");
     // Com o teclado aberto o indicador de home não está na tela.
-    expect(classes).toContain("max-md:data-[teclado-aberto]:pb-0");
+    expect(classes).toContain("max-lg:data-[teclado-aberto]:pb-0");
   });
 });

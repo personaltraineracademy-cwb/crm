@@ -101,7 +101,7 @@ export function Parcelas({
   const proximoNumero = lista.reduce((max, p) => Math.max(max, p.numero), 0) + 1;
 
   return (
-    <section className="rounded-md border border-border p-3">
+    <section className="rounded-lg border border-border p-3">
       <h2 className="mb-2 text-sm font-semibold">{t("Parcelas")}</h2>
 
       {podeGerenciar ? (
@@ -113,13 +113,13 @@ export function Parcelas({
       ) : null}
 
       {podeGerenciar ? (
-        <label className="mb-2 flex flex-col gap-1 text-xs text-text-muted">
+        <label className="mb-2 flex flex-col gap-1 text-xs text-muted-foreground">
           {t("Conta para receber o pagamento")}
           <select
             value={contaId}
             data-testid="parcela-conta"
             onChange={(e) => setContaId(e.target.value)}
-            className="w-64 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+            className="w-64 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
           >
             <option value="">{t("Escolha")}</option>
             {(contas.data ?? []).map((c) => (
@@ -132,18 +132,18 @@ export function Parcelas({
       ) : null}
 
       {lista.length === 0 ? (
-        <p className="text-sm text-text-muted">{t("Nenhuma parcela ainda.")}</p>
+        <p className="text-sm text-muted-foreground">{t("Nenhuma parcela ainda.")}</p>
       ) : (
         <table className="w-full text-sm">
           <tbody>
             {lista.map((p) => (
               <tr key={p.id} className="border-b border-border/60" data-testid={`parcela-${p.id}`}>
-                <td className="py-1 text-text-muted">#{p.numero}</td>
+                <td className="py-1 text-muted-foreground">#{p.numero}</td>
                 <td className="py-1">{new Date(p.vencimento).toLocaleDateString(tagDoIdioma)}</td>
                 <td className="py-1 text-right tabular-nums">
                   {formatCents(p.valor_cents, "BRL")}
                 </td>
-                <td className="py-1 text-right text-xs text-text-muted">
+                <td className="py-1 text-right text-xs text-muted-foreground">
                   {p.status === "pago" ? t("pago") : t("pendente")}
                 </td>
                 <td className="w-24 py-1 text-right">
@@ -152,7 +152,7 @@ export function Parcelas({
                       type="button"
                       disabled={!contaId || pagar.isPending}
                       onClick={() => pagar.mutate(p.id)}
-                      className="text-xs text-accent disabled:opacity-50"
+                      className="text-xs text-primary disabled:opacity-50"
                       data-testid={`pagar-parcela-${p.id}`}
                     >
                       {t("Pagar")}
@@ -203,7 +203,7 @@ function FormularioDeParcela({
         setValor("");
       }}
     >
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Número")}
         <input
           value={numero}
@@ -211,22 +211,22 @@ function FormularioDeParcela({
           min={1}
           data-testid="parcela-numero"
           onChange={(e) => setNumero(e.target.value)}
-          className="w-16 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="w-16 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Vencimento")}
         <input
           type="date"
           value={vencimento}
           data-testid="parcela-vencimento"
           onChange={(e) => setVencimento(e.target.value)}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Valor")}
         <input
           value={valor}
@@ -234,7 +234,7 @@ function FormularioDeParcela({
           placeholder="0,00"
           data-testid="parcela-valor"
           onChange={(e) => setValor(e.target.value)}
-          className="w-28 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="w-28 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 

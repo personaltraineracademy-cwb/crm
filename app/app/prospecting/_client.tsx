@@ -30,6 +30,7 @@ import {
 import { precisaDeRede, siteEfetivo } from "@/lib/prospecting/site-efetivo";
 import { opcoesDoPreparo } from "@/lib/prospecting/opcoes-do-preparo";
 import { previaPorGerar, previaValida } from "@/lib/prospecting/previa";
+import { PageHeader } from "@/components/ui/page-header";
 
 type Campaign = {
   id: string;
@@ -93,7 +94,7 @@ const labels: Record<string, string> = {
   replied: "Respondeu",
   qualified: "Qualificado",
 };
-const selectClass = "h-10 w-full rounded-md border border-input bg-background px-3 text-sm";
+const selectClass = "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm";
 const emptyConfig: CampaignConfig = {
   agent_id: "",
   channel_session_id: "",
@@ -513,23 +514,21 @@ export function ProspectingClient() {
     if (excluiu) setConfirmandoExclusao(false);
   }
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 md:p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium tracking-widest text-muted-foreground uppercase">CRM</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">{t("Prospecção")}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            {t("Encontre empresas, aborde aos poucos e acompanhe quem avança na conversa.")}
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => setSettings((s) => !s)}>
-          {t("Configurar busca")}
-        </Button>
-      </header>
+    <main className="flex w-full flex-col gap-6 p-4 md:p-6">
+      {/* Sem sobretítulo ("CRM"): o contrato do Work não usa (DS §10.10). */}
+      <PageHeader
+        title={t("Prospecção")}
+        description={t("Encontre empresas, aborde aos poucos e acompanhe quem avança na conversa.")}
+        actions={
+          <Button variant="outline" size="sm" onClick={() => setSettings((s) => !s)}>
+            {t("Configurar busca")}
+          </Button>
+        }
+      />
       {(error || query.error) && (
         <div
           role="alert"
-          className="rounded-lg border border-destructive p-4 text-sm text-destructive"
+          className="text-danger-foreground rounded-xl border border-destructive p-4 text-sm"
         >
           {error ??
             (query.error instanceof Error
@@ -854,7 +853,7 @@ export function ProspectingClient() {
                   <Badge variant="outline">{t(labels[campaign.status] ?? campaign.status)}</Badge>
                 </div>
                 {campaign.error && (
-                  <p role="alert" className="mt-4 rounded-md bg-destructive/10 p-3 text-sm">
+                  <p role="alert" className="bg-danger-soft mt-4 rounded-md p-3 text-sm">
                     {campaign.error}
                   </p>
                 )}
@@ -929,7 +928,7 @@ export function ProspectingClient() {
                     </div>
                     {campaign.status === "paused" && ritmo?.campaignId === campaign.id && (
                       <form
-                        className="mt-4 space-y-3 rounded-md border p-4"
+                        className="mt-4 space-y-3 rounded-lg bg-muted/40 p-4"
                         onSubmit={(e) => {
                           e.preventDefault();
                           void salvarRitmo();
@@ -1042,7 +1041,7 @@ export function ProspectingClient() {
                         {!manual && config.agent_id && (
                           <section
                             aria-label={t("Agente selecionado")}
-                            className="space-y-2 rounded-xl border bg-muted/20 p-4 text-sm"
+                            className="space-y-2 rounded-lg bg-muted/40 p-4 text-sm"
                           >
                             <p className="font-semibold">
                               {agents.find((agent) => agent.id === config.agent_id)?.name ??
@@ -1468,7 +1467,7 @@ export function ProspectingClient() {
                         <Label htmlFor="prospecting-ordenar">{t("Ordenar")}</Label>
                         <select
                           id="prospecting-ordenar"
-                          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                          className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
                           value={ordenar}
                           disabled={busy}
                           onChange={(e) => setOrdenar(e.target.value as "" | "score")}

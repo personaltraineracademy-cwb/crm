@@ -5,6 +5,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { AuditClient } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Audit Log" };
@@ -21,12 +22,13 @@ export default async function AuditPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Audit Log")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir("Histórico append-only de mutações na organização. Manager+.", idioma)}
-        </p>
-      </header>
+      <PageHeader
+        title={t("Audit Log")}
+        description={traduzir(
+          "Histórico append-only de mutações na organização. Manager+.",
+          idioma,
+        )}
+      />
       <AuditClient />
     </div>
   );

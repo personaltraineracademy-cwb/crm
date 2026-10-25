@@ -30,7 +30,7 @@ export function InterfaceEditor({
   );
   const options = permitidos(false, role).filter((d) => !essencial(d, role));
   return (
-    <fieldset disabled={disabled} className="space-y-3 rounded-md border p-4">
+    <fieldset disabled={disabled} className="space-y-3 rounded-lg border p-4">
       <legend className="px-1 text-sm font-medium">{t("Interface")}</legend>
       <p className="text-xs text-muted-foreground">{t("Define quais áreas aparecem na navegação. As permissões continuam sendo determinadas pelo papel. Links de conversas e avisos podem abrir áreas autorizadas que estejam ocultas.")}</p>
       <label htmlFor={id} className="block text-sm">{t("Perfil de interface")}</label>
@@ -38,7 +38,7 @@ export function InterfaceEditor({
         id={id}
         value={value.preset}
         onChange={(e) => onChange({ preset: e.target.value as InterfaceSettings["preset"] })}
-        className="h-10 w-full rounded-md border bg-background px-3 text-sm max-md:min-h-11"
+        className="h-10 w-full rounded-lg border bg-background px-3 text-sm max-md:min-h-11"
       >
         <option value="completa">{t("Completa")}</option>
         <option value="simplificada">{t("Simplificada")}</option>
@@ -57,7 +57,7 @@ export function InterfaceEditor({
             if (!items.length) return null;
             return (
               <fieldset key={group.id} className="space-y-2">
-                <legend className="mb-2 text-xs font-medium text-muted-foreground uppercase">
+                <legend className="mb-2 text-xs font-medium text-muted-foreground">
                   {t(group.label)}
                 </legend>
                 {items.map((d) => (
@@ -89,7 +89,9 @@ export function InterfaceEditor({
         </div>
       </details>
       {!interfaceTemDestino(value, role) || value.destinos?.length === 0 ? (
-        <p role="alert" className="text-sm text-destructive">{t("Selecione ao menos uma área de trabalho permitida ao papel.")}</p>
+        <p role="alert" className="text-danger-foreground text-sm">
+          {t("Selecione ao menos uma área de trabalho permitida ao papel.")}
+        </p>
       ) : null}
     </fieldset>
   );

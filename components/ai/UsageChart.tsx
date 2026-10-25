@@ -13,35 +13,33 @@ import {
 } from "recharts";
 import type { UsagePayload } from "@/lib/ai/usage/aggregate";
 import { formatCentsUSD } from "@/lib/money";
+import {
+  COR_DA_SERIE,
+  PROPS_DA_DICA,
+  PROPS_DA_GRADE,
+  PROPS_DA_LEGENDA,
+  PROPS_DO_EIXO,
+  diaDoEixo,
+  numeroCompacto,
+  numeroPtBr,
+  percentualPtBr,
+  propsDaLinha,
+} from "@/components/ai/grafico/tema-do-grafico";
 import { useT } from "@/hooks/i18n/useT";
 
 interface Props {
   payload: UsagePayload;
 }
 
-function formatDateTick(s: string, idioma: string): string {
-  const d = new Date(`${s}T00:00:00Z`);
-  return d.toLocaleDateString(idioma, {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: "UTC",
-  });
-}
+const formatDateTick = diaDoEixo;
+const formatNumber = (n: number) => numeroPtBr(n);
+const formatTokens = numeroCompacto;
 
-function formatNumber(n: number): string {
-  return n.toLocaleString("pt-BR");
-}
-
-function formatTokens(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
-  return String(n);
-}
-
+/** Cartão de gráfico (§12.4): o `Card` padrão, título `base`/600. */
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <h3 className="mb-4 text-sm font-medium text-muted-foreground">{title}</h3>
+    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
       {children}
     </div>
   );
@@ -50,18 +48,11 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 function EmptyChart() {
   const t = useT();
   return (
-    <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+    <div className="flex h-[200px] items-center justify-center rounded-lg bg-muted/40 text-sm text-muted-foreground">
       {t("Sem dados no período")}
     </div>
   );
 }
-
-const tooltipStyle = {
-  borderRadius: "8px",
-  fontSize: "12px",
-  border: "1px solid var(--color-border)",
-  background: "var(--color-surface)",
-};
 
 export function UsageChart({ payload }: Props) {
   const tagDoIdioma = useTagDeIdioma();
@@ -96,33 +87,27 @@ export function UsageChart({ payload }: Props) {
               data={series.cost_cents}
               margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="day"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 tickFormatter={(v: number) => formatCentsUSD(v)}
                 width={70}
               />
               <Tooltip
+                {...PROPS_DA_DICA}
                 formatter={(value) => [formatCentsUSD(Number(value)), t("Custo")]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={tooltipStyle}
               />
               <Line
-                type="monotone"
+                {...propsDaLinha(COR_DA_SERIE.principal)}
                 dataKey="value"
-                stroke="hsl(142 76% 36%)"
-                strokeWidth={2}
-                dot={false}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -138,33 +123,27 @@ export function UsageChart({ payload }: Props) {
               data={series.total_tokens}
               margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="day"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 tickFormatter={formatTokens}
                 width={50}
               />
               <Tooltip
+                {...PROPS_DA_DICA}
                 formatter={(value) => [formatNumber(Number(value)), t("Tokens")]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={tooltipStyle}
               />
               <Line
-                type="monotone"
+                {...propsDaLinha(COR_DA_SERIE.secundaria)}
                 dataKey="value"
-                stroke="hsl(262 83% 58%)"
-                strokeWidth={2}
-                dot={false}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -180,53 +159,44 @@ export function UsageChart({ payload }: Props) {
               data={latencyData}
               margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="day"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 // O eixo TAMBÉM em segundos. Traduzir só o título e o tooltip
                 // deixaria a régua contradizendo o rótulo — o gráfico diria
                 // "segundos" e mostraria 24.000 na lateral.
                 tickFormatter={(v: number) =>
-                  (v / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })
+                  numeroPtBr(v / 1000)
                 }
                 width={40}
               />
               <Tooltip
+                {...PROPS_DA_DICA}
                 // Segundos, não milissegundos: 17.621 ms não diz nada a quem
                 // atende; 17,6 s diz.
                 formatter={(value, name) => [
-                  `${(Number(value) / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} s`,
+                  `${numeroPtBr(Number(value) / 1000, 1)} s`,
                   name,
                 ]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={tooltipStyle}
               />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Legend {...PROPS_DA_LEGENDA} />
               <Line
-                type="monotone"
+                {...propsDaLinha(COR_DA_SERIE.principal)}
                 dataKey="p50"
                 name={t("a maioria responde em")}
-                stroke="hsl(199 89% 48%)"
-                strokeWidth={2}
-                dot={false}
               />
               <Line
-                type="monotone"
+                {...propsDaLinha(COR_DA_SERIE.comparativo)}
                 dataKey="p95"
                 name={t("pior caso comum")}
-                stroke="hsl(0 84% 60%)"
-                strokeWidth={2}
-                dot={false}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -242,33 +212,27 @@ export function UsageChart({ payload }: Props) {
               data={handoffData}
               margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+              <CartesianGrid {...PROPS_DA_GRADE} />
               <XAxis
                 dataKey="day"
                 tickFormatter={(v) => formatDateTick(v, tagDoIdioma)}
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+                {...PROPS_DO_EIXO}
                 interval="preserveStartEnd"
+                minTickGap={24}
               />
               <YAxis
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v: number) => `${v.toFixed(0)}%`}
+                {...PROPS_DO_EIXO}
+                tickFormatter={(v: number) => percentualPtBr(v, 0)}
                 width={45}
               />
               <Tooltip
-                formatter={(value) => [`${Number(value).toFixed(2)}%`, t("Handoff")]}
+                {...PROPS_DA_DICA}
+                formatter={(value) => [percentualPtBr(Number(value), 2), t("Handoff")]}
                 labelFormatter={(label) => formatDateTick(String(label), tagDoIdioma)}
-                contentStyle={tooltipStyle}
               />
               <Line
-                type="monotone"
+                {...propsDaLinha(COR_DA_SERIE.secundaria)}
                 dataKey="pct"
-                stroke="hsl(38 92% 50%)"
-                strokeWidth={2}
-                dot={false}
               />
             </LineChart>
           </ResponsiveContainer>

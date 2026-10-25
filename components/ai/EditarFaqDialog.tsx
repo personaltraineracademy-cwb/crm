@@ -128,7 +128,7 @@ export function EditarFaqDialog({ sourceId, nome, aberto, onFechar, onSalvo }: P
             onChange={(e) => setTexto(e.target.value)}
             disabled={carregando || salvando}
           />
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Uma linha")} <code>## Pergunta:</code> {t("e uma")} <code>## Resposta:</code>{" "}
             {t("por item, separados por uma linha em branco.")}
           </p>

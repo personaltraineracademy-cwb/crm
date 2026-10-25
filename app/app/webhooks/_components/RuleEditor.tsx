@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { classesDoChipDaEtapa } from "@/components/fluxo/tema-do-fluxo";
 import {
   Sheet,
   SheetContent,
@@ -509,7 +510,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
           </div>
 
           <section className="space-y-2">
-            <h3 className="text-lg font-semibold text-text">{t("QUANDO")}</h3>
+            <h3 className={classesDoChipDaEtapa("gatilho")}>{t("Quando")}</h3>
             <Select
               value={triggerEvent}
               onValueChange={(v) => {
@@ -533,7 +534,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
             </Select>
 
             {ehGatilhoDeNovoContato ? (
-              <div className="space-y-1 rounded-sm border border-border p-3">
+              <div className="space-y-1 rounded-lg bg-muted/40 p-3">
                 <Label>{t("Fonte do formulário")}</Label>
                 <Select value={webhookSourceId} onValueChange={setWebhookSourceId}>
                   <SelectTrigger aria-label={t("Fonte do formulário")}>
@@ -560,7 +561,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
                 regra é salva e nunca dispara — por isso o schema da API também
                 a recusa. */}
             {ehGatilhoDeData ? (
-              <div className="space-y-3 rounded-sm border border-border p-3">
+              <div className="space-y-3 rounded-lg bg-muted/40 p-3">
                 <p className="text-sm text-muted-foreground">
                   {t(
                     "O aviso sai no dia em que faltarem N dias para a data, uma vez por negócio. Para avisar DEPOIS da data, use N negativo — -60 confirma a entrega 60 dias após o casamento.",
@@ -641,7 +642,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
                 varredura não sabe onde olhar — por isso o schema da API também
                 a recusa. */}
             {ehGatilhoDeTempo ? (
-              <div className="space-y-3 rounded-sm border border-border p-3">
+              <div className="space-y-3 rounded-lg bg-muted/40 p-3">
                 <p className="text-sm text-muted-foreground">
                   {triggerEvent === GATILHO_SILENCIO
                     ? t(
@@ -780,7 +781,10 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
           </section>
 
           <section className="space-y-3">
-            <h3 className="text-lg font-semibold text-text">{t("SE (opcional)")}</h3>
+            <h3 className="flex items-center gap-2">
+              <span className={classesDoChipDaEtapa("condicao")}>{t("Se")}</span>
+              <span className="text-xs text-muted-foreground">{t("opcional")}</span>
+            </h3>
             {/* #2727 — o grupo do TOPO: "todas" combina por E (a lista simples,
                 o formato de sempre) e "qualquer uma" grava `{any:[…]}`. */}
             {conditions.length > 0 ? (
@@ -811,7 +815,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
                 (cond.field !== "" && !curatedFields.some((f) => f.value === cond.field));
               const curated = curatedFields.find((f) => f.value === cond.field);
               return (
-                <div key={idx} className="space-y-1 rounded-sm border border-border p-3">
+                <div key={idx} className="space-y-1 rounded-lg bg-muted/40 p-3">
                   <div className="flex flex-wrap items-center gap-2">
                     {isAdvanced ? (
                       <Input
@@ -905,11 +909,13 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
           </section>
 
           <section className="space-y-3">
-            <h3 className="text-lg font-semibold text-text">{t("ENTÃO")}</h3>
+            <h3 className={classesDoChipDaEtapa("acao")}>{t("Então")}</h3>
             {actions.map((action, idx) => (
-              <div key={idx} className="space-y-3 rounded-sm border border-border p-3">
+              <div key={idx} className="space-y-3 rounded-lg bg-muted/40 p-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium text-text">{t(ACTION_LABELS[action.type])}</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {t(ACTION_LABELS[action.type])}
+                  </p>
                   <div className="flex items-center gap-1">
                     <Button
                       type="button"
@@ -973,7 +979,7 @@ export function RuleEditor({ open, onOpenChange, rule }: Props) {
           </section>
 
           {!isEdit ? (
-            <p className="rounded-sm border border-border bg-muted p-3 text-sm text-muted-foreground">
+            <p className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
               {t("A automação nasce pausada. Revise e ligue quando estiver pronta.")}
             </p>
           ) : null}

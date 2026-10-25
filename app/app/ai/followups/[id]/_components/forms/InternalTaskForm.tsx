@@ -67,7 +67,7 @@ export function InternalTaskForm({
   return (
     <div className="grid gap-2 sm:grid-cols-2" data-testid="internal-task-form">
       <div className="space-y-1 sm:col-span-2">
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Este nó cria uma tarefa para a equipe — nenhuma mensagem sai para o cliente.")}
         </p>
       </div>
@@ -134,7 +134,7 @@ export function InternalTaskForm({
         </Select>
       </div>
       {erro && (
-        <p className="text-xs text-error-fg sm:col-span-2" role="alert">
+        <p className="text-danger-foreground text-xs sm:col-span-2" role="alert">
           {erro}
         </p>
       )}

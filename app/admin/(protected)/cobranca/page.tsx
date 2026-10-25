@@ -19,6 +19,7 @@ import { ConexaoDaCobranca } from "./_conexao";
 import { PlanosDaInstalacao, type PlanoDaTela } from "./_planos";
 import { ReguaDaCobranca } from "./_regua";
 import { FaixaDoModoDeTeste, VisaoGeral } from "./_visao-geral";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Cobrança — Admin Plataforma" };
 export const dynamic = "force-dynamic";
@@ -109,8 +110,8 @@ export default async function CobrancaPage({ searchParams }: { searchParams: Pro
                   </td>
                   <td className="pr-4">{t(ROTULO_DO_ESTADO[a.estado])}</td>
                   <td className="pr-4">{quando(a.estado === "trial" ? a.trial_ate : a.proximo_vencimento)}</td>
-                  <td className={a.estado === "em_atraso" ? "pr-4 text-error-fg" : "pr-4"}>{a.estado === "em_atraso" ? quando(a.vencida_desde) : "—"}</td>
-                  <td className={atrasada ? "pr-4 text-error-fg" : "pr-4"}>{a.provedor ? quando(a.relida_em) : "—"}</td>
+                  <td className={a.estado === "em_atraso" ? "pr-4 text-danger-foreground" : "pr-4"}>{a.estado === "em_atraso" ? quando(a.vencida_desde) : "—"}</td>
+                  <td className={atrasada ? "pr-4 text-danger-foreground" : "pr-4"}>{a.provedor ? quando(a.relida_em) : "—"}</td>
                   <td className="pr-4">{a.ultimo_erro ? t(ROTULO_DO_ERRO[a.ultimo_erro]) : "—"}</td>
                   <td className="py-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -128,12 +129,12 @@ export default async function CobrancaPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Cobrança dos seus clientes")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t("Os planos que você vende e as empresas que pagam. Empresa sem plano é isenta: não paga e não tem limites.")}
-        </p>
-      </header>
+      <PageHeader
+        title={t("Cobrança dos seus clientes")}
+        description={t(
+          "Os planos que você vende e as empresas que pagam. Empresa sem plano é isenta: não paga e não tem limites.",
+        )}
+      />
       <FaixaDoModoDeTeste modo={visao.modo} idioma={idioma} />
       <AbasDaCobranca
         inicial={inicial}

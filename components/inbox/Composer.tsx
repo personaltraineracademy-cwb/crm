@@ -56,6 +56,44 @@ import { BarraDeRecursos } from "@/components/inbox/composer/BarraDeRecursos";
 import { type Recurso } from "@/lib/inbox/recursos";
 import type { Message } from "@/lib/types/messaging";
 
+/**
+ * O DESENHO DO COMPOSITOR (Unnify, adaptado: o DS não cobre caixa de entrada).
+ *
+ * O campo é um GRUPO de campo (`InputGroup` do Work, DS §10.2): a borda e o
+ * foco são do grupo inteiro, e as ações (anexo, emoji, sugestão) e o enviar
+ * moram dentro dele: ações `xs` (28, fantasmas) à esquerda e o enviar primário
+ * `icon` (36) à direita. Altura mínima de 44 numa linha; o texto cresce até o teto
+ * de `autoresize` (160px) e as ações ficam presas embaixo, junto da última
+ * linha. Foco: borda `ring` + anel de 3px a 35% — o do grupo do Work.
+ */
+const GRUPO_DO_CAMPO = [
+  "flex min-h-11 w-full min-w-0 items-end gap-0.5 rounded-lg border border-input bg-card p-0.5",
+  "transition-[border-color,box-shadow] duration-fast ease-out motion-reduce:transition-none",
+  "hover:border-interactive-border",
+  "focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/35",
+  "has-disabled:opacity-50",
+].join(" ");
+
+/**
+ * As faixas acima do campo ("respondendo a", aviso do rascunho, curinga,
+ * bloqueio) são `Alert` compacto (DS §10.19): raio 8, borda 1px, 10 × 8,
+ * texto `xs`, no máximo uma ação. Neutra em `card`; estado pelo trio.
+ */
+const FAIXA = "mb-1.5 flex items-start gap-2 rounded-lg border px-2.5 py-2 text-xs";
+const FAIXA_NEUTRA = `${FAIXA} border-border bg-card`;
+const FAIXA_DE_AVISO = `${FAIXA} border-warning-border bg-warning-soft text-warning-foreground`;
+
+/**
+ * As duas pílulas de modo. A de nota usa o trio de chip de aviso (DS §3.3):
+ * a versão anterior era `bg-warning text-warning-fg` — âmbar sólido com texto
+ * âmbar —, 1,16:1 no escuro. Chip de 28 (raio 6, `xs`/500) com alvo de 44 no
+ * toque sem mexer no desenho (`ds-alvo-44`).
+ */
+const PILULA =
+  "ds-alvo-44 inline-flex h-7 items-center rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring";
+const PILULA_INATIVA =
+  "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground";
+
 export interface ComposerHandle {
   focus: () => void;
 }
@@ -723,7 +761,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
 
   if (blockedReason) {
     return (
-      <div className="border-t border-border bg-muted/40 px-4 py-3 text-center text-xs text-muted-foreground">
+      <div className="border-t border-border bg-muted/40 px-4 py-3 text-center text-sm text-muted-foreground">
         {blockedReason}
       </div>
     );
@@ -734,7 +772,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
       <div
         className={cn(
           "relative border-t border-border bg-background px-3 py-2",
-          mode === "note" && "border-warning/40 bg-warning-bg",
+          mode === "note" && "border-warning-border bg-warning-soft",
         )}
       >
         {/* O BLOCO DA ASSISTÊNCIA SÓ COM SUGESTÃO (issue #3027): sem rascunho
@@ -744,10 +782,10 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
             inteiro, como sempre — e sai quando ela é enviada ou descartada.
             Com o teclado virtual aberto, a sugestão sai da frente (F2): sobram
             ~250px de tela num iPhone, e o fio da conversa vale mais que ela. O
-            marcador é da camada da conversa (`useAlturaVisivel`), e o `max-md:`
+            marcador é da camada da conversa (`useAlturaVisivel`), e o `max-lg:`
             mantém o computador intacto. */}
         {mode === "reply" && sugestao && (
-          <div className="max-md:group-data-[teclado-aberto]/conversa:hidden">
+          <div className="max-lg:group-data-[teclado-aberto]/conversa:hidden">
             <ReplyReviewPanel conversationId={conversationId} disabled={isDisabled} />
           </div>
         )}
@@ -774,7 +812,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
         {rascunho && !rascunhoUsado && mode === "reply" && (
           <div
             data-testid="aviso-rascunho"
-            className="mb-1.5 flex items-start gap-2 rounded-md border-l-2 border-primary bg-muted/60 px-2 py-1.5 text-xs"
+            className={FAIXA_NEUTRA}
           >
             <p className="min-w-0 flex-1 text-muted-foreground">
               {rascunho.leitura.estado === "sugerido" ? (
@@ -798,7 +836,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
         {motivoCuringa && (
           <div
             data-testid="aviso-curinga-literal"
-            className="mb-1.5 flex items-start gap-2 rounded-md border-l-2 border-warning bg-warning-bg px-2 py-1.5 text-xs text-warning-fg"
+            className={FAIXA_DE_AVISO}
           >
             <p className="min-w-0 flex-1">
               {t("Contato sem nome no CRM: {{nome}}/{{primeiro_nome}} ficaram literais no texto. Edite antes de enviar.")}
@@ -812,7 +850,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
         {aguardandoAssumir && (
           <div
             data-testid="aviso-assumir"
-            className="mb-1.5 flex items-start gap-2 rounded-md border-l-2 border-primary bg-muted/60 px-2 py-1.5 text-xs"
+            className={FAIXA_NEUTRA}
           >
             <p className="min-w-0 flex-1 text-muted-foreground">
               {t("Assuma esta conversa para responder.")}
@@ -823,11 +861,12 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
           <button
             type="button"
             onClick={() => setMode("reply")}
+            aria-pressed={mode === "reply"}
             className={cn(
-              "min-h-11 rounded-full px-3 py-1 text-xs font-medium transition-colors lg:min-h-0 lg:px-2.5",
+              PILULA,
               mode === "reply"
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:bg-muted",
+                ? "border-interactive-border bg-interactive text-interactive-foreground"
+                : PILULA_INATIVA,
             )}
           >
             {t("Responder")}
@@ -835,11 +874,12 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
           <button
             type="button"
             onClick={() => setMode("note")}
+            aria-pressed={mode === "note"}
             className={cn(
-              "min-h-11 rounded-full px-3 py-1 text-xs font-medium transition-colors lg:min-h-0 lg:px-2.5",
+              PILULA,
               mode === "note"
-                ? "bg-warning text-warning-fg"
-                : "text-muted-foreground hover:bg-muted",
+                ? "border-warning-border bg-warning-soft text-warning-foreground"
+                : PILULA_INATIVA,
             )}
           >
             {t("Nota interna")}
@@ -856,9 +896,14 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
           relê-la — ela está logo acima, no fio.
         */}
         {respondendo && mode === "reply" && (
-          <div className="mb-1 flex items-start gap-2 rounded-md border-l-2 border-primary bg-muted/60 px-2 py-1.5">
+          <div className="relative mb-1.5 flex items-start gap-2 rounded-lg bg-muted/40 py-1.5 pr-1 pl-3">
+            {/* A barra de 2px `primary` da citação (DS §10.23, texto rico), a mesma do balão. */}
+            <span
+              className="absolute inset-y-1.5 left-1 w-0.5 rounded-full bg-primary"
+              aria-hidden
+            />
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-medium text-primary">
+              <div className="text-xs font-medium text-primary">
                 {respondendo.direction === "outbound" ? t("Você") : t("Cliente")}
               </div>
               <div className="line-clamp-2 text-xs text-muted-foreground">
@@ -871,7 +916,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
               type="button"
               onClick={onCancelarResposta}
               aria-label={t("Cancelar resposta")}
-              className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:size-auto lg:p-0.5"
+              className="ds-alvo-44 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
             >
               <X className="size-4" />
             </button>
@@ -888,7 +933,7 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
             onEscolher={escolherRecurso}
           />
         )}
-        <div className="flex items-end gap-2">
+        <div className={GRUPO_DO_CAMPO} data-slot="grupo-do-campo">
           {/* O "+" existe nos DOIS modos desde a F3 da #1863: em "Nota interna"
               ele abre o mesmo menu, com as DUAS primeiras opções — foto/vídeo e
               documento — porque a nota passou a aceitar anexo. A terceira
@@ -996,8 +1041,11 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer(
               // 16px abaixo do `md`: o Safari do iPhone AMPLIA a página ao focar
               // campo com fonte menor, e a conversa sai do quadro. 44px de alvo
               // até o `lg`, como o resto dos botões de toque.
-              "max-h-40 min-h-11 flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-base md:text-sm lg:min-h-9",
-              "placeholder:text-muted-foreground focus:ring-1 focus:ring-ring focus:outline-hidden",
+              // Sem borda nem anel próprios: quem desenha a borda e o foco é o
+              // grupo (`GRUPO_DO_CAMPO`). A altura de 44 é a do grupo, e o campo
+              // ocupa a linha das ações (36).
+              "max-h-40 min-h-9 min-w-0 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-base text-foreground shadow-none md:text-sm",
+              "placeholder:text-muted-foreground focus:outline-hidden focus-visible:outline-hidden",
             )}
             disabled={mode === "note" ? isDisabled : respostaBarrada}
             aria-label={t("Mensagem")}

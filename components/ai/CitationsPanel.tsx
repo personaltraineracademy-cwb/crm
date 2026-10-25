@@ -49,7 +49,7 @@ export function CitationsPanel({
               return (
               <div
                 key={c.chunk_id ?? `cit-${i}`}
-                className="rounded-md border p-3 text-sm"
+                className="rounded-lg border p-3 text-sm"
               >
                 <div className="mb-1 flex items-center justify-between">
                   <Badge variant="secondary">
@@ -76,7 +76,7 @@ export function CitationsPanel({
             })
           )}
           {messageId && (
-            <p className="pt-2 text-[10px] text-muted-foreground">
+            <p className="pt-2 text-xs text-muted-foreground">
               message_id: {messageId}
             </p>
           )}

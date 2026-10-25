@@ -105,7 +105,7 @@ export function CollectForm({
             commit({ ...state, key: e.target.value });
           }}
         />
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Minúsculas, sem espaço (ex.: cidade, cnh, moto_interesse).")}
         </p>
       </div>
@@ -162,7 +162,7 @@ export function CollectForm({
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
           <Label htmlFor="collect-correcao">{t("Permitir correção")}</Label>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Se o cliente mudar de ideia, a nova informação substitui a anterior.")}
           </p>
         </div>
@@ -187,12 +187,12 @@ export function CollectForm({
             commit({ ...state, question: e.target.value });
           }}
         />
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("A IA pode adaptar a pergunta ao tom da conversa.")}
         </p>
       </div>
 
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

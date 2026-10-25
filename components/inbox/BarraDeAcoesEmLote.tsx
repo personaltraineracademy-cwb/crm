@@ -95,7 +95,8 @@ export function BarraDeAcoesEmLote({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface-elevated px-3 py-2"
+      // Barra de seleção: o fundo suave da seleção (`interactive`, DS §9.1).
+      className="bg-interactive flex flex-wrap items-center gap-1.5 border-b border-border px-3 py-2"
       role="toolbar"
       aria-label={t("Ações em lote")}
       data-testid="barra-de-acoes-em-lote"
@@ -207,7 +208,7 @@ export function BarraDeAcoesEmLote({
                 </SelectContent>
               </Select>
               {!membros.isLoading && lista.length === 0 && (
-                <p className="text-xs text-text-subtle">
+                <p className="text-xs text-muted-foreground">
                   {t("Nenhum atendente disponível para transferir.")}
                 </p>
               )}

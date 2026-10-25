@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Card } from "@/components/ui/card";
+import { StatCard as CartaoDeMetrica } from "@/components/ui/stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAiUsage, type AiUsageFilters } from "@/hooks/ai/useAiUsage";
 import { UsageFilters, type UsageFiltersAgent } from "@/components/ai/UsageFilters";
@@ -27,32 +27,21 @@ function formatCentsUSDFino(cents: number): string {
   });
 }
 
-function StatCard({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
-  return (
-    <Card className="p-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
-      {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
-    </Card>
-  );
+/**
+ * O cartão de métrica do Unnify (§10.11), com o `hint` daqui no lugar do
+ * contexto. A grade é `auto-fit` (§11.3): as colunas seguem a largura.
+ */
+function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
+  return <CartaoDeMetrica label={label} value={value} context={hint} />;
 }
+
+const GRADE_DE_KPIS = "grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4";
 
 function StatSkeletons() {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className={GRADE_DE_KPIS}>
       {Array.from({ length: 6 }).map((_, i) => (
-        <Card key={i} className="p-4">
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="mt-2 h-8 w-32" />
-        </Card>
+        <CartaoDeMetrica key={i} label="" value="" loading />
       ))}
     </div>
   );
@@ -62,8 +51,8 @@ function ChartSkeletons() {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-lg border bg-card p-4">
-          <Skeleton className="h-3 w-32" />
+        <div key={i} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+          <Skeleton className="h-5 w-40" />
           <Skeleton className="mt-4 h-[200px] w-full" />
         </div>
       ))}
@@ -100,7 +89,7 @@ export function UsageDashboardClient({ agents, initial }: Props) {
         </>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={GRADE_DE_KPIS}>
             <StatCard
               label={t("Custo no período")}
               // DÓLAR: esta tela mostrava o MESMO número em duas moedas — o card de
@@ -142,7 +131,7 @@ export function UsageDashboardClient({ agents, initial }: Props) {
             />
             <StatCard
               label={t("Passaram para uma pessoa")}
-              value={`${(q.data.totals.handoff_rate * 100).toFixed(2)}%`}
+              value={`${(q.data.totals.handoff_rate * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`}
               hint={t("quanto mais alto, mais a IA precisou de ajuda")}
             />
             {/*

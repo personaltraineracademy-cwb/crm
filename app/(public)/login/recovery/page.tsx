@@ -26,14 +26,16 @@ export default async function RecoveryPage({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1.5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Recuperar acesso")}</h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">
+          {t("Recuperar acesso")}
+        </h1>
         <p className="text-sm text-muted-foreground">
           {t("Use um código de recuperação para reconfigurar sua autenticação em duas etapas.")}
         </p>
       </div>
       <RecoveryForm next={next} />
-      <div className="text-center text-sm">
+      <div className="border-t border-border pt-6 text-sm">
         <Link
           href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
           className="text-muted-foreground underline-offset-4 hover:underline"

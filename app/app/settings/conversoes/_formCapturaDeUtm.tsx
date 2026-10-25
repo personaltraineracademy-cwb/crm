@@ -174,7 +174,7 @@ export function FormularioDeCapturaDeUtm({
           </p>
         </div>
 
-        <div className="flex items-center justify-between rounded-md border p-4">
+        <div className="flex items-center justify-between rounded-lg bg-muted/40 p-4">
           <div className="flex flex-col gap-1">
             <Label htmlFor={`${plataforma}_captura_habilitada`}>
               {t("Endereço de captura ligado")}
@@ -192,7 +192,7 @@ export function FormularioDeCapturaDeUtm({
           />
         </div>
 
-        <div className="rounded-md border p-4">
+        <div className="rounded-lg bg-muted/40 p-4">
           <p className="text-sm font-medium">{t("Cole este endereço no botão da sua página")}</p>
           {plataforma === "google" && (
             <p className="mt-2 text-sm">

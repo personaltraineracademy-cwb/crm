@@ -72,12 +72,14 @@ export function TrechosDoMaterialDialog({ sourceId, nome, aberto, onFechar }: Pr
         </DialogHeader>
 
         <div className="max-h-[60vh] space-y-3 overflow-y-auto" data-testid="material-trechos-lista">
-          {isLoading ? <p className="text-sm text-text-muted">{t("Carregando…")}</p> : null}
+          {isLoading ? <p className="text-sm text-muted-foreground">{t("Carregando…")}</p> : null}
           {isError ? (
-            <p className="text-sm text-error-fg">{t("Não consegui ler os trechos agora.")}</p>
+            <p className="text-danger-foreground text-sm">
+              {t("Não consegui ler os trechos agora.")}
+            </p>
           ) : null}
           {data && data.trechos.length === 0 ? (
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-muted-foreground">
               {t(
                 "Este material ainda não foi preparado — não há trecho nenhum para o agente encontrar.",
               )}
@@ -85,8 +87,8 @@ export function TrechosDoMaterialDialog({ sourceId, nome, aberto, onFechar }: Pr
           ) : null}
           {/* `trecho`, e não `t`: o `t` do `useT()` já ocupa o nome neste escopo. */}
           {data?.trechos.map((trecho) => (
-            <div key={trecho.id} className="rounded-md border border-border bg-surface p-3">
-              <div className="mb-1 flex items-center justify-between text-xs text-text-muted">
+            <div key={trecho.id} className="rounded-lg border border-border bg-card p-3">
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                 <span>
                   {t("Trecho")} {trecho.position + 1}
                 </span>
@@ -98,7 +100,7 @@ export function TrechosDoMaterialDialog({ sourceId, nome, aberto, onFechar }: Pr
             </div>
           ))}
           {data?.truncado ? (
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-muted-foreground">
               {t("Mostrando os primeiros trechos de")} {data.total}.{" "}
               {t(
                 "Uma tela não folheia mil pedaços — o restante está no acervo e o agente alcança todos.",

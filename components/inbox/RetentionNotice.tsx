@@ -18,8 +18,8 @@ const KIND_ICON: Record<RetentionKind, typeof ShieldCheck> = {
 };
 
 const KIND_CLASS: Record<RetentionKind, string> = {
-  protection: "border-warning bg-warning-bg text-warning-fg",
-  compliance: "border-destructive/40 bg-destructive/10 text-destructive",
+  protection: "border-warning-border bg-warning-soft text-warning-foreground",
+  compliance: "border-danger-border bg-danger-soft text-danger-foreground",
   quality: "border-border bg-muted/40 text-muted-foreground",
   handoff: "border-border bg-muted/40 text-muted-foreground",
 };

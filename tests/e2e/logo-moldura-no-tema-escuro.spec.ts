@@ -516,8 +516,8 @@ test.describe("a moldura do logo no tema escuro", () => {
 
   test("(5) A FRONTEIRA: no escuro, a marca do PRODUTO não recebe moldura", async ({ page }) => {
     await loginComTotp(page, creds.users.dono!.email, secret());
-    // Tira o logo enviado: sem ele, e com o nome padrão, a barra cai no ramo
-    // `marcaDoProduto` — o `<svg>` inline desenhado para os dois temas.
+    // Tira o logo enviado: sem ele, a barra cai no ramo `marcaDoProduto` — o
+    // `<svg>` com a arte do Unnify CRM para os dois temas.
     await removerLogoSeHouver(page, "/admin/marca", "instalacao");
 
     await page.goto("/app/inbox");
@@ -530,7 +530,7 @@ test.describe("a moldura do logo no tema escuro", () => {
       "ainda há um <img> na barra — o logo enviado não foi removido, e o caso mediria outra coisa",
     ).toHaveCount(0, { timeout: 15_000 });
 
-    const marca = barra.getByRole("img", { name: "DeskcommCRM" });
+    const marca = barra.getByRole("img", { name: "Unnify CRM" });
     await expect(
       marca,
       "a barra não caiu no ramo `marcaDoProduto` — sem ele não há fronteira para medir",

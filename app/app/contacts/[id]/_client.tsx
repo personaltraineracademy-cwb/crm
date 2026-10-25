@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { ShieldCheck, PencilSimple, LockOpen } from "@/lib/ui/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/ui/page-header";
 import { FichasDoModulo } from "@/components/modulos/FichasDoModulo";
 import { ChipDeEtiqueta } from "@/components/tags/ChipDeEtiqueta";
 import { Badge } from "@/components/ui/badge";
@@ -72,7 +74,7 @@ function NivelDaOrigem({ rotulo, valor }: { rotulo: string; valor: string | null
   if (!valor) return null;
   return (
     <div>
-      <dt className="text-xs uppercase text-muted-foreground">{rotulo}</dt>
+      <dt className="text-xs font-medium text-muted-foreground">{rotulo}</dt>
       <dd className="mt-1 break-words">{valor}</dd>
     </div>
   );
@@ -127,9 +129,15 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
 
   if (q.isLoading) {
     return (
-      <div className="space-y-4 p-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-32 w-full" />
+      // Esqueleto com a forma final: cabeçalho, linha de abas e o cartão de dados.
+      <div className="space-y-6 p-6" aria-busy="true">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <Skeleton className="h-10 w-full max-w-sm" />
+        <Skeleton className="h-48 w-full rounded-xl" />
       </div>
     );
   }
@@ -137,7 +145,16 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
   if (q.isError || !q.data) {
     return (
       <div className="p-6">
-        <Card className="p-6 text-center text-sm text-error-fg">{t("Erro ao carregar contato.")}</Card>
+        <Alert
+          variant="destructive"
+          action={
+            <Button size="sm" variant="outline" onClick={() => void q.refetch()}>
+              {t("Tentar novamente")}
+            </Button>
+          }
+        >
+          {t("Erro ao carregar contato.")}
+        </Alert>
       </div>
     );
   }
@@ -173,34 +190,37 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
   );
 
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-6 p-6">
       {contact.is_anonymized && (
-        <div
-          role="alert"
-          className="border-error-fg/30 sticky top-0 z-20 flex items-center gap-3 rounded-md border bg-error-bg p-3 text-sm text-error-fg"
+        <Alert
+          variant="destructive"
+          className="sticky top-0 z-20"
+          icon={<ShieldCheck size={16} weight="duotone" aria-hidden />}
         >
-          <ShieldCheck size={18} weight="duotone" aria-hidden />
           <span>
             {t("Contato anonimizado (LGPD)")}
             {contact.anonymized_at &&
               ` em ${format(new Date(contact.anonymized_at), "dd/MM/yyyy", { locale: localeDaData })}`}
             {t(" — edição bloqueada.")}
           </span>
-        </div>
+        </Alert>
       )}
 
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-        <div className="min-w-0">
-          {/* Sem truncar: nome é dado que a tela existe pra mostrar, e cortar
-              com reticências sem um jeito de ver o resto violaria o princípio
-              de nunca esconder informação crítica. Deixa quebrar linha. */}
-          <h1 className="break-words text-2xl font-semibold tracking-tight">{displayName}</h1>
-          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      {/* Sem truncar: nome é dado que a tela existe pra mostrar, e cortar com
+          reticências sem um jeito de ver o resto violaria o princípio de nunca
+          esconder informação crítica. O `PageHeader` deixa o título quebrar. */}
+      <PageHeader
+        back={{ href: "/app/contacts", label: t("Contatos") }}
+        title={displayName}
+        description={
+          <div className="flex flex-wrap items-center gap-2">
             {contact.email && <span>{contact.email}</span>}
             {contact.email && contact.phone_number && <span>•</span>}
             {contact.phone_number && <span>{phoneForDisplay(contact.phone_number)}</span>}
           </div>
-          <div className="mt-2 flex flex-wrap gap-1">
+        }
+        meta={
+          <div className="flex flex-wrap gap-1">
             {contact.tags.map((t) => (
               <ChipDeEtiqueta key={t} tag={t} />
             ))}
@@ -214,150 +234,172 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
             {contact.ai_opt_out && <Badge variant="secondary">{t("Sempre atendimento humano")}</Badge>}
             {contact.is_anonymized && <Badge variant="destructive">{t("Anonimizado")}</Badge>}
           </div>
-        </div>
-        {!contact.is_anonymized && user.support?.access_mode !== "support_readonly" && (
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
-            {/* O CAMINHO DE VOLTA do descadastro. Sem ele, o contato que pediu
-                para sair — ou que caiu num falso positivo — ficava preso para
-                sempre: `before-send` recusa todo envio, o funil não cria lead,
-                o follow-up não retoma. A regra W-02 previu o override
-                ("Tenant admin pode desbloquear manualmente; ação auditada") e o
-                produto não tinha porta nenhuma para exercê-lo.
+        }
+        actions={
+          !contact.is_anonymized && user.support?.access_mode !== "support_readonly" ? (
+            <>
+              {/* O CAMINHO DE VOLTA do descadastro. Sem ele, o contato que pediu
+                  para sair — ou que caiu num falso positivo — ficava preso para
+                  sempre: `before-send` recusa todo envio, o funil não cria lead,
+                  o follow-up não retoma. A regra W-02 previu o override
+                  ("Tenant admin pode desbloquear manualmente; ação auditada") e o
+                  produto não tinha porta nenhuma para exercê-lo.
 
-                Só ADMIN, como a regra nomeia: desfazer um pedido de descadastro
-                não é editar cadastro, é reabrir um canal que o cliente fechou —
-                e quem clica responde pela decisão. */}
-            {/* Confirmação antes do clique: nenhum caminho do produto bloqueia
-                de novo à mão (o único escritor de is_blocked=true é o STOP do
-                próprio cliente, em lib/channels/pos-entrada.ts), então um clique
-                errado ao lado do "Editar" reabriria um canal que só o cliente
-                consegue fechar outra vez. */}
-            {contact.is_blocked && isAdmin && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" disabled={desbloquear.isPending} className="shrink-0">
-                    <LockOpen size={16} weight="bold" aria-hidden />
-                    <span>{t("Desbloquear")}</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t("Desbloquear este contato?")}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("Este contato pediu para não receber mais mensagens. Desbloquear volta a permitir campanhas, follow-ups e respostas da IA para ele, e a ação fica registrada na auditoria em seu nome.")}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => desbloquear.mutate()}>
-                      {t("Desbloquear")}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            {/* PESSOAL (spec 21, etapa 15): gerente marca e desmarca; sem
-                exceção de envio — quem é pessoal não recebe por nenhum caminho.
-                Marcar confirma (esconde da operação); desmarcar é direto. */}
-            {!contact.is_personal && podeMarcarPessoal && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    disabled={marcarPessoal.isPending}
-                    className="shrink-0"
-                    data-testid="marcar-pessoal"
-                  >
-                    <span>{t("Marcar como pessoal")}</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t("Marcar este contato como pessoal?")}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("O contato sai da operação: conversas fecham, IA, follow-ups, campanha e envios param. O histórico continua no banco e volta à vista ao desmarcar; follow-ups e campanhas cancelados não voltam.")}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => marcarPessoal.mutate()}>
-                      {t("Marcar como pessoal")}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            {contact.is_personal && podeMarcarPessoal && (
+                  Só ADMIN, como a regra nomeia: desfazer um pedido de descadastro
+                  não é editar cadastro, é reabrir um canal que o cliente fechou —
+                  e quem clica responde pela decisão. */}
+              {/* Confirmação antes do clique: nenhum caminho do produto bloqueia
+                  de novo à mão (o único escritor de is_blocked=true é o STOP do
+                  próprio cliente, em lib/channels/pos-entrada.ts), então um clique
+                  errado ao lado do "Editar" reabriria um canal que só o cliente
+                  consegue fechar outra vez. */}
+              {contact.is_blocked && isAdmin && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      disabled={desbloquear.isPending}
+                      size="sm"
+                      className="shrink-0"
+                    >
+                      <LockOpen size={16} weight="bold" aria-hidden />
+                      <span>{t("Desbloquear")}</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t("Desbloquear este contato?")}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t(
+                          "Este contato pediu para não receber mais mensagens. Desbloquear volta a permitir campanhas, follow-ups e respostas da IA para ele, e a ação fica registrada na auditoria em seu nome.",
+                        )}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => desbloquear.mutate()}>
+                        {t("Desbloquear")}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+              {/* PESSOAL (spec 21, etapa 15): gerente marca e desmarca; sem
+                  exceção de envio — quem é pessoal não recebe por nenhum caminho.
+                  Marcar confirma (esconde da operação); desmarcar é direto. */}
+              {!contact.is_personal && podeMarcarPessoal && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      disabled={marcarPessoal.isPending}
+                      size="sm"
+                      className="shrink-0"
+                      data-testid="marcar-pessoal"
+                    >
+                      <span>{t("Marcar como pessoal")}</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t("Marcar este contato como pessoal?")}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t(
+                          "O contato sai da operação: conversas fecham, IA, follow-ups, campanha e envios param. O histórico continua no banco e volta à vista ao desmarcar; follow-ups e campanhas cancelados não voltam.",
+                        )}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => marcarPessoal.mutate()}>
+                        {t("Marcar como pessoal")}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+              {contact.is_personal && podeMarcarPessoal && (
+                <Button
+                  variant="outline"
+                  disabled={desmarcarPessoal.isPending}
+                  size="sm"
+                  className="shrink-0"
+                  data-testid="desmarcar-pessoal"
+                  onClick={() => desmarcarPessoal.mutate()}
+                >
+                  <span>
+                    {desmarcarPessoal.isPending ? t("Desmarcando...") : t("Desmarcar pessoal")}
+                  </span>
+                </Button>
+              )}
+              {/* SEMPRE ATENDIMENTO HUMANO (issue 2379): a marca que a devolução
+                  NÃO desfaz — nem a manual, nem a automática do cron. Marcar
+                  confirma (a IA para de vez); remover é direto e NÃO devolve o
+                  atendimento, que continua sendo gesto do botão "Devolver ao
+                  automático". Mesmo gate de pessoal: decisão operacional. */}
+              {!contact.ai_opt_out && podeMarcarPessoal && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      disabled={marcarSempreHumano.isPending}
+                      size="sm"
+                      className="shrink-0"
+                      data-testid="marcar-sempre-humano"
+                    >
+                      <span>{t("Marcar como sempre humano")}</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {t("Marcar este contato como sempre humano?")}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t(
+                          "A IA deixa de responder este contato para sempre: a devolução automática e o botão de devolver ao automático passam a recusar, e a marca só sai por aqui. A conversa atual continua com a equipe.",
+                        )}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => marcarSempreHumano.mutate()}>
+                        {t("Marcar como sempre humano")}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+              {contact.ai_opt_out && podeMarcarPessoal && (
+                <Button
+                  variant="outline"
+                  disabled={desmarcarSempreHumano.isPending}
+                  size="sm"
+                  className="shrink-0"
+                  data-testid="desmarcar-sempre-humano"
+                  onClick={() => desmarcarSempreHumano.mutate()}
+                >
+                  <span>
+                    {desmarcarSempreHumano.isPending
+                      ? t("Removendo...")
+                      : t("Remover marca de humano")}
+                  </span>
+                </Button>
+              )}
+              <DialButton contactId={contactId} hasPhone={!!contact.phone_number} />
               <Button
                 variant="outline"
-                disabled={desmarcarPessoal.isPending}
+                onClick={() => setEditOpen(true)}
+                size="sm"
                 className="shrink-0"
-                data-testid="desmarcar-pessoal"
-                onClick={() => desmarcarPessoal.mutate()}
               >
-                <span>
-                  {desmarcarPessoal.isPending ? t("Desmarcando...") : t("Desmarcar pessoal")}
-                </span>
+                <PencilSimple size={16} weight="bold" aria-hidden />
+                <span>{t("Editar")}</span>
               </Button>
-            )}
-            {/* SEMPRE ATENDIMENTO HUMANO (issue 2379): a marca que a devolução
-                NÃO desfaz — nem a manual, nem a automática do cron. Marcar
-                confirma (a IA para de vez); remover é direto e NÃO devolve o
-                atendimento, que continua sendo gesto do botão "Devolver ao
-                automático". Mesmo gate de pessoal: decisão operacional. */}
-            {!contact.ai_opt_out && podeMarcarPessoal && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    disabled={marcarSempreHumano.isPending}
-                    className="shrink-0"
-                    data-testid="marcar-sempre-humano"
-                  >
-                    <span>{t("Marcar como sempre humano")}</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      {t("Marcar este contato como sempre humano?")}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("A IA deixa de responder este contato para sempre: a devolução automática e o botão de devolver ao automático passam a recusar, e a marca só sai por aqui. A conversa atual continua com a equipe.")}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t("Cancelar")}</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => marcarSempreHumano.mutate()}>
-                      {t("Marcar como sempre humano")}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            {contact.ai_opt_out && podeMarcarPessoal && (
-              <Button
-                variant="outline"
-                disabled={desmarcarSempreHumano.isPending}
-                className="shrink-0"
-                data-testid="desmarcar-sempre-humano"
-                onClick={() => desmarcarSempreHumano.mutate()}
-              >
-                <span>
-                  {desmarcarSempreHumano.isPending
-                    ? t("Removendo...")
-                    : t("Remover marca de humano")}
-                </span>
-              </Button>
-            )}
-            <DialButton contactId={contactId} hasPhone={!!contact.phone_number} />
-            <Button variant="outline" onClick={() => setEditOpen(true)} className="shrink-0">
-              <PencilSimple size={16} weight="bold" aria-hidden />
-              <span>{t("Editar")}</span>
-            </Button>
-          </div>
-        )}
-      </header>
+            </>
+          ) : null
+        }
+      />
 
       <ConversaNoDossie conversa={contact.conversa} />
 
@@ -374,27 +416,31 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
       )}
 
       <Tabs defaultValue="overview">
-        <TabsList>
+        <TabsList variant="line">
           <TabsTrigger value="overview">{t("Visão geral")}</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="timeline">{t("Linha do tempo")}</TabsTrigger>
           {isAdmin && <TabsTrigger value="lgpd">LGPD</TabsTrigger>}
         </TabsList>
 
-        <TabsContent value="overview" className="mt-4">
+        <TabsContent value="overview" className="mt-6">
           <Card className="p-4">
             <dl className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Nome")}</dt>
+                <dt className="text-xs font-medium text-muted-foreground">{t("Nome")}</dt>
                 <dd className="mt-1">{contact.name ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Nome")} · WhatsApp</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("Nome")} · WhatsApp
+                </dt>
                 <dd className="mt-1">{contact.display_name ?? "—"}</dd>
               </div>
               {contact.address_book_name && (
                 <div>
                   {/* Só a equipe vê: nenhuma mensagem usa este nome (PR #2439). */}
-                  <dt className="text-xs uppercase text-muted-foreground">{t("Nome na agenda do celular")}</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("Nome na agenda do celular")}
+                  </dt>
                   <dd className="mt-1">{contact.address_book_name}</dd>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {t("Só a equipe vê. Para usar em mensagens, copie para o nome.")}
@@ -402,11 +448,11 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 </div>
               )}
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">Email</dt>
+                <dt className="text-xs font-medium text-muted-foreground">Email</dt>
                 <dd className="mt-1">{contact.email ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Telefone")}</dt>
+                <dt className="text-xs font-medium text-muted-foreground">{t("Telefone")}</dt>
                 <dd className="mt-1">
                   {contact.phone_number ? phoneForDisplay(contact.phone_number) : "—"}
                 </dd>
@@ -420,7 +466,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 aniversário de ontem para quem olha.
               */}
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">
+                <dt className="text-xs font-medium text-muted-foreground">
                   {t("Data de nascimento")}
                 </dt>
                 <dd className="mt-1">
@@ -435,7 +481,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 anúncio — mesmo com o `utm_source` da campanha gravado ao lado.
               */}
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Origem")}</dt>
+                <dt className="text-xs font-medium text-muted-foreground">{t("Origem")}</dt>
                 <dd className="mt-1">
                   {origem.origem === ORIGEM_AGENDA_DO_CELULAR ? t("Agenda do celular") : origem.origem}
                 </dd>
@@ -446,7 +492,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
               <NivelDaOrigem rotulo={t("Posicionamento")} valor={origem.posicionamento} />
               {origem.semPosicionamentoDeAnuncio && (
                 <div>
-                  <dt className="text-xs uppercase text-muted-foreground">
+                  <dt className="text-xs font-medium text-muted-foreground">
                     {t("Posicionamento")}
                   </dt>
                   <dd className="mt-1 text-sm text-muted-foreground">
@@ -455,7 +501,9 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 </div>
               )}
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Última atividade")}</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("Última atividade")}
+                </dt>
                 <dd className="mt-1">
                   {contact.last_activity_at
                     ? format(new Date(contact.last_activity_at), "dd/MM/yyyy HH:mm", {
@@ -465,7 +513,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">{t("Criado em")}</dt>
+                <dt className="text-xs font-medium text-muted-foreground">{t("Criado em")}</dt>
                 <dd className="mt-1">
                   {format(new Date(contact.created_at), "dd/MM/yyyy", { locale: localeDaData })}
                 </dd>
@@ -478,7 +526,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
               */}
               {clientesLigado && contact.first_service_at && (
                 <div>
-                  <dt className="text-xs uppercase text-muted-foreground">
+                  <dt className="text-xs font-medium text-muted-foreground">
                     {t("Cliente desde")}
                   </dt>
                   <dd className="mt-1">
@@ -489,7 +537,7 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
                 </div>
               )}
               <div>
-                <dt className="text-xs uppercase text-muted-foreground">Tags</dt>
+                <dt className="text-xs font-medium text-muted-foreground">Tags</dt>
                 <dd className="mt-1 flex flex-wrap gap-1">
                   {contact.tags.length === 0
                     ? "—"
@@ -538,15 +586,15 @@ export function ContactDetailClient({ contactId, paineisDeModulo = [] }: Props) 
           ))}
         </TabsContent>
 
-        <TabsContent value="timeline" className="mt-4">
+        <TabsContent value="timeline" className="mt-6">
           <TimelineView contactId={contactId} />
         </TabsContent>
 
         {isAdmin && (
-          <TabsContent value="lgpd" className="mt-4">
+          <TabsContent value="lgpd" className="mt-6">
             <Card className="space-y-4 p-4">
               <div>
-                <h2 className="text-lg font-semibold">{t("Direito ao esquecimento (LGPD)")}</h2>
+                <h2 className="text-base font-semibold">{t("Direito ao esquecimento (LGPD)")}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {t(
                     "A anonimização é irreversível. Use somente após confirmação formal do titular ou ordem judicial.",

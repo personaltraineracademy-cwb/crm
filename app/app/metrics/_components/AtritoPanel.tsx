@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 
 import { useT } from "@/hooks/i18n/useT";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useAtritoMetrics, useSalvarReguaAbandono } from "@/hooks/metrics/useAtritoMetrics";
 import { formatarMedida, type Medida, type Par } from "@/lib/metrics/atrito";
@@ -58,7 +60,7 @@ function ParCard({ par }: { par: Par }) {
 
         {/* O custo disso. Mesmo cartão, sempre. */}
         <div className="min-w-0 flex-1 border-t pt-3 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-          <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 text-xs text-muted-foreground">
             {t("O que isso custou")}
           </p>
           {par.danos.map((d) => (
@@ -117,12 +119,14 @@ function ReguaAbandono({ horas, padrao, podeEditar }: { horas: number; padrao: n
         </Button>
       ) : null}
       {sujo && !valido ? (
-        <span className="text-destructive">{t("Use um número inteiro entre 1 e 2160.")}</span>
+        <span className="text-danger-foreground">{t("Use um número inteiro entre 1 e 2160.")}</span>
       ) : null}
       {/* Falha VISÍVEL: sem isto, um erro de escrita deixaria a tela mostrando o
           valor digitado como se tivesse sido salvo. */}
       {salvar.isError ? (
-        <span className="text-destructive">{t("Não foi possível salvar. Tente de novo.")}</span>
+        <span className="text-danger-foreground">
+          {t("Não foi possível salvar. Tente de novo.")}
+        </span>
       ) : null}
       {horas === padrao && !sujo ? <span>{t("(padrão do sistema)")}</span> : null}
     </div>
@@ -134,12 +138,21 @@ export function AtritoPanel({ podeEditarRegua }: { podeEditarRegua: boolean }) {
   const { data, isLoading, isError } = useAtritoMetrics();
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground">{t("Carregando o índice de atrito…")}</p>;
+    return (
+      <div
+        className="flex flex-col gap-3"
+        aria-busy="true"
+        aria-label={t("Carregando o índice de atrito…")}
+      >
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </div>
+    );
   }
   // Falha aberta na informação: dizer que não carregou é melhor que sumir com a
   // seção — seção ausente lê-se como "não há atrito" (doutrina cap. 4.5).
   if (isError || !data) {
-    return <p className="text-sm text-destructive">{t("Erro ao carregar o índice de atrito.")}</p>;
+    return <Alert variant="destructive">{t("Erro ao carregar o índice de atrito.")}</Alert>;
   }
 
   const { escopo, pares, regua } = data.data;
@@ -150,7 +163,7 @@ export function AtritoPanel({ podeEditarRegua }: { podeEditarRegua: boolean }) {
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="text-base font-medium">{t("Atrito")}</h2>
+        <h2 className="text-base font-semibold">{t("Atrito")}</h2>
         <p className="text-sm text-muted-foreground">
           {t("O que o resultado custou para os dois lados.")}{" "}
           {escopo.demandas === 0 ? (

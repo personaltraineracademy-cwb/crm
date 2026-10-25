@@ -29,7 +29,7 @@ export function ModeloDaCampanhaNoDetalhe({ campanha }: { campanha: CampanhaDeta
         {modelo?.category ? ` · ${t(ROTULO_DA_CATEGORIA[modelo.category] ?? modelo.category)}` : ""}
       </p>
       {modelo && !modelo.aprovado && (
-        <p className="text-sm text-warning-fg">
+        <p className="text-warning-foreground text-sm">
           {t("Este modelo não está aprovado na plataforma agora")} ({modelo.status}).
         </p>
       )}

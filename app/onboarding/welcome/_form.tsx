@@ -34,7 +34,7 @@ export function WelcomeForm({
 
   return (
     <form
-      className="space-y-5 rounded-lg border bg-background p-6"
+      className="space-y-5 rounded-xl border border-border bg-card p-6"
       action={(formData) => {
         if (!accepted) {
           toast.error(t("Aceite os termos para continuar."));

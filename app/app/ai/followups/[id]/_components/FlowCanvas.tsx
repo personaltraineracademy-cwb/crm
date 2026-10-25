@@ -4,8 +4,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
-  Background,
-  Controls,
   ConnectionLineType,
   addEdge,
   useNodesState,
@@ -43,6 +41,12 @@ import { rotuloDoRamo } from "@/lib/followup/rotulo-do-ramo";
 import { useFollowupFlow, type FollowupFlowDetailRow } from "@/hooks/followup/useFollowupFlow";
 import { useT } from "@/hooks/i18n/useT";
 import { Button } from "@/components/ui/button";
+import {
+  CLASSE_DO_CANVAS,
+  ControlesDoFluxo,
+  FundoDoFluxo,
+  ROTULO_DA_ARESTA,
+} from "@/components/fluxo/tema-do-fluxo";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Plus, X } from "@/lib/ui/icons";
 import { NodeConfigPanel } from "./NodeConfigPanel";
@@ -195,6 +199,7 @@ function FlowCanvasInner({ flowId, initialData }: Props) {
         return {
           ...e,
           type: "smoothstep" as const,
+          ...ROTULO_DA_ARESTA,
           label: branch ? t(rotuloDoRamo(branch, nomes)) : t(conditionLabel(condition)),
           selected: e.id === selectedEdgeId,
         };
@@ -367,6 +372,7 @@ function FlowCanvasInner({ flowId, initialData }: Props) {
             nodes={nodes}
             edges={edgesForRender}
             nodeTypes={nodeTypes}
+            className={CLASSE_DO_CANVAS}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -383,8 +389,8 @@ function FlowCanvasInner({ flowId, initialData }: Props) {
             // followup-cartoes: scale 1 → 2 logo após o primeiro clique).
             fitView={initial.nodes.length > 0}
           >
-            <Background />
-            <Controls />
+            <FundoDoFluxo />
+            <ControlesDoFluxo />
           </ReactFlow>
           <Button
             type="button"
@@ -408,7 +414,7 @@ function FlowCanvasInner({ flowId, initialData }: Props) {
         */}
         {selectedNode && (
           <aside
-            className="fixed inset-x-0 bottom-[var(--rodape-ocupado,0px)] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg border-t border-border bg-surface shadow-lg lg:static lg:z-auto lg:h-full lg:w-96 lg:max-h-none lg:shrink-0 lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none"
+            className="fixed inset-x-0 bottom-[var(--rodape-ocupado,0px)] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-card shadow-lg lg:static lg:z-auto lg:h-full lg:max-h-none lg:w-96 lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-l lg:shadow-none"
             data-testid="node-config-sheet"
           >
             {/* Barra própria pro X, não sobreposta ao conteúdo — um botão
@@ -443,7 +449,7 @@ function FlowCanvasInner({ flowId, initialData }: Props) {
 
         {selectedEdge && (
           <aside
-            className="fixed inset-x-0 bottom-[var(--rodape-ocupado,0px)] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-lg border-t border-border bg-surface shadow-lg lg:static lg:z-auto lg:h-full lg:w-96 lg:max-h-none lg:shrink-0 lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none"
+            className="fixed inset-x-0 bottom-[var(--rodape-ocupado,0px)] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-card shadow-lg lg:static lg:z-auto lg:h-full lg:max-h-none lg:w-96 lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-l lg:shadow-none"
             data-testid="edge-config-sheet"
           >
             <div className="flex shrink-0 justify-end p-2 lg:hidden">

@@ -199,7 +199,7 @@ export function RegrasDeConversaoGoogle({
         {etapas.map((e) => {
           const r = rascunhos[e.id]!;
           return (
-            <li key={e.id} className="rounded-md border p-4" data-testid={`regra-${e.id}`}>
+            <li key={e.id} className="rounded-lg bg-muted/40 p-4" data-testid={`regra-${e.id}`}>
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{e.nome}</p>
@@ -261,7 +261,7 @@ export function RegrasDeConversaoGoogle({
                     <Label htmlFor={`categoria-${e.id}`}>{t("Categoria da conversão")}</Label>
                     <select
                       id={`categoria-${e.id}`}
-                      className="rounded-md border bg-background p-2 text-sm"
+                      className="rounded-lg border bg-background p-2 text-sm"
                       value={r.category}
                       onChange={(ev) =>
                         mudar(e.id, { category: ev.target.value as CategoriaDeConversao })
@@ -281,7 +281,7 @@ export function RegrasDeConversaoGoogle({
                     <Label htmlFor={`canal-${e.id}`}>{t("Canal de entrada")}</Label>
                     <select
                       id={`canal-${e.id}`}
-                      className="rounded-md border bg-background p-2 text-sm"
+                      className="rounded-lg border bg-background p-2 text-sm"
                       value={r.channel}
                       onChange={(ev) => mudar(e.id, { channel: ev.target.value as CanalDeEntrada })}
                     >

@@ -134,7 +134,7 @@ export function EditorDeSkill({ nome, aberto, aoMudarAberto }: Props) {
         {skill.isSuccess && (
           <div className="flex flex-col gap-4 py-2">
             {veioDePacote && (
-              <div className="flex flex-col gap-2 rounded-md border border-border/60 p-3 text-sm">
+              <div className="flex flex-col gap-2 rounded-lg border border-border/60 p-3 text-sm">
                 <p className="text-muted-foreground">
                   {t(
                     "Skill de pacote: descrição, palavras-chave e corpo são editáveis. Ao salvar, a versão nova herda os arquivos do pacote — nada se perde.",
@@ -213,7 +213,7 @@ export function EditorDeSkill({ nome, aberto, aoMudarAberto }: Props) {
               />
             </div>
 
-            <div className="flex flex-col gap-2 rounded-md border border-border/60 p-3">
+            <div className="flex flex-col gap-2 rounded-lg border border-border/60 p-3">
               <Label>{t("Histórico de versões")}</Label>
               {versoes.isLoading && (
                 <p className="text-xs text-muted-foreground">{t("Carregando…")}</p>

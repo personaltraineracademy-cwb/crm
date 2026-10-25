@@ -177,8 +177,8 @@ export function ExtensionGuide({
         className="mx-auto w-full max-w-4xl p-4 sm:p-6"
         data-testid="extension-guide-unavailable"
       >
-        <Card className="border-warning/40 bg-warning-bg p-5 sm:p-6" role="alert">
-          <Warning size={24} weight="duotone" aria-hidden className="text-warning-fg" />
+        <Card className="border-warning-border bg-warning-soft p-5 sm:p-6" role="alert">
+          <Warning size={24} weight="duotone" aria-hidden className="text-warning-foreground" />
           <h1 className="mt-3 text-xl font-semibold">{t("Este guia não está disponível")}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             {error ?? t("Não foi possível confirmar o estado atual desta extensão.")}
@@ -227,14 +227,14 @@ export function ExtensionGuide({
     >
       <Link
         href="/app/extensions"
-        className="inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-medium text-muted-foreground hover:text-text focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
+        className="inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
       >
         <CaretLeft aria-hidden />
         {t("Voltar às extensões")}
       </Link>
 
-      <header className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
-        <div className="border-b border-border bg-accent-soft/45 px-5 py-4 sm:px-7">
+      <header className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+        <div className="bg-primary/10/45 border-b border-border px-5 py-4 sm:px-7">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="success">{t("Ativa")}</Badge>
             <span className="font-mono text-xs text-muted-foreground">v{guide.version}</span>
@@ -247,14 +247,18 @@ export function ExtensionGuide({
           </p>
           {displayTitle.fallback || displaySummary.fallback ? <FallbackNotice /> : null}
           <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-            <ListChecks size={16} weight="duotone" aria-hidden className="text-accent" />
+            <ListChecks size={16} weight="duotone" aria-hidden className="text-primary" />
             {portasLegiveis(guide.manifest.permissions, t)}
           </div>
         </div>
       </header>
 
       {missingCard ? (
-        <Card className="border-info/40 bg-info-bg p-4" role="status" data-testid="extension-guide-missing-card">
+        <Card
+          className="border-info-border bg-info-soft p-4"
+          role="status"
+          data-testid="extension-guide-missing-card"
+        >
           <p className="text-sm">
             {t("O card indicado não existe na versão {versao} desta extensão.").replace(
               "{versao}",
@@ -265,7 +269,7 @@ export function ExtensionGuide({
       ) : null}
 
       {actionError ? (
-        <Card className="border-warning/40 bg-warning-bg p-4" role="alert">
+        <Card className="border-warning-border bg-warning-soft p-4" role="alert">
           <p className="text-sm font-medium">{t("A ação não foi aberta")}</p>
           <p className="mt-1 text-sm text-muted-foreground">{actionError}</p>
           <p className="mt-2 text-xs text-muted-foreground">
@@ -293,14 +297,14 @@ export function ExtensionGuide({
               key={card.id}
               id={`extension-card-${card.id}`}
               data-testid={`extension-guide-card-${card.id}`}
-              className={`scroll-mt-6 rounded-xl border bg-surface shadow-xs ${
+              className={`scroll-mt-6 rounded-xl border bg-card shadow-xs ${
                 card.id === selectedCardId
-                  ? "border-accent ring-1 ring-accent-200"
+                  ? "border-primary ring-1 ring-accent-200"
                   : "border-border"
               } ${compact ? "p-4" : "p-5 sm:p-6"}`}
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon size={22} weight="duotone" aria-hidden />
                 </div>
                 <div>
@@ -363,7 +367,7 @@ export function ExtensionGuide({
 function FallbackNotice() {
   const t = useT();
   return (
-    <p className="mt-2 text-xs text-warning-fg">
+    <p className="text-warning-foreground mt-2 text-xs">
       {t("Parte deste conteúdo está disponível apenas em português.")}
     </p>
   );

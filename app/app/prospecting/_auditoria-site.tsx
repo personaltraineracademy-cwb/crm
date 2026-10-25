@@ -187,13 +187,13 @@ export function AuditoriaDoCandidato({
           {erroDaPrevia && (
             <p
               role="alert"
-              className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive"
+              className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-xs"
             >
               {erroDaPrevia}
             </p>
           )}
           {previa && (
-            <div ref={previaRef} className="rounded-md border p-3 text-xs leading-relaxed">
+            <div ref={previaRef} className="rounded-lg border p-3 text-xs leading-relaxed">
               <p className="whitespace-pre-wrap">{previa.mensagem}</p>
             </div>
           )}

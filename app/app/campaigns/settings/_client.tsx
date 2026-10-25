@@ -39,6 +39,7 @@ import {
 import { useT } from "@/hooks/i18n/useT";
 import { useTelefoneExemplo } from "@/hooks/contacts/useTelefoneExemplo";
 import { ArrowBendUpLeft } from "@/lib/ui/icons";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function ConfiguracaoDeCampanhas() {
   const t = useT();
@@ -47,18 +48,16 @@ export function ConfiguracaoDeCampanhas() {
       <div>
         <Link
           href="/app/campaigns"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-text"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowBendUpLeft size={14} aria-hidden />
           {t("Campanhas")}
         </Link>
       </div>
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Configuração de campanhas")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t("O que vale para todas as campanhas, e não para uma só.")}
-        </p>
-      </header>
+      <PageHeader
+        title={t("Configuração de campanhas")}
+        description={t("O que vale para todas as campanhas, e não para uma só.")}
+      />
 
       <Padroes />
       <TextosSalvos />
@@ -152,7 +151,7 @@ function Padroes() {
           {salvar.isPending ? t("Salvando…") : t("Salvar padrões")}
         </Button>
         {salvar.isSuccess && !salvar.isPending && (
-          <span className="text-sm text-success-fg">{t("Padrões salvos.")}</span>
+          <span className="text-success-foreground text-sm">{t("Padrões salvos.")}</span>
         )}
       </div>
     </Card>

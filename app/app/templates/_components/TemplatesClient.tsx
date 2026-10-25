@@ -21,7 +21,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, PencilSimple, Trash, DragHandle } from "@/lib/ui/icons";
+import { ChatCircle, Microphone, Plus, PencilSimple, Trash, DragHandle } from "@/lib/ui/icons";
+import { EmptyState } from "@/components/ui/empty-state";
+import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api/client";
 import { showApiError } from "@/components/feedback/ApiErrorToast";
 import {
@@ -166,9 +168,14 @@ export function TemplatesClient({ canShare, currentUserId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
+      // Esqueleto com a forma final (Unnify §10.21): a lista de linhas de 56.
+      <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex min-h-14 flex-col justify-center gap-1.5 px-4 py-3">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -181,12 +188,23 @@ export function TemplatesClient({ canShare, currentUserId }: Props) {
         </Button>
       </div>
       {!templates?.length ? (
-        <p className="text-sm text-muted-foreground">{t("Nenhuma resposta rápida ainda.")}</p>
+        // Vazio compacto (§10.21): ícone de 32 e a frase. A ação é o
+        // "Nova resposta rápida" logo acima — uma por área (§1).
+        <EmptyState
+          className="rounded-xl border border-border bg-card p-6"
+          icon={<ChatCircle size={32} aria-hidden />}
+          title={t("Nenhuma resposta rápida ainda.")}
+        />
       ) : (
         <DragDropContext onDragEnd={aoSoltar}>
           <Droppable droppableId="respostas-rapidas">
             {(provided) => (
-              <ul ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+              // Lista do Work (§10.12): um cartão com linhas de 56 separadas por 1px.
+              <ul
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card"
+              >
                 {lista.map((template, indice) => {
                   // Só o que a RLS deixa escrever pode ser arrastado: mover uma
                   // resposta COMPARTILHADA exige manager+, e o `agent` que
@@ -203,9 +221,11 @@ export function TemplatesClient({ canShare, currentUserId }: Props) {
                         <li
                           ref={provido.innerRef}
                           {...provido.draggableProps}
-                          className={`flex items-start justify-between gap-4 rounded-md border bg-card p-4 ${
-                            instantaneo.isDragging ? "shadow-md ring-1 ring-accent/40" : ""
-                          }`}
+                          className={cn(
+                            "flex min-h-14 items-start justify-between gap-4 bg-card px-4 py-3 transition-colors hover:bg-muted/40",
+                            // Arrastando ela FLUTUA: é o único momento com sombra (§6.3).
+                            instantaneo.isDragging && "rounded-xl border border-border shadow-md",
+                          )}
                         >
                           <div className="flex min-w-0 items-start gap-2">
                             {podeMover && (
@@ -218,13 +238,20 @@ export function TemplatesClient({ canShare, currentUserId }: Props) {
                               </span>
                             )}
                             <div className="min-w-0 space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium">{template.title}</span>
+                              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                                <span
+                                  className="truncate text-sm font-medium text-foreground"
+                                  title={template.title}
+                                >
+                                  {template.title}
+                                </span>
                                 <Badge variant={template.owner_user_id ? "neutral" : "default"}>
                                   {t(template.owner_user_id ? "Pessoal" : "Compartilhado")}
                                 </Badge>
                                 {ehRecursoDeAudio(template) && (
-                                  <Badge variant="neutral">🎧 {t("Áudio")}</Badge>
+                                  <Badge variant="neutral">
+                                    <Microphone size={12} aria-hidden /> {t("Áudio")}
+                                  </Badge>
                                 )}
                                 {/* A resposta rápida que leva imagem do próprio operador
                                     (#2526) se anuncia na lista: sem isto, quem usa o menu
@@ -238,7 +265,7 @@ export function TemplatesClient({ canShare, currentUserId }: Props) {
                                     </Badge>
                                   )}
                               </div>
-                              <p className="line-clamp-2 text-sm text-muted-foreground">
+                              <p className="line-clamp-2 text-xs text-muted-foreground">
                                 {ehRecursoDeAudio(template)
                                   ? t("Resposta rápida de áudio")
                                   : template.body}

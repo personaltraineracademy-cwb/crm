@@ -116,7 +116,7 @@ export function ReactivateDialog({
             aria-describedby={error ? "reactivate-reason-error" : undefined}
           />
           {error && (
-            <p id="reactivate-reason-error" className="text-xs text-destructive" role="alert">
+            <p id="reactivate-reason-error" className="text-danger-foreground text-xs" role="alert">
               {error}
             </p>
           )}

@@ -122,13 +122,13 @@ export function MoveLeadForm({
         </div>
       )}
       {falhou && (
-        <p className="text-xs text-warning-fg">
+        <p className="text-warning-foreground text-xs">
           {t(
             "Não consegui carregar as etapas agora. O que estava escolhido continua salvo — recarregue a página para escolher outra.",
           )}
         </p>
       )}
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t("O card vai para esta etapa do mesmo funil — trocar de funil é recusado, como no quadro.")}
       </p>
     </div>

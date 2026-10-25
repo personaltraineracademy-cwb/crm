@@ -68,7 +68,7 @@ export function ContatoNoCard({ lead }: Props) {
                 title={`${rotulo} — ${href}`}
                 aria-label={`${t("Abrir")} ${rotulo}`}
                 onClick={(e) => e.stopPropagation()}
-                className="rounded-md border border-border px-1.5 py-0.5 text-[11px] leading-4 text-text-muted hover:border-accent hover:text-accent"
+                className="hover:border-interactive-border rounded-md border border-border px-1.5 py-0.5 text-xs leading-4 text-muted-foreground hover:text-primary"
               >
                 {definicao?.curto ?? tipo}
               </a>

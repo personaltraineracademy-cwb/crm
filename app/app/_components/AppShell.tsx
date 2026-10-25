@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useOptimistic, useTransition, type ReactNode } from "react";
+import "@/components/shell/casca.css";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopBar } from "@/components/shell/TopBar";
 import { BarraInferior } from "@/components/shell/BarraInferior";
@@ -23,10 +24,22 @@ interface AppShellProps {
    * 403 a cada minuto em nome de ninguém.
    */
   podeAtender: boolean;
+  /**
+   * Grava a preferência de barra recolhida (a Server Action `toggleSidebar`),
+   * recebida do layout e não importada aqui: assim esta casca não arrasta o
+   * `lib/env` do servidor para quem a desenha em teste. Ausente, a barra de
+   * cima não mostra o botão de recolher.
+   */
+  alternarBarraLateral?: (recolhidaAgora: boolean) => Promise<void>;
   children: ReactNode;
 }
 
-export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellProps) {
+export function AppShell({
+  sidebarCollapsed,
+  podeAtender,
+  alternarBarraLateral,
+  children,
+}: AppShellProps) {
   useInboundMessageAlerts();
   useInboundCallAlerts();
   useCrmAlerts();
@@ -48,6 +61,28 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
   // o `p-6` inteiro é rodapé. Com o painel de chamada na tela, é ele que
   // decide a faixa que o conteúdo perde, e ninguém mais mede isso por fora.
   const ocupacaoDoRodape = useOcupacaoDoRodape();
+
+  /*
+    RECOLHER A BARRA LATERAL (DS §5.6: a escolha é lembrada).
+
+    A preferência continua no cookie `sidebar_collapsed`, lido pelo layout no
+    servidor para a primeira pintura não piscar. O botão agora mora na barra de
+    cima, e o estado passa por aqui, que é quem desenha as duas.
+
+    `useOptimistic`: a largura começa a andar no clique (200ms), e não depois da
+    ida e volta da Server Action. Se a ação falhar, a transição termina e o
+    valor volta ao que o servidor diz — que é o cookie de antes.
+  */
+  const [barraRecolhida, setBarraRecolhida] = useOptimistic(sidebarCollapsed);
+  const [alternando, iniciarTroca] = useTransition();
+  const alternarBarra = alternarBarraLateral
+    ? () =>
+        iniciarTroca(async () => {
+          setBarraRecolhida(!barraRecolhida);
+          await alternarBarraLateral(barraRecolhida);
+        })
+    : undefined;
+
   return (
     /*
       `min-h-dvh`, e não `min-h-screen`: `100vh` no celular é a janela com a
@@ -63,10 +98,12 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
       topo ficam ACIMA da casca, e sem o desconto o documento media a tela
       mais a faixa — rolável justo quando o WhatsApp está desconectado.
     */
-    <div className="flex min-h-[calc(100dvh-var(--faixas-de-cima,0px))] w-full bg-background">
+    <div className="casca flex min-h-[calc(100dvh-var(--faixas-de-cima,0px))] w-full bg-background">
       <BarraDeProgressoNavegacao />
-      <div className="hidden md:block">
-        <Sidebar collapsed={sidebarCollapsed} />
+      {/* O corte da casca é `lg` = 1024 (DS §5.4): acima, barra lateral;
+          abaixo, gaveta + barra ancorada embaixo. Era `md` = 768. */}
+      <div className="hidden lg:block">
+        <Sidebar collapsed={barraRecolhida} />
       </div>
       {/*
         `min-w-0` é o que permite a coluna de conteúdo ENCOLHER. Um flex item
@@ -88,7 +125,11 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
         cima da lista.
       */}
       <div className="flex min-h-[calc(100dvh-var(--faixas-de-cima,0px))] min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar
+          barraRecolhida={barraRecolhida}
+          aoAlternarBarra={alternarBarra}
+          alternando={alternando}
+        />
         {/*
           O RODAPÉ DESCONTA O QUE AS PEÇAS FIXAS OCUPAM (issue #1305).
 
@@ -100,9 +141,16 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
           sem depender de o jsdom computar `var()` (ele não computa), e é o que
           aparece no inspetor quando alguém pergunta quanto o rodapé perdeu.
 
-          `p-4 sm:p-6`: 24px de margem em cada lado de uma tela de 360px come
-          13% da largura útil. O `AdminShell` já usava este par — aqui a casca
-          do tenant passa a usar o mesmo.
+          A MARGEM LATERAL É O GUTTER DO UNNIFY (DS §5.3): `--pta-gutter`,
+          `clamp(1rem, 0.6rem + 1.4vw, 2.5rem)` — 16px no celular, ~32px em
+          1600px, 40px no máximo —, declarado na raiz da casca (`.casca`). A
+          página ocupa a largura toda; o teto de 2400px, centrado, só existe
+          para monitor ultralargo.
+
+          Em cima e embaixo continua o par de antes (`pt-4 sm:pt-6` + o piso
+          do rodapé): a grade do Inbox desconta exatamente esses 24px
+          (`components/inbox/InboxLayout.tsx`), e mudar a medida vertical aqui
+          empurraria o composer para fora da tela.
 
           `pb-area-segura` é o piso da faixa de baixo quando NÃO há peça fixa:
           `max(var(--space-6), env(safe-area-inset-bottom))`. Sem ela, no iOS em
@@ -110,7 +158,7 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
           peça fixa quem cobre isso é o terceiro termo do `max()` do contrato.
         */}
         <main
-          className="flex-1 overflow-auto p-4 pb-area-segura sm:p-6"
+          className="mx-auto w-full max-w-[2400px] flex-1 overflow-auto px-(--pta-gutter) pt-4 pb-area-segura sm:pt-6"
           style={estiloDaReserva(ocupacaoDoRodape)}
           data-rodape-ocupado={ocupacaoDoRodape}
         >
@@ -127,8 +175,8 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
         de `rodape-ocupado`. Peça que mora dentro de quem a desconta é a receita
         do laço.
 
-        Ela própria se esconde acima de `md` — o mesmo corte em que a barra
-        lateral aparece, logo acima.
+        Ela própria se esconde de `lg` para cima — o mesmo corte em que a
+        barra lateral aparece, logo acima.
       */}
       <BarraInferior />
     </div>

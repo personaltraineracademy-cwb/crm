@@ -146,7 +146,7 @@ export function WaitForm({
           </div>
         </>
       )}
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

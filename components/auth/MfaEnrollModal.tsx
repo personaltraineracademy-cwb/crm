@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 
 import { useT } from "@/hooks/i18n/useT";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { TOTPInput } from "@/components/auth/TOTPInput";
 import { RecoveryCodesPanel } from "@/components/auth/RecoveryCodesPanel";
@@ -82,9 +83,9 @@ export function MfaEnrollModal({ motivo = "obrigatorio" }: { motivo?: "obrigator
       role="dialog"
       aria-modal="true"
       aria-labelledby="mfa-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4"
     >
-      <div className="w-full max-w-md rounded-lg border border-border bg-background p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-popover p-6 text-popover-foreground shadow-xl">
         {step === "intro" && (
           <div className="space-y-4">
             <div>
@@ -109,9 +110,9 @@ export function MfaEnrollModal({ motivo = "obrigatorio" }: { motivo?: "obrigator
               </p>
             </div>
             {error && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <Alert variant="destructive">
                 {error}
-              </div>
+              </Alert>
             )}
             <Button
               type="button"
@@ -151,7 +152,7 @@ export function MfaEnrollModal({ motivo = "obrigatorio" }: { motivo?: "obrigator
                     alt={t("QR code para configurar autenticador")}
                     width={240}
                     height={240}
-                    className="rounded-md border border-border bg-white p-2"
+                    className="rounded-lg border border-border bg-white p-2"
                   />
                 </div>
                 <details className="text-xs text-muted-foreground">
@@ -176,9 +177,9 @@ export function MfaEnrollModal({ motivo = "obrigatorio" }: { motivo?: "obrigator
                     hasError={!!error}
                   />
                   {error && (
-                    <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-sm text-destructive">
+                    <Alert variant="destructive">
                       {error}
-                    </div>
+                    </Alert>
                   )}
                   <Button
                     type="button"

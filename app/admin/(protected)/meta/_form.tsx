@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { useT } from "@/hooks/i18n/useT";
 import { MENSAGEM_DA_RECUSA_DE_ESCRITA, ehRecusaDeEscrita } from "@/lib/auth/recusa-de-escrita-de-admin";
 import { copyToClipboard } from "@/lib/clipboard";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Props {
   /**
@@ -118,17 +119,17 @@ export function FormularioDaMeta({
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("API Oficial da Meta desta instalação")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("É com estas duas informações que o sistema confere que cada mensagem recebida pelo número oficial veio mesmo da Meta. Elas valem para a instalação inteira — cada empresa conecta o próprio número depois, em Conexões.")}
-        </p>
-      </header>
+      <PageHeader
+        title={t("API Oficial da Meta desta instalação")}
+        description={t(
+          "É com estas duas informações que o sistema confere que cada mensagem recebida pelo número oficial veio mesmo da Meta. Elas valem para a instalação inteira — cada empresa conecta o próprio número depois, em Conexões.",
+        )}
+      />
 
       {leituraFalhou ? (
         <p
           role="alert"
-          className="rounded-md border border-warning/40 bg-warning-bg p-3 text-xs leading-4 text-text-muted"
+          className="border-warning-border bg-warning-soft rounded-lg border p-3 text-xs leading-4 text-muted-foreground"
         >
           {t("Não deu para ler a configuração salva agora, então o que aparece abaixo pode não ser o que está valendo. Recarregue a página antes de trocar qualquer coisa.")}
         </p>
@@ -156,7 +157,7 @@ export function FormularioDaMeta({
         {temNoAmbiente ? (
           <p
             data-testid="meta-tem-no-ambiente"
-            className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+            className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
           >
             {t("Esta instalação já tem a chave e o token no arquivo de configuração do servidor. O que você salvar aqui passa a valer no lugar deles — e, a partir daí, é o token desta tela que precisa estar colado no painel da Meta.")}
           </p>
@@ -206,8 +207,8 @@ export function FormularioDaMeta({
                 {t("Copiar")}
               </Button>
             </div>
-            <p className="rounded-md border border-warning/40 bg-warning-bg p-3 text-xs leading-4 text-text-muted">
-              <strong className="font-semibold text-text">{t("Copie agora.")}</strong>{" "}
+            <p className="border-warning-border bg-warning-soft rounded-lg border p-3 text-xs leading-4 text-muted-foreground">
+              <strong className="font-semibold text-foreground">{t("Copie agora.")}</strong>{" "}
               {t("Por segurança, ele não aparece de novo depois que você sair desta página. Se perder, é só gerar outro aqui.")}
             </p>
           </div>

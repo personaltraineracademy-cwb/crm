@@ -1,59 +1,51 @@
+import type * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 /**
- * O esqueleto de carregamento.
+ * O esqueleto de carregamento (Unnify DS §10.20, §7.2, §7.3).
  *
- * ─── O defeito que esta versão fecha ────────────────────────────────────────
+ * Raio 8 (`rounded-lg`), gradiente `skeleton-base` → `skeleton-highlight` →
+ * `skeleton-base` em 200% de largura varrendo em 1,6s `ease-in-out`. Com
+ * movimento reduzido vira bloco ESTÁTICO na cor `skeleton-base`. Ele tem a
+ * FORMA FINAL do conteúdo (mesma altura e largura), para a tela não saltar.
  *
- * A classe era `animate-pulse rounded-md bg-primary/10`, e `bg-primary/10` — a
- * accent a 10% — dá contraste **1,146:1 sobre branco**. O esqueleto não era
- * discreto: era invisível. A tela de carregamento parecia uma tela VAZIA, e a
- * diferença entre "está vindo" e "não tem nada" é a diferença entre esperar e
- * ir embora.
+ * ─── Como, sem CSS novo ─────────────────────────────────────────────────────
+ * O mecanismo continua o `.ds-esqueleto` do `app/globals.css` (o `@keyframes`
+ * e o gradiente de 200%) e o bloco estático do `app/unnify/base.css`. Aqui só
+ * trocamos as CORES que ele lê (`--ds-esqueleto-corpo` e `--ds-esqueleto-brilho`)
+ * pelas do Unnify. Em `style`, e não em classe: a regra `.ds-esqueleto` está
+ * fora de camada e venceria qualquer utilitário do Tailwind.
  *
- * Quem mediu foi `components/agenda/estados.tsx:34-44`, que contornou o
- * problema localmente com `bg-neutral-400` e deixou escrito que consertar o
- * primitivo era item de produto, não conserto de passagem — havia 113 usos em
- * 51 arquivos. É este o PR que faz o conserto subir para cá.
+ * ─── Contraste ─────────────────────────────────────────────────────────────
+ * O `skeleton-base` do Unnify (#eceff4) dava 1,15:1 sobre o cartão claro e
+ * 1,04:1 sobre a página: o esqueleto sumia (`docs/unnify/pendencias-etapa-3.md`
+ * §4, decisão S2). O token foi movido na própria rampa neutra
+ * (`app/unnify/tokens.css`) para ficar entre 1,4:1 e 1,6:1 contra o cartão E
+ * contra a página, nos dois temas: claro #c8cfd9 (1,57 no cartão, 1,41 na
+ * página), escuro #383d46 (1,39 no cartão, 1,60 na página). Mais que isso
+ * pesaria como conteúdo; o CRM usava `neutral-400` (2,1:1).
  *
- * ─── Por que o desenho mudou de pulso para faixa ───────────────────────────
- *
- * `animate-pulse` oscila a opacidade entre 1 e .5, então o esqueleto vivia
- * entre dois contrastes — e o pior deles, 1,525:1, é quase invisível de novo:
- * metade de cada ciclo desfazia o conserto. A faixa que atravessa mantém o
- * corpo sempre no piso medido e só passa por cima dele uma faixa de contraste
- * MAIOR. O movimento nunca vai para baixo.
- *
- * Toda a régua — a tabela de medições, os 1.6s e por que o brilho anda em
- * direções opostas no tema claro e no escuro — está no bloco `.ds-esqueleto` de
- * `app/globals.css`. Aqui fica só o nome.
- *
- * ─── O que acontece com os `bg-neutral-400` escritos à mão ─────────────────
- *
- * Eles ficam INERTES, e o resultado continua certo. `background-image` pinta
- * ACIMA de `background-color` na ordem de pintura do CSS, então o gradiente de
- * `.ds-esqueleto` cobre o fundo sólido que `estados.tsx` passa — a cor dele não
- * aparece mais. Não é perda: `neutral-400` é exatamente o corpo do gradiente,
- * porque foi daquela medição que ele saiu. A tela que já tinha a cor certa
- * continua com ela, só que agora pelo primitivo.
- *
- * Limpar aqueles `bg-neutral-400` é varredura para outro PR. Deixá-los não
- * custa nada, e tirá-los agora mexeria na única tela que estava correta.
+ * `data-esqueleto` é a âncora de teste (classe é implementação e muda; "isto é
+ * um esqueleto" é contrato). Vários testes a usam: não remova.
  */
-function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  // `data-esqueleto` é a âncora de teste, e ela existe por um susto real.
-  //
-  // `tests/unit/inbox-media-image.test.tsx` procurava o esqueleto por
-  // `document.querySelector(".animate-pulse")` — a classe da implementação. Ao
-  // trocá-la por `ds-esqueleto`, o caso de PRESENÇA reprovou (certo) e o de
-  // AUSÊNCIA passou a valer **vácuo**: `not.toBeInTheDocument()` contra um
-  // seletor que nunca casa com nada passa sempre, e passaria mesmo com o
-  // esqueleto preso na tela para sempre.
-  //
-  // Classe é implementação e muda; "isto é um esqueleto" é contrato e não muda.
-  // Por isso o atributo — no mesmo padrão de `data-rodape-ocupado` e
-  // `data-quadro-do-funil`, que o produto já usa para ser medido.
-  return <div data-esqueleto className={cn("ds-esqueleto rounded-md", className)} {...props} />;
+function Skeleton({ className, style, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="skeleton"
+      data-esqueleto
+      className={cn("ds-esqueleto rounded-lg", className)}
+      style={
+        {
+          "--ds-esqueleto-corpo": "var(--skeleton-base)",
+          "--ds-esqueleto-brilho": "var(--skeleton-highlight)",
+          animationTimingFunction: "ease-in-out",
+          ...style,
+        } as React.CSSProperties
+      }
+      {...props}
+    />
+  );
 }
 
 export { Skeleton };

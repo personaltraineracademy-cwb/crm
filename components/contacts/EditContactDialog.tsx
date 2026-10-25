@@ -223,7 +223,7 @@ export function EditContactDialog({
             />
           </div>
           {customFieldDefs.length > 0 && (
-            <div className="space-y-3 rounded-md border border-border p-3">
+            <div className="space-y-3 rounded-lg border border-border p-3">
               <div>
                 <h3 className="text-sm font-medium">{t("Campos personalizados")}</h3>
                 <p className="text-xs text-muted-foreground">
@@ -239,7 +239,7 @@ export function EditContactDialog({
             </div>
           )}
           {serverError && (
-            <p role="alert" className="text-sm text-error-fg">
+            <p role="alert" className="text-danger-foreground text-sm">
               {serverError}
             </p>
           )}

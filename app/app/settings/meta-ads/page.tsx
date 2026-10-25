@@ -34,6 +34,7 @@ import { existeConexaoDeLeitura } from "@/lib/plataformas-de-anuncio/credenciais
 import { createAdminClient } from "@/lib/supabase/admin";
 
 import { FormularioDeMetaAds } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Meta Ads" };
 export const dynamic = "force-dynamic";
@@ -56,16 +57,14 @@ export default async function MetaAdsSettingsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Meta Ads")}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Meta Ads")}
+        description={t(
             "Conecte um token de acesso para o sistema ler o desempenho das suas campanhas e mostrá-lo em Análise › Meta Ads. É uma conexão só de leitura: nada é criado, pausado ou alterado na sua conta de anúncios.",
           )}
-        </p>
-      </header>
+      />
 
-      <div className="rounded-md border border-sky-500/40 bg-sky-500/10 p-4 text-sm">
+      <div className="border-info-border bg-info-soft rounded-lg border p-4 text-sm">
         {/*
           A permissão exata está escrita aqui porque é o erro nº 1 desta
           integração: um token gerado sem `ads_read` conecta, salva, e só falha

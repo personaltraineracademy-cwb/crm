@@ -4,10 +4,10 @@ import { useT } from "@/hooks/i18n/useT";
 import { useState } from "react";
 
 import { useAttendantMetrics, type AttendantMetric } from "@/hooks/metrics/useAttendantMetrics";
-import { EmptyState } from "@/components/empty/EmptyState";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatarDuracao } from "@/lib/metrics/canais";
-import { WarningOctagon } from "@/lib/ui/icons";
 import { AtritoPanel } from "./AtritoPanel";
 import { CanaisPanel } from "./CanaisPanel";
 import { MetaDoMesPanel, type EstadoDaMeta } from "./MetaDoMesPanel";
@@ -91,9 +91,9 @@ export function MetricsClient({ canCompare, currentUserId }: Props) {
         aria-busy="true"
         aria-label={t("Carregando o desempenho")}
       >
-        {canCompare ? <Skeleton className="h-10 w-64" /> : null}
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-48 w-full" />
+        {canCompare ? <Skeleton className="h-8 w-64" /> : null}
+        <Skeleton className="h-32 w-full rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-xl" />
         <div className="flex flex-col gap-2">
           <Skeleton className="h-5 w-40" />
           {[0, 1, 2, 3].map((i) => (
@@ -106,7 +106,7 @@ export function MetricsClient({ canCompare, currentUserId }: Props) {
 
   // ─── ERRO: diz o que houve e oferece saída ────────────────────────────────
   //
-  // Era `<p class="text-destructive">Erro ao carregar métricas.</p>` — uma frase
+  // Era `<p class="text-danger-foreground">Erro ao carregar métricas.</p>` — uma frase
   // vermelha solta no alto de uma tela em branco, sem ícone, sem explicação e
   // sem nada para clicar. Visto na captura de 360px: a tela inteira era o
   // título, a descrição e aquela linha.
@@ -116,12 +116,19 @@ export function MetricsClient({ canCompare, currentUserId }: Props) {
   // que de fato refaz a consulta, em vez de pedir F5.
   if (isError || !data) {
     return (
-      <EmptyState
-        icon={WarningOctagon}
-        headline="Não consegui carregar o desempenho"
-        subcopy="Pode ser uma falha de rede, ou este painel pode não estar incluído no plano da sua empresa."
-        primary={{ label: t("Tentar de novo"), onClick: () => void refetch() }}
-      />
+      <Alert
+        variant="destructive"
+        title={t("Não consegui carregar o desempenho")}
+        action={
+          <Button size="sm" variant="outline" onClick={() => void refetch()}>
+            {t("Tentar de novo")}
+          </Button>
+        }
+      >
+        {t(
+          "Pode ser uma falha de rede, ou este painel pode não estar incluído no plano da sua empresa.",
+        )}
+      </Alert>
     );
   }
 
@@ -132,10 +139,11 @@ export function MetricsClient({ canCompare, currentUserId }: Props) {
   return (
     <div className="flex flex-col gap-6">
       {canCompare ? (
-        <div className="flex flex-wrap items-center gap-3">
+        // Filtro do escopo numa linha de 32, sem caixa (DS §11.2).
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">{t("Atendente")}</span>
           <Select value={owner} onValueChange={setOwner}>
-            <SelectTrigger className="w-full max-w-64">
+            <SelectTrigger className="h-8 w-full max-w-64" aria-label={t("Atendente")}>
               <SelectValue placeholder={t("Todos os atendentes")} />
             </SelectTrigger>
             <SelectContent>

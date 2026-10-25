@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useMarcaDaInstalacao } from "@/lib/branding/contexto";
 import { Switcher } from "./components/Switcher";
 import { SectionTokens } from "./sections/SectionTokens";
 import { SectionPalettes } from "./sections/SectionPalettes";
@@ -10,12 +11,13 @@ import { SectionComponents } from "./sections/SectionComponents";
 import { SectionPatterns } from "./sections/SectionPatterns";
 import { SectionMotion } from "./sections/SectionMotion";
 import { SectionIcons } from "./sections/SectionIcons";
+import { SectionSuperficies } from "./sections/SectionSuperficies";
 import { useVariant } from "./lib/variant-context";
 import { PALETTES, TYPOS, DENSITIES } from "./lib/tokens";
 
 type SectionId =
   | "tokens" | "paletas" | "tipografia" | "densidade"
-  | "componentes" | "padroes" | "motion" | "icones";
+  | "componentes" | "superficies" | "padroes" | "motion" | "icones";
 
 const NAV: Array<{ id: SectionId; label: string }> = [
   { id: "tokens",      label: "Tokens" },
@@ -23,6 +25,7 @@ const NAV: Array<{ id: SectionId; label: string }> = [
   { id: "tipografia",  label: "Tipografia" },
   { id: "densidade",   label: "Densidade" },
   { id: "componentes", label: "Componentes" },
+  { id: "superficies", label: "Superfícies" },
   { id: "padroes",     label: "Padrões" },
   { id: "motion",      label: "Motion" },
   { id: "icones",      label: "Iconografia" },
@@ -30,6 +33,8 @@ const NAV: Array<{ id: SectionId; label: string }> = [
 
 export default function DesignShowcasePage() {
   const [active, setActive] = useState<SectionId>("tokens");
+  // O nome da instalação, como no resto do app (o provedor do layout raiz).
+  const { name: nome } = useMarcaDaInstalacao();
   const v = useVariant();
 
   const content = (() => {
@@ -39,6 +44,7 @@ export default function DesignShowcasePage() {
       case "tipografia":  return <SectionTypography />;
       case "densidade":   return <SectionDensity />;
       case "componentes": return <SectionComponents />;
+      case "superficies": return <SectionSuperficies />;
       case "padroes":     return <SectionPatterns />;
       case "motion":      return <SectionMotion />;
       case "icones":      return <SectionIcons />;
@@ -48,7 +54,7 @@ export default function DesignShowcasePage() {
   return (
     <div className="ds-shell">
       <aside className="ds-sidebar">
-        <h1>DeskcommCRM</h1>
+        <h1>{nome}</h1>
         <div className="ds-sub">design system · v0.1</div>
 
         <div className="ds-nav-section">Foundation</div>
@@ -64,7 +70,7 @@ export default function DesignShowcasePage() {
         ))}
 
         <div className="ds-nav-section">Componentes</div>
-        {NAV.slice(4, 6).map((n) => (
+        {NAV.slice(4, 7).map((n) => (
           <button
             key={n.id}
             className="ds-nav-link"
@@ -76,7 +82,7 @@ export default function DesignShowcasePage() {
         ))}
 
         <div className="ds-nav-section">Sensação</div>
-        {NAV.slice(6).map((n) => (
+        {NAV.slice(7).map((n) => (
           <button
             key={n.id}
             className="ds-nav-link"
@@ -107,7 +113,7 @@ export default function DesignShowcasePage() {
 
         <div className="ds-scroll">
           <div className="ds-banner">
-            <h1>Showcase de Design System — DeskcommCRM</h1>
+            <h1>Showcase de Design System — {nome}</h1>
             <p>
               Use a sidebar pra navegar pelas seções. Use o switcher (canto superior direito) pra trocar
               <strong> paleta · tipografia · densidade · tema</strong> em runtime — escolhas persistem em localStorage.

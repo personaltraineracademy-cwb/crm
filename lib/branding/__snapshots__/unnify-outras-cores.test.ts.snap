@@ -1,0 +1,1801 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #005bb5 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #005bb5;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #d9e9ff;
+  --color-accent-200: #b0d2ff;
+  --color-accent-300: #79b2fc;
+  --color-accent-400: #4492f3;
+  --color-accent-500: #1976de;
+  --color-accent-600: #005bb5;
+  --color-accent-700: #0f4a8e;
+  --color-accent-800: #133e72;
+  --color-accent-900: #15365e;
+  --color-accent-950: #091d35;
+  --color-accent: #005bb5;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0f4a8e;
+  --color-accent-soft: #d9e9ff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #005bb5;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #d9e9ff;
+  --color-accent-200: #b0d2ff;
+  --color-accent-300: #79b2fc;
+  --color-accent-400: #4492f3;
+  --color-accent-500: #1976de;
+  --color-accent-600: #005bb5;
+  --color-accent-700: #0f4a8e;
+  --color-accent-800: #133e72;
+  --color-accent-900: #15365e;
+  --color-accent-950: #091d35;
+  --color-accent: #4492f3;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #79b2fc;
+  --color-accent-soft: rgba(68, 146, 243, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #005bb5;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #d9e9ff;
+  --color-accent-200: #b0d2ff;
+  --color-accent-300: #79b2fc;
+  --color-accent-400: #4492f3;
+  --color-accent-500: #1976de;
+  --color-accent-600: #005bb5;
+  --color-accent-700: #0f4a8e;
+  --color-accent-800: #133e72;
+  --color-accent-900: #15365e;
+  --color-accent-950: #091d35;
+  --color-accent: #005bb5;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0f4a8e;
+  --color-accent-soft: #d9e9ff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #005bb5;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #d9e9ff;
+  --color-accent-200: #b0d2ff;
+  --color-accent-300: #79b2fc;
+  --color-accent-400: #4492f3;
+  --color-accent-500: #1976de;
+  --color-accent-600: #005bb5;
+  --color-accent-700: #0f4a8e;
+  --color-accent-800: #133e72;
+  --color-accent-900: #15365e;
+  --color-accent-950: #091d35;
+  --color-accent: #4492f3;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #79b2fc;
+  --color-accent-soft: rgba(68, 146, 243, 0.16);
+}",
+  "motivos": [],
+  "sha256DoResolvido": "50aa068a4fb0d2636f29c7c03e3c95b55e58b55c1cb6442446b437a03f036299",
+  "tokens": {
+    "claro": {
+      "accent": "#005bb5",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#0f4a8e",
+      "soft": "#d9e9ff",
+    },
+    "escuro": {
+      "accent": "#4492f3",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#79b2fc",
+      "soft": "rgba(68, 146, 243, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #0066cd sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #0066cd;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeaff;
+  --color-accent-200: #b6d5ff;
+  --color-accent-300: #82b8ff;
+  --color-accent-400: #4c9aff;
+  --color-accent-500: #147ff5;
+  --color-accent-600: #0066cd;
+  --color-accent-700: #0f52a0;
+  --color-accent-800: #14447f;
+  --color-accent-900: #163a68;
+  --color-accent-950: #071c38;
+  --color-accent: #0066cd;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0f52a0;
+  --color-accent-soft: #dbeaff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #0066cd;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeaff;
+  --color-accent-200: #b6d5ff;
+  --color-accent-300: #82b8ff;
+  --color-accent-400: #4c9aff;
+  --color-accent-500: #147ff5;
+  --color-accent-600: #0066cd;
+  --color-accent-700: #0f52a0;
+  --color-accent-800: #14447f;
+  --color-accent-900: #163a68;
+  --color-accent-950: #071c38;
+  --color-accent: #4c9aff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #82b8ff;
+  --color-accent-soft: rgba(76, 154, 255, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #0066cd;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeaff;
+  --color-accent-200: #b6d5ff;
+  --color-accent-300: #82b8ff;
+  --color-accent-400: #4c9aff;
+  --color-accent-500: #147ff5;
+  --color-accent-600: #0066cd;
+  --color-accent-700: #0f52a0;
+  --color-accent-800: #14447f;
+  --color-accent-900: #163a68;
+  --color-accent-950: #071c38;
+  --color-accent: #0066cd;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0f52a0;
+  --color-accent-soft: #dbeaff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #0066cd;
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeaff;
+  --color-accent-200: #b6d5ff;
+  --color-accent-300: #82b8ff;
+  --color-accent-400: #4c9aff;
+  --color-accent-500: #147ff5;
+  --color-accent-600: #0066cd;
+  --color-accent-700: #0f52a0;
+  --color-accent-800: #14447f;
+  --color-accent-900: #163a68;
+  --color-accent-950: #071c38;
+  --color-accent: #4c9aff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #82b8ff;
+  --color-accent-soft: rgba(76, 154, 255, 0.16);
+}",
+  "motivos": [],
+  "sha256DoResolvido": "dd8e7c9c8aa7abae9bc6cf89d54b295128c199f061854fc2fbd9aeef542a106f",
+  "tokens": {
+    "claro": {
+      "accent": "#0066cd",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#0f52a0",
+      "soft": "#dbeaff",
+    },
+    "escuro": {
+      "accent": "#4c9aff",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#82b8ff",
+      "soft": "rgba(76, 154, 255, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #0b5cff sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #0b5cff;
+  --color-accent-50: #f0f5ff;
+  --color-accent-100: #dfeaff;
+  --color-accent-200: #bed5ff;
+  --color-accent-300: #92b8ff;
+  --color-accent-400: #689bff;
+  --color-accent-500: #417fff;
+  --color-accent-600: #0b5cff;
+  --color-accent-700: #114bc5;
+  --color-accent-800: #133f9c;
+  --color-accent-900: #14377e;
+  --color-accent-950: #051943;
+  --color-accent: #0b5cff;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #114bc5;
+  --color-accent-soft: #dfeaff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #0b5cff;
+  --color-accent-50: #f0f5ff;
+  --color-accent-100: #dfeaff;
+  --color-accent-200: #bed5ff;
+  --color-accent-300: #92b8ff;
+  --color-accent-400: #689bff;
+  --color-accent-500: #417fff;
+  --color-accent-600: #0b5cff;
+  --color-accent-700: #114bc5;
+  --color-accent-800: #133f9c;
+  --color-accent-900: #14377e;
+  --color-accent-950: #051943;
+  --color-accent: #689bff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #92b8ff;
+  --color-accent-soft: rgba(104, 155, 255, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #0b5cff;
+  --color-accent-50: #f0f5ff;
+  --color-accent-100: #dfeaff;
+  --color-accent-200: #bed5ff;
+  --color-accent-300: #92b8ff;
+  --color-accent-400: #689bff;
+  --color-accent-500: #417fff;
+  --color-accent-600: #0b5cff;
+  --color-accent-700: #114bc5;
+  --color-accent-800: #133f9c;
+  --color-accent-900: #14377e;
+  --color-accent-950: #051943;
+  --color-accent: #0b5cff;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #114bc5;
+  --color-accent-soft: #dfeaff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #0b5cff;
+  --color-accent-50: #f0f5ff;
+  --color-accent-100: #dfeaff;
+  --color-accent-200: #bed5ff;
+  --color-accent-300: #92b8ff;
+  --color-accent-400: #689bff;
+  --color-accent-500: #417fff;
+  --color-accent-600: #0b5cff;
+  --color-accent-700: #114bc5;
+  --color-accent-800: #133f9c;
+  --color-accent-900: #14377e;
+  --color-accent-950: #051943;
+  --color-accent: #689bff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #92b8ff;
+  --color-accent-soft: rgba(104, 155, 255, 0.16);
+}",
+  "motivos": [],
+  "sha256DoResolvido": "535aee92a7cfe92f807641d6b88ff135522487b39e4010778ea03d74dc6ca697",
+  "tokens": {
+    "claro": {
+      "accent": "#0b5cff",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#114bc5",
+      "soft": "#dfeaff",
+    },
+    "escuro": {
+      "accent": "#689bff",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#92b8ff",
+      "soft": "rgba(104, 155, 255, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #0f172a sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #0f172a;
+  --color-accent-50: #f3f5f8;
+  --color-accent-100: #dde1e7;
+  --color-accent-200: #b5bbc8;
+  --color-accent-300: #828a9d;
+  --color-accent-400: #545f77;
+  --color-accent-500: #303a52;
+  --color-accent-600: #0f172a;
+  --color-accent-700: #121928;
+  --color-accent-800: #141a26;
+  --color-accent-900: #161a24;
+  --color-accent-950: #191c23;
+  --color-accent: #0f172a;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #121928;
+  --color-accent-soft: #dde1e7;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #0f172a;
+  --color-accent-50: #f3f5f8;
+  --color-accent-100: #f3f5f8;
+  --color-accent-200: #dde1e7;
+  --color-accent-300: #b5bbc8;
+  --color-accent-400: #828a9d;
+  --color-accent-500: #545f77;
+  --color-accent-600: #303a52;
+  --color-accent-700: #0f172a;
+  --color-accent-800: #121928;
+  --color-accent-900: #141a26;
+  --color-accent-950: #161a24;
+  --color-accent: #828a9d;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #b5bbc8;
+  --color-accent-soft: rgba(130, 138, 157, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #0f172a;
+  --color-accent-50: #f3f5f8;
+  --color-accent-100: #dde1e7;
+  --color-accent-200: #b5bbc8;
+  --color-accent-300: #828a9d;
+  --color-accent-400: #545f77;
+  --color-accent-500: #303a52;
+  --color-accent-600: #0f172a;
+  --color-accent-700: #121928;
+  --color-accent-800: #141a26;
+  --color-accent-900: #161a24;
+  --color-accent-950: #191c23;
+  --color-accent: #0f172a;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #121928;
+  --color-accent-soft: #dde1e7;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #0f172a;
+  --color-accent-50: #f3f5f8;
+  --color-accent-100: #f3f5f8;
+  --color-accent-200: #dde1e7;
+  --color-accent-300: #b5bbc8;
+  --color-accent-400: #828a9d;
+  --color-accent-500: #545f77;
+  --color-accent-600: #303a52;
+  --color-accent-700: #0f172a;
+  --color-accent-800: #121928;
+  --color-accent-900: #141a26;
+  --color-accent-950: #161a24;
+  --color-accent: #828a9d;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #b5bbc8;
+  --color-accent-soft: rgba(130, 138, 157, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "8a2edee15eb40b6e1a0a978599bbe53d0d08399604bf38c7429d65bb4610fe54",
+  "tokens": {
+    "claro": {
+      "accent": "#0f172a",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#121928",
+      "soft": "#dde1e7",
+    },
+    "escuro": {
+      "accent": "#828a9d",
+      "d": -1,
+      "fg": "#000000",
+      "grau": 300,
+      "hover": "#b5bbc8",
+      "soft": "rgba(130, 138, 157, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #1c261d + escuro #d9ac62 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #e0e3e0;
+  --color-accent-200: #bac0ba;
+  --color-accent-300: #8a948b;
+  --color-accent-400: #5f6b60;
+  --color-accent-500: #3d493e;
+  --color-accent-600: #1c261d;
+  --color-accent-700: #1c241d;
+  --color-accent-800: #1c221c;
+  --color-accent-900: #1c211c;
+  --color-accent-950: #1a1d1a;
+  --color-accent: #1c261d;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #1c241d;
+  --color-accent-soft: #e0e3e0;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #1c261d;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #e0e3e0;
+  --color-accent-200: #bac0ba;
+  --color-accent-300: #8a948b;
+  --color-accent-400: #5f6b60;
+  --color-accent-500: #3d493e;
+  --color-accent-600: #1c261d;
+  --color-accent-700: #1c241d;
+  --color-accent-800: #1c221c;
+  --color-accent-900: #1c211c;
+  --color-accent-950: #1a1d1a;
+  --color-accent: #1c261d;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #1c241d;
+  --color-accent-soft: #e0e3e0;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #1c261d;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "298e20003404df8e639b8bd0e688300e0a92f81a8d930ade090ff73b3b5f4173",
+  "tokens": {
+    "claro": {
+      "accent": "#1c261d",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#1c241d",
+      "soft": "#e0e3e0",
+    },
+    "escuro": {
+      "accent": "#e9b762",
+      "d": 1,
+      "fg": "#000000",
+      "grau": 500,
+      "hover": "#f2c377",
+      "soft": "rgba(233, 183, 98, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #1c261d sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #e0e3e0;
+  --color-accent-200: #bac0ba;
+  --color-accent-300: #8a948b;
+  --color-accent-400: #5f6b60;
+  --color-accent-500: #3d493e;
+  --color-accent-600: #1c261d;
+  --color-accent-700: #1c241d;
+  --color-accent-800: #1c221c;
+  --color-accent-900: #1c211c;
+  --color-accent-950: #1a1d1a;
+  --color-accent: #1c261d;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #1c241d;
+  --color-accent-soft: #e0e3e0;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #f4f5f4;
+  --color-accent-200: #e0e3e0;
+  --color-accent-300: #bac0ba;
+  --color-accent-400: #8a948b;
+  --color-accent-500: #5f6b60;
+  --color-accent-600: #3d493e;
+  --color-accent-700: #1c261d;
+  --color-accent-800: #1c241d;
+  --color-accent-900: #1c221c;
+  --color-accent-950: #1c211c;
+  --color-accent: #8a948b;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bac0ba;
+  --color-accent-soft: rgba(138, 148, 139, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #e0e3e0;
+  --color-accent-200: #bac0ba;
+  --color-accent-300: #8a948b;
+  --color-accent-400: #5f6b60;
+  --color-accent-500: #3d493e;
+  --color-accent-600: #1c261d;
+  --color-accent-700: #1c241d;
+  --color-accent-800: #1c221c;
+  --color-accent-900: #1c211c;
+  --color-accent-950: #1a1d1a;
+  --color-accent: #1c261d;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #1c241d;
+  --color-accent-soft: #e0e3e0;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #1c261d;
+  --color-accent-50: #f4f5f4;
+  --color-accent-100: #f4f5f4;
+  --color-accent-200: #e0e3e0;
+  --color-accent-300: #bac0ba;
+  --color-accent-400: #8a948b;
+  --color-accent-500: #5f6b60;
+  --color-accent-600: #3d493e;
+  --color-accent-700: #1c261d;
+  --color-accent-800: #1c241d;
+  --color-accent-900: #1c221c;
+  --color-accent-950: #1c211c;
+  --color-accent: #8a948b;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bac0ba;
+  --color-accent-soft: rgba(138, 148, 139, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|escuro|--color-accent",
+    "redundancia_nao_cromatica_necessaria|escuro|success",
+  ],
+  "sha256DoResolvido": "5c318a7b0ec4c7e5e5c410481cb91c5d839ee4cabe1cd1f8c26c3e78d85df727",
+  "tokens": {
+    "claro": {
+      "accent": "#1c261d",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#1c241d",
+      "soft": "#e0e3e0",
+    },
+    "escuro": {
+      "accent": "#8a948b",
+      "d": -1,
+      "fg": "#000000",
+      "grau": 300,
+      "hover": "#bac0ba",
+      "soft": "rgba(138, 148, 139, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #7a5cd6 + escuro #d9ac62 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #eae7ff;
+  --color-accent-100: #d5cfff;
+  --color-accent-200: #bbaeff;
+  --color-accent-300: #a48dff;
+  --color-accent-400: #916ffb;
+  --color-accent-500: #7a5cd6;
+  --color-accent-600: #604aa6;
+  --color-accent-700: #4d3d83;
+  --color-accent-800: #3f346a;
+  --color-accent-900: #1d1636;
+  --color-accent-950: #1d1636;
+  --color-accent: #604aa6;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #4d3d83;
+  --color-accent-soft: #d5cfff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #eae7ff;
+  --color-accent-100: #d5cfff;
+  --color-accent-200: #bbaeff;
+  --color-accent-300: #a48dff;
+  --color-accent-400: #916ffb;
+  --color-accent-500: #7a5cd6;
+  --color-accent-600: #604aa6;
+  --color-accent-700: #4d3d83;
+  --color-accent-800: #3f346a;
+  --color-accent-900: #1d1636;
+  --color-accent-950: #1d1636;
+  --color-accent: #604aa6;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #4d3d83;
+  --color-accent-soft: #d5cfff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "f4ae93725ef043812e99f0263c8288a8d83e9685210a6646504ba955d55b23ab",
+  "tokens": {
+    "claro": {
+      "accent": "#604aa6",
+      "d": 1,
+      "fg": "#ffffff",
+      "grau": 700,
+      "hover": "#4d3d83",
+      "soft": "#d5cfff",
+    },
+    "escuro": {
+      "accent": "#e9b762",
+      "d": 1,
+      "fg": "#000000",
+      "grau": 500,
+      "hover": "#f2c377",
+      "soft": "rgba(233, 183, 98, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #7a5cd6 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #eae7ff;
+  --color-accent-100: #d5cfff;
+  --color-accent-200: #bbaeff;
+  --color-accent-300: #a48dff;
+  --color-accent-400: #916ffb;
+  --color-accent-500: #7a5cd6;
+  --color-accent-600: #604aa6;
+  --color-accent-700: #4d3d83;
+  --color-accent-800: #3f346a;
+  --color-accent-900: #1d1636;
+  --color-accent-950: #1d1636;
+  --color-accent: #604aa6;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #4d3d83;
+  --color-accent-soft: #d5cfff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #eae7ff;
+  --color-accent-200: #d5cfff;
+  --color-accent-300: #bbaeff;
+  --color-accent-400: #a48dff;
+  --color-accent-500: #916ffb;
+  --color-accent-600: #7a5cd6;
+  --color-accent-700: #604aa6;
+  --color-accent-800: #4d3d83;
+  --color-accent-900: #3f346a;
+  --color-accent-950: #1d1636;
+  --color-accent: #a48dff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bbaeff;
+  --color-accent-soft: rgba(164, 141, 255, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #eae7ff;
+  --color-accent-100: #d5cfff;
+  --color-accent-200: #bbaeff;
+  --color-accent-300: #a48dff;
+  --color-accent-400: #916ffb;
+  --color-accent-500: #7a5cd6;
+  --color-accent-600: #604aa6;
+  --color-accent-700: #4d3d83;
+  --color-accent-800: #3f346a;
+  --color-accent-900: #1d1636;
+  --color-accent-950: #1d1636;
+  --color-accent: #604aa6;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #4d3d83;
+  --color-accent-soft: #d5cfff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #7a5cd6;
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #eae7ff;
+  --color-accent-200: #d5cfff;
+  --color-accent-300: #bbaeff;
+  --color-accent-400: #a48dff;
+  --color-accent-500: #916ffb;
+  --color-accent-600: #7a5cd6;
+  --color-accent-700: #604aa6;
+  --color-accent-800: #4d3d83;
+  --color-accent-900: #3f346a;
+  --color-accent-950: #1d1636;
+  --color-accent: #a48dff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bbaeff;
+  --color-accent-soft: rgba(164, 141, 255, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+  ],
+  "sha256DoResolvido": "92bbcb0658c28f317174556007142b66e227ba815f7da152d6426a4072fed4f7",
+  "tokens": {
+    "claro": {
+      "accent": "#604aa6",
+      "d": 1,
+      "fg": "#ffffff",
+      "grau": 700,
+      "hover": "#4d3d83",
+      "soft": "#d5cfff",
+    },
+    "escuro": {
+      "accent": "#a48dff",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#bbaeff",
+      "soft": "rgba(164, 141, 255, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #75b7ff + escuro #7a5cd6 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #75b7ff;
+  --color-accent-50: #bbdbff;
+  --color-accent-100: #a3ceff;
+  --color-accent-200: #8dc3ff;
+  --color-accent-300: #75b7ff;
+  --color-accent-400: #5a8bc1;
+  --color-accent-500: #466c95;
+  --color-accent-600: #395676;
+  --color-accent-700: #0d1d2f;
+  --color-accent-800: #0d1d2f;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #395676;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0d1d2f;
+  --color-accent-soft: #a3ceff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #75b7ff;
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #eae7ff;
+  --color-accent-200: #d5cfff;
+  --color-accent-300: #bbaeff;
+  --color-accent-400: #a48dff;
+  --color-accent-500: #916ffb;
+  --color-accent-600: #7a5cd6;
+  --color-accent-700: #604aa6;
+  --color-accent-800: #4d3d83;
+  --color-accent-900: #3f346a;
+  --color-accent-950: #1d1636;
+  --color-accent: #a48dff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bbaeff;
+  --color-accent-soft: rgba(164, 141, 255, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #75b7ff;
+  --color-accent-50: #bbdbff;
+  --color-accent-100: #a3ceff;
+  --color-accent-200: #8dc3ff;
+  --color-accent-300: #75b7ff;
+  --color-accent-400: #5a8bc1;
+  --color-accent-500: #466c95;
+  --color-accent-600: #395676;
+  --color-accent-700: #0d1d2f;
+  --color-accent-800: #0d1d2f;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #395676;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0d1d2f;
+  --color-accent-soft: #a3ceff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #75b7ff;
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #eae7ff;
+  --color-accent-200: #d5cfff;
+  --color-accent-300: #bbaeff;
+  --color-accent-400: #a48dff;
+  --color-accent-500: #916ffb;
+  --color-accent-600: #7a5cd6;
+  --color-accent-700: #604aa6;
+  --color-accent-800: #4d3d83;
+  --color-accent-900: #3f346a;
+  --color-accent-950: #1d1636;
+  --color-accent: #a48dff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #bbaeff;
+  --color-accent-soft: rgba(164, 141, 255, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+  ],
+  "sha256DoResolvido": "06e77d18b83eb923ff3d52fa43e3f437fb5c5976d55b498189a5ec1b5bfe26e2",
+  "tokens": {
+    "claro": {
+      "accent": "#395676",
+      "d": 3,
+      "fg": "#ffffff",
+      "grau": 900,
+      "hover": "#0d1d2f",
+      "soft": "#a3ceff",
+    },
+    "escuro": {
+      "accent": "#a48dff",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#bbaeff",
+      "soft": "rgba(164, 141, 255, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #75b7ff sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #75b7ff;
+  --color-accent-50: #bbdbff;
+  --color-accent-100: #a3ceff;
+  --color-accent-200: #8dc3ff;
+  --color-accent-300: #75b7ff;
+  --color-accent-400: #5a8bc1;
+  --color-accent-500: #466c95;
+  --color-accent-600: #395676;
+  --color-accent-700: #0d1d2f;
+  --color-accent-800: #0d1d2f;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #395676;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0d1d2f;
+  --color-accent-soft: #a3ceff;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #75b7ff;
+  --color-accent-50: #e5f1ff;
+  --color-accent-100: #d3e7ff;
+  --color-accent-200: #bbdbff;
+  --color-accent-300: #a3ceff;
+  --color-accent-400: #8dc3ff;
+  --color-accent-500: #75b7ff;
+  --color-accent-600: #5a8bc1;
+  --color-accent-700: #466c95;
+  --color-accent-800: #395676;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #8dc3ff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a3ceff;
+  --color-accent-soft: rgba(141, 195, 255, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #75b7ff;
+  --color-accent-50: #bbdbff;
+  --color-accent-100: #a3ceff;
+  --color-accent-200: #8dc3ff;
+  --color-accent-300: #75b7ff;
+  --color-accent-400: #5a8bc1;
+  --color-accent-500: #466c95;
+  --color-accent-600: #395676;
+  --color-accent-700: #0d1d2f;
+  --color-accent-800: #0d1d2f;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #395676;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #0d1d2f;
+  --color-accent-soft: #a3ceff;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #75b7ff;
+  --color-accent-50: #e5f1ff;
+  --color-accent-100: #d3e7ff;
+  --color-accent-200: #bbdbff;
+  --color-accent-300: #a3ceff;
+  --color-accent-400: #8dc3ff;
+  --color-accent-500: #75b7ff;
+  --color-accent-600: #5a8bc1;
+  --color-accent-700: #466c95;
+  --color-accent-800: #395676;
+  --color-accent-900: #0d1d2f;
+  --color-accent-950: #0d1d2f;
+  --color-accent: #8dc3ff;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a3ceff;
+  --color-accent-soft: rgba(141, 195, 255, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "566f11310a65e1c583280e5ed381e8da02d9ee5032bff429a2b1d18fc59ae988",
+  "tokens": {
+    "claro": {
+      "accent": "#395676",
+      "d": 3,
+      "fg": "#ffffff",
+      "grau": 900,
+      "hover": "#0d1d2f",
+      "soft": "#a3ceff",
+    },
+    "escuro": {
+      "accent": "#8dc3ff",
+      "d": 1,
+      "fg": "#000000",
+      "grau": 500,
+      "hover": "#a3ceff",
+      "soft": "rgba(141, 195, 255, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #506d48 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #506d48;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e3ebe1;
+  --color-accent-200: #c7d6c2;
+  --color-accent-300: #a2ba9c;
+  --color-accent-400: #81a078;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #364732;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e3ebe1;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #506d48;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e3ebe1;
+  --color-accent-200: #c7d6c2;
+  --color-accent-300: #a2ba9c;
+  --color-accent-400: #81a078;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #364732;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #81a078;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a2ba9c;
+  --color-accent-soft: rgba(129, 160, 120, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #506d48;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e3ebe1;
+  --color-accent-200: #c7d6c2;
+  --color-accent-300: #a2ba9c;
+  --color-accent-400: #81a078;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #364732;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e3ebe1;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #506d48;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e3ebe1;
+  --color-accent-200: #c7d6c2;
+  --color-accent-300: #a2ba9c;
+  --color-accent-400: #81a078;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #364732;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #81a078;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a2ba9c;
+  --color-accent-soft: rgba(129, 160, 120, 0.16);
+}",
+  "motivos": [
+    "semantica_deslocada|claro|error",
+    "semantica_deslocada|escuro|warning",
+    "semantica_deslocada|escuro|error",
+    "redundancia_nao_cromatica_necessaria|escuro|success",
+  ],
+  "sha256DoResolvido": "306cdc1da192abb2c69cc68f21af541c3f7ef7e585c15af184cfc654e22c0f69",
+  "tokens": {
+    "claro": {
+      "accent": "#506d48",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#41573b",
+      "soft": "#e3ebe1",
+    },
+    "escuro": {
+      "accent": "#81a078",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#a2ba9c",
+      "soft": "rgba(129, 160, 120, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #67885d + escuro #808080 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #67885d;
+  --color-accent-50: #ccdec7;
+  --color-accent-100: #adc8a5;
+  --color-accent-200: #90b385;
+  --color-accent-300: #799f6e;
+  --color-accent-400: #67885d;
+  --color-accent-500: #516a4a;
+  --color-accent-600: #42553c;
+  --color-accent-700: #374633;
+  --color-accent-800: #171f14;
+  --color-accent-900: #171f14;
+  --color-accent-950: #171f14;
+  --color-accent: #42553c;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #374633;
+  --color-accent-soft: #adc8a5;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #67885d;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #67885d;
+  --color-accent-50: #ccdec7;
+  --color-accent-100: #adc8a5;
+  --color-accent-200: #90b385;
+  --color-accent-300: #799f6e;
+  --color-accent-400: #67885d;
+  --color-accent-500: #516a4a;
+  --color-accent-600: #42553c;
+  --color-accent-700: #374633;
+  --color-accent-800: #171f14;
+  --color-accent-900: #171f14;
+  --color-accent-950: #171f14;
+  --color-accent: #42553c;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #374633;
+  --color-accent-soft: #adc8a5;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #67885d;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "semantica_deslocada|claro|error",
+    "cor_escura_acromatica|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "c9c657cc14555c78486501f686ab986b7389e0d86feb54cf9def2473bf29c1ce",
+  "tokens": {
+    "claro": {
+      "accent": "#42553c",
+      "d": 2,
+      "fg": "#ffffff",
+      "grau": 800,
+      "hover": "#374633",
+      "soft": "#adc8a5",
+    },
+    "escuro": {
+      "accent": "#82a077",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#a4ba9a",
+      "soft": "rgba(130, 160, 119, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #67885d sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #67885d;
+  --color-accent-50: #ccdec7;
+  --color-accent-100: #adc8a5;
+  --color-accent-200: #90b385;
+  --color-accent-300: #799f6e;
+  --color-accent-400: #67885d;
+  --color-accent-500: #516a4a;
+  --color-accent-600: #42553c;
+  --color-accent-700: #374633;
+  --color-accent-800: #171f14;
+  --color-accent-900: #171f14;
+  --color-accent-950: #171f14;
+  --color-accent: #42553c;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #374633;
+  --color-accent-soft: #adc8a5;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #67885d;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e5eee2;
+  --color-accent-200: #ccdec7;
+  --color-accent-300: #adc8a5;
+  --color-accent-400: #90b385;
+  --color-accent-500: #799f6e;
+  --color-accent-600: #67885d;
+  --color-accent-700: #516a4a;
+  --color-accent-800: #42553c;
+  --color-accent-900: #374633;
+  --color-accent-950: #171f14;
+  --color-accent: #90b385;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #adc8a5;
+  --color-accent-soft: rgba(144, 179, 133, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #67885d;
+  --color-accent-50: #ccdec7;
+  --color-accent-100: #adc8a5;
+  --color-accent-200: #90b385;
+  --color-accent-300: #799f6e;
+  --color-accent-400: #67885d;
+  --color-accent-500: #516a4a;
+  --color-accent-600: #42553c;
+  --color-accent-700: #374633;
+  --color-accent-800: #171f14;
+  --color-accent-900: #171f14;
+  --color-accent-950: #171f14;
+  --color-accent: #42553c;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #374633;
+  --color-accent-soft: #adc8a5;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #67885d;
+  --color-accent-50: #f2f6f1;
+  --color-accent-100: #e5eee2;
+  --color-accent-200: #ccdec7;
+  --color-accent-300: #adc8a5;
+  --color-accent-400: #90b385;
+  --color-accent-500: #799f6e;
+  --color-accent-600: #67885d;
+  --color-accent-700: #516a4a;
+  --color-accent-800: #42553c;
+  --color-accent-900: #374633;
+  --color-accent-950: #171f14;
+  --color-accent: #90b385;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #adc8a5;
+  --color-accent-soft: rgba(144, 179, 133, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "semantica_deslocada|claro|error",
+  ],
+  "sha256DoResolvido": "75461a32843f6095eeddab690cc0da0636120774bb682b90b8f0751fc8649353",
+  "tokens": {
+    "claro": {
+      "accent": "#42553c",
+      "d": 2,
+      "fg": "#ffffff",
+      "grau": 800,
+      "hover": "#374633",
+      "soft": "#adc8a5",
+    },
+    "escuro": {
+      "accent": "#90b385",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#adc8a5",
+      "soft": "rgba(144, 179, 133, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #808080 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #808080;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e4ebe0;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #808080;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #808080;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e4ebe0;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #808080;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "motivos": [
+    "marca_acromatica|null|--color-brand",
+    "semantica_deslocada|claro|error",
+    "semantica_deslocada|escuro|warning",
+    "semantica_deslocada|escuro|error",
+    "redundancia_nao_cromatica_necessaria|escuro|success",
+  ],
+  "sha256DoResolvido": "b2b1ab43834dc54960d78ec7c51012f306e036f0ec7d2839163ae60b9b63397c",
+  "tokens": {
+    "claro": {
+      "accent": "#506d48",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#41573b",
+      "soft": "#e4ebe0",
+    },
+    "escuro": {
+      "accent": "#82a077",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#a4ba9a",
+      "soft": "rgba(130, 160, 119, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #d9ac62 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #d9ac62;
+  --color-accent-50: #f6d29b;
+  --color-accent-100: #f2c377;
+  --color-accent-200: #e9b762;
+  --color-accent-300: #d9ac62;
+  --color-accent-400: #a4834c;
+  --color-accent-500: #7f653c;
+  --color-accent-600: #655131;
+  --color-accent-700: #251a08;
+  --color-accent-800: #251a08;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #655131;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #251a08;
+  --color-accent-soft: #f2c377;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #d9ac62;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #d9ac62;
+  --color-accent-50: #f6d29b;
+  --color-accent-100: #f2c377;
+  --color-accent-200: #e9b762;
+  --color-accent-300: #d9ac62;
+  --color-accent-400: #a4834c;
+  --color-accent-500: #7f653c;
+  --color-accent-600: #655131;
+  --color-accent-700: #251a08;
+  --color-accent-800: #251a08;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #655131;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #251a08;
+  --color-accent-soft: #f2c377;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #d9ac62;
+  --color-accent-50: #f9eedc;
+  --color-accent-100: #f9e2c0;
+  --color-accent-200: #f6d29b;
+  --color-accent-300: #f2c377;
+  --color-accent-400: #e9b762;
+  --color-accent-500: #d9ac62;
+  --color-accent-600: #a4834c;
+  --color-accent-700: #7f653c;
+  --color-accent-800: #655131;
+  --color-accent-900: #251a08;
+  --color-accent-950: #251a08;
+  --color-accent: #e9b762;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #f2c377;
+  --color-accent-soft: rgba(233, 183, 98, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "semantica_deslocada|claro|error",
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "dd4a00d94790f2b9bde78aef7b4844d393805c2e696b963144ac81426ada8d1b",
+  "tokens": {
+    "claro": {
+      "accent": "#655131",
+      "d": 3,
+      "fg": "#ffffff",
+      "grau": 900,
+      "hover": "#251a08",
+      "soft": "#f2c377",
+    },
+    "escuro": {
+      "accent": "#e9b762",
+      "d": 1,
+      "fg": "#000000",
+      "grau": 500,
+      "hover": "#f2c377",
+      "soft": "rgba(233, 183, 98, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #e11d48 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #e11d48;
+  --color-accent-50: #ffe3e3;
+  --color-accent-100: #ffc7c8;
+  --color-accent-200: #ff9fa3;
+  --color-accent-300: #ff737e;
+  --color-accent-400: #ff395b;
+  --color-accent-500: #e11d48;
+  --color-accent-600: #ae213a;
+  --color-accent-700: #8a2130;
+  --color-accent-800: #70202a;
+  --color-accent-900: #38080f;
+  --color-accent-950: #38080f;
+  --color-accent: #ae213a;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #8a2130;
+  --color-accent-soft: #ffc7c8;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #e11d48;
+  --color-accent-50: #fff1f1;
+  --color-accent-100: #ffe3e3;
+  --color-accent-200: #ffc7c8;
+  --color-accent-300: #ff9fa3;
+  --color-accent-400: #ff737e;
+  --color-accent-500: #ff395b;
+  --color-accent-600: #e11d48;
+  --color-accent-700: #ae213a;
+  --color-accent-800: #8a2130;
+  --color-accent-900: #70202a;
+  --color-accent-950: #38080f;
+  --color-accent: #ff737e;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #ff9fa3;
+  --color-accent-soft: rgba(255, 115, 126, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #e11d48;
+  --color-accent-50: #ffe3e3;
+  --color-accent-100: #ffc7c8;
+  --color-accent-200: #ff9fa3;
+  --color-accent-300: #ff737e;
+  --color-accent-400: #ff395b;
+  --color-accent-500: #e11d48;
+  --color-accent-600: #ae213a;
+  --color-accent-700: #8a2130;
+  --color-accent-800: #70202a;
+  --color-accent-900: #38080f;
+  --color-accent-950: #38080f;
+  --color-accent: #ae213a;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #8a2130;
+  --color-accent-soft: #ffc7c8;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #e11d48;
+  --color-accent-50: #fff1f1;
+  --color-accent-100: #ffe3e3;
+  --color-accent-200: #ffc7c8;
+  --color-accent-300: #ff9fa3;
+  --color-accent-400: #ff737e;
+  --color-accent-500: #ff395b;
+  --color-accent-600: #e11d48;
+  --color-accent-700: #ae213a;
+  --color-accent-800: #8a2130;
+  --color-accent-900: #70202a;
+  --color-accent-950: #38080f;
+  --color-accent: #ff737e;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #ff9fa3;
+  --color-accent-soft: rgba(255, 115, 126, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "semantica_deslocada|claro|error",
+    "semantica_deslocada|escuro|success",
+    "redundancia_nao_cromatica_necessaria|escuro|warning",
+  ],
+  "sha256DoResolvido": "8900b4c4c16f8b771b44d4fd4fce4090d9db3c4cd51876a41e5ebfda6791d5e4",
+  "tokens": {
+    "claro": {
+      "accent": "#ae213a",
+      "d": 1,
+      "fg": "#ffffff",
+      "grau": 700,
+      "hover": "#8a2130",
+      "soft": "#ffc7c8",
+    },
+    "escuro": {
+      "accent": "#ff737e",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#ff9fa3",
+      "soft": "rgba(255, 115, 126, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #f5c518 sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #f5c518;
+  --color-accent-50: #ffe088;
+  --color-accent-100: #ffd65b;
+  --color-accent-200: #ffcc08;
+  --color-accent-300: #f5c518;
+  --color-accent-400: #b8941b;
+  --color-accent-500: #8d721a;
+  --color-accent-600: #6f5a19;
+  --color-accent-700: #251b00;
+  --color-accent-800: #251b00;
+  --color-accent-900: #251b00;
+  --color-accent-950: #251b00;
+  --color-accent: #6f5a19;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #251b00;
+  --color-accent-soft: #ffd65b;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #f5c518;
+  --color-accent-50: #ffeaaf;
+  --color-accent-100: #ffe088;
+  --color-accent-200: #ffd65b;
+  --color-accent-300: #ffcc08;
+  --color-accent-400: #f5c518;
+  --color-accent-500: #b8941b;
+  --color-accent-600: #8d721a;
+  --color-accent-700: #6f5a19;
+  --color-accent-800: #251b00;
+  --color-accent-900: #251b00;
+  --color-accent-950: #251b00;
+  --color-accent: #f5c518;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #ffcc08;
+  --color-accent-soft: rgba(245, 197, 24, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #f5c518;
+  --color-accent-50: #ffe088;
+  --color-accent-100: #ffd65b;
+  --color-accent-200: #ffcc08;
+  --color-accent-300: #f5c518;
+  --color-accent-400: #b8941b;
+  --color-accent-500: #8d721a;
+  --color-accent-600: #6f5a19;
+  --color-accent-700: #251b00;
+  --color-accent-800: #251b00;
+  --color-accent-900: #251b00;
+  --color-accent-950: #251b00;
+  --color-accent: #6f5a19;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #251b00;
+  --color-accent-soft: #ffd65b;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #f5c518;
+  --color-accent-50: #ffeaaf;
+  --color-accent-100: #ffe088;
+  --color-accent-200: #ffd65b;
+  --color-accent-300: #ffcc08;
+  --color-accent-400: #f5c518;
+  --color-accent-500: #b8941b;
+  --color-accent-600: #8d721a;
+  --color-accent-700: #6f5a19;
+  --color-accent-800: #251b00;
+  --color-accent-900: #251b00;
+  --color-accent-950: #251b00;
+  --color-accent: #f5c518;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #ffcc08;
+  --color-accent-soft: rgba(245, 197, 24, 0.16);
+}",
+  "motivos": [
+    "accent_deslocado|claro|--color-accent",
+    "semantica_deslocada|claro|error",
+    "accent_deslocado|escuro|--color-accent",
+  ],
+  "sha256DoResolvido": "1675e83871041a9b3a06160b5893484d089e0990e31b538ef01a087e7c0b0bdc",
+  "tokens": {
+    "claro": {
+      "accent": "#6f5a19",
+      "d": 3,
+      "fg": "#ffffff",
+      "grau": 900,
+      "hover": "#251b00",
+      "soft": "#ffd65b",
+    },
+    "escuro": {
+      "accent": "#f5c518",
+      "d": 2,
+      "fg": "#000000",
+      "grau": 600,
+      "hover": "#ffcc08",
+      "soft": "rgba(245, 197, 24, 0.16)",
+    },
+  },
+}
+`;
+
+exports[`a tabela do Unnify não muda nenhuma outra cor > #ffffff sai igual ao de antes da tabela 1`] = `
+{
+  "cssDaInstalacao": ":root:root {
+  --color-brand: #ffffff;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e4ebe0;
+}
+:root:root[data-theme="dark"] {
+  --color-brand: #ffffff;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "cssDaOrganizacao": "body:has([data-marca-org]) {
+  --color-brand: #ffffff;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #506d48;
+  --color-accent-fg: #ffffff;
+  --color-accent-hover: #41573b;
+  --color-accent-soft: #e4ebe0;
+}
+[data-theme="dark"] body:has([data-marca-org]) {
+  --color-brand: #ffffff;
+  --color-accent-50: #f3f6f1;
+  --color-accent-100: #e4ebe0;
+  --color-accent-200: #c8d6c1;
+  --color-accent-300: #a4ba9a;
+  --color-accent-400: #82a077;
+  --color-accent-500: #67885d;
+  --color-accent-600: #506d48;
+  --color-accent-700: #41573b;
+  --color-accent-800: #374731;
+  --color-accent-900: #2f3c2b;
+  --color-accent-950: #171f15;
+  --color-accent: #82a077;
+  --color-accent-fg: #000000;
+  --color-accent-hover: #a4ba9a;
+  --color-accent-soft: rgba(130, 160, 119, 0.16);
+}",
+  "motivos": [
+    "marca_acromatica|null|--color-brand",
+    "semantica_deslocada|claro|error",
+    "semantica_deslocada|escuro|warning",
+    "semantica_deslocada|escuro|error",
+    "redundancia_nao_cromatica_necessaria|escuro|success",
+  ],
+  "sha256DoResolvido": "a53ae6ebf8bd389bd63b4bc6788e12242236ba207a2e094e2946d61fa1fce72e",
+  "tokens": {
+    "claro": {
+      "accent": "#506d48",
+      "d": 0,
+      "fg": "#ffffff",
+      "grau": 600,
+      "hover": "#41573b",
+      "soft": "#e4ebe0",
+    },
+    "escuro": {
+      "accent": "#82a077",
+      "d": 0,
+      "fg": "#000000",
+      "grau": 400,
+      "hover": "#a4ba9a",
+      "soft": "rgba(130, 160, 119, 0.16)",
+    },
+  },
+}
+`;

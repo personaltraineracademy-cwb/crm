@@ -68,7 +68,7 @@ export function CaseList({ heading }: { heading?: ReactNode } = {}) {
             </div>
           ) : !data || data.cases.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">
-              <Robot size={28} className="text-muted-foreground" aria-hidden />
+              <Robot size={32} className="text-muted-foreground" aria-hidden />
               <p className="text-sm font-medium">
                 {tab === "open" ? t("Nenhum caso aberto") : t("Nenhum caso concluído")}
               </p>
@@ -79,7 +79,7 @@ export function CaseList({ heading }: { heading?: ReactNode } = {}) {
               </p>
             </div>
           ) : (
-            <ul className="min-h-0 overflow-y-auto divide-y divide-border rounded-lg border border-border">
+            <ul className="min-h-0 divide-y divide-border overflow-y-auto rounded-xl border border-border bg-card">
               {data.cases.map((c) => (
                 <CaseRow
                   key={c.id}
@@ -126,17 +126,19 @@ function CaseRow({
         aria-current={selected ? "true" : undefined}
         data-testid="case-item"
         className={cn(
-          "flex w-full flex-col items-start gap-1 px-4 py-3 text-left transition-colors hover:bg-accent-soft",
-          selected && "bg-accent-soft",
+          "flex w-full flex-col items-start gap-1 px-4 py-3 text-left transition-colors hover:bg-muted/40",
+          selected && "bg-interactive hover:bg-interactive",
         )}
       >
         <div className="flex w-full items-center justify-between gap-2">
-          <p className="truncate text-sm font-medium">{item.title}</p>
+          <p className="truncate text-sm font-medium text-foreground" title={item.title}>
+            {item.title}
+          </p>
           <Badge variant={STATUS_BADGE_VARIANT[item.status]} className="shrink-0">
             {t(STATUS_LABEL[item.status])}
           </Badge>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground tabular-nums">
           {/* O assunto vem ANTES do nome: quem tria a fila decide por ele, e o
               nome só importa depois de escolher o caso. */}
           {t(tipoDeCasoLabel(item.kind))} · {item.contact_name ?? t("Contato sem nome")} · {when}

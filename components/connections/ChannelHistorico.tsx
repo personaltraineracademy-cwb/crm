@@ -105,7 +105,11 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
 
   if (query.isLoading) return null;
   if (query.isError) {
-    return <p role="alert" className="text-[11px] text-destructive">{frase("rede")}</p>;
+    return (
+      <p role="alert" className="text-danger-foreground text-xs">
+        {frase("rede")}
+      </p>
+    );
   }
 
   const titulo = <p className="text-xs font-medium">{t("Trazer conversas antigas para o atendimento")}</p>;
@@ -114,7 +118,9 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
     return (
       <div className="flex flex-col gap-1">
         {titulo}
-        <p className="text-[11px] text-muted-foreground">{t("Ligue 'Guardar o histórico' e conecte o número de novo")}</p>
+        <p className="text-xs text-muted-foreground">
+          {t("Ligue 'Guardar o histórico' e conecte o número de novo")}
+        </p>
       </div>
     );
   }
@@ -137,11 +143,13 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
   return (
     <div className="flex flex-col gap-1">
       {titulo}
-      <p className="text-[11px] text-muted-foreground">{t("Período: últimos 30, 90, 180 ou 365 dias")}</p>
+      <p className="text-xs text-muted-foreground">
+        {t("Período: últimos 30, 90, 180 ou 365 dias")}
+      </p>
 
       {rodando && imp && (
         <>
-          <p className="text-[11px]">
+          <p className="text-xs">
             {t("Importando: {feitas} de {conversas} conversas")
               .replace("{feitas}", String(imp.conversas_feitas ?? 0))
               .replace("{conversas}", String(p?.conversas ?? 0))}
@@ -156,9 +164,11 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
 
       {status === "erro" && imp && (
         <>
-          <p role="alert" className="text-[11px] text-destructive">{t("A importação parou por um erro.")}</p>
+          <p role="alert" className="text-danger-foreground text-xs">
+            {t("A importação parou por um erro.")}
+          </p>
           {imp.erro && (
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {t("Detalhe: {erro}").replace("{erro}", resumirErroDaImportacao(imp.erro))}
             </p>
           )}
@@ -177,8 +187,8 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
 
       {status === "concluida" && imp && (
         <>
-          <p className="text-[11px] font-medium">{t("Importação concluída")}</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-xs font-medium">{t("Importação concluída")}</p>
+          <p className="text-xs text-muted-foreground">
             {t("{gravadas} mensagens trazidas; {indisponiveis} áudios ou imagens não estavam mais disponíveis.")
               .replace("{gravadas}", String(imp.mensagens_gravadas ?? 0))
               .replace("{indisponiveis}", String(imp.midias_indisponiveis ?? 0))}
@@ -188,7 +198,7 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
 
       {status === "previa" && imp && numeros && (
         <>
-          <p className="text-[11px]">{numeros}</p>
+          <p className="text-xs">{numeros}</p>
           <div>
             <Button size="sm" disabled={busy || contando} onClick={() => void acao({ acao: "importar", importacaoId: imp.id })}>
               {t("Importar")}
@@ -199,8 +209,14 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
 
       {(status === "previa" || status === "rodando" || status === "erro") && (
         <>
-          <p className="text-[11px] text-muted-foreground">{t("Nenhuma mensagem antiga será respondida pela IA nem dispara automação.")}</p>
-          <p className="text-[11px] text-muted-foreground">{t("Áudios e imagens antigos que o WhatsApp não guarda mais aparecem como indisponíveis.")}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("Nenhuma mensagem antiga será respondida pela IA nem dispara automação.")}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t(
+              "Áudios e imagens antigos que o WhatsApp não guarda mais aparecem como indisponíveis.",
+            )}
+          </p>
         </>
       )}
 
@@ -224,7 +240,9 @@ export function ChannelHistorico({ channelId }: { channelId: string }) {
       )}
 
       {erroDaPrevia && (
-        <p role="alert" className="text-[11px] text-destructive">{frase(erroDaPrevia)}</p>
+        <p role="alert" className="text-danger-foreground text-xs">
+          {frase(erroDaPrevia)}
+        </p>
       )}
     </div>
   );

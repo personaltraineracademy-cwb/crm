@@ -45,14 +45,14 @@ export function AnuncioDoContato({
 
   return (
     <section data-testid="inbox-anuncio">
-      <h3 className="text-xs font-semibold text-text">
+      <h3 className="text-sm font-semibold text-foreground">
         {origem ? t("Anúncio de origem") : t("Anúncio")}
       </h3>
       {origem && (
         <div className="mt-2 space-y-1.5">
           <AnuncioCard anuncio={origem} />
           {nomes.length > 0 && (
-            <dl className="space-y-0.5 text-[11px]">
+            <dl className="space-y-0.5 text-xs">
               {nomes.map(([rotulo, valor]) => (
                 <div key={rotulo} className="flex gap-1">
                   <dt className="shrink-0 text-muted-foreground">{rotulo}:</dt>
@@ -62,7 +62,7 @@ export function AnuncioDoContato({
             </dl>
           )}
           {quando(origem.capturado_em) && (
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {t("Clicou em {data}").replace("{data}", quando(origem.capturado_em)!)}
             </p>
           )}
@@ -71,11 +71,13 @@ export function AnuncioDoContato({
       {recente && (
         <div className="mt-3 space-y-1.5">
           {origem && (
-            <div className="text-[11px] font-medium text-muted-foreground">{t("Voltou por outro anúncio")}</div>
+            <div className="text-xs font-medium text-muted-foreground">
+              {t("Voltou por outro anúncio")}
+            </div>
           )}
           <AnuncioCard anuncio={recente} />
           {quando(recente.recebido_em) && (
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {t("Clicou em {data}").replace("{data}", quando(recente.recebido_em)!)}
             </p>
           )}

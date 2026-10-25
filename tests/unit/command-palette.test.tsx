@@ -72,18 +72,38 @@ describe("CommandPalette", () => {
     expect(descricao.indexOf("Jev"), "o Jev tem de vir no começo").toBeLessThan(20);
   });
 
-  it("o texto de apoio do item destacado usa a cor de frente do destaque, não o cinza", async () => {
+  it("o item destacado usa o realce SUAVE, e a descrição a frente dele, não o cinza", async () => {
     const user = userEvent.setup();
     abrir();
     await user.type(screen.getByRole("combobox"), "jev");
     const destacada = screen.getByRole("option", { selected: true });
-    // Cinza sobre o verde do destaque dava 1,2:1. Sem opacidade: o piso de
-    // 4,5:1 de lib/branding/contraste.ts só vale para a cor de frente INTEIRA.
-    for (const apoio of [destacada.querySelector("p")!, destacada.querySelector("span.uppercase")!]) {
-      expect(apoio.classList).toContain("text-accent-foreground");
-      expect(apoio.className).not.toMatch(/text-accent-foreground\//);
-      expect(apoio.className).not.toContain("text-muted-foreground");
+    // DS §10.18: realce `interactive` (azul muito suave), nunca a ação cheia —
+    // no CRM `bg-accent` é o azul do botão primário.
+    expect(destacada.classList).toContain("bg-interactive");
+    expect(destacada.className).not.toMatch(/(^|\s)bg-accent(\s|$)/);
+    const apoio = destacada.querySelector("p")!;
+    expect(apoio.classList).toContain("text-interactive-foreground");
+    expect(apoio.className).not.toContain("text-muted-foreground");
+  });
+
+  it("os grupos têm título, e cada opção mora no grupo dela", () => {
+    abrir();
+    const grupos = screen.getAllByRole("group");
+    expect(grupos.length).toBeGreaterThan(1);
+    for (const grupo of grupos) {
+      const titulo = document.getElementById(grupo.getAttribute("aria-labelledby")!);
+      expect(titulo?.textContent, "grupo sem título").toBeTruthy();
+      expect(titulo!.className).toContain("text-xs");
+      expect(titulo!.className).toContain("text-muted-foreground");
     }
+  });
+
+  it("o botão Esc fecha a paleta (serve também ao toque)", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+    render(<CommandPalette open onOpenChange={onOpenChange} />);
+    await user.click(screen.getByRole("button", { name: "Fechar" }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   it("respeita o papel", async () => {

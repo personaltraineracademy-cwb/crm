@@ -40,6 +40,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import { PainelDeTags } from "./_painel";
 import { TagsInternasForm } from "./_tags-internas-form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Tags" };
 export const dynamic = "force-dynamic";
@@ -96,14 +97,12 @@ export default async function TagsPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto md:p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Tags")}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Tags")}
+        description={t(
             "As etiquetas que os agentes, o Inbox e o funil usam nesta organização. Renomear ou juntar corrige também as regras de agente que escrevem a etiqueta, na mesma operação.",
           )}
-        </p>
-      </header>
+      />
 
       <form method="get" className="flex max-w-xl items-center gap-2">
         <Input name="busca" aria-label={t("Buscar etiquetas")} placeholder={t("Buscar etiquetas")}
@@ -113,7 +112,7 @@ export default async function TagsPage({ searchParams }: { searchParams: Promise
       {error || !result.success ? (
         // A falha NÃO vira lista vazia: "nenhuma etiqueta" e "não consegui ler"
         // levam o operador a decisões opostas (uma convida a criar tudo de novo).
-        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm">
+        <div className="border-danger-border bg-danger-soft rounded-lg border p-4 text-sm">
           {t("Não foi possível carregar as etiquetas agora. Recarregue a página.")}
         </div>
       ) : (

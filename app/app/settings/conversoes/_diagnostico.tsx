@@ -7,9 +7,9 @@ import { traduzir } from "@/lib/i18n/dicionario";
 import type { Idioma } from "@/lib/i18n/idiomas";
 
 const ESTILO: Record<Saude, string> = {
-  ok: "border-emerald-500/40 bg-emerald-500/10",
-  atencao: "border-amber-500/40 bg-amber-500/10",
-  problema: "border-destructive/40 bg-destructive/10",
+  ok: "border-success-border bg-success-soft",
+  atencao: "border-warning-border bg-warning-soft",
+  problema: "border-danger-border bg-danger-soft",
 };
 
 const ROTULO: Record<Saude, string> = { ok: "OK", atencao: "Atenção", problema: "Problema" };
@@ -30,7 +30,7 @@ export function DiagnosticoGoogle({
           <li
             key={item.chave}
             data-saude={item.saude}
-            className={`flex flex-col gap-1 rounded-md border p-4 ${ESTILO[item.saude]}`}
+            className={`flex flex-col gap-1 rounded-lg border p-4 ${ESTILO[item.saude]}`}
           >
             <div className="flex items-center justify-between gap-2">
               <p className="font-medium">{t(item.titulo)}</p>

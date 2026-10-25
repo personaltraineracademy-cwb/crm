@@ -4,6 +4,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { CaseList } from "./_components/CaseList";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -18,15 +19,13 @@ export default async function CasesPage() {
   return (
     <div className="flex h-[calc(100dvh-3.5rem-var(--space-6)-max(var(--space-6),var(--rodape-ocupado,0px)))] min-h-0 flex-col sm:p-6">
       <CaseList heading={
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Casos", idioma)}</h1>
-          <p className="text-sm text-muted-foreground">
-            {traduzir(
+        <PageHeader
+          title={traduzir("Casos", idioma)}
+          description={traduzir(
               "Quando a IA trava em algo que só um humano resolve, ela abre um caso aqui — e continua conversando com o cliente enquanto espera sua resposta.",
               idioma,
             )}
-          </p>
-        </header>
+        />
       } />
     </div>
   );

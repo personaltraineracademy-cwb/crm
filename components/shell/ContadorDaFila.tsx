@@ -3,6 +3,7 @@
 import { useAuth } from "@/hooks/auth/AuthProvider";
 import { useConversationCounts } from "@/hooks/inbox/useConversationCounts";
 import { useT } from "@/hooks/i18n/useT";
+import { classesDoContador } from "@/components/shell/contador";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,7 +16,7 @@ import { cn } from "@/lib/utils";
  * procurando; pediu para "ver as transferências no menu". Reusa a MESMA
  * contagem das abas do Inbox (sem filtros, a chave do React Query é a mesma).
  */
-export function ContadorDaFila({ compacto }: { compacto: boolean }) {
+export function ContadorDaFila({ compacto, className }: { compacto: boolean; className?: string }) {
   const t = useT();
   const { activeOrg } = useAuth();
   const { data } = useConversationCounts(activeOrg?.orgId ?? null);
@@ -28,10 +29,7 @@ export function ContadorDaFila({ compacto }: { compacto: boolean }) {
       data-testid="contador-da-fila"
       aria-label={rotulo}
       title={rotulo}
-      className={cn(
-        "rounded-full bg-red-600 text-[10px] font-semibold leading-none text-white tabular-nums",
-        compacto ? "absolute top-1 right-1 h-2 w-2" : "ml-auto px-1.5 py-0.5",
-      )}
+      className={cn(classesDoContador(compacto), className)}
     >
       {compacto ? null : esperando}
     </span>

@@ -120,7 +120,7 @@ export function BarraDeContatosEmLote({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface-elevated px-3 py-2"
+      className="flex flex-wrap items-center gap-1.5 border-b border-border bg-muted px-3 py-2"
       role="toolbar"
       aria-label={t("Ações em lote")}
       data-testid="barra-de-contatos-em-lote"
@@ -253,7 +253,7 @@ export function BarraDeContatosEmLote({
               </SelectContent>
             </Select>
             {!membros.isLoading && lista.length === 0 && (
-              <p className="text-xs text-text-subtle">{t("Nenhum atendente disponível.")}</p>
+              <p className="text-xs text-muted-foreground">{t("Nenhum atendente disponível.")}</p>
             )}
           </div>
           <DialogFooter>

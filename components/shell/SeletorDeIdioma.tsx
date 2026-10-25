@@ -35,7 +35,13 @@ import { Check } from "@/lib/ui/icons";
  * em vigor é metade da pergunta de quem procura este botão.
  */
 
-export function SeletorDeIdioma() {
+/**
+ * A troca de idioma em si, separada do botão: o menu da conta (`UserMenu`) usa
+ * a MESMA função no celular, onde o botão do topo não cabe ao lado do título.
+ * Duas cópias desta lógica seriam duas recargas que divergem no dia em que uma
+ * delas for consertada.
+ */
+export function useTrocaDeIdioma() {
   const t = useT();
   const idioma = useIdioma();
   const emVigor = idiomaVisivelPorCodigo(idioma);
@@ -79,17 +85,25 @@ export function SeletorDeIdioma() {
     });
   };
 
+  return { idioma, emVigor, salvando, escolher };
+}
+
+export function SeletorDeIdioma({ className }: { className?: string }) {
+  const t = useT();
+  const { idioma, emVigor, salvando, escolher } = useTrocaDeIdioma();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
+          className={className}
           disabled={salvando}
           aria-label={`${t("Idioma")}: ${emVigor.nomeNativo}`}
           data-testid="seletor-de-idioma"
         >
-          <span className="text-xs font-semibold tabular-nums">
+          <span className="text-xs font-medium tabular-nums">
             {emVigor.rotuloCurto}
           </span>
         </Button>
@@ -104,7 +118,7 @@ export function SeletorDeIdioma() {
           >
             <Check
               size={16}
-              className={`mr-2 ${codigo === idioma ? "" : "invisible"}`}
+              className={codigo === idioma ? "" : "invisible"}
               aria-hidden
             />
             {nomeNativo}

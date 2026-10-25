@@ -79,10 +79,10 @@ export function Recorrencias({
   return (
     <section className="space-y-3 rounded-xl border p-4">
       <h2 className="font-semibold">{t("Todo mês")}</h2>
-      <p className="text-sm text-text-muted">
+      <p className="text-sm text-muted-foreground">
         {t("Aluguel, internet, contador. O sistema abre a conta no dia certo.")}
       </p>
-      <p className="text-xs text-text-muted">
+      <p className="text-xs text-muted-foreground">
         {t(
           "Nasce como conta a pagar, nunca como paga: o sistema sabe que vence, não sabe se você pagou.",
         )}
@@ -92,7 +92,7 @@ export function Recorrencias({
         <div className="flex flex-wrap items-end gap-2">
           <input
             aria-label={t("Nome do lançamento")}
-            className="min-h-11 rounded-md border p-2"
+            className="min-h-11 rounded-lg border p-2"
             placeholder={t("Ex.: Aluguel")}
             value={nome}
             onChange={(e) => setNome(e.target.value)}
@@ -100,7 +100,7 @@ export function Recorrencias({
 
           <select
             aria-label={t("Entrada ou saída")}
-            className="min-h-11 rounded-md border p-2"
+            className="min-h-11 rounded-lg border p-2"
             value={direcao}
             onChange={(e) => setDirecao(e.target.value as "in" | "out")}
           >
@@ -110,7 +110,7 @@ export function Recorrencias({
 
           <select
             aria-label={t("Conta")}
-            className="min-h-11 rounded-md border p-2"
+            className="min-h-11 rounded-lg border p-2"
             value={contaId}
             onChange={(e) => setContaId(e.target.value)}
           >
@@ -124,17 +124,17 @@ export function Recorrencias({
 
           <input
             aria-label={t("Valor")}
-            className="min-h-11 w-28 rounded-md border p-2"
+            className="min-h-11 w-28 rounded-lg border p-2"
             placeholder="0,00"
             inputMode="decimal"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
           />
 
-          <label className="flex flex-col gap-1 text-xs text-text-muted">
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">
             {t("Dia do mês")}
             <input
-              className="min-h-11 w-20 rounded-md border p-2"
+              className="min-h-11 w-20 rounded-lg border p-2"
               inputMode="numeric"
               value={dia}
               onChange={(e) => setDia(e.target.value)}
@@ -170,7 +170,7 @@ export function Recorrencias({
             evita a dúvida de "vai pular fevereiro?".
           */}
           {diaValido && diaNumero > 28 ? (
-            <p className="w-full text-xs text-text-muted">
+            <p className="w-full text-xs text-muted-foreground">
               {t("Nos meses mais curtos, cai no último dia do mês.")}
             </p>
           ) : null}
@@ -178,15 +178,15 @@ export function Recorrencias({
       ) : null}
 
       {carregando ? (
-        <p className="text-sm text-text-muted">{t("Carregando...")}</p>
+        <p className="text-sm text-muted-foreground">{t("Carregando...")}</p>
       ) : recorrencias.length === 0 ? (
-        <p className="text-sm text-text-muted">{t("Nenhum lançamento recorrente.")}</p>
+        <p className="text-sm text-muted-foreground">{t("Nenhum lançamento recorrente.")}</p>
       ) : (
         <ul className="space-y-1">
           {recorrencias.map((r) => (
             <li
               key={r.id}
-              className="flex items-center justify-between rounded-md border border-border p-2 text-sm"
+              className="flex items-center justify-between rounded-lg border border-border p-2 text-sm"
             >
               <span>
                 {r.name} · {r.direction === "out" ? t("Saída") : t("Entrada")} ·{" "}
@@ -214,7 +214,7 @@ export function Recorrencias({
                     type="button"
                     aria-label={t("Remover lançamento recorrente")}
                     onClick={() => onInativar(r.id)}
-                    className="text-text-muted hover:text-text"
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     ×
                   </button>

@@ -144,7 +144,7 @@ export function BasesDoAgente({ materiais, value, onChange, disabled = false }: 
                 {m.is_active === false ? (
                   <span
                     data-testid={`base-${m.id}-arquivado`}
-                    className="ml-2 text-xs font-medium text-warning-fg"
+                    className="text-warning-foreground ml-2 text-xs font-medium"
                   >
                     {t("arquivado no acervo")}
                   </span>
@@ -164,7 +164,7 @@ export function BasesDoAgente({ materiais, value, onChange, disabled = false }: 
       ) : null}
 
       {acervoTodoDeFora ? (
-        <p data-testid="agente-acervo-de-fora" className="text-xs text-warning-fg">
+        <p data-testid="agente-acervo-de-fora" className="text-warning-foreground text-xs">
           {t("Você tem")} {ativos.length} {ativos.length === 1 ? t("material") : t("materiais")}{" "}
           {t(
             "no acervo e este assistente não lê nenhum. Ele vai responder de improviso sobre assuntos que já estão escritos.",
@@ -173,7 +173,7 @@ export function BasesDoAgente({ materiais, value, onChange, disabled = false }: 
       ) : null}
 
       {arquivadosMarcados.length > 0 ? (
-        <p data-testid="agente-base-arquivada-marcada" className="text-xs text-warning-fg">
+        <p data-testid="agente-base-arquivada-marcada" className="text-warning-foreground text-xs">
           {arquivadosMarcados.length === 1
             ? t("Um material marcado aqui foi arquivado no acervo — o agente não lê mais ele.")
             : t(
@@ -192,7 +192,7 @@ export function BasesDoAgente({ materiais, value, onChange, disabled = false }: 
       ) : null}
 
       {semPreparo.length > 0 ? (
-        <p data-testid="agente-base-sem-preparo" className="text-xs text-warning-fg">
+        <p data-testid="agente-base-sem-preparo" className="text-warning-foreground text-xs">
           {semPreparo.length === 1
             ? `"${semPreparo[0]?.name}" ${t("está marcado mas ainda não foi preparado — o agente não vai achar nada nele.")}`
             : `${semPreparo.length} ${t("materiais marcados ainda não foram preparados — o agente não vai achar nada neles.")}`}{" "}

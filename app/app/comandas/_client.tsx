@@ -197,20 +197,22 @@ export function Comandas({
                 type="button"
                 onClick={() => setAbertaId(c.id)}
                 data-testid={`comanda-${c.number}`}
-                className={`flex w-full items-center justify-between rounded-md border p-2 text-left text-sm ${
-                  abertaId === c.id ? "border-accent bg-surface-elevated" : "border-border"
+                className={`flex w-full items-center justify-between rounded-lg border p-2 text-left text-sm ${
+                  abertaId === c.id ? "border-primary bg-muted" : "border-border"
                 }`}
               >
                 <span>
                   <span className="font-medium">#{c.number}</span>{" "}
-                  <span className="text-xs text-text-muted">{t(ROTULO_DO_STATUS[c.status])}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {t(ROTULO_DO_STATUS[c.status])}
+                  </span>
                 </span>
                 <span className="tabular-nums">{formatCents(c.total_cents, c.currency)}</span>
               </button>
             </li>
           ))}
           {lista.data?.length === 0 ? (
-            <li className="p-2 text-sm text-text-muted">{t("Nenhuma comanda ainda.")}</li>
+            <li className="p-2 text-sm text-muted-foreground">{t("Nenhuma comanda ainda.")}</li>
           ) : null}
         </ul>
 
@@ -224,16 +226,16 @@ export function Comandas({
         />
       </section>
 
-      <section className="min-h-0 overflow-y-auto rounded-md border border-border p-3">
+      <section className="min-h-0 overflow-y-auto rounded-lg border border-border p-3">
         {!comanda ? (
-          <p className="text-sm text-text-muted">{t("Escolha uma comanda à esquerda.")}</p>
+          <p className="text-sm text-muted-foreground">{t("Escolha uma comanda à esquerda.")}</p>
         ) : (
           <div className="flex flex-col gap-4">
             <header className="flex items-baseline justify-between">
               <h2 className="text-lg font-semibold">
                 {t("Comanda")} #{comanda.number}
               </h2>
-              <span className="text-sm text-text-muted">
+              <span className="text-sm text-muted-foreground">
                 {comanda.contact_id && fidelidade.data ? (
                   <span className="mr-2" data-testid="saldo-de-fidelidade">
                     {fidelidade.data.saldo} {t("ponto(s)")}
@@ -252,7 +254,7 @@ export function Comandas({
                       {i.description}
                       {i.quantity > 1 ? ` ×${i.quantity}` : ""}
                       {i.commission_percent > 0 ? (
-                        <span className="ml-2 text-xs text-text-muted">
+                        <span className="ml-2 text-xs text-muted-foreground">
                           {t("comissão")} {i.commission_percent}%
                         </span>
                       ) : null}
@@ -266,7 +268,7 @@ export function Comandas({
                           type="button"
                           aria-label={t("Remover item")}
                           onClick={() => removerItem.mutate(i.id)}
-                          className="text-text-muted hover:text-text"
+                          className="text-muted-foreground hover:text-foreground"
                         >
                           ×
                         </button>
@@ -360,7 +362,7 @@ function FormularioDeItem({
         setTipoId("");
       }}
     >
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Serviço")}
         <select
           value={tipoId}
@@ -379,7 +381,7 @@ function FormularioDeItem({
               setPreco((escolhido.default_price_cents / 100).toFixed(2));
             }
           }}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         >
           <option value="">{t("Avulso")}</option>
           {tipos.map((x) => (
@@ -390,17 +392,17 @@ function FormularioDeItem({
         </select>
       </label>
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Descrição")}
         <input
           value={descricao}
           data-testid="item-descricao"
           onChange={(e) => setDescricao(e.target.value)}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Valor")}
         <input
           value={preco}
@@ -408,7 +410,7 @@ function FormularioDeItem({
           placeholder="0,00"
           data-testid="item-valor"
           onChange={(e) => setPreco(e.target.value)}
-          className="w-28 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="w-28 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
 
@@ -445,13 +447,13 @@ function Fechamento({
 
   return (
     <div className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
-      <label className="flex flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {t("Forma de pagamento")}
         <select
           value={formaId}
           data-testid="forma-de-pagamento"
           onChange={(e) => setFormaId(e.target.value)}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         >
           <option value="">{t("Escolha")}</option>
           {formas.map((f) => (
@@ -463,7 +465,7 @@ function Fechamento({
       </label>
 
       {temContato ? (
-        <label className="flex flex-col gap-1 text-xs text-text-muted">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           {t("Pontos de fidelidade")}
           <input
             value={pontos}
@@ -471,7 +473,7 @@ function Fechamento({
             placeholder="0"
             data-testid="pontos-de-fidelidade"
             onChange={(e) => setPontos(e.target.value)}
-            className="w-24 rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+            className="w-24 rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
           />
         </label>
       ) : null}
@@ -499,7 +501,7 @@ function Fechamento({
         frente. Aqui ela vê antes de tentar, e o texto diz onde resolver.
       */}
       {escolhida && !escolhida.account_id ? (
-        <p className="w-full text-xs text-danger" data-testid="aviso-forma-sem-conta">
+        <p className="text-danger-foreground w-full text-xs" data-testid="aviso-forma-sem-conta">
           {t(
             "Esta forma de pagamento ainda não tem conta de destino. Defina em Configurações › Financeiro.",
           )}
@@ -529,7 +531,7 @@ function Estorno({
         setMotivo("");
       }}
     >
-      <label className="flex flex-1 flex-col gap-1 text-xs text-text-muted">
+      <label className="flex flex-1 flex-col gap-1 text-xs text-muted-foreground">
         {/*
           O motivo é obrigatório na rota, e o rótulo diz por quê: um estorno sem
           motivo é um buraco no caixa que ninguém explica três meses depois.
@@ -539,7 +541,7 @@ function Estorno({
           value={motivo}
           data-testid="motivo-do-estorno"
           onChange={(e) => setMotivo(e.target.value)}
-          className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+          className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
         />
       </label>
       <Button

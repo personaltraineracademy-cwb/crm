@@ -44,7 +44,7 @@ export function DesignerDeAutomacao({ id }: { id: string }) {
   if (!nova && !regra) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-        <p className="max-w-md text-sm text-text-muted">
+        <p className="max-w-md text-sm text-muted-foreground">
           {isError
             ? t("Não consegui carregar as automações agora. Recarregue a página; se continuar, avise quem cuida da instalação.")
             : t("Esta automação não existe mais, ou não é desta organização.")}

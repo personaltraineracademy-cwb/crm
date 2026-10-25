@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Robot, Plus, Trash, PencilSimple, FlowArrow } from "@/lib/ui/icons";
 import { SeloDeAutoria } from "@/components/operacao/SeloDeAutoria";
+import { classesDoChipDaEtapa } from "@/components/fluxo/tema-do-fluxo";
 import {
   useAutomationRules,
   useUpdateAutomationRule,
@@ -88,7 +89,7 @@ export function RulesTab() {
       <div className="flex justify-center pt-10">
         <Card className="max-w-md">
           <CardHeader className="items-center text-center">
-            <Robot className="mb-2 h-10 w-10 text-accent" />
+            <Robot className="mb-2 size-8 text-muted-foreground" />
             <CardTitle>{t("Crie sua primeira automação")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
@@ -134,9 +135,15 @@ export function RulesTab() {
                   {r.is_active ? t("Ativa") : t("Pausada")}
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground">{triggerLabel(r.trigger_event, t)}</p>
-              <p className="text-xs text-muted-foreground">
-                {r.actions.length} {r.actions.length === 1 ? t("ação") : t("ações")}
+              <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className={classesDoChipDaEtapa("gatilho")}>{t("Quando")}</span>
+                <span className="min-w-0 truncate">{triggerLabel(r.trigger_event, t)}</span>
+              </p>
+              <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className={classesDoChipDaEtapa("acao")}>{t("Então")}</span>
+                <span className="tabular-nums">
+                  {r.actions.length} {r.actions.length === 1 ? t("ação") : t("ações")}
+                </span>
               </p>
               {/* Uma regra ligada roda sozinha para sempre: quem a ligou é parte
                   do estado dela, não um detalhe de auditoria. */}

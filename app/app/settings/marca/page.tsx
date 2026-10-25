@@ -39,6 +39,7 @@ import { createClient } from "@/lib/supabase/server";
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { FormularioDaMarcaDaOrganizacao } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Marca" };
 export const dynamic = "force-dynamic";
@@ -73,12 +74,13 @@ export default async function MarcaDaOrganizacaoPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Marca", idioma)}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {traduzir("O nome e a cor que a sua empresa mostra para quem trabalha aqui dentro.", idioma)}
-        </p>
-      </header>
+      <PageHeader
+        title={traduzir("Marca", idioma)}
+        description={traduzir(
+          "O nome e a cor que a sua empresa mostra para quem trabalha aqui dentro.",
+          idioma,
+        )}
+      />
 
       <FormularioDaMarcaDaOrganizacao
         gravada={{

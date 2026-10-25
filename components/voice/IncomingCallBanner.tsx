@@ -83,9 +83,9 @@ export function IncomingCallBanner() {
         dentro da área da barra de status no iOS em tela cheia, e o aviso nascia
         por baixo dela.
       */
-      className="ds-surge fixed inset-x-0 top-[max(1rem,env(safe-area-inset-top))] z-50 mx-auto flex w-[min(420px,calc(100%-2rem))] items-center gap-4 rounded-xl border border-border bg-popover p-4 shadow-2xl"
+      className="ds-surge fixed inset-x-0 top-[max(1rem,env(safe-area-inset-top))] z-50 mx-auto flex w-[min(420px,calc(100%-2rem))] items-center gap-4 rounded-xl border border-border bg-popover p-4 shadow-xl"
     >
-      <Avatar className="h-12 w-12 shrink-0">
+      <Avatar className="size-10 shrink-0">
         {contact?.id ? (
           <AvatarImage
             src={`/api/v1/contacts/${contact.id}/avatar`}
@@ -93,12 +93,12 @@ export function IncomingCallBanner() {
             className="object-cover"
           />
         ) : null}
-        <AvatarFallback className="bg-primary/15 text-base font-semibold text-primary">
+        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
           {inicial}
         </AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">{nome}</p>
+        <p className="truncate text-base font-semibold text-foreground">{nome}</p>
         <p className="text-xs text-muted-foreground">{t("Chamada de voz recebida")}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -113,7 +113,9 @@ export function IncomingCallBanner() {
         </Button>
         <Button
           size="icon"
-          className="rounded-full bg-success text-white hover:brightness-95"
+          // Atender é a ação PRIMÁRIA (azul de ação): no Unnify verde é estado,
+          // não botão. O ícone de telefone já diz "atender".
+          className="rounded-full"
           onClick={() => void acceptCall()}
           aria-label={t("Atender chamada")}
         >

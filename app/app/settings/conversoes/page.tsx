@@ -79,6 +79,7 @@ import { RegrasDeConversaoGoogle, type EtapaAberta } from "./_regrasGoogle";
 import { listarRegrasGoogle } from "@/lib/conversoes/regras-google";
 import { RegrasDeConversaoMeta } from "./_regrasMeta";
 import { listarRegrasMeta, rotuloDoEventoDaMeta } from "@/lib/conversoes/regras-meta";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Conversões" };
 export const dynamic = "force-dynamic";
@@ -241,16 +242,18 @@ export default async function ConversoesPage({
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Conversões")}</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {t(
+      <PageHeader
+        title={t("Conversões")}
+        description={t(
             "Quando um negócio que veio de anúncio é marcado como ganho, o valor da venda volta para a plataforma que trouxe o cliente. É esse retorno que ensina o anúncio a procurar mais gente parecida com quem comprou.",
           )}
-        </p>
-      </header>
+      />
 
-      <nav className="flex gap-1 border-b" aria-label={t("Seções de conversões")}>
+      {/* Abas de página no desenho `line` (DS §10.7): links, por isso à mão. */}
+      <nav
+        className="flex overflow-x-auto border-b border-border [scrollbar-width:none]"
+        aria-label={t("Seções de conversões")}
+      >
         {(
           [
             ["configuracao", t("Configuração")],
@@ -265,8 +268,8 @@ export default async function ConversoesPage({
             aria-current={aba === chave ? "page" : undefined}
             className={
               aba === chave
-                ? "-mb-px border-b-2 border-primary px-3 py-2 text-sm font-medium"
-                : "px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+                ? "relative inline-flex h-10 shrink-0 items-center px-3 text-sm font-medium whitespace-nowrap text-foreground after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full after:bg-primary"
+                : "inline-flex h-10 shrink-0 items-center px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
             }
           >
             {rotulo}
@@ -292,7 +295,7 @@ export default async function ConversoesPage({
             idioma={idioma}
           />
         ) : (
-          <p className="rounded-md border p-4 text-sm">
+          <p className="rounded-lg border p-4 text-sm">
             {t("Não consegui ler o histórico agora. Atualize a página em instantes.")}
           </p>
         )
@@ -300,14 +303,14 @@ export default async function ConversoesPage({
         diagnostico ? (
           <DiagnosticoGoogle itens={diagnostico} idioma={idioma} />
         ) : (
-          <p className="rounded-md border p-4 text-sm">
+          <p className="rounded-lg border p-4 text-sm">
             {t("Não consegui ler o diagnóstico agora. Atualize a página em instantes.")}
           </p>
         )
       ) : (
         <>
           {erroDoGoogle && (
-            <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm">
+            <div className="border-danger-border bg-danger-soft rounded-lg border p-4 text-sm">
               {t(
                 ERRO_DO_GOOGLE_EM_PORTUGUES[erroDoGoogle] ??
                   "Não consegui conectar com o Google Ads.",
@@ -315,13 +318,13 @@ export default async function ConversoesPage({
             </div>
           )}
           {okDoGoogle && (
-            <div className="rounded-md border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm">
+            <div className="border-success-border bg-success-soft rounded-lg border p-4 text-sm">
               {t("Google Ads autorizado. Agora informe a conta e a ação de conversão abaixo.")}
             </div>
           )}
 
           {estado.conectada && !estado.habilitada && (
-            <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+            <div className="border-warning-border bg-warning-soft rounded-lg border p-4 text-sm">
               {t(
                 "O envio está pausado. As vendas continuam sendo registradas aqui, mas não vão para a plataforma enquanto isto estiver desligado.",
               )}
@@ -329,7 +332,7 @@ export default async function ConversoesPage({
           )}
 
           {estado.testEventCode && (
-            <div className="rounded-md border border-sky-500/40 bg-sky-500/10 p-4 text-sm">
+            <div className="border-info-border bg-info-soft rounded-lg border p-4 text-sm">
               {t(
                 "Modo de teste ligado: as vendas vão marcadas como teste e não contam para a otimização. Apague o código de teste quando terminar de conferir.",
               )}
@@ -398,7 +401,7 @@ export default async function ConversoesPage({
             </div>
 
             {pendencias.length === 0 ? (
-              <p className="rounded-md border p-4 text-sm text-muted-foreground">
+              <p className="rounded-lg border p-4 text-sm text-muted-foreground">
                 {/*
               Ausência de pendência tem DUAS causas com significados opostos, e
               dizer só "tudo certo" esconderia a segunda: ou nada falhou, ou nunca
@@ -496,7 +499,7 @@ export default async function ConversoesPage({
               )}
             </p>
 
-            <div className="rounded-md border p-4 text-sm">
+            <div className="rounded-lg border p-4 text-sm">
               <p className="font-medium">{t("Como montar o link do botão")}</p>
               <ol className="mt-2 flex list-decimal flex-col gap-2 pl-5">
                 <li>
@@ -543,7 +546,7 @@ export default async function ConversoesPage({
                 numerosConectados={numerosConectados}
               />
             ) : (
-              <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+              <div className="border-warning-border bg-warning-soft rounded-lg border p-4 text-sm">
                 {t(
                   "Esta organização ainda não tem um apelido de URL, e o endereço de captura precisa de um. Fale com quem administra o servidor.",
                 )}

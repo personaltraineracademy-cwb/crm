@@ -25,16 +25,18 @@ export function LocationCard({ localizacao }: { localizacao: Localizacao }) {
       href={linkDoMapa(localizacao)}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex max-w-[260px] items-center gap-2 rounded-lg border border-current/20 bg-background/10 px-2 py-2 text-left transition-colors hover:bg-background/20"
+      className="hover:border-interactive-border hover:bg-interactive flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-card p-2 text-left text-card-foreground transition-colors"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-background/20">
-        <MapPin size={24} weight="duotone" aria-hidden />
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+        <MapPin size={20} weight="duotone" aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate font-medium" title={detalhe || undefined} data-testid="pino-detalhe">
           {detalhe || t("Localização compartilhada")}
         </span>
-        <span className="block truncate text-xs underline opacity-80">{t("Abrir no mapa")}</span>
+        <span className="block truncate text-xs text-primary underline underline-offset-4">
+          {t("Abrir no mapa")}
+        </span>
       </span>
     </a>
   );

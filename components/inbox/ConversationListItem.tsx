@@ -5,12 +5,12 @@ import { useLocaleDeData } from "@/hooks/i18n/useLocaleDeData";
 import type { Locale } from "date-fns";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { useT } from "@/hooks/i18n/useT";
-import { Check, Robot, Sparkle } from "@/lib/ui/icons";
+import { Robot, Sparkle } from "@/lib/ui/icons";
 import { ChannelLogo } from "@/components/inbox/ChannelLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChipDeEtiqueta } from "@/components/tags/ChipDeEtiqueta";
-import { OwnerBadge } from "@/components/kanban/OwnerBadge";
 import {
   comandoDaConversa,
   esperaDaConversa,
@@ -22,6 +22,7 @@ import type { ConversationWithContact } from "@/hooks/inbox/useConversationsReal
 import { rotuloParaAEquipe } from "@/lib/contacts/rotulo-do-contato";
 import { phoneForDisplay } from "@/lib/channels/phone-variants";
 import { rotuloDoCanalDaConversa } from "@/lib/channels/estado";
+import { tomDoCanal } from "./tons";
 
 interface Props {
   conversation: ConversationWithContact;
@@ -104,12 +105,20 @@ interface Props {
  * podem ser mantidas em arquivos diferentes.
  */
 const COR_DO_COMANDO: Record<string, string> = {
-  humano: "bg-blue-500",
-  automatico: "bg-purple-500",
-  aguardando: "bg-amber-500",
-  ninguem: "bg-muted-foreground/60",
+  // Unnify (§3.3): estado é cor sólida só no PONTO. Humano é informação (o
+  // azul do estado `info`), o automático é categoria (tom violeta, o mesmo do
+  // "IA" das outras telas), aguardando é aviso, e os dois que não pedem nada
+  // ficam neutros — cor só onde há o que fazer.
+  humano: "bg-info",
+  automatico: "bg-tone-violet",
+  aguardando: "bg-warning",
+  ninguem: "bg-muted-foreground",
   encerrada: "bg-muted-foreground/30",
 };
+
+/** Chip da linha (Unnify §10.6): 20 de altura para a linha caber em 56, raio 6, `xs`/500. */
+const CHIP =
+  "inline-flex h-5 shrink-0 items-center gap-1 rounded-md px-1.5 text-xs font-medium leading-4";
 
 function initials(name: string | null | undefined, fallback: string): string {
   const v = (name ?? "").trim();
@@ -273,61 +282,59 @@ export function ConversationListItem({
   return (
     <div
       className={cn(
-        "relative flex w-full items-start border-b border-border/70",
-        selecionado && "bg-accent-soft",
+        // Lista do Work (Unnify §10.12): linhas separadas por 1px `border`,
+        // sem caixa em volta.
+        "relative flex w-full items-start border-b border-border",
+        selecionado && "bg-interactive",
       )}
     >
       {/*
         A CAIXA DE SELEÇÃO (#2484, F1) — fora do botão da linha, de propósito:
         controle interativo dentro de `<button>` é HTML inválido, e o clique na
         caixa NÃO pode abrir a conversa. Marcar e abrir são gestos diferentes.
+        `mt-4.5`: centro da caixa (20) no centro do avatar (8 + 20 − 10).
       */}
       {onAlternarSelecao && (
-        <button
-          type="button"
-          role="checkbox"
-          aria-checked={selecionado}
+        <Checkbox
+          checked={selecionado}
+          onCheckedChange={() => onAlternarSelecao(conversation.id)}
           aria-label={t("Selecionar conversa")}
           title={t("Selecionar conversa")}
           data-testid={`selecao-em-lote-${conversation.id}`}
-          onClick={() => onAlternarSelecao(conversation.id)}
-          className={cn(
-            "mt-3 ml-2 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors",
-            "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent",
-            selecionado
-              ? "border-accent bg-accent text-accent-foreground"
-              : "border-muted-foreground bg-background hover:bg-surface-elevated",
-          )}
-        >
-          {selecionado && <Check size={12} weight="bold" aria-hidden />}
-        </button>
+          // Borda `muted-foreground`, não a `input` do Unnify: a `input` dá 2,12:1
+          // (dívida registrada no DS §3.4) e a caixa desmarcada precisa de 3:1
+          // (WCAG 1.4.11, #2990). Marcada, quem pinta é o `primary` do componente.
+          className="mt-4.5 ml-3 shrink-0 border-muted-foreground"
+        />
       )}
       <button
         type="button"
         data-conversation-id={conversation.id}
         onClick={() => onSelect(conversation.id)}
         className={cn(
-          "group relative flex min-w-0 flex-1 items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface-elevated",
-          "focus-visible:outline-hidden focus-visible:bg-surface-elevated",
-          // `accent-soft`, e não um degrau fixo da rampa: os degraus têm o MESMO
-          // hex nos dois temas, e o `accent-50` (quase branco) no escuro deixava o
-          // nome — `text-text`, claro no escuro — branco sobre branco.
-          // Marcada no lote, quem pinta é o wrapper: no escuro o `accent-soft` é
-          // translúcido, e pintar os dois o somava (prévia a 3,2:1). O botão fica
-          // transparente também no hover/foco, senão o cinza do hover cobria só ele
-          // e a linha ficava em dois tons; o foco vira anel, como o da caixa.
+          // Linha de 56 (Unnify §5.1, "Linha de lista (Work)"): avatar de 40 +
+          // 8 em cima e embaixo. Etiquetas e posição na fila fazem a linha
+          // crescer, nunca encolher.
+          "group relative flex min-h-14 min-w-0 flex-1 items-start gap-3 px-3 py-2 text-left transition-colors hover:bg-muted/40",
+          // Foco em anel INTERNO (Unnify §9.2: controle dentro de lista).
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-inset",
+          // `interactive` (o fundo suave da seleção, Unnify §9.1), e não um
+          // degrau fixo da rampa: os degraus têm o MESMO hex nos dois temas.
+          // Marcada no lote, quem pinta é o wrapper: pintar os dois somava a
+          // camada. O botão fica transparente também no hover/foco, senão o
+          // hover cobria só ele e a linha ficava em dois tons.
           isSelected &&
             (selecionado
-              ? "hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
-              : "bg-accent-soft hover:bg-accent-soft"),
+              ? "hover:bg-transparent focus-visible:bg-transparent"
+              : "bg-interactive hover:bg-interactive"),
         )}
         aria-current={isSelected ? "true" : undefined}
       >
       {isSelected && (
-        <span className="absolute inset-y-0 left-0 w-0.5 bg-accent" aria-hidden />
+        <span className="absolute inset-y-0 left-0 w-0.5 bg-primary" aria-hidden />
       )}
       <div className="relative shrink-0">
-        <Avatar className="h-10 w-10">
+        <Avatar className="size-10">
           {/* Só monta a <img> quando existe arquivo: sem isso o browser pediria
               a rota para TODO contato da lista e levaria 404 em cada um sem
               foto — que é a maioria. O AvatarFallback do Radix já cobre o caso
@@ -339,32 +346,33 @@ export function ConversationListItem({
               className="object-cover"
             />
           ) : null}
-          <AvatarFallback className="bg-surface-elevated text-xs font-medium text-text-muted">
+          <AvatarFallback className="bg-muted text-sm font-medium text-muted-foreground">
             {initials(displayName, phoneFallback)}
           </AvatarFallback>
         </Avatar>
+        {/* Selo de status do avatar (Unnify §10.20): 10px com anel de 2px na cor do fundo. */}
         <span
           className={cn(
-            "absolute -bottom-0.5 -left-0.5 h-3 w-3 rounded-full border-2 border-background",
+            "absolute -bottom-0.5 -left-0.5 size-2.5 rounded-full ring-2 ring-background",
             dot,
           )}
           role="img"
           aria-label={rotuloDoComando}
           title={rotuloDoComando}
         />
-        <ChannelLogo channel={canal} size={16} className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-background ring-2 ring-background" />
+        <ChannelLogo channel={canal} size={16} className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background ring-2 ring-background" />
       </div>
 
       <div className="min-w-0 flex-1">
         {naFila && (
           <div className="mb-1 flex items-center gap-1.5">
             <span
-              className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-soft px-1 text-[10px] font-medium tabular-nums text-accent"
+              className={cn(CHIP, "min-w-5 justify-center bg-interactive tabular-nums text-interactive-foreground")}
               aria-label={`${t("Posição")} ${queuePosition} ${t("na fila")}`}
             >
               {queuePosition}º
             </span>
-            <span className="text-[11px] text-text-muted">
+            <span className="truncate text-xs text-muted-foreground">
               {waitingLabel(conversation, t, localeDaData)}
             </span>
           </div>
@@ -372,10 +380,11 @@ export function ConversationListItem({
         <div className="flex items-baseline justify-between gap-2">
           <span className="flex min-w-0 items-center gap-1.5">
             <span
+              title={displayName}
               className={cn(
-                "truncate text-sm",
-                unread > 0 ? "font-semibold text-text" : "font-medium text-text",
-                c?.is_anonymized && "font-normal italic text-text-muted",
+                "truncate text-sm text-foreground",
+                unread > 0 ? "font-semibold" : "font-medium",
+                c?.is_anonymized && "font-normal italic text-muted-foreground",
               )}
             >
               {displayName}
@@ -389,13 +398,13 @@ export function ConversationListItem({
               mandou cada mensagem dentro do grupo).
             */}
             {conversation.is_group && (
-              <Badge variant="secondary" className="h-4 shrink-0 px-1.5 text-[10px]">
+              <span className={cn(CHIP, "bg-secondary text-secondary-foreground")}>
                 {t("Grupo")}
-              </Badge>
+              </span>
             )}
           </span>
           <span
-            className="shrink-0 text-[11px] tabular-nums text-text-subtle"
+            className="shrink-0 text-xs tabular-nums text-muted-foreground"
             // O mesmo lugar da tela mostra duas coisas diferentes conforme a aba:
             // na Fila é "desde quando o cliente ESPERA" (a mensagem mais antiga sem
             // resposta — #990), nas outras é "há quanto tempo a conversa mexeu". O
@@ -408,11 +417,12 @@ export function ConversationListItem({
 
         <div className="mt-0.5 flex items-center justify-between gap-2">
           <p
+            title={preview}
             className={cn(
-              "min-w-0 truncate text-[13px]",
-              // Na aberta, `text-text`: `text-muted` sobre o `accent-soft` do
-              // escuro dá 4,2:1, abaixo do AA (medido em selecionada-legivel-no-escuro.test).
-              unread > 0 || isSelected ? "text-text" : "text-text-muted",
+              "min-w-0 truncate text-xs",
+              // Não lida ou aberta, `foreground`: é o que pede o olho, e na
+              // aberta o fundo é o `interactive`.
+              unread > 0 || isSelected ? "text-foreground" : "text-muted-foreground",
             )}
           >
             {isAi && mostrarAutomatico ? (
@@ -421,7 +431,7 @@ export function ConversationListItem({
             {truncated}
           </p>
           {unread > 0 && (
-            <span className="inline-flex h-[18px] min-w-[18px] shrink-0 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-semibold tabular-nums text-accent-foreground">
+            <span className={cn(CHIP, "min-w-5 justify-center bg-primary tabular-nums text-primary-foreground")}>
               {unread}
             </span>
           )}
@@ -432,25 +442,30 @@ export function ConversationListItem({
             {/* O SELO DO EXEMPLO vem ANTES das etiquetas de propósito: a faixa
                 mostra no máximo 2 etiquetas e as que sobram viram "+N". Um
                 estado que decide se a conversa entra na base de conhecimento
-                do agente não pode ser o primeiro a ser cortado. */}
+                do agente não pode ser o primeiro a ser cortado. Chip `info`,
+                o mesmo do selo "IA" do balão. */}
             {exemploMarcado && (
-              <Badge
-                variant="outline"
+              <span
                 data-testid="selo-exemplo-ia"
-                className="h-4 gap-1 px-1.5 text-[10px] font-normal text-accent"
+                className={cn(CHIP, "border border-info-border bg-info-soft text-info-foreground")}
               >
-                <Sparkle size={10} weight="fill" aria-hidden />
+                <Sparkle size={12} weight="fill" aria-hidden />
                 {t("Exemplo para a IA")}
-              </Badge>
+              </span>
             )}
             {visibleTags.map((t) => (
-              <ChipDeEtiqueta key={t} tag={t} className="h-4 px-1.5 text-[10px]" />
+              <ChipDeEtiqueta key={t} tag={t} className="h-5 rounded-md px-1.5 text-xs leading-4" />
             ))}
             {overflow > 0 && (
-              <span className="text-[10px] text-text-muted">+{overflow}</span>
+              <span className="text-xs tabular-nums text-muted-foreground">+{overflow}</span>
             )}
             {mostrarAtendente && comando.quem === "humano" && (
-              <OwnerBadge ownerKind="user" ownerName={comando.nome ?? t("Atendente")} compacto />
+              <span
+                className={cn(CHIP, "min-w-0 max-w-36 truncate bg-secondary text-secondary-foreground")}
+                title={comando.nome ?? t("Atendente")}
+              >
+                <span className="truncate">{comando.nome ?? t("Atendente")}</span>
+              </span>
             )}
             {/* #2383: `min-w-0` + `max-w` + `truncate` — o mesmo tratamento do
                 badge do cabeçalho. Uma linha de badges é `flex-wrap`, então um
@@ -458,23 +473,22 @@ export function ConversationListItem({
                 lista (critério de aceite: layout utilizável com nomes maiores).
                 O `title` devolve o texto inteiro para quem passa o mouse. */}
             {mostrarCanal && rotuloCanal && (
-              <Badge
-                variant="outline"
-                className="h-4 min-w-0 max-w-[9rem] gap-1 truncate px-1.5 text-[10px] font-normal text-text-muted"
+              <span
+                className={cn(CHIP, "min-w-0 max-w-36 truncate", tomDoCanal(conversation.channel_session_id ?? rotuloCanal))}
                 title={`${t("Entrou por")} ${rotuloCanal}`}
               >
                 <span className="truncate">{rotuloCanal}</span>
-              </Badge>
+              </span>
             )}
             {c?.is_blocked && (
-              <Badge variant="destructive" className="h-4 px-1.5 text-[10px]">
+              <span className={cn(CHIP, "border border-danger-border bg-danger-soft text-danger-foreground")}>
                 {t("Bloqueado")}
-              </Badge>
+              </span>
             )}
             {c?.is_anonymized && (
-              <Badge variant="outline" className="h-4 px-1.5 text-[10px]">
+              <span className={cn(CHIP, "border border-border text-foreground")}>
                 {t("Anonimizado")}
-              </Badge>
+              </span>
             )}
           </div>
         )}
@@ -489,13 +503,11 @@ export function ConversationListItem({
         Fica sempre visível, e não só no hover: o defeito que esta issue
         conserta é justamente um recurso que ninguém achava. Um ícone que só
         aparece sob o cursor continuaria escondido no celular, onde não há
-        hover — e o alvo de toque é maior do que o desenho sugere.
+        hover. Botão `icon-xs` (28, raio 6); no toque, alvo de 44 sem mexer no
+        desenho (`ds-alvo-44`).
 
-        Desmarcado usa `text-text-muted`, não `text-text-subtle`: é componente
-        gráfico e precisa de 3:1 contra o fundo da linha. Medido na prova de
-        tela, subtle dava 2,81:1 no escuro (#605e54 sobre #161510). Muted, no
-        pior fundo de cada tema (linha selecionada, `bg-accent-soft`): 5,74:1 no
-        claro (#5d594f sobre #e4ebe0) e 4,23:1 no escuro (#8e8b7f sobre #272b20).
+        Desmarcado usa `muted-foreground`: é componente gráfico e precisa de
+        3:1 contra o fundo da linha, inclusive na selecionada (`interactive`).
       */}
       {onAlternarExemplo && (
         <button
@@ -506,14 +518,14 @@ export function ConversationListItem({
           title={rotuloExemplo}
           onClick={() => onAlternarExemplo(conversation.id, !exemploMarcado)}
           className={cn(
-            "mr-1 mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-sm transition-colors",
-            "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent",
+            "ds-alvo-44 mt-2 mr-1 flex size-7 shrink-0 items-center justify-center rounded-md transition-colors",
+            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
             exemploMarcado
-              ? "text-accent hover:bg-accent-soft"
-              : "text-text-muted hover:bg-surface-elevated hover:text-text",
+              ? "hover:bg-interactive text-primary"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
           )}
         >
-          <Sparkle size={14} weight={exemploMarcado ? "fill" : "regular"} aria-hidden />
+          <Sparkle size={16} weight={exemploMarcado ? "fill" : "regular"} aria-hidden />
         </button>
       )}
     </div>

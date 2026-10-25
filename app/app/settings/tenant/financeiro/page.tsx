@@ -7,6 +7,7 @@ import { moduloLigado } from "@/lib/instalacao/modulos";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 import { CatalogoFinanceiro } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -38,12 +39,12 @@ export default async function Page() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">{t("Financeiro")}</h1>
-        <p className="text-sm text-text-muted">
-          {t("Onde o dinheiro fica, como o cliente paga e como cada lançamento é classificado.")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("Financeiro")}
+        description={t(
+          "Onde o dinheiro fica, como o cliente paga e como cada lançamento é classificado.",
+        )}
+      />
       <CatalogoFinanceiro
         podeEditar={podeEditar}
         comissaoDisponivel={await moduloLigado(createAdminClient(), "financeiro")}

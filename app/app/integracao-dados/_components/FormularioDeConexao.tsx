@@ -289,7 +289,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
               placeholder={t("Ex: CRM de assinaturas")}
               maxLength={80}
             />
-            {erros.label && <p className="text-xs text-destructive">{erros.label}</p>}
+            {erros.label && <p className="text-danger-foreground text-xs">{erros.label}</p>}
           </div>
 
           <div className="grid grid-cols-3 gap-3">
@@ -305,7 +305,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                 // do campo de webhook. Ensinar o formato não precisa de host novo.
                 placeholder="meusistema.com"
               />
-              {erros.host && <p className="text-xs text-destructive">{erros.host}</p>}
+              {erros.host && <p className="text-danger-foreground text-xs">{erros.host}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="ext-port">{t("Porta")}</Label>
@@ -315,7 +315,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                 onChange={(e) => setPort(e.target.value)}
                 inputMode="numeric"
               />
-              {erros.port && <p className="text-xs text-destructive">{erros.port}</p>}
+              {erros.port && <p className="text-danger-foreground text-xs">{erros.port}</p>}
             </div>
           </div>
 
@@ -328,7 +328,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
               placeholder="outro_crm"
             />
             {erros.database_name && (
-              <p className="text-xs text-destructive">{erros.database_name}</p>
+              <p className="text-danger-foreground text-xs">{erros.database_name}</p>
             )}
           </div>
 
@@ -341,7 +341,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="off"
               />
-              {erros.username && <p className="text-xs text-destructive">{erros.username}</p>}
+              {erros.username && <p className="text-danger-foreground text-xs">{erros.username}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="ext-password">{t("Senha")}</Label>
@@ -353,7 +353,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                 autoComplete="new-password"
                 placeholder={editando ? t("Guardada — preencha só para trocar") : undefined}
               />
-              {erros.password && <p className="text-xs text-destructive">{erros.password}</p>}
+              {erros.password && <p className="text-danger-foreground text-xs">{erros.password}</p>}
             </div>
           </div>
 
@@ -373,7 +373,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
             </Select>
           </div>
 
-          <div className="flex items-center justify-between rounded-md border p-3">
+          <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Label htmlFor="ext-enabled">{t("Conexão ativa")}</Label>
               <p className="text-xs text-muted-foreground">
@@ -383,7 +383,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
             <Switch id="ext-enabled" checked={enabled} onCheckedChange={setEnabled} />
           </div>
 
-          <fieldset className="space-y-3 rounded-md border p-3">
+          <fieldset className="space-y-3 rounded-lg border p-3">
             <legend className="px-1 text-sm font-medium">{t("Cliente nas conversas")}</legend>
             <p className="text-xs text-muted-foreground">
               {t(
@@ -417,18 +417,18 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                   maxLength={128}
                 />
                 {erros.customer_key_column && (
-                  <p className="text-xs text-destructive">{erros.customer_key_column}</p>
+                  <p className="text-danger-foreground text-xs">{erros.customer_key_column}</p>
                 )}
               </div>
             </div>
             {identificador === "phone" && (
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {t("O telefone precisa estar gravado só com números, com ou sem o código do país ou o sinal + (5511999998888, 11999998888 ou +5511999998888).")}
               </p>
             )}
           </fieldset>
 
-          <fieldset className="space-y-3 rounded-md border p-3">
+          <fieldset className="space-y-3 rounded-lg border p-3">
             <legend className="px-1 text-sm font-medium">{t("Limites de leitura")}</legend>
             <p className="text-xs text-muted-foreground">
               {t("Quanto o assistente e a grade podem ler desta fonte. Aumente se o seu processo precisar.")}
@@ -442,10 +442,12 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                   onChange={(e) => setMaxRows(e.target.value)}
                   inputMode="numeric"
                 />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {LIMITE_LINHAS.minimo}–{LIMITE_LINHAS.maximo}
                 </p>
-                {erros.max_rows && <p className="text-xs text-destructive">{erros.max_rows}</p>}
+                {erros.max_rows && (
+                  <p className="text-danger-foreground text-xs">{erros.max_rows}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="ext-max-filters">{t("Filtros por consulta")}</Label>
@@ -455,10 +457,12 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                   onChange={(e) => setMaxFilters(e.target.value)}
                   inputMode="numeric"
                 />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {LIMITE_FILTROS.minimo}–{LIMITE_FILTROS.maximo}
                 </p>
-                {erros.max_filters && <p className="text-xs text-destructive">{erros.max_filters}</p>}
+                {erros.max_filters && (
+                  <p className="text-danger-foreground text-xs">{erros.max_filters}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="ext-max-response">{t("Resposta para a IA (KB)")}</Label>
@@ -468,11 +472,11 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
                   onChange={(e) => setMaxResponseKb(e.target.value)}
                   inputMode="numeric"
                 />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {KB_MIN}–{KB_MAX}
                 </p>
                 {erros.max_response_kb && (
-                  <p className="text-xs text-destructive">{erros.max_response_kb}</p>
+                  <p className="text-danger-foreground text-xs">{erros.max_response_kb}</p>
                 )}
               </div>
             </div>

@@ -166,7 +166,7 @@ export function OrgMemoryClient({ initialState }: Props) {
             placeholder={t(
               "Ex.: Nunca prometa desconto sem confirmar com um humano. Horário de atendimento: 9h–18h, seg-sex. Sempre chame o cliente pelo primeiro nome.",
             )}
-            className="min-h-[220px] font-mono text-[13px]"
+            className="min-h-[220px] font-mono text-sm"
           />
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs text-muted-foreground">
@@ -196,12 +196,12 @@ export function OrgMemoryClient({ initialState }: Props) {
                     <button
                       type="button"
                       onClick={() => setHistoryTarget(v)}
-                      className="flex w-full items-center gap-3 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent-soft"
+                      className="hover:bg-interactive flex w-full items-center gap-3 rounded-sm px-2 py-1.5 text-left text-sm"
                     >
                       <span className="font-mono text-xs">v{v.version_number}</span>
                       <span className="text-xs text-muted-foreground">{formatDate(v.created_at, tagDoIdioma)}</span>
                       {document?.version_id === v.id && (
-                        <Badge variant="success" className="text-[10px]">
+                        <Badge variant="success" className="text-xs">
                           {t("ativa")}
                         </Badge>
                       )}
@@ -234,7 +234,7 @@ export function OrgMemoryClient({ initialState }: Props) {
           {formOpen && (
             <form
               onSubmit={handleCreateEntry}
-              className="flex flex-col gap-3 rounded-md border border-border bg-surface-elevated p-4"
+              className="flex flex-col gap-3 rounded-xl border border-border bg-muted p-4"
             >
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="entry-title">{t("Título")}</Label>
@@ -280,7 +280,7 @@ export function OrgMemoryClient({ initialState }: Props) {
           )}
 
           {visibleEntries.length === 0 ? (
-            <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
               {showArchived
                 ? t("Nenhum aprendizado arquivado.")
                 : t(
@@ -292,16 +292,19 @@ export function OrgMemoryClient({ initialState }: Props) {
               {visibleEntries.map((entry) => (
                 <li
                   key={entry.id}
-                  className="flex flex-col gap-1.5 rounded-md border border-border/60 p-3 text-sm"
+                  className="flex flex-col gap-1.5 rounded-lg border border-border/60 p-3 text-sm"
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">{entry.title}</span>
-                    <Badge variant={entry.source === "manual" ? "neutral" : "info"} className="text-[10px]">
+                    <Badge
+                      variant={entry.source === "manual" ? "neutral" : "info"}
+                      className="text-xs"
+                    >
                       {rotuloDaOrigem[entry.source]}
                     </Badge>
                     <span className="ml-auto text-xs text-muted-foreground">{formatDate(entry.created_at, tagDoIdioma)}</span>
                   </div>
-                  <p className="whitespace-pre-wrap text-text-muted">{entry.body}</p>
+                  <p className="whitespace-pre-wrap text-muted-foreground">{entry.body}</p>
                   <div className="flex sm:justify-end">
                     <Button
                       variant="ghost"
@@ -343,7 +346,7 @@ export function OrgMemoryClient({ initialState }: Props) {
           {versionDetail.isLoading ? (
             <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>
           ) : (
-            <pre className="max-h-[50vh] overflow-y-auto whitespace-pre-wrap rounded-md border border-border bg-surface-elevated p-4 font-mono text-[13px]">
+            <pre className="max-h-[50vh] overflow-y-auto rounded-md border border-border bg-muted p-4 font-mono text-sm whitespace-pre-wrap">
               {versionDetail.data?.content}
             </pre>
           )}

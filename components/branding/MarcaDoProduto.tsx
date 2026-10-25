@@ -1,89 +1,89 @@
-import { LOGOTIPO, SIMBOLO } from "@/lib/branding/desenho";
+import { type ArteDaMarca, LOGOTIPO, NOME_DO_LOGO, SIMBOLO } from "@/lib/branding/desenho";
 import { cn } from "@/lib/utils";
 
 /**
- * A marca do PRODUTO desenhada em SVG inline — o que a tela mostra quando
- * ninguém configurou marca própria (`marcaEhADoProduto`, em `lib/branding.ts`).
+ * O logo do PRODUTO (Unnify CRM) — o que a tela mostra quando ninguém
+ * configurou logo próprio (`marcaEhADoProduto`, em `lib/branding.ts`).
  *
- * Inline, e não `<img src="/algo.svg">`, por três motivos:
- *  - as cores seguem o TEMA: sálvia mais clara e nome em creme no escuro, como
- *    a régua do produto já define — um arquivo estático teria uma cor só;
- *  - nada em `public/`: um `.svg` fixo ali seria servido na instalação de um
- *    revendedor que configurou a marca dele (ver `lib/branding/desenho.ts`);
- *  - a barra lateral já usa `<img>` para o logo CONFIGURADO, e o e2e
- *    `marca-logo.spec.ts` mede "barra sem `<img>`" como "sem logo do
- *    revendedor". Um `<img>` do produto ali faria a spec medir a coisa errada.
+ * A arte são os arquivos de `public/marca/unnify-crm/` (ver
+ * `lib/branding/desenho.ts`), desenhados por `<image>` dentro de um `<svg>`:
  *
- * O texto alternativo é o `nome` que a tela já resolveu — nunca uma string
- * fixa, para que a catraca de marca (`tests/unit/branding.test.ts`) continue
- * contando ZERO ocorrências fora de `lib/branding.ts`.
+ *  - o tema troca sem piscar: as duas versões estão no DOM e o CSS mostra uma
+ *    pelo `data-theme` do `<html>`, que o script do layout grava antes da
+ *    primeira pintura — nenhum JavaScript decide o tema aqui;
+ *  - continua sem `<img>`: o e2e `marca-logo.spec.ts` mede "barra sem `<img>`"
+ *    como "sem logo do revendedor", e um `<img>` do produto ali faria a spec
+ *    medir a coisa errada;
+ *  - o `viewBox` é o do arquivo, então `h-8 w-auto` dá a largura certa sem
+ *    ninguém digitar a proporção.
+ *
+ * O nome acessível é o que o desenho escreve, "Unnify CRM" — e não o nome da
+ * instalação: a legenda descreve a imagem que está ali. `decorativo` esconde
+ * o logo do leitor de tela onde o nome já está escrito ao lado (ou quando o
+ * logo for o conteúdo de um link que já tem nome), para não ler duas vezes.
  */
 
 type Props = {
-  readonly nome: string;
+  /**
+   * @deprecated Ignorado. O nome acessível é o que o logo escreve
+   * (`NOME_DO_LOGO`). Fica no tipo para não exigir mudança em quem chama.
+   */
+  readonly nome?: string;
   readonly className?: string;
   /** `true` quando o texto ao lado já nomeia a marca — evita ler duas vezes. */
   readonly decorativo?: boolean;
 };
 
-const SIMBOLO_CLARO_ESCURO = "fill-[#506d48] dark:fill-[#82a077]";
-const NOME_CLARO_ESCURO = "fill-[#1c1a16] dark:fill-[#f5f4ef]";
-const SUFIXO_CLARO_ESCURO = "fill-[#5d594f] dark:fill-[#8e8b7f]";
-
-// As classes acima repetem os hexes de `CORES_DA_MARCA` porque o Tailwind só
-// gera utilitário para valor LITERAL no fonte. Quem impede os dois de divergirem
-// é `tests/unit/marca-do-produto.test.tsx`, que compara as classes à paleta —
-// e não uma asserção em runtime: um throw aqui derrubaria a casca inteira.
-export const CLASSES_DE_COR = {
-  simbolo: SIMBOLO_CLARO_ESCURO,
-  nome: NOME_CLARO_ESCURO,
-  sufixo: SUFIXO_CLARO_ESCURO,
-} as const;
-
-function acessibilidade(nome: string, decorativo: boolean) {
-  return decorativo
-    ? ({ "aria-hidden": true } as const)
-    : ({ role: "img", "aria-label": nome } as const);
-}
-
-/** O símbolo sozinho — para a barra recolhida, avatar e cantos apertados. */
-export function SimboloDoProduto({ nome, className, decorativo = false }: Props) {
+function Arte({
+  arte,
+  className,
+  decorativo,
+}: {
+  readonly arte: ArteDaMarca;
+  readonly className: string;
+  readonly decorativo: boolean;
+}) {
   return (
     <svg
-      viewBox={SIMBOLO.viewBox}
-      className={cn("shrink-0", className)}
-      {...acessibilidade(nome, decorativo)}
+      viewBox={`0 0 ${arte.largura} ${arte.altura}`}
+      className={className}
+      data-marca-do-produto=""
+      {...(decorativo
+        ? ({ "aria-hidden": true } as const)
+        : ({ role: "img", "aria-label": NOME_DO_LOGO } as const))}
     >
-      <g className={SIMBOLO_CLARO_ESCURO} transform={SIMBOLO.transform}>
-        <path d={SIMBOLO.d} />
-        <rect {...SIMBOLO.modulo} />
-      </g>
+      <image
+        href={arte.claro}
+        width={arte.largura}
+        height={arte.altura}
+        className="dark:hidden"
+        data-tema="claro"
+      />
+      <image
+        href={arte.escuro}
+        width={arte.largura}
+        height={arte.altura}
+        className="hidden dark:inline"
+        data-tema="escuro"
+      />
     </svg>
   );
 }
 
-/** Símbolo + nome — para a barra aberta e a fachada de entrada. */
-export function LogotipoDoProduto({ nome, className, decorativo = false }: Props) {
+/**
+ * O símbolo sozinho — barra recolhida e cabeçalhos com o nome ao lado.
+ * A partir de 24 px (`LADO_MINIMO_DO_SIMBOLO`); abaixo disso, o ícone do app.
+ */
+export function SimboloDoProduto({ className, decorativo = false }: Props) {
+  return <Arte arte={SIMBOLO} className={cn("shrink-0", className)} decorativo={decorativo} />;
+}
+
+/**
+ * Símbolo + "Unnify CRM" — barra aberta e tela de entrada. Encolhe (mantendo a
+ * proporção) antes de empurrar o botão de recolher para fora da linha.
+ */
+export function LogotipoDoProduto({ className, decorativo = false }: Props) {
   return (
-    <svg
-      viewBox={LOGOTIPO.viewBox}
-      className={cn("shrink-0", className)}
-      {...acessibilidade(nome, decorativo)}
-    >
-      <g className={SIMBOLO_CLARO_ESCURO} transform={LOGOTIPO.simbolo.transform}>
-        <path d={LOGOTIPO.simbolo.d} />
-        <rect {...LOGOTIPO.simbolo.modulo} />
-      </g>
-      <g className={NOME_CLARO_ESCURO}>
-        {LOGOTIPO.nome.map((g) => (
-          <path key={g.transform} transform={g.transform} d={g.d} />
-        ))}
-      </g>
-      <g className={SUFIXO_CLARO_ESCURO}>
-        {LOGOTIPO.sufixo.map((g) => (
-          <path key={g.transform} transform={g.transform} d={g.d} />
-        ))}
-      </g>
-    </svg>
+    <Arte arte={LOGOTIPO} className={cn("max-w-full min-w-0", className)} decorativo={decorativo} />
   );
 }

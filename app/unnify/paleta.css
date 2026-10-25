@@ -1,0 +1,131 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Paleta crua do Tailwind remapeada (mapa §5, decisão 4).
+
+   O contrato do Unnify PROÍBE a paleta crua (`text-red-500`, DS §17.1). Isto é
+   PONTE VISUAL, não conformidade: as ~480 classes cruas continuam no código e
+   migram para `warning-*`, `success-*`, `error-*`/`danger-*` e `info-*` nas
+   etapas de componentes. Até lá, elas pelo menos pintam na família do Unnify.
+
+   ─── Rampa ABSOLUTA, igual nos dois temas ───────────────────────────────────
+   Cada tom vira um hex CONSTANTE, com a luminosidade do tom original. Os ~150
+   pares `dark:` do código (`text-amber-800 dark:text-amber-300`) foram escritos
+   contando com luminosidade fixa; um token com tema aqui (`red-50 →
+   --danger-soft`) faria o `dark:bg-red-950/40` cair duas vezes no escuro e o
+   fundo sumir (risco R1 do mapa).
+
+   ─── `@theme` SEM `inline`, e valor hex ─────────────────────────────────────
+   Com hex literal o Tailwind calcula o fallback de opacidade (`bg-sky-500/40`)
+   para navegador sem `color-mix`; com `var()` o fallback sairia sem a
+   opacidade (mapa §5.2). Este bloco vem depois do `@import "tailwindcss"` e
+   substitui as chaves padrão.
+
+   - sky, blue e indigo: a rampa de ação/informação do Unnify (o sky-500 do
+     Tailwind é ciano; o `info` do Unnify é `#0066cc`). A 400 é o primário
+     escuro, porque `dark:text-sky-400` é o uso típico.
+   - gray: a escala neutra clara do Unnify, constante.
+   - yellow: a rampa do amber abaixo (um segundo amarelo só somava cor).
+   - amber, red, emerald e green: ajuste fino só nos tons que são papel do
+     Unnify (`warning-*`, `danger-*`, `success-*`); green com a rampa do emerald.
+   - Os demais (purple, violet, pink, teal, cyan, orange, lime, fuchsia) já são
+     os `tone-*` do Unnify e não mudam.
+   ───────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* sky → ação/informação */
+  --color-sky-50: #eaf2fc;
+  --color-sky-100: #dceafa;
+  --color-sky-200: #b8d8ff;
+  --color-sky-300: #9bbbe0;
+  --color-sky-400: #75b7ff;
+  --color-sky-500: #0066cc;
+  --color-sky-600: #005bb5;
+  --color-sky-700: #0055aa;
+  --color-sky-800: #004f9e;
+  --color-sky-900: #203d5c;
+  --color-sky-950: #203750;
+  /* blue → ação/informação */
+  --color-blue-50: #eaf2fc;
+  --color-blue-100: #dceafa;
+  --color-blue-200: #b8d8ff;
+  --color-blue-300: #9bbbe0;
+  --color-blue-400: #75b7ff;
+  --color-blue-500: #0066cc;
+  --color-blue-600: #005bb5;
+  --color-blue-700: #0055aa;
+  --color-blue-800: #004f9e;
+  --color-blue-900: #203d5c;
+  --color-blue-950: #203750;
+  /* indigo → ação/informação (0 usos hoje; prevenção) */
+  --color-indigo-50: #eaf2fc;
+  --color-indigo-100: #dceafa;
+  --color-indigo-200: #b8d8ff;
+  --color-indigo-300: #9bbbe0;
+  --color-indigo-400: #75b7ff;
+  --color-indigo-500: #0066cc;
+  --color-indigo-600: #005bb5;
+  --color-indigo-700: #0055aa;
+  --color-indigo-800: #004f9e;
+  --color-indigo-900: #203d5c;
+  --color-indigo-950: #203750;
+  /* gray → escala neutra clara do Unnify */
+  --color-gray-50: #f7f8fb;
+  --color-gray-100: #eef1f5;
+  --color-gray-200: #d2d9e2;
+  --color-gray-300: #b4bcc8;
+  --color-gray-400: #aab3c0;
+  --color-gray-500: #858e9b;
+  --color-gray-600: #626a77;
+  --color-gray-700: #343c48;
+  --color-gray-800: #2a303a;
+  --color-gray-900: #20242c;
+  --color-gray-950: #10141b;
+  /* yellow → rampa do amber (aviso) */
+  --color-yellow-50: #fffbeb;
+  --color-yellow-100: #fef3c7;
+  --color-yellow-200: #fde68a;
+  --color-yellow-300: #fcd34d;
+  --color-yellow-400: #fbbf24;
+  --color-yellow-500: #f4a93c;
+  --color-yellow-600: #d97706;
+  --color-yellow-700: #b45309;
+  --color-yellow-800: #92400e;
+  --color-yellow-900: #78350f;
+  --color-yellow-950: #2a1a00;
+  /* amber → aviso; 50, 600 e 700 ficam os do Tailwind */
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f4a93c;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+  --color-amber-950: #2a1a00;
+  /* red → perigo; 100, 500 e 800 ficam os do Tailwind */
+  --color-red-50: #fff0ee;
+  --color-red-200: #fecdca;
+  --color-red-300: #ffb4ae;
+  --color-red-400: #ff918a;
+  --color-red-600: #dc2626;
+  --color-red-700: #b42318;
+  --color-red-900: #6b2a2a;
+  --color-red-950: #361f20;
+  /* emerald → sucesso; 100, 500, 700 e 900 ficam os do Tailwind */
+  --color-emerald-50: #ddfbef;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-600: #0c7f57;
+  --color-emerald-800: #065f46;
+  --color-emerald-950: #052e1c;
+  /* green → a rampa do emerald (sucesso) */
+  --color-green-50: #ddfbef;
+  --color-green-100: #d1fae5;
+  --color-green-200: #a7f3d0;
+  --color-green-300: #6ee7b7;
+  --color-green-400: #34d399;
+  --color-green-500: #10b981;
+  --color-green-600: #0c7f57;
+  --color-green-700: #047857;
+  --color-green-800: #065f46;
+  --color-green-900: #064e3b;
+  --color-green-950: #052e1c;
+}

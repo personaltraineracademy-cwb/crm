@@ -234,7 +234,7 @@ export function AcoesDaAssinatura(p: PropsDasAcoes) {
         </div>
       )}
       {fatura && (
-        <div className="space-y-2 rounded-md border p-3 text-sm">
+        <div className="space-y-2 rounded-lg border p-3 text-sm">
           <p>{t("Sua fatura está pronta. Pague por Pix, boleto ou cartão.")}</p>
           <Button asChild>
             <a href={fatura} target="_blank" rel="noopener noreferrer">
@@ -324,7 +324,7 @@ export function AcoesDaAssinatura(p: PropsDasAcoes) {
       </div>
 
       {trocando && (
-        <div className="space-y-3 rounded-md border p-3">
+        <div className="space-y-3 rounded-lg border p-3">
           <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1">
             <Label htmlFor="novo-plano">{t("Novo plano")}</Label>
@@ -391,7 +391,7 @@ export function AcoesDaAssinatura(p: PropsDasAcoes) {
       )}
 
       {cancelando && (
-        <div className="space-y-2 rounded-md border p-3 text-sm">
+        <div className="space-y-2 rounded-lg border p-3 text-sm">
           <p>{t("Você mantém o acesso até o fim do período já pago. Não há reembolso proporcional.")}</p>
           <Button
             variant="destructive"

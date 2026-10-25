@@ -5,6 +5,7 @@ import { useAssignableMembers } from "@/hooks/inbox/useAssignableMembers";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useT } from "@/hooks/i18n/useT";
 import { Button } from "@/components/ui/button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   Select,
   SelectContent,
@@ -251,36 +252,15 @@ export function CalendarioDoFunil({ pipelineId, pipeline: funil, stages, leads }
             </SelectContent>
           </Select>
 
-          <div className="flex items-center gap-0.5 rounded-md border bg-muted p-0.5">
-            <button
-              type="button"
-              data-testid="calendario-mes"
-              aria-pressed={visao === "mes"}
-              onClick={() => setVisao("mes")}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
-                visao === "mes"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("Mês")}
-            </button>
-            <button
-              type="button"
-              data-testid="calendario-semana"
-              aria-pressed={visao === "semana"}
-              onClick={() => setVisao("semana")}
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors",
-                visao === "semana"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("Semana")}
-            </button>
-          </div>
+          <SegmentedControl
+            aria-label={t("Visualização")}
+            value={visao}
+            onValueChange={setVisao}
+            options={[
+              { value: "mes", label: t("Mês") },
+              { value: "semana", label: t("Semana") },
+            ]}
+          />
         </div>
       </div>
 
@@ -289,7 +269,7 @@ export function CalendarioDoFunil({ pipelineId, pipeline: funil, stages, leads }
           {cabecalho.map((rotulo, i) => (
             <div
               key={`${rotulo}-${i}`}
-              className="py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+              className="py-2 text-center text-xs font-semibold text-muted-foreground"
             >
               {rotulo}
             </div>
@@ -321,7 +301,7 @@ export function CalendarioDoFunil({ pipelineId, pipeline: funil, stages, leads }
                   className={cn(
                     "flex h-6 w-6 items-center justify-center self-start rounded-full text-xs font-semibold",
                     chave === hoje
-                      ? "bg-primary font-bold text-primary-foreground"
+                      ? "bg-primary font-semibold text-primary-foreground"
                       : "text-muted-foreground",
                   )}
                 >
@@ -335,14 +315,14 @@ export function CalendarioDoFunil({ pipelineId, pipeline: funil, stages, leads }
                     data-testid={`calendario-negocio-${lead.id}`}
                     title={lead.title}
                     onClick={() => setDossieId(lead.id)}
-                    className="w-full truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-left text-[10px] font-medium text-primary transition-colors hover:bg-primary/20"
+                    className="w-full truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-left text-xs font-medium text-primary transition-colors hover:bg-primary/20"
                   >
                     {lead.title}
                   </button>
                 ))}
 
                 {excedente > 0 ? (
-                  <span className="pl-1 text-[10px] font-semibold text-muted-foreground">
+                  <span className="pl-1 text-xs font-semibold text-muted-foreground">
                     +{excedente} {t("mais")}
                   </span>
                 ) : null}

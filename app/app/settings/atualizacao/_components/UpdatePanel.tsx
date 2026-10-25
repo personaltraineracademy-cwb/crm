@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useT } from "@/hooks/i18n/useT";
 import { irAoDesafioDeMfa } from "@/lib/auth/ir-ao-desafio-de-mfa";
+import { PageHeader } from "@/components/ui/page-header";
 
 // Sem `cd <pasta>`: o instalador não fixa o nome da pasta do clone
 // (REPO_DIR é configurável, default "deskcommcrm" minúsculo) — quem tem
@@ -77,7 +78,7 @@ function BotaoVoltar({
           "Os seus dados seguem intactos: a cópia de segurança feita antes da tentativa continua guardada no servidor.",
         )}
       </p>
-      {erro && <p className="mt-3 text-sm text-error-fg">{erro}</p>}
+      {erro && <p className="text-danger-foreground mt-3 text-sm">{erro}</p>}
     </>
   );
 }
@@ -605,7 +606,7 @@ export function UpdatePanel() {
   return (
     <Layout semSmtp={semSmtp} titulo={`${t("Versão")} ${nova} ${t("disponível")}`}>
       {data.off_release && (
-        <p className="mb-4 rounded-md border border-warning bg-warning-bg p-3 text-sm text-warning-fg">
+        <p className="mb-4 rounded-lg border border-warning-border bg-warning-soft p-3 text-sm text-warning-foreground">
           {t("Sua instalação está numa versão de desenvolvimento. Atualizar vai levá-la para a versão publicada")}{" "}
           {nova}.
         </p>
@@ -617,7 +618,7 @@ export function UpdatePanel() {
           que versão veio — num salto de várias, "reconecte o número" sem dizer
           de qual release não informa o operador, assusta. */}
       {data.notes?.requires_attention.length ? (
-        <div className="mb-4 rounded-md border border-warning bg-warning-bg p-3 text-sm text-warning-fg">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground mb-4 rounded-lg border p-3 text-sm">
           <p className="mb-1 font-medium">⚠️ {t("Requer atenção")}</p>
           {data.notes.requires_attention.map((aviso) => (
             <div key={aviso.version} className="mt-2">
@@ -773,7 +774,7 @@ function BotaoAtualizar({
           )}
         </span>
       </div>
-      {erro && <p className="mt-3 text-sm text-error-fg">{erro}</p>}
+      {erro && <p className="text-danger-foreground mt-3 text-sm">{erro}</p>}
     </>
   );
 }
@@ -869,7 +870,7 @@ function AvisoDeSmtp() {
   return (
     <div
       data-testid="aviso-sem-smtp"
-      className="rounded-md border border-warning bg-warning-bg p-3 text-sm text-warning-fg"
+      className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm"
     >
       <p className="font-medium">⚠️ {t("Sem SMTP configurado")}</p>
       <p className="mt-1">
@@ -898,12 +899,8 @@ function Layout({
 }) {
   const t = useT();
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {titulo ?? t("Atualização do sistema")}
-        </h1>
-      </header>
+    <div className="flex max-w-3xl flex-col gap-6 p-6">
+      <PageHeader title={titulo ?? t("Atualização do sistema")} />
       {semSmtp ? <AvisoDeSmtp /> : null}
       <Card className="p-6">{children}</Card>
     </div>

@@ -15,7 +15,7 @@
  * defeito nas outras duas:
  *
  *   1. a barra lateral do app          (`components/shell/Sidebar.tsx`)
- *   2. a tela de entrada               (`app/(public)/layout.tsx`)
+ *   2. a tela de entrada               (`components/auth/TelaDeAcesso.tsx`)
  *   3. a PRÉVIA da tela de marca       (`components/branding/CampoDeLogo.tsx`)
  *
  * A terceira é a que mais engana: se a prévia mostrar o logo cru onde o app
@@ -88,7 +88,7 @@ describe("o logo do operador não some no tema escuro", () => {
   it("a TELA DE ENTRADA desenha o logo sobre o mesmo chip", () => {
     // O login também respeita `data-theme` — o `ThemeProvider` embrulha a raiz
     // inteira (`app/layout.tsx`), a fachada inclusa.
-    const fonte = semComentario(leia("app/(public)/layout.tsx"));
+    const fonte = semComentario(leia("components/auth/TelaDeAcesso.tsx"));
 
     expect(fonte, "sumiu o chip `dark:bg-white` da tela de entrada").toMatch(/dark:bg-white/);
     expect(
@@ -116,7 +116,7 @@ describe("o logo do operador não some no tema escuro", () => {
     // chegava a um `<img>` em exatamente três arquivos.
     const SUPERFICIES = [
       "components/shell/Sidebar.tsx",
-      "app/(public)/layout.tsx",
+      "components/auth/TelaDeAcesso.tsx",
       "components/branding/CampoDeLogo.tsx",
     ];
     for (const arquivo of SUPERFICIES) {

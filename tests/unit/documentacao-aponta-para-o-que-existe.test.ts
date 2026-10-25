@@ -69,15 +69,23 @@ const PONTEIROS_MORTOS_ACEITOS = new Set([
 /**
  * Unnify: arquivos do original que a nossa versão apaga de propósito (README.en.md,
  * VISION.md…). Os documentos internos do original seguem linkando-os, e editá-los
- * viraria conflito a cada sincronização. A lista mora em um arquivo só nosso.
+ * viraria conflito a cada sincronização.
+ *
+ * A fonte é `scripts/unnify/arquivos-removidos.txt`, que fica só no PRIVADO
+ * (`so-no-privado.txt`): no público a pasta não existe, e ler o arquivo derrubava
+ * o teste inteiro. Os documentos que apontam para os removidos vão ao público, então
+ * a lista também mora aqui; no privado, o caso no fim do arquivo cobra que as
+ * duas batem (o mesmo arranjo de `gatilho-dos-jobs-de-entrega.test.ts`).
  */
-const REMOVIDOS_PELA_UNNIFY = new Set(
-  fs
-    .readFileSync(path.join(RAIZ, "scripts/unnify/arquivos-removidos.txt"), "utf8")
-    .split("\n")
-    .map((l) => l.replace(/#.*/, "").trim())
-    .filter(Boolean),
-);
+const REMOVIDOS_PELA_UNNIFY = new Set([
+  "README.en.md",
+  "README.es.md",
+  "CONTRIBUTING.en.md",
+  "VISION.md",
+  "RELATORIO-W1-GATILHOS.md",
+]);
+const LISTA_DE_REMOVIDOS = path.join(RAIZ, "scripts/unnify/arquivos-removidos.txt");
+const NO_PRIVADO = fs.existsSync(LISTA_DE_REMOVIDOS);
 
 /**
  * Nomes ilustrativos: `lib/foo/bar.ts` não é ponteiro, é exemplo.
@@ -213,5 +221,21 @@ describe("documentação — o que ela aponta existe", () => {
       `nota de pendência sobrevivente — o gate citado JÁ está ativo:\n${violacoes.join("\n")}\n` +
         `confira a régua real: gh api repos/melgarafael/DeskcommCRM/branches/main/protection --jq '.required_status_checks.contexts'`,
     ).toEqual([]);
+  });
+});
+
+// Unnify. No público a lista não existe, e não há o que conferir: o caso fica `skipped` lá.
+describe("Unnify: os removidos daqui são os de scripts/unnify/arquivos-removidos.txt", () => {
+  it.skipIf(!NO_PRIVADO)("a lista do teste bate com a do privado", () => {
+    const daLista = fs
+      .readFileSync(LISTA_DE_REMOVIDOS, "utf8")
+      .split("\n")
+      .map((l) => l.replace(/#.*/, "").trim())
+      .filter(Boolean)
+      .sort();
+    expect(
+      daLista,
+      "arquivo novo em arquivos-removidos.txt: acrescente-o também a REMOVIDOS_PELA_UNNIFY neste arquivo (e vice-versa)",
+    ).toEqual([...REMOVIDOS_PELA_UNNIFY].sort());
   });
 });

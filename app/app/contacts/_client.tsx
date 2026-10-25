@@ -4,7 +4,8 @@ import { useT } from "@/hooks/i18n/useT";
 import { Plus, DownloadSimple, MagnifyingGlass, UploadSimple, UsersThree, ArrowsClockwise } from "@/lib/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -185,14 +186,12 @@ export function ContactsListClient() {
   );
 
   return (
-    <div className="space-y-4 md:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Contatos")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Customer 360 — busque, filtre e gerencie contatos.")}
-          </p>
-        </div>
+    <div className="space-y-6 md:p-6">
+      <PageHeader
+        title={t("Contatos")}
+        description={t("Customer 360 — busque, filtre e gerencie contatos.")}
+        actions={
+          <>
         {/*
           A estrutura é a da main (o "Importar CSV" do PR #313). Os botões
           QUEBRAM linha em vez de passar da tela: o `whitespace-nowrap` do
@@ -204,18 +203,17 @@ export function ContactsListClient() {
           botões descem de linha e o título não é espremido. Onde cabem
           (1280px), nada muda.
         */}
-        <div className="flex flex-wrap items-center gap-2">
           {/*
             A porta do recurso de duplicados fica AQUI, na tela que já existe, e
             não num item de menu novo: quem descobre que tem contato repetido
             descobre olhando a lista, e a barra lateral não precisa crescer para
             um trabalho que se faz de vez em quando.
           */}
-          <Button variant="outline" onClick={() => setDuplicadosOpen(true)}>
+          <Button variant="outline" size="sm" onClick={() => setDuplicadosOpen(true)}>
             <UsersThree size={16} weight="bold" aria-hidden />
             <span>{t("Duplicados")}</span>
           </Button>
-          <Button variant="outline" onClick={() => setImportOpen(true)}>
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
             <UploadSimple size={16} weight="bold" aria-hidden />
             <span>{t("Importar CSV")}</span>
           </Button>
@@ -226,7 +224,7 @@ export function ContactsListClient() {
             fora", e separá-los em cantos diferentes da tela faria cada um
             parecer um recurso que o outro não é.
           */}
-          <Button variant="outline" onClick={() => setSyncOpen(true)}>
+          <Button variant="outline" size="sm" onClick={() => setSyncOpen(true)}>
             <ArrowsClockwise size={16} weight="bold" aria-hidden />
             <span>{t("Sincronizar agenda")}</span>
           </Button>
@@ -240,7 +238,7 @@ export function ContactsListClient() {
           {podeExportar && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" size="sm">
                   <DownloadSimple size={16} weight="bold" aria-hidden />
                   <span>{t("Exportar")}</span>
                 </Button>
@@ -255,14 +253,16 @@ export function ContactsListClient() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus size={16} weight="bold" aria-hidden />
             <span>{t("Novo contato")}</span>
           </Button>
-        </div>
-      </header>
+          </>
+        }
+      />
 
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-2">
+      {/* Filtros numa linha de 32, sem caixa em volta (DS §11.2). */}
+      <div className="flex flex-wrap items-center gap-2">
         <div className="relative w-full sm:w-72">
           <MagnifyingGlass
             size={16}
@@ -274,7 +274,7 @@ export function ContactsListClient() {
             placeholder={t("Buscar por nome, email ou telefone…")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="h-9 w-full pl-8"
+            className="h-8 w-full pl-8"
           />
         </div>
 
@@ -364,9 +364,13 @@ export function ContactsListClient() {
         {/* Só pessoais: o filtro que acha quem saiu da operação — e a porta do
             desmarcar em lote mental (abre a ficha e desmarca um a um). O
             `data-testid` é contrato do e2e da spec. */}
+        {/* Alternador de filtro, não ação: ligado ganha o fundo de seleção
+            (`interactive`), e não o azul cheio, que é da ação primária da
+            página ("Novo contato"). */}
         <Button
-          variant={soPessoais ? "default" : "outline"}
+          variant="outline"
           size="sm"
+          className="aria-pressed:border-interactive-border aria-pressed:bg-interactive aria-pressed:text-interactive-foreground"
           data-testid="filtro-pessoais"
           aria-pressed={soPessoais}
           onClick={() => setSoPessoais((v) => !v)}
@@ -427,27 +431,34 @@ export function ContactsListClient() {
       )}
 
       {q.isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
+        // Esqueleto com a forma da tabela: cabeçalho de 48 e linhas de 48.
+        <div className="overflow-hidden rounded-xl border border-border bg-card" aria-busy="true">
+          <Skeleton className="h-12 w-full rounded-none" />
+          <div className="divide-y divide-border">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex h-12 items-center gap-4 px-4">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="ml-auto h-4 w-20" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : q.isError ? (
-        <Card className="p-6 text-center">
-          <p className="text-sm text-error-fg">{t("Erro ao carregar contatos.")}</p>
-          <Button
-            size="sm"
-            variant="outline"
-            className="mt-2"
-            onClick={() => q.refetch()}
-          >
-            {t("Tentar novamente")}
-          </Button>
-        </Card>
+        <Alert
+          variant="destructive"
+          action={
+            <Button size="sm" variant="outline" onClick={() => q.refetch()}>
+              {t("Tentar novamente")}
+            </Button>
+          }
+        >
+          {t("Erro ao carregar contatos.")}
+        </Alert>
       ) : allContacts.length === 0 ? (
-        <Card className="p-2">
+        <div className="rounded-xl border border-border bg-card">
           <EmptyContacts />
-        </Card>
+        </div>
       ) : (
         <>
           {/* Abaixo de `md` a tabela vira cartão e o cabeçalho some, levando a
@@ -462,7 +473,7 @@ export function ContactsListClient() {
               {t("Selecionar todos os contatos visíveis")}
             </Button>
           )}
-          <Card className="overflow-hidden">
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
             <ContactsTable
               contacts={allContacts}
               orderBy={orderBy}
@@ -479,9 +490,9 @@ export function ContactsListClient() {
                   : undefined
               }
             />
-          </Card>
+          </div>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground tabular-nums">
               {allContacts.length} {allContacts.length === 1 ? t("contato") : t("contatos")}
               {q.hasNextPage ? ` ${t("carregados — há mais resultados")}` : ""}
             </p>

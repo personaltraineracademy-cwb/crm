@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { EntrarComGoogle } from "@/components/auth/EntrarComGoogle";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Alert } from "@/components/ui/alert";
 import { marcaDaSaida } from "@/lib/branding/saida";
 import { createClient } from "@/lib/supabase/server";
 import { idiomaDoVisitante } from "@/lib/i18n/idiomaAnonimo";
@@ -33,25 +34,17 @@ export default async function LoginPage({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1.5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Entrar")}</h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">{t("Entrar")}</h1>
         <p className="text-sm text-muted-foreground">{marca.nome}</p>
       </div>
       {reset === "success" && (
-        <div
-          className="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm"
-          role="status"
-        >
-          {t("Senha redefinida com sucesso. Entre com a nova senha.")}
-        </div>
+        <Alert>{t("Senha redefinida com sucesso. Entre com a nova senha.")}</Alert>
       )}
       {error === "link_invalido" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t("Link inválido ou expirado. Peça um novo em Recuperar senha ou refaça o cadastro.")}
-        </div>
+        </Alert>
       )}
       {/*
         Os dois avisos abaixo chegaram por frentes diferentes e falam de erros
@@ -59,30 +52,21 @@ export default async function LoginPage({
         diagnóstico inteiro da tela de login.
       */}
       {error === "convite_invalido" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "Sua conta foi confirmada, mas o convite não vale mais — ele expirou ou foi emitido para outro e-mail. Peça um novo a quem te convidou. Não criamos uma empresa nova para você, porque não era isso que você estava fazendo.",
           )}
-        </div>
+        </Alert>
       )}
       {error === "cadastro_por_convite" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "Sua conta foi confirmada, mas esta instalação aceita cadastro apenas por convite — então não criamos uma empresa para você. Peça um convite a quem administra o sistema; o link dele já traz tudo o que falta.",
           )}
-        </div>
+        </Alert>
       )}
       {error === "template_padrao" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "Este link veio do modelo de e-mail padrão do Supabase, que não fecha o acesso nesta instalação — pedir outro link não resolve. Quem administra o sistema precisa configurar os modelos de e-mail: na nuvem do Supabase, com ",
           )}
@@ -90,17 +74,14 @@ export default async function LoginPage({
           {t(
             "; num Supabase próprio, apontando GOTRUE_MAILER_TEMPLATES_* para as rotas /email-templates/ do app.",
           )}
-        </div>
+        </Alert>
       )}
       {error === "provisionamento" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "Sua conta foi confirmada, mas houve um erro ao preparar seu ambiente. Tente entrar novamente em instantes.",
           )}
-        </div>
+        </Alert>
       )}
       {/*
         As duas recusas da entrada com Google, separadas de propósito: uma é
@@ -110,40 +91,31 @@ export default async function LoginPage({
         defeito onde não há.
       */}
       {error === "entrada_com_google" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "Não foi possível concluir a entrada com o Google. Tente novamente — se acontecer de novo, entre com e-mail e senha.",
           )}
-        </div>
+        </Alert>
       )}
       {error === "entrada_com_google_cancelada" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t("A entrada com o Google foi cancelada antes de terminar. Nada mudou na sua conta.")}
-        </div>
+        </Alert>
       )}
       {/* A terceira recusa da entrada com Google: a conta está confirmada, mas o
           acesso dela foi retirado. Não é convite inválido (não havia convite
           nenhum) nem falha do Google — é decisão de quem administra, e a tela
           diz exatamente isso, em vez de mandar a pessoa "tentar de novo". */}
       {error === "acesso_revogado" && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {t(
             "O acesso desta conta foi retirado por quem administra o sistema — então não criamos uma empresa nova para você. Se o acesso deveria continuar, peça a quem administra para restaurá-lo; se você está entrando em outra equipe, peça um convite.",
           )}
-        </div>
+        </Alert>
       )}
       <LoginForm next={next} />
       <EntrarComGoogle next={next} />
-      <div className="space-y-2 text-center text-sm">
+      <div className="space-y-2 border-t border-border pt-6 text-sm">
         <p>
           <Link
             href="/login/forgot"

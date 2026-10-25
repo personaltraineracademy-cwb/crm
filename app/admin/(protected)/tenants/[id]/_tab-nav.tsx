@@ -20,7 +20,10 @@ export function TabNav({ basePath, tabs }: TabNavProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex gap-0 border-b">
+    // Abas de página no desenho `line` do DS (§10.7): altura 40, texto sm/500,
+    // a ativa em `foreground` com sublinhado de 2px `primary` recuado 12px.
+    // São links (cada aba é uma rota), por isso não usam o `Tabs` do Radix.
+    <nav className="flex overflow-x-auto border-b border-border [scrollbar-width:none]">
       {tabs.map((tab) => {
         const href = basePath + tab.href;
         // Overview matches exactly; others match as prefix
@@ -33,26 +36,27 @@ export function TabNav({ basePath, tabs }: TabNavProps) {
             key={tab.label}
             href={tab.disabled ? "#" : href}
             aria-disabled={tab.disabled}
+            aria-current={isActive && !tab.disabled ? "page" : undefined}
             className={[
-              "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+              "relative inline-flex h-10 shrink-0 items-center px-3 text-sm font-medium whitespace-nowrap transition-colors",
               tab.disabled
-                ? "cursor-not-allowed text-muted-foreground border-transparent"
+                ? "cursor-not-allowed text-muted-foreground"
                 : isActive
-                  ? "border-foreground text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/40",
+                  ? "text-foreground after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full after:bg-primary"
+                  : "text-muted-foreground hover:text-foreground",
             ]
               .filter(Boolean)
               .join(" ")}
           >
             {t(tab.label)}
             {tab.disabled && (
-              <span className="ml-1.5 text-[10px] font-normal opacity-60">
+              <span className="ml-1.5 text-xs font-normal opacity-60">
                 {t("em breve")}
               </span>
             )}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }

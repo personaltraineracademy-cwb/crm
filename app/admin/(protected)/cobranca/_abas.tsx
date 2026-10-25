@@ -20,7 +20,7 @@ export function AbasDaCobranca({ inicial, paineis }: { inicial: AbaDaCobranca; p
   const t = useT();
   return (
     <Tabs key={inicial} defaultValue={inicial}>
-      <TabsList className="flex h-auto flex-wrap">
+      <TabsList variant="line" className="max-w-full justify-start">
         {ABAS_DA_COBRANCA.map((aba) => (
           <TabsTrigger key={aba} value={aba}>
             {t(ROTULO[aba])}
@@ -28,7 +28,7 @@ export function AbasDaCobranca({ inicial, paineis }: { inicial: AbaDaCobranca; p
         ))}
       </TabsList>
       {ABAS_DA_COBRANCA.map((aba) => (
-        <TabsContent key={aba} value={aba} className="pt-4">
+        <TabsContent key={aba} value={aba} className="pt-6">
           {paineis[aba]}
         </TabsContent>
       ))}

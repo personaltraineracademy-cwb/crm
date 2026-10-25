@@ -355,7 +355,7 @@ export function ConnectWhatsappClient({
   // é o único estado em que esta tela não tem efeito colateral nenhum.
   if (forma === null) {
     return (
-      <div className="space-y-4 rounded-lg border bg-background p-6">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-6">
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium">{t("Como você já usa esse número?")}</legend>
           <p className="text-xs text-muted-foreground">
@@ -396,11 +396,11 @@ export function ConnectWhatsappClient({
 
   if (forma === "oficial" || forma === "parceiro") {
     return (
-      <div className="space-y-4 rounded-lg border bg-background p-6">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-6">
         <VoltarParaEscolha onVoltar={() => setForma(null)} />
 
         {forma === "oficial" && !oficialPodeReceber && (
-          <div className="rounded-md border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-100">
+          <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-4 text-sm">
             <p className="font-medium">
               {t("Este servidor ainda não está pronto para RECEBER por este caminho.")}
             </p>
@@ -423,10 +423,10 @@ export function ConnectWhatsappClient({
   }
 
   return (
-    <div className="space-y-4 rounded-lg border bg-background p-6">
+    <div className="space-y-4 rounded-xl border border-border bg-card p-6">
       <VoltarParaEscolha onVoltar={() => setForma(null)} />
       {!wahaConfigured && (
-        <div className="rounded-md border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-100">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-4 text-sm">
           <p className="font-medium">{t("O WhatsApp desta instalação ainda não subiu.")}</p>
           <p className="mt-1">
             {t("Ele roda no seu próprio servidor. Dá para seguir sem ele agora e conectar o número depois, em")}{" "}
@@ -437,7 +437,7 @@ export function ConnectWhatsappClient({
       )}
 
       {wahaConfigured && (
-        <div className="rounded-md border bg-muted/40 p-4">
+        <div className="rounded-lg bg-muted/40 p-4">
           {/*
             O que estava aqui: "Sessão: org_f3d61bc0" e "Status: INIT".
             O primeiro é um identificador que o produto deriva do id interno da
@@ -489,14 +489,14 @@ export function ConnectWhatsappClient({
           )}
 
           {status === "WORKING" && (
-            <p className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+            <p className="text-success-foreground mt-3 text-sm font-medium">
               ✓ {t("Conectado! Avançando…")}
             </p>
           )}
 
           {status === "FAILED" && (
             <div className="mt-3 space-y-2">
-              <p className="text-sm text-destructive">
+              <p className="text-sm text-danger-foreground">
                 {t("O código expirou antes de alguém escanear. É normal — ele vale só alguns minutos.")}
               </p>
               <p className="text-xs text-muted-foreground">

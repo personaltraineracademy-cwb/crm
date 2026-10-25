@@ -34,7 +34,7 @@ export function HandoffKeywordsInput({ value, onChange, disabled }: Props) {
   return (
     <div className="space-y-2">
       <Label htmlFor="handoff_kw">{t("Palavras que chamam uma pessoa na hora")}</Label>
-      <div className="flex flex-wrap gap-1 rounded-md border border-border/60 p-2">
+      <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 p-2">
         {value.map((kw) => (
           <button
             key={kw}
@@ -69,7 +69,7 @@ export function HandoffKeywordsInput({ value, onChange, disabled }: Props) {
         />
         <button
           type="button"
-          className="rounded-md border border-border/60 px-3 text-xs hover:bg-muted"
+          className="rounded-lg border border-border/60 px-3 text-xs hover:bg-muted"
           onClick={() => add(draft)}
           disabled={disabled || draft.trim() === ""}
         >

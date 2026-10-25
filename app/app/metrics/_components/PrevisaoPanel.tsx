@@ -1,6 +1,7 @@
 "use client";
 
 import { useT } from "@/hooks/i18n/useT";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePrevisaoFunil } from "@/hooks/metrics/usePrevisaoFunil";
 import { formatValorDoNegocio } from "@/lib/money";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +26,10 @@ export function PrevisaoPanel() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold">{t("Previsão")}</CardTitle>
+          <CardTitle className="text-base font-semibold">{t("Previsão")}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">{t("Carregando…")}</p>
+        <CardContent aria-busy="true" aria-label={t("Carregando…")}>
+          <Skeleton className="h-24 w-full" />
         </CardContent>
       </Card>
     );
@@ -38,10 +39,10 @@ export function PrevisaoPanel() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold">{t("Previsão")}</CardTitle>
+          <CardTitle className="text-base font-semibold">{t("Previsão")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-destructive">{t("Erro ao carregar a previsão.")}</p>
+          <p className="text-danger-foreground text-sm">{t("Erro ao carregar a previsão.")}</p>
         </CardContent>
       </Card>
     );
@@ -55,7 +56,7 @@ export function PrevisaoPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">{t("Previsão")}</CardTitle>
+        <CardTitle className="text-base font-semibold">{t("Previsão")}</CardTitle>
         <p className="text-xs text-muted-foreground">
           {data.fonte === "ia_quando_houver"
             ? t("Chance vinda da inteligência artificial quando existe, e da etapa quando não.")

@@ -10,6 +10,7 @@ import { TeamMembersClient } from "./_components/TeamMembersClient";
 import { TeamInvitesClient } from "./_components/TeamInvitesClient";
 import { AttendantsClient } from "./_components/AttendantsClient";
 import { fusoUtilizavel } from "@/lib/tempo/fusos";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Equipe" };
@@ -48,26 +49,26 @@ export default async function TeamPage({
 
   return (
     <div className="flex h-full flex-col gap-6 md:p-6">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Equipe")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Gestão de membros, roles e atendimento do tenant.")}
-          </p>
-        </div>
-        {isAdmin ? (
-          <Button asChild className="shrink-0">
-            <Link href="/app/team/invite">{t("Convidar membros")}</Link>
-          </Button>
-        ) : null}
-      </header>
+      <PageHeader
+        title={t("Equipe")}
+        description={t("Gestão de membros, roles e atendimento do tenant.")}
+        actions={
+          <>
+            {isAdmin ? (
+              <Button size="sm" asChild className="shrink-0">
+                <Link href="/app/team/invite">{t("Convidar membros")}</Link>
+              </Button>
+            ) : null}
+          </>
+        }
+      />
 
       <Tabs defaultValue={abaInicial} className="flex flex-1 flex-col">
-        <TabsList>
+        <TabsList variant="line">
           <TabsTrigger value="members">{t("Membros")}</TabsTrigger>
           <TabsTrigger value="attendants">{t("Atendimento")}</TabsTrigger>
         </TabsList>
-        <TabsContent value="members" className="mt-4 flex flex-col gap-8">
+        <TabsContent value="members" className="mt-6 flex flex-col gap-8">
           <TeamMembersClient currentUserId={user.id} canManage={isAdmin} />
           {/*
             Convites pendentes vivem AQUI, na mesma aba de quem já entrou —
@@ -77,7 +78,7 @@ export default async function TeamPage({
           */}
           {isManager ? <TeamInvitesClient canManage={isAdmin} /> : null}
         </TabsContent>
-        <TabsContent value="attendants" className="mt-4">
+        <TabsContent value="attendants" className="mt-6">
           {isManager ? (
             <AttendantsClient canManage={isManager} organizationTimezone={fusoUtilizavel(activeOrg?.timezone)} />
           ) : (

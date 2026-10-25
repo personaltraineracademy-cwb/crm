@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { useT } from "@/hooks/i18n/useT";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChipDeEstado, type TomDeEstado } from "@/components/ai/chip-de-estado";
+import { cn } from "@/lib/utils";
 import { useClaimConversation } from "@/hooks/inbox/useClaimConversation";
 import { useAtRiskLeads, type AtRiskLead } from "@/hooks/leads/useAtRiskLeads";
 import type { RiskBucket } from "@/lib/leads/risk-radar";
@@ -20,12 +22,34 @@ import {
 
 const RISK_META: Record<
   Exclude<RiskBucket, "em_dia">,
-  { label: string; variant: "error" | "warning" | "info" }
+  { label: string; tom: TomDeEstado }
 > = {
-  critico: { label: "Crítico", variant: "error" },
-  em_risco: { label: "Em risco", variant: "warning" },
-  em_voo: { label: "Em voo", variant: "info" },
+  // Estado pelo trio do Unnify: crítico = perigo, em risco = aviso, em voo (o
+  // assistente já tem retorno marcado, está em andamento) = informação.
+  critico: { label: "Crítico", tom: "perigo" },
+  em_risco: { label: "Em risco", tom: "aviso" },
+  em_voo: { label: "Em voo", tom: "info" },
 };
+
+/**
+ * Aviso de lista paralela (sem próximo passo, proposta vencida, proposta
+ * esperando revisão): o alerta em linha do Unnify (§10.19) no tom de aviso —
+ * raio 8, borda 1px, ícone de 16 alinhado ao título. Um aviso por conceito.
+ */
+const AVISO_DA_LISTA =
+  "rounded-lg border border-warning-border bg-warning-soft px-3 py-2.5 text-sm";
+
+function TituloDoAviso({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-warning-foreground flex items-center gap-2 font-medium">
+      <Warning size={16} aria-hidden className="shrink-0" />
+      <span>{children}</span>
+    </p>
+  );
+}
+
+/** Lista do Work (§10.12): a MESMA grade no cabeçalho de colunas e nas linhas. */
+const GRADE_DA_LISTA = "md:grid md:grid-cols-[7rem_minmax(0,1fr)_auto] md:items-center";
 
 function coldFor(hours: number, t: (texto: string) => string): string {
   if (hours < 48) return `${t("parado há")} ${hours}h`;
@@ -60,10 +84,13 @@ export function RiskRadarList() {
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <Skeleton className="h-10 w-full rounded-none" />
+        <div className="divide-y divide-border">
+          <Skeleton className="h-14 w-full rounded-none opacity-60" />
+          <Skeleton className="h-14 w-full rounded-none opacity-60" />
+          <Skeleton className="h-14 w-full rounded-none opacity-60" />
+        </div>
       </div>
     );
   }
@@ -81,7 +108,7 @@ export function RiskRadarList() {
         className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center"
         data-testid="radar-empty"
       >
-        <CheckCircle size={28} className="text-success-fg/70" aria-hidden />
+        <CheckCircle size={32} className="text-muted-foreground" aria-hidden />
         <p className="text-sm font-medium">{t("Nenhuma demanda em risco")}</p>
         <p className="text-xs text-muted-foreground">
           {t("Toda demanda aberta teve atividade recente ou já tem um retorno agendado.")}
@@ -97,26 +124,26 @@ export function RiskRadarList() {
           viola o invariante 5. Esta é a lista que responde "e daí?". */}
       {semPasso.length > 0 ? (
         <section
-          className="rounded-lg border border-warning-border bg-warning-bg/40 p-3"
+          className={AVISO_DA_LISTA}
           data-testid="radar-sem-proximo-passo"
         >
-          <p className="text-sm font-medium">
+          <TituloDoAviso>
             {semPasso.length}{" "}
             {semPasso.length === 1
               ? t("demanda aberta sem próximo passo")
               : t("demandas abertas sem próximo passo")}
-          </p>
-          <p className="mb-2 text-xs text-muted-foreground">
+          </TituloDoAviso>
+          <p className="mt-1 mb-2 pl-6 text-xs text-muted-foreground">
             {t(
               "Ninguém marcou o que acontece a seguir. Cada uma é alguém esperando sem que nada esteja combinado.",
             )}
           </p>
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-1 pl-6">
             {semPasso.slice(0, 8).map((d) => (
               <li key={d.id} className="flex items-baseline justify-between gap-3 text-xs max-md:items-center">
                 <Link
                   href={destinoDaDemandaSemPasso(d)}
-                  className="truncate hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5"
+                  className="truncate text-foreground hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5"
                   data-testid="radar-sem-passo-link"
                 >
                   {d.contact_name ?? t("Contato sem nome")}
@@ -135,22 +162,22 @@ export function RiskRadarList() {
           paralela, não misturada nos itens do radar). */}
       {vencidas.length > 0 ? (
         <section
-          className="rounded-lg border border-warning-border bg-warning-bg/40 p-3"
+          className={AVISO_DA_LISTA}
           data-testid="radar-propostas-vencidas"
         >
-          <p className="text-sm font-medium">
+          <TituloDoAviso>
             {vencidas.length}{" "}
             {vencidas.length === 1
               ? t("proposta vencida sem retomada")
               : t("propostas vencidas sem retomada")}
-          </p>
-          <p className="mb-2 text-xs text-muted-foreground">
+          </TituloDoAviso>
+          <p className="mt-1 mb-2 pl-6 text-xs text-muted-foreground">
             {t("O cliente recebeu e não decidiu. Retome antes que esfrie de vez.")}
           </p>
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-1 pl-6">
             {vencidas.slice(0, 8).map((p) => (
               <li key={p.proposal_id} className="flex items-baseline justify-between gap-3 text-xs max-md:items-center">
-                <Link href={`/app/proposals/${p.proposal_id}`} className="truncate hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5">
+                <Link href={`/app/proposals/${p.proposal_id}`} className="truncate text-foreground hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5">
                   {p.numero != null && p.ano != null ? `${String(p.numero).padStart(4, "0")}/${p.ano}` : t("Proposta sem número")}
                 </Link>
                 <span className="shrink-0 tabular-nums text-muted-foreground">
@@ -167,22 +194,22 @@ export function RiskRadarList() {
           não misturada nos itens do radar). */}
       {esperandoRevisao.length > 0 ? (
         <section
-          className="rounded-lg border border-warning-border bg-warning-bg/40 p-3"
+          className={AVISO_DA_LISTA}
           data-testid="radar-propostas-esperando-revisao"
         >
-          <p className="text-sm font-medium">
+          <TituloDoAviso>
             {esperandoRevisao.length}{" "}
             {esperandoRevisao.length === 1
               ? t("proposta esperando revisão")
               : t("propostas esperando revisão")}
-          </p>
-          <p className="mb-2 text-xs text-muted-foreground">
+          </TituloDoAviso>
+          <p className="mt-1 mb-2 pl-6 text-xs text-muted-foreground">
             {t("Rascunhos que a IA terminou e ninguém revisou. Confira antes de enviar.")}
           </p>
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-1 pl-6">
             {esperandoRevisao.slice(0, 8).map((p) => (
               <li key={p.proposal_id} className="flex items-baseline justify-between gap-3 text-xs max-md:items-center">
-                <Link href={`/app/proposals/${p.proposal_id}`} className="truncate hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5">
+                <Link href={`/app/proposals/${p.proposal_id}`} className="truncate text-foreground hover:underline max-md:block max-md:min-w-0 max-md:flex-1 max-md:py-3.5">
                   {p.titulo ?? t("Proposta sem título")}
                 </Link>
                 <span className="shrink-0 truncate text-muted-foreground">
@@ -195,22 +222,35 @@ export function RiskRadarList() {
       ) : null}
 
       <div className="flex flex-wrap gap-2" data-testid="radar-counts">
-        <Badge variant="error">
-          {data.counts.critico} {t("crítico")}
-        </Badge>
-        <Badge variant="warning">
-          {data.counts.em_risco} {t("em risco")}
-        </Badge>
-        <Badge variant="info">
-          {data.counts.em_voo} {t("em voo")}
-        </Badge>
+        <ChipDeEstado tom="perigo">
+          <span className="tabular-nums">{data.counts.critico}</span> {t("crítico")}
+        </ChipDeEstado>
+        <ChipDeEstado tom="aviso">
+          <span className="tabular-nums">{data.counts.em_risco}</span> {t("em risco")}
+        </ChipDeEstado>
+        <ChipDeEstado tom="info">
+          <span className="tabular-nums">{data.counts.em_voo}</span> {t("em voo")}
+        </ChipDeEstado>
       </div>
 
-      <ul className="divide-y divide-border rounded-lg border border-border">
-        {data.items.map((lead) => (
-          <RadarRow key={lead.id} lead={lead} />
-        ))}
-      </ul>
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div
+          aria-hidden
+          className={cn(
+            GRADE_DA_LISTA,
+            "hidden border-b border-border bg-muted/40 py-2.5 pr-3 text-xs font-medium text-muted-foreground md:grid",
+          )}
+        >
+          <span className="pl-4">{t("Estado")}</span>
+          <span>{t("Demandas abertas")}</span>
+          <span />
+        </div>
+        <ul className="divide-y divide-border">
+          {data.items.map((lead) => (
+            <RadarRow key={lead.id} lead={lead} />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -264,18 +304,26 @@ function RadarRow({ lead }: { lead: AtRiskLead }) {
     <li
       data-testid="radar-item"
       data-risk={lead.risk}
-      className="flex items-start gap-2 pr-3 transition-colors hover:bg-accent/50 max-md:flex-wrap"
+      className={cn(
+        GRADE_DA_LISTA,
+        "flex min-h-14 items-start gap-2 pr-3 transition-colors hover:bg-muted/40 max-md:flex-wrap",
+      )}
     >
-      <Link href={href} className="flex min-w-0 flex-1 items-start gap-3 px-4 py-3">
-        <Badge variant={meta.variant} className="mt-0.5 shrink-0">
+      <Link
+        href={href}
+        className="flex min-w-0 flex-1 items-start gap-3 px-4 py-3 md:col-span-2 md:grid md:grid-cols-subgrid md:gap-0"
+      >
+        <ChipDeEstado tom={meta.tom} className="mt-0.5">
           {t(meta.label)}
-        </Badge>
+        </ChipDeEstado>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{lead.title}</p>
+          <p className="truncate text-sm font-medium text-foreground" title={lead.title}>
+            {lead.title}
+          </p>
           <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
             {lead.contact_name ? <span className="truncate">{lead.contact_name}</span> : null}
-            <span className="inline-flex items-center gap-1">
-              <ClockCountdown size={13} aria-hidden />
+            <span className="inline-flex items-center gap-1 tabular-nums">
+              <ClockCountdown size={12} aria-hidden />
               {coldFor(lead.hours_since_activity, t)}
             </span>
             <span className="inline-flex items-center gap-1" data-testid="radar-assignee">
@@ -283,15 +331,23 @@ function RadarRow({ lead }: { lead: AtRiskLead }) {
             </span>
           </p>
           {lead.agenda?.appointment_id ? (
-            <p className="mt-1 text-xs text-info-fg">{t(lead.agenda.motivo === "presenca_vencida" ? "Presença não confirmada · revise o compromisso" : lead.agenda.motivo === "presenca_pendente" ? "Confirme a presença · cobrança aguardando" : "Compromisso agendado · cobrança aguardando")}</p>
+            <p className="text-info-foreground mt-1 text-xs">
+              {t(
+                lead.agenda.motivo === "presenca_vencida"
+                  ? "Presença não confirmada · revise o compromisso"
+                  : lead.agenda.motivo === "presenca_pendente"
+                    ? "Confirme a presença · cobrança aguardando"
+                    : "Compromisso agendado · cobrança aguardando",
+              )}
+            </p>
           ) : lead.in_flight && lead.next_followup_at ? (
-            <p className="mt-1 inline-flex items-center gap-1 text-xs text-info-fg">
-              <PaperPlaneTilt size={13} aria-hidden />
+            <p className="text-info-foreground mt-1 inline-flex items-center gap-1 text-xs">
+              <PaperPlaneTilt size={12} aria-hidden />
               {t("Assistente retorna")} {followupWhen(lead.next_followup_at, t)}
             </p>
           ) : (
-            <p className="mt-1 inline-flex items-center gap-1 text-xs text-warning-fg">
-              <Warning size={13} aria-hidden />
+            <p className="text-warning-foreground mt-1 inline-flex items-center gap-1 text-xs">
+              <Warning size={12} aria-hidden />
               {t("Sem próximo passo agendado")}
             </p>
           )}
@@ -307,7 +363,14 @@ function RadarRow({ lead }: { lead: AtRiskLead }) {
             : "max-md:hidden"
         }`}
       >
-        {lead.agenda?.appointment_id ? <Link className="text-xs underline max-md:inline-flex max-md:min-h-11 max-md:items-center" href={`/app/agenda?compromisso=${lead.agenda.appointment_id}`}>{t("Ver compromisso")}</Link> : null}
+        {lead.agenda?.appointment_id ? (
+          <Link
+            className="text-xs text-primary underline-offset-4 hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center"
+            href={`/app/agenda?compromisso=${lead.agenda.appointment_id}`}
+          >
+            {t("Ver compromisso")}
+          </Link>
+        ) : null}
         {canClaim ? (
           <Button
             size="sm"

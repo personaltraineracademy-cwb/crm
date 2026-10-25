@@ -54,8 +54,8 @@ export function EdgeConfigPanel({ sourceNode, targetNode, condition, onChange, o
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto" data-testid="edge-config-panel">
       <div className="space-y-1">
-        <h2 className="text-base font-semibold text-text">{t("Condição da aresta")}</h2>
-        <p className="flex items-center gap-1.5 text-sm text-text-muted">
+        <h2 className="text-base font-semibold text-foreground">{t("Condição da aresta")}</h2>
+        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <span className="truncate">{sourceNode?.label ?? "?"}</span>
           <ArrowRight size={12} aria-hidden className="shrink-0" />
           <span className="truncate">{targetNode?.label ?? "?"}</span>
@@ -83,7 +83,7 @@ export function EdgeConfigPanel({ sourceNode, targetNode, condition, onChange, o
           </SelectContent>
         </Select>
         {sourceNode && nodeBranches(sourceNode).length > 1 && (
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("São as saídas do nó")} &quot;{sourceNode.label}&quot; — {t("as mesmas que aparecem no card.")}
           </p>
         )}

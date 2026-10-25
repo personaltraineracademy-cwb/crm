@@ -87,13 +87,17 @@ describe("quem desconta as faixas", () => {
   });
 
   it("a barra de cima e a lateral grudam ABAIXO das faixas, sem passar por baixo delas", () => {
-    // As faixas são `sticky top-0 z-50`. Com o TopBar e a Sidebar também em
+    // As faixas são `sticky top-0` (camada 40). Com o TopBar e a Sidebar também em
     // `top-0`, rolar uma tela longa deixava a faixa por cima da busca, do sino
     // e do topo da barra lateral. E a Sidebar com `h-dvh` cheio fazia o
     // documento medir tela + faixa no computador.
     const topo = readFileSync("components/shell/TopBar.tsx", "utf8");
     const lateral = readFileSync("components/shell/Sidebar.tsx", "utf8");
-    expect(topo).toMatch(/<header className="sticky top-\[var\(--faixas-de-cima,0px\)\] /);
+    // Classe própria antes do `sticky` é permitida: o prettier-plugin-tailwindcss
+    // põe na frente a classe que não conhece (`casca-barra-superior`).
+    expect(topo).toMatch(
+      /<header className="(?:[\w-]+ )*sticky top-\[var\(--faixas-de-cima,0px\)\] /,
+    );
     expect(lateral).toMatch(
       /"sticky top-\[var\(--faixas-de-cima,0px\)\] z-30 flex h-\[calc\(100dvh-var\(--faixas-de-cima,0px\)\)\] /,
     );

@@ -56,7 +56,7 @@ export function EtapaDeQualquerFunil({
         </SelectContent>
       </Select>
       {falhou && (
-        <p className="text-xs text-warning-fg">
+        <p className="text-warning-foreground text-xs">
           {t(
             "Não consegui carregar as etapas agora. O que estava escolhido continua salvo — recarregue a página para escolher outra.",
           )}

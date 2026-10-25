@@ -8,7 +8,6 @@ import { formatDistanceToNow, format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -21,6 +20,7 @@ import {
 import { CaretLeft } from "@/lib/ui/icons";
 import { useAdminUser } from "@/hooks/useAdminUser";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -113,29 +113,12 @@ export function UserDetailClient({ id }: UserDetailClientProps) {
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
-      <div>
-        <Link
-          href="/admin/users"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <CaretLeft size={14} aria-hidden />
-          {t("Usuários")}
-        </Link>
-      </div>
-
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {user.full_name ?? user.email ?? t("Usuário sem nome")}
-        </h1>
-        {user.full_name && (
-          <p className="font-mono text-sm text-muted-foreground">{user.email}</p>
-        )}
-        <p className="text-xs text-muted-foreground font-mono">{user.id}</p>
-      </div>
-
-      <Separator />
+      <PageHeader
+        back={{ href: "/admin/users", label: t("Usuários") }}
+        title={user.full_name ?? user.email ?? t("Usuário sem nome")}
+        description={user.full_name ? <span className="font-mono">{user.email}</span> : undefined}
+        meta={<span className="font-mono">{user.id}</span>}
+      />
 
       {/* User info card */}
       <Card>
@@ -205,12 +188,12 @@ export function UserDetailClient({ id }: UserDetailClientProps) {
                       <div className="flex flex-col gap-0.5">
                         <Link
                           href={`/admin/tenants/${m.organization_id}`}
-                          className="text-sm font-medium text-accent hover:underline"
+                          className="text-sm font-medium text-primary hover:underline"
                         >
                           {m.tenant_name ?? m.organization_id}
                         </Link>
                         {m.tenant_slug && (
-                          <span className="font-mono text-[10px] text-muted-foreground">
+                          <span className="font-mono text-xs text-muted-foreground">
                             {m.tenant_slug}
                           </span>
                         )}

@@ -3,7 +3,7 @@
  *
  * jsdom não faz layout: ele não sabe que a tela tem 360px nem onde a barra
  * desenha. Então aqui se prova o que decide o comportamento — qual classe
- * esconde acima de `md`, quantas vagas existem, e de onde saem as abas — e a
+ * esconde de `lg` para cima, quantas vagas existem, e de onde saem as abas — e a
  * prova de geometria fica com `tests/e2e/celular-cabe-na-tela.spec.ts`, que mede
  * por `getBoundingClientRect` num browser de verdade. É o mesmo arranjo de
  * `components/shell/TenantSwitcher.celular.test.tsx`.
@@ -62,14 +62,19 @@ function montar() {
 }
 
 describe("a barra de abas do celular", () => {
-  it("existe só abaixo de `md` — acima dela quem navega é a barra lateral", () => {
+  it("existe só abaixo de `lg` — de 1024 para cima quem navega é a barra lateral", () => {
     estado.role = "admin";
     montar();
     const barra = screen.getByRole("navigation", { name: "Navegação rápida" });
-    // `md:hidden` é o MESMO corte do `hidden md:block` da barra lateral no
+    // `lg:hidden` é o MESMO corte do `hidden lg:block` da barra lateral no
     // `AppShell`. Se os dois divergirem, existe uma largura com duas navegações
     // na tela ou com nenhuma.
-    expect(barra.className).toContain("md:hidden");
+    //
+    // O corte era `md` (768) até a etapa 6, quando a casca passou ao do Unnify,
+    // `lg` = 1024 (DS §5.4, decisão do dono): entre 768 e 1023 quem navega
+    // passa a ser esta barra mais a gaveta.
+    expect(barra.className).toContain("lg:hidden");
+    expect(barra.className).not.toContain("md:hidden");
   });
 
   it("cabem quatro abas mais o `Mais`, e não mais que isso", () => {
@@ -113,8 +118,8 @@ describe("a barra de abas do celular", () => {
 
   it("NÃO declara piso de altura — senão o desktop reserva rodapé para uma barra invisível", () => {
     // O contrato normalmente pede um piso em `altura`, para a reserva valer antes
-    // de o navegador medir. Aqui piso é defeito: quem esconde esta barra acima de
-    // `md` é CSS, então no laptop ela está no DOM com `display: none`. Como
+    // de o navegador medir. Aqui piso é defeito: quem esconde esta barra a partir
+    // de `lg` é CSS, então no laptop ela está no DOM com `display: none`. Como
     // `ocupacaoDaPeca` é `distancia + max(altura, medida)`, um piso de 56 faria o
     // `<main>` do desktop — e o Inbox e o quadro do funil, que leem a mesma
     // variável — perderem 56px por uma barra que não está na tela.

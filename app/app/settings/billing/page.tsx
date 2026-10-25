@@ -10,6 +10,7 @@ import { lerPainelDaAssinatura } from "@/lib/cobranca/painel";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { moduloLigado } from "@/lib/instalacao/modulos";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -37,13 +38,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const suporte = painel ? null : await emailDeSuporte();
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        {/* Mesmo nome do item de menu (catalogo.ts), ligada ou não. */}
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Plano e cobrança", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir("Planos, faturas e cobrança.", idioma)}
-        </p>
-      </header>
+      {/* Mesmo nome do item de menu (catalogo.ts), ligada ou não. */}
+      <PageHeader
+        title={traduzir("Plano e cobrança", idioma)}
+        description={traduzir("Planos, faturas e cobrança.", idioma)}
+      />
       {painel ? (
         <>
           <PainelDaAssinatura dados={painel} idioma={idioma} />

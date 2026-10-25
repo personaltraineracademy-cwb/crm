@@ -49,9 +49,9 @@ export function SkillForm({
       <div className="space-y-2">
         <Label htmlFor="skill-name">{t("Skill a puxar neste passo")}</Label>
         {isLoading ? (
-          <p className="text-xs text-text-muted">{t("Carregando suas skills…")}</p>
+          <p className="text-xs text-muted-foreground">{t("Carregando suas skills…")}</p>
         ) : isError || !data?.installed?.length ? (
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Você ainda não tem skills instaladas. Instale em IA → Skills.")}
           </p>
         ) : (
@@ -69,7 +69,7 @@ export function SkillForm({
           </Select>
         )}
       </div>
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

@@ -19,6 +19,14 @@ import type { PlanoDeTarefas } from "@/lib/tarefas/plano";
 import { CURATED_FIELDS, OP_LABELS, type Op } from "@/app/app/webhooks/_components/RuleEditor";
 import { ACTION_LABELS, TRIGGER_LABELS, type ActionType, type TriggerEvent } from "@/app/app/webhooks/_components/labels";
 
+import {
+  BLOCO_DE_ICONE,
+  FAIXA_DO_NO,
+  classesDoChipDaEtapa,
+  classesDoNo,
+  type PapelDaEtapa,
+} from "@/components/fluxo/tema-do-fluxo";
+
 import { VISUAL_DAS_CONDICOES, VISUAL_DO_GATILHO, visualDaAcao } from "./visual";
 
 /**
@@ -184,7 +192,8 @@ function DescricaoDasCondicoes({ dados, evento }: { dados: Extract<DadosDaCaixa,
 
 /**
  * O cartão de uma caixa do designer: o MESMO desenho do cartão do construtor de
- * follow-up (`NodeCard`), com a etapa da fila em cima do título. Entrada em
+ * follow-up (`NodeCard`, ambos em `components/fluxo/tema-do-fluxo`), com a etapa
+ * da fila ("Quando", "Se", "Então · Ação 2") em chip de tom acima do título. Entrada em
  * cima, saída embaixo — numa automação a ordem é a fila, então cada caixa tem
  * uma de cada (o gatilho só tem saída).
  */
@@ -208,28 +217,28 @@ export function CaixaDaAutomacao({ id, data, selected }: NodeProps<NoDaAutomacao
       ? (data.acao.config.opcoes as Array<{ rotulo?: unknown; acao?: { type?: unknown } | null }>)
       : null;
 
+  const papel: PapelDaEtapa =
+    data.kind === "gatilho" ? "gatilho" : data.kind === "condicoes" ? "condicao" : "acao";
+
   return (
     <div
-      className={cn(
-        "w-56 rounded-md border border-l-4 border-border bg-surface shadow-sm transition-shadow",
-        visual.borderClassName,
-        selected && "ring-2 ring-accent-500 ring-offset-1 ring-offset-bg",
-        temProblema && "border-error ring-2 ring-error ring-offset-1 ring-offset-bg",
-      )}
+      className={classesDoNo({ selecionado: selected, comErro: temProblema })}
       data-testid={`caixa-${id}`}
       title={temProblema ? problemas.map((p) => t(p.mensagem)).join("; ") : undefined}
     >
       {data.kind !== "gatilho" && <Handle type="target" position={Position.Top} />}
-      <div className="flex items-start gap-2 px-3 py-2">
-        <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full", visual.chipClassName)}>
-          <Icone size={14} aria-hidden />
+      <div className="flex items-start gap-3 p-3">
+        <span className={BLOCO_DE_ICONE}>
+          <Icone size={16} aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
           {data.etapa ? (
-            <p className="text-[10px] font-medium uppercase tracking-wide text-text-muted">{data.etapa}</p>
+            <p className={cn(classesDoChipDaEtapa(papel), "mb-1 max-w-full truncate")}>
+              {data.etapa}
+            </p>
           ) : null}
-          <p className="line-clamp-2 break-words text-sm font-medium text-text">{titulo}</p>
-          <p className="line-clamp-2 break-words text-xs text-text-muted">
+          <p className="line-clamp-2 text-sm font-medium break-words text-foreground">{titulo}</p>
+          <p className="mt-0.5 line-clamp-2 text-xs break-words text-muted-foreground">
             {data.kind === "gatilho" ? (
               <DescricaoDoGatilho dados={data} />
             ) : data.kind === "condicoes" ? (
@@ -243,14 +252,14 @@ export function CaixaDaAutomacao({ id, data, selected }: NodeProps<NoDaAutomacao
         </div>
       </div>
       {data.kind === "condicoes" && (
-        <p className="border-t border-border/60 px-3 py-1.5 text-xs italic text-text-muted">
+        <p className={cn(FAIXA_DO_NO, "text-muted-foreground italic")}>
           {t("Se não atender, nada acontece.")}
         </p>
       )}
       {opcoes && (
-        <ul className="border-t border-border/60 px-3 py-1.5" data-testid={`caixa-${id}-opcoes`}>
+        <ul className={FAIXA_DO_NO} data-testid={`caixa-${id}-opcoes`}>
           {opcoes.map((o, i) => (
-            <li key={i} className="line-clamp-2 break-words text-xs text-text-muted">
+            <li key={i} className="line-clamp-2 break-words text-muted-foreground">
               {`${typeof o.rotulo === "string" ? o.rotulo : "—"} → ${
                 typeof o.acao?.type === "string" ? t(ACTION_LABELS[o.acao.type as ActionType] ?? o.acao.type) : "—"
               }`}
@@ -259,7 +268,10 @@ export function CaixaDaAutomacao({ id, data, selected }: NodeProps<NoDaAutomacao
         </ul>
       )}
       {temProblema && (
-        <p className="border-t border-error/30 px-3 py-1.5 text-xs leading-snug text-error-fg" data-testid={`caixa-${id}-problema`}>
+        <p
+          className={cn(FAIXA_DO_NO, "border-danger-border text-danger-foreground leading-snug")}
+          data-testid={`caixa-${id}-problema`}
+        >
           {t(problemas[0]!.mensagem)}
           {problemas.length > 1 ? ` (+${problemas.length - 1})` : ""}
         </p>

@@ -400,7 +400,7 @@ export function ScheduleDialog({
             região que nasce já cheia. */}
         <div role="status">
           {publicado ? (
-            <div data-testid="resumo-publicado" className="space-y-1 rounded-md border p-3">
+            <div data-testid="resumo-publicado" className="space-y-1 rounded-lg border p-3">
               <p className="text-sm font-medium">{t("Publicado")}</p>
               <ul className="text-sm text-muted-foreground">
                 {resumoDaJornada(publicado, t).map((linha) => (
@@ -458,7 +458,9 @@ function RoutingCard({ canManage }: { canManage: boolean }) {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-sm text-destructive">{t("Erro ao carregar a configuração de roteamento.")}</p>
+          <p className="text-danger-foreground text-sm">
+            {t("Erro ao carregar a configuração de roteamento.")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -601,7 +603,7 @@ export function AttendantsClient({ canManage, organizationTimezone }: Props) {
             ))}
           </div>
         ) : isError ? (
-          <p className="p-4 text-sm text-destructive">Erro ao carregar atendentes.</p>
+          <p className="text-danger-foreground p-4 text-sm">Erro ao carregar atendentes.</p>
         ) : attendants.length === 0 ? (
           <p className="p-4 text-sm text-muted-foreground">
             {t("Nenhum atendente na organização. Convide membros com papel de atendente ou superior.")}
@@ -641,7 +643,7 @@ export function AttendantsClient({ canManage, organizationTimezone }: Props) {
                       </div>
                     </TableCell>
                     <TableCell data-rotulo={t("Carga")} className={`max-md:p-0 ${ROTULO_NO_CELULAR}`}>
-                      <span className={load >= capacity ? "font-medium text-destructive" : ""}>
+                      <span className={load >= capacity ? "font-medium text-danger-foreground" : ""}>
                         {load}
                       </span>
                     </TableCell>

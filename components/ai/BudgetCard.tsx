@@ -166,7 +166,7 @@ export function BudgetCard({ initialData, isAdmin }: Props) {
 
   if (!status) {
     return (
-      <Card className="p-4">
+      <Card className="p-4 sm:p-5">
         <p className="text-sm text-muted-foreground">{t("Carregando orçamento...")}</p>
       </Card>
     );
@@ -179,10 +179,10 @@ export function BudgetCard({ initialData, isAdmin }: Props) {
   const chave = avisoDaChave(status, t);
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold tracking-tight">{t("Orçamento mensal de IA")}</h2>
+          <h2 className="text-base font-semibold text-foreground">{t("Orçamento mensal de IA")}</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {t("Gasto de")} {mesCorrente(tagDoIdioma)} ·{" "}
             {t("valores em dólar (é a moeda em que o provedor de IA cobra)")}
@@ -200,7 +200,7 @@ export function BudgetCard({ initialData, isAdmin }: Props) {
       </div>
 
       {chave && (
-        <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900 dark:text-amber-200">
+        <p className="border-warning-border bg-warning-soft text-warning-foreground mt-3 rounded-lg border p-2 text-xs">
           {chave}
         </p>
       )}
@@ -208,20 +208,20 @@ export function BudgetCard({ initialData, isAdmin }: Props) {
       {status.gasto_incompleto && (
         <p
           data-testid="aviso-medicao-incompleta"
-          className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900 dark:text-amber-200"
+          className="border-warning-border bg-warning-soft text-warning-foreground mt-3 rounded-lg border p-2 text-xs"
         >
           {t(AVISO_DE_MEDICAO)}
         </p>
       )}
 
       <div className="mt-4 space-y-2">
-        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+        <div className="h-2 w-full overflow-hidden rounded-full bg-primary/15">
           <div
             className={`h-full transition-all ${
               status.pct >= 100
-                ? "bg-destructive"
+                ? "bg-danger"
                 : status.pct >= status.alarm_threshold_pct
-                  ? "bg-amber-500"
+                  ? "bg-warning"
                   : "bg-primary"
             }`}
             style={{ width: `${pct}%` }}
@@ -231,9 +231,9 @@ export function BudgetCard({ initialData, isAdmin }: Props) {
             role="progressbar"
           />
         </div>
-        <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm tabular-nums">
           <span>
-            <strong>{fmtCents(consumed)}</strong>
+            <strong className="font-semibold text-foreground">{fmtCents(consumed)}</strong>
             {limit > 0 ? (
               <>
                 {" "}
@@ -284,7 +284,7 @@ function OpcaoDeModo({
         disabled
           ? "cursor-not-allowed border-border opacity-60"
           : marcado
-            ? "cursor-pointer border-primary bg-primary/5"
+            ? "cursor-pointer border-primary bg-primary/10"
             : "cursor-pointer border-border hover:bg-muted/40"
       }`}
     >
@@ -302,7 +302,7 @@ function OpcaoDeModo({
         <span className="block text-sm font-medium">{titulo}</span>
         <span className="block text-xs text-muted-foreground">{corpo}</span>
         {disabled && motivoBloqueado && (
-          <span className="block text-xs text-amber-700 dark:text-amber-300">
+          <span className="block text-xs text-warning-foreground">
             {motivoBloqueado}
           </span>
         )}
@@ -455,7 +455,7 @@ function EditBudgetDialog({ status }: { status: BudgetStatus }) {
               aria-invalid={tetoInsuficiente || !centsValidos}
             />
             {tetoInsuficiente && (
-              <p className="text-xs text-destructive">
+              <p className="text-danger-foreground text-xs">
                 {t("Para avisar ou parar no limite, ele precisa ser de pelo menos")}{" "}
                 {fmtCents(PISO_DE_TETO_CENTS)} {t("por mês. Abaixo disso não é orçamento de")}{" "}
                 {t(
@@ -481,7 +481,7 @@ function EditBudgetDialog({ status }: { status: BudgetStatus }) {
           )}
 
           {armando && (
-            <div className="space-y-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
+            <div className="border-warning-border bg-warning-soft space-y-1.5 rounded-lg border p-3">
               <p className="text-xs">
                 {t("A parada começa a valer")} <strong>72 {t("horas")}</strong> {t("depois de salvar. É o tempo de você ver o aviso chegar antes que alguma conversa pare.")}
               </p>

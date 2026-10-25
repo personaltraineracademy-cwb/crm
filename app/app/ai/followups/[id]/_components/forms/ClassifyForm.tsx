@@ -106,7 +106,7 @@ export function ClassifyForm({
             commit({ classesText, graceMin: v, target, hint });
           }}
         />
-        <p className="text-xs text-text-muted">{ESPERA_PELA_RESPOSTA.ajuda(t)}</p>
+        <p className="text-xs text-muted-foreground">{ESPERA_PELA_RESPOSTA.ajuda(t)}</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="classify-target">{t("O que a IA vai ler")}</Label>
@@ -142,7 +142,7 @@ export function ClassifyForm({
           }}
         />
       </div>
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

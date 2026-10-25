@@ -43,7 +43,7 @@ export function CssPersonalizado({
       <Card className="space-y-4 p-6">
         <div className="space-y-1">
           <h2 className="text-base font-semibold">{t("CSS personalizado")}</h2>
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             {t(
               "Ajustes visuais globais: afetam o login e todas as telas, em todas as organizações desta instalação.",
             )}
@@ -53,7 +53,7 @@ export function CssPersonalizado({
         {erroAtual ? (
           <p
             role="alert"
-            className="rounded-md border border-error/30 bg-error/10 p-3 text-sm text-error-fg"
+            className="border-danger-border bg-danger/10 text-danger-foreground rounded-lg border p-3 text-sm"
           >
             {t("O CSS salvo não foi aplicado porque contém uma regra inválida.")} {erroAtual}
           </p>
@@ -73,7 +73,7 @@ export function CssPersonalizado({
             className="font-mono text-xs"
             aria-describedby="custom-css-ajuda"
           />
-          <p id="custom-css-ajuda" className="text-xs text-text-muted">
+          <p id="custom-css-ajuda" className="text-xs text-muted-foreground">
             {t(
               "Use seletores de classe e propriedades visuais (cores, bordas, sombras e tipografia). Sem seletores globais ou por ID, @rules, URLs, scripts, !important ou propriedades de layout e posicionamento. Até 16 KB. Deixe vazio e salve para remover.",
             )}

@@ -95,7 +95,7 @@ export function ApproveButton({ requestId, requestType, status, titular }: Appro
         </AlertDialogHeader>
 
         {requestType === "data_request" && (
-          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-lg border bg-muted/30 px-3 py-2 text-sm">
             <dt className="text-muted-foreground">{t("Titular")}</dt>
             <dd className="font-medium break-words">
               {titular?.nome ?? t("Sem nome no cadastro")}

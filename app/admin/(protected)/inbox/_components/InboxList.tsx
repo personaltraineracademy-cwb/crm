@@ -153,7 +153,7 @@ export function InboxList() {
         )}
 
         {isError && (
-          <p className="p-4 text-center text-xs text-destructive">
+          <p className="text-danger-foreground p-4 text-center text-xs">
             {t("Falha ao carregar conversas.")}
           </p>
         )}
@@ -178,14 +178,14 @@ export function InboxList() {
               type="button"
               onClick={() => handleSelect(row.id)}
               className={cn(
-                "group flex w-full flex-col gap-1 border-b border-border px-3 py-2.5 text-left transition-colors hover:bg-accent/40",
-                isSelected && "bg-accent/60",
+                "group hover:bg-interactive/40 flex w-full flex-col gap-1 border-b border-border px-3 py-2.5 text-left transition-colors",
+                isSelected && "bg-primary/60",
               )}
               aria-current={isSelected ? "true" : undefined}
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-medium">{name}</span>
-                <span className="shrink-0 text-[10px] text-muted-foreground">{time}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">{time}</span>
               </div>
 
               {org && (
@@ -199,7 +199,7 @@ export function InboxList() {
                   {preview.length > 55 ? `${preview.slice(0, 55)}…` : preview}
                 </p>
                 {unread > 0 && (
-                  <Badge className="h-4 min-w-4 shrink-0 px-1.5 text-[10px]">{unread}</Badge>
+                  <Badge className="h-4 min-w-4 shrink-0 px-1.5 text-xs">{unread}</Badge>
                 )}
               </div>
             </button>

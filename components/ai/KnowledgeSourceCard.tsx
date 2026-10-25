@@ -119,14 +119,14 @@ export function KnowledgeSourceCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Icon className="h-5 w-5 shrink-0 text-accent" aria-hidden />
+            <Icon className="h-5 w-5 shrink-0 text-primary" aria-hidden />
             <CardTitle className="text-base">
               {/* O nome é a porta mais óbvia para ler o material: quem olha a
                   grade clica no título antes de procurar um botão. */}
               {href ? (
                 <Link
                   href={href}
-                  className="hover:text-accent focus-visible:underline"
+                  className="hover:text-primary focus-visible:underline"
                   data-testid={`material-abrir-nome-${source.id}`}
                 >
                   {source.name}
@@ -138,28 +138,28 @@ export function KnowledgeSourceCard({
           </div>
           <SourceStatusBadge source={source} />
         </div>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           {meta?.rotulo ? t(meta.rotulo) : source.source_type}
         </p>
       </CardHeader>
 
       <CardContent className="flex-1 space-y-2 text-sm">
         <div className="flex items-baseline justify-between">
-          <span className="text-text-muted">{t("Preparado")}</span>
+          <span className="text-muted-foreground">{t("Preparado")}</span>
           <span>{formatRelative(source.last_indexed_at, tagDoIdioma, t)}</span>
         </div>
         <div className="flex items-baseline justify-between">
-          <span className="text-text-muted">{t("Trechos que o agente encontra")}</span>
+          <span className="text-muted-foreground">{t("Trechos que o agente encontra")}</span>
           <span data-testid={`material-trechos-${source.id}`}>{source.chunks_count ?? 0}</span>
         </div>
 
         {/* Quem usa este material. Sem isto, arquivar é um tiro no escuro: não dá
             para saber quantos assistentes param de saber daquilo. */}
         <div className="flex items-baseline justify-between gap-2">
-          <span className="text-text-muted">{t("Consultado por")}</span>
+          <span className="text-muted-foreground">{t("Consultado por")}</span>
           <span className="text-right">
             {usadoPor.length === 0 ? (
-              <span className="text-warning-fg" data-testid={`material-orfao-${source.id}`}>
+              <span className="text-warning-foreground" data-testid={`material-orfao-${source.id}`}>
                 {t("nenhum assistente ainda")}
               </span>
             ) : (
@@ -169,7 +169,7 @@ export function KnowledgeSourceCard({
         </div>
 
         {mostraErro ? (
-          <details className="rounded-md border border-error-bg bg-error-bg/30 p-2 text-xs text-error-fg">
+          <details className="border-danger-soft bg-danger-soft/30 text-danger-foreground rounded-lg border p-2 text-xs">
             <summary className="cursor-pointer font-medium">{t("Por que não entrou")}</summary>
             <p className="mt-1 whitespace-pre-wrap break-words">{source.last_index_error}</p>
           </details>

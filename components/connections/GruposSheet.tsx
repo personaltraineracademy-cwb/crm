@@ -285,13 +285,13 @@ export function GruposSheet({
           )}
 
           {erro && (
-            <p role="alert" className="text-sm text-destructive">
+            <p role="alert" className="text-danger-foreground text-sm">
               {erro}
             </p>
           )}
 
           {pendente && (
-            <div role="alertdialog" className="rounded-md border p-3 text-sm">
+            <div role="alertdialog" className="rounded-lg border p-3 text-sm">
               <p>{t(AVISO_DE_VOLUME)}</p>
               <div className="mt-2 flex gap-2">
                 <Button
@@ -312,7 +312,7 @@ export function GruposSheet({
           )}
 
           {confirmarDesligarTodos && (
-            <div role="alertdialog" className="rounded-md border p-3 text-sm">
+            <div role="alertdialog" className="rounded-lg border p-3 text-sm">
               <p>{t(AVISO_DE_DESLIGAR_TODOS)}</p>
               <div className="mt-2 flex gap-2">
                 <Button size="sm" onClick={() => void desligarTodos()}>
@@ -326,7 +326,7 @@ export function GruposSheet({
           )}
 
           {confirmarLigarTodos && (
-            <div role="alertdialog" className="rounded-md border p-3 text-sm">
+            <div role="alertdialog" className="rounded-lg border p-3 text-sm">
               <p>
                 {confirmarLigarTodos.alvos.length} {t("grupos vão ligar e aparecer no chat.")}
               </p>

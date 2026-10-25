@@ -452,7 +452,7 @@ export function TriggerConfigControl({ flowId, triggerConfig }: Props) {
                 </SelectContent>
               </Select>
               {!etapasCarregando && etapas.length === 0 && (
-                <p className="text-xs text-error-fg">
+                <p className="text-danger-foreground text-xs">
                   {t("Nenhuma etapa ativa encontrada — crie o funil antes de armar este gatilho.")}
                 </p>
               )}
@@ -540,7 +540,7 @@ export function TriggerConfigControl({ flowId, triggerConfig }: Props) {
                   </Select>
                 </div>
                 {retornoInvalid && (
-                  <p className="text-xs text-error-fg">
+                  <p className="text-danger-foreground text-xs">
                     {t("Mínimo de")} 1 {t("hora")}. {t("Máximo de")} 90 {t("dias")}.
                   </p>
                 )}
@@ -575,7 +575,9 @@ export function TriggerConfigControl({ flowId, triggerConfig }: Props) {
                   aria-invalid={thresholdInvalid}
                 />
                 {thresholdInvalid && !tetoInvalid && !pausaInvalid && (
-                  <p className="text-xs text-error-fg">{t("Mínimo de")} {MIN_THRESHOLD_MINUTES} {t("minutos.")}</p>
+                  <p className="text-danger-foreground text-xs">
+                    {t("Mínimo de")} {MIN_THRESHOLD_MINUTES} {t("minutos.")}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -591,7 +593,9 @@ export function TriggerConfigControl({ flowId, triggerConfig }: Props) {
                   data-testid="trigger-max-silence"
                 />
                 {tetoInvalid && (
-                  <p className="text-xs text-error-fg">{t("Precisa ser maior que o mínimo e no máximo 10080 (7 dias).")}</p>
+                  <p className="text-danger-foreground text-xs">
+                    {t("Precisa ser maior que o mínimo e no máximo 10080 (7 dias).")}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   {t(
@@ -621,7 +625,9 @@ export function TriggerConfigControl({ flowId, triggerConfig }: Props) {
                   data-testid="trigger-reentry-pause"
                 />
                 {pausaInvalid && (
-                  <p className="text-xs text-error-fg">{t("Use de 0 a 2160 horas (90 dias).")}</p>
+                  <p className="text-danger-foreground text-xs">
+                    {t("Use de 0 a 2160 horas (90 dias).")}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   {t(

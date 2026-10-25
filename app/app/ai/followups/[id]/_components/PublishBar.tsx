@@ -129,9 +129,9 @@ export function PublishBar({
   const busy = save.isPending || publish.isPending || disable.isPending || rollback.isPending;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3">
       <div className="flex items-center gap-1">
-        <h1 className="text-sm font-semibold text-text">{flow.name}</h1>
+        <h1 className="text-sm font-semibold text-foreground">{flow.name}</h1>
         <RenameFollowupFlowButton
           flowId={flowId}
           flowName={flow.name}

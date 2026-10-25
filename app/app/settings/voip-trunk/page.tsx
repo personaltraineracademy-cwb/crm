@@ -5,6 +5,7 @@ import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { createClient } from "@/lib/supabase/server";
 import { TrunkSettingsClient, type TrunkSettingsRow } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -31,17 +32,15 @@ export default async function TrunkSettingsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Trunk SIP", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Trunk SIP", idioma)}
+        description={<>{traduzir(
             "Credenciais de registro do seu provedor SIP (Asterisk/AudioSocket). Depois de salvar, aplique o bloco abaixo em",
             idioma,
           )}{" "}
           <code>asterisk/pjsip.conf</code>{" "}
-          {traduzir("na VPS — a aplicação ainda é manual.", idioma)}
-        </p>
-      </header>
+          {traduzir("na VPS — a aplicação ainda é manual.", idioma)}</>}
+      />
       <TrunkSettingsClient initialData={(data as TrunkSettingsRow | null) ?? null} canWrite={canWrite} />
     </div>
   );

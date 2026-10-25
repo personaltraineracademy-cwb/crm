@@ -16,7 +16,7 @@ type Resource = { id: string; name: string; capacity: number; is_active: boolean
 type Calendar = { id: string; name: string; account_email: string; user_id: string; available: boolean; can_read: boolean; can_write: boolean };
 type Block = { id: string; scope_kind: string; event_type_id: string | null; owner_user_id: string | null; resource_id: string | null; starts_at: string; ends_at: string; reason: string; revision: number };
 type Data = { service: DadosDoServico; resources: Resource[]; calendars: Calendar[]; blocks: Block[]; preview: { availability: DisponibilidadeDoServico[] } | null };
-const field = "rounded-md border border-border bg-surface-elevated p-2 text-sm w-full";
+const field = "rounded-lg border border-border bg-surface-elevated p-2 text-sm w-full";
 const hhmm = (m: number) => `${Math.floor(m / 60).toString().padStart(2, "0")}:${(m % 60).toString().padStart(2, "0")}`;
 const minute = (s: string) => { const [h = Number.NaN, m = Number.NaN] = s.split(":").map(Number); return h * 60 + m; };
 const NEW_ROW: HorarioDoServico = { weekday: 1, on_date: null, timing_kind: "fixed", start_minute: 840, end_minute: null, duration_minutes: null, capacity_rule: "inherit", capacity_limit: null };
@@ -78,7 +78,7 @@ export function ConfiguracaoDoServico({ typeId, name, pessoas, onClose, onEditTy
     return instanteDe({ ano: Number(parts[1]), mes: Number(parts[2]), dia: Number(parts[3]), hora: Number(parts[4]), minuto: Number(parts[5]) }, draft.service_timezone).toISOString();
   };
   if (!data || !draft) return <section aria-label={t("Serviço e horários")}><p role={loadError ? "alert" : "status"}>{loadError ? t("Não foi possível ler a configuração do serviço.") : t("Carregando…")}</p>{loadError && <Button onClick={() => void load().catch((e) => { setLoadError(true); showApiError(e); })}>{t("Tentar novamente")}</Button>}<Button onClick={onClose}>{t("Fechar")}</Button></section>;
-  return <section className="space-y-4 rounded-lg border border-border bg-surface p-4" aria-label={t("Serviço e horários")} data-testid="service-configuration">
+  return <section className="space-y-4 rounded-xl border border-border bg-surface p-4" aria-label={t("Serviço e horários")} data-testid="service-configuration">
     <div className="flex flex-wrap items-start justify-between gap-2"><h2 className="min-w-0 break-words text-lg font-semibold">{t("Configurar")} {name}</h2><div className="flex flex-wrap gap-2">{onEditType && <Button type="button" variant="outline" onClick={onEditType}>{t("Nome e duração")}</Button>}<Button type="button" variant="ghost" onClick={onClose}>{t("Fechar")}</Button></div></div>
     <div role="tablist" aria-label={t("Configuração do serviço")} className="flex gap-1 overflow-x-auto border-b border-border pb-2">
       {tabs.map((item, i) => <Button key={item.id} type="button" role="tab" id={`${panelId}-tab-${item.id}`} aria-controls={`${panelId}-${item.id}`} aria-selected={tab === item.id} tabIndex={tab === item.id ? 0 : -1} variant={tab === item.id ? "default" : "ghost"} className="min-h-11 shrink-0" onClick={() => setTab(item.id)} onKeyDown={(e) => {

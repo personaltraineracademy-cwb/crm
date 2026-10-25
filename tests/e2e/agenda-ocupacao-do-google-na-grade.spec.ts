@@ -304,7 +304,10 @@ test.describe("a ocupação do Google na grade da agenda", () => {
 
     // Visão MÊS: outro recorte, outra busca. Aqui nem a semente do servidor
     // chegava, porque `naJanelaDoServidor` vira falso.
-    await page.getByTestId("visao-mes").click();
+    await page
+      .getByTestId("alternador-de-visao")
+      .getByRole("button", { name: "Mês", exact: true })
+      .click();
     await expect(
       chipDoGoogleNoMes(page),
       "a ocupação do Google não aparece na visão Mês",

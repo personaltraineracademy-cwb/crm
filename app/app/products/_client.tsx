@@ -14,6 +14,7 @@ import { formatCents } from "@/lib/money";
 import { precoParaCentavos, type Produto } from "@/lib/schemas/produtos";
 
 import { EdicaoDoProduto } from "./_edicao";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface Textos {
   titulo: string;
@@ -335,17 +336,14 @@ export function ProdutosClient({
 
   return (
     <div className="mx-auto w-full max-w-5xl p-6" data-testid="tela-produtos">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold">{textos.titulo}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{textos.subtitulo}</p>
-      </header>
+      <PageHeader title={textos.titulo} description={textos.subtitulo} />
 
       <div className="mb-4 flex items-center gap-3">
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder={t("Buscar por nome, código ou marca")}
-          className="h-9 w-full max-w-sm rounded-md border px-3 text-sm"
+          className="h-9 w-full max-w-sm rounded-lg border px-3 text-sm"
           data-testid="busca-produto"
         />
         {podeEditar ? (
@@ -391,7 +389,7 @@ export function ProdutosClient({
       ) : null}
 
       {resumo ? (
-        <div className="mb-6 rounded-lg border p-4 text-sm" data-testid="resumo-importacao">
+        <div className="mb-6 rounded-xl border p-4 text-sm" data-testid="resumo-importacao">
           <p className="font-medium">
             {resumo.criados} {t("novos")} · {resumo.atualizados} {t("atualizados")} ·{" "}
             {resumo.total_linhas} {t("linhas na planilha")}
@@ -425,14 +423,14 @@ export function ProdutosClient({
       ) : null}
 
       {criando && podeEditar ? (
-        <div className="mb-6 rounded-lg border p-4" data-testid="form-produto">
+        <div className="mb-6 rounded-xl border p-4" data-testid="form-produto">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm">
               {t("Código")}
               <input
                 value={rascunho.codigo}
                 onChange={(e) => setRascunho({ ...rascunho, codigo: e.target.value })}
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
                 data-testid="produto-codigo"
               />
             </label>
@@ -441,7 +439,7 @@ export function ProdutosClient({
               <input
                 value={rascunho.nome}
                 onChange={(e) => setRascunho({ ...rascunho, nome: e.target.value })}
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
                 data-testid="produto-nome"
               />
             </label>
@@ -450,7 +448,7 @@ export function ProdutosClient({
               <input
                 value={rascunho.marca}
                 onChange={(e) => setRascunho({ ...rascunho, marca: e.target.value })}
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
               />
             </label>
             <label className="text-sm">
@@ -458,7 +456,7 @@ export function ProdutosClient({
               <input
                 value={rascunho.categoria}
                 onChange={(e) => setRascunho({ ...rascunho, categoria: e.target.value })}
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
               />
             </label>
             <label className="text-sm">
@@ -467,7 +465,7 @@ export function ProdutosClient({
                 value={rascunho.preco}
                 onChange={(e) => setRascunho({ ...rascunho, preco: e.target.value })}
                 placeholder="5.499,00"
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
                 data-testid="produto-preco"
               />
             </label>
@@ -477,7 +475,7 @@ export function ProdutosClient({
                 value={rascunho.custo}
                 onChange={(e) => setRascunho({ ...rascunho, custo: e.target.value })}
                 placeholder="4.100,00"
-                className="mt-1 h-9 w-full rounded-md border px-3"
+                className="mt-1 h-9 w-full rounded-lg border px-3"
               />
               <span className="mt-1 block text-xs text-muted-foreground">
                 {t("Serve para o atendente saber até onde pode negociar. Não aparece para o cliente.")}
@@ -500,7 +498,7 @@ export function ProdutosClient({
               <input
                 value={rascunho.quantidade}
                 onChange={(e) => setRascunho({ ...rascunho, quantidade: e.target.value })}
-                className="mt-1 h-9 w-32 rounded-md border px-3"
+                className="mt-1 h-9 w-32 rounded-lg border px-3"
               />
             </label>
           ) : (
@@ -541,7 +539,7 @@ export function ProdutosClient({
             <div className="flex items-center gap-4 p-3">
               {capa ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={capa} alt="" className="h-10 w-10 shrink-0 rounded-md object-cover" />
+                <img src={capa} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
               ) : null}
               <div className="min-w-0 flex-1">
                 <p className={`truncate font-medium ${p.ativo ? "" : "text-muted-foreground line-through"}`}>

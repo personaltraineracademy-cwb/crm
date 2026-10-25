@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import { useT } from "@/hooks/i18n/useT";
 import { useOrganizationTransition } from "./OrganizationTransitionProvider";
-import { CaretDown, Storefront } from "@/lib/ui/icons";
+import { CaretDown, Check, Storefront } from "@/lib/ui/icons";
 import { useUser, useActiveOrg } from "@/hooks/auth/AuthProvider";
 import {
   DropdownMenu,
@@ -66,28 +66,33 @@ export function TenantSwitcher() {
           variant="ghost"
           size="sm"
           disabled={isPending || !!user.support}
-          className="gap-2"
+          className="shrink-0 gap-2 text-muted-foreground hover:text-foreground max-md:w-11 max-md:px-0"
           aria-label={`${t("Organização")}: ${active?.name ?? t("Selecionar org")}`}
           title={user.support ? "Saia do acompanhamento para trocar de organização" : undefined}
           data-testid="tenant-switcher"
         >
-          <Storefront size={16} weight="duotone" aria-hidden />
-          <span className="hidden max-w-[160px] truncate md:inline">
+          <Storefront size={16} aria-hidden />
+          <span className="hidden max-w-[160px] truncate text-sm font-medium text-foreground md:inline">
             {active?.name ?? "Selecionar org"}
           </span>
           <CaretDown size={12} aria-hidden className="hidden md:inline" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[220px]">
+      <DropdownMenuContent align="end" className="min-w-[220px]">
         {user.organizations.map((org) => (
           <DropdownMenuItem
             key={org.organization_id}
             data-testid={`tenant-switcher-item-${org.organization_id}`}
+            // A marca de seleção é um ícone `aria-hidden`; quem não a vê ouve
+            // qual é a organização em vigor por aqui.
+            aria-current={active?.orgId === org.organization_id ? "true" : undefined}
             onClick={() => { void switchTo(org.organization_id); }}
             className="flex items-center justify-between"
           >
             <span className="truncate">{org.organization_name}</span>
-            {active?.orgId === org.organization_id && <span className="text-xs text-muted-foreground">✓</span>}
+            {active?.orgId === org.organization_id && (
+              <Check size={16} aria-hidden className="shrink-0 text-primary" />
+            )}
           </DropdownMenuItem>
         ))}
         {user.is_platform_admin && <DropdownMenuItem asChild>

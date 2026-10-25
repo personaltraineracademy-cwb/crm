@@ -90,10 +90,12 @@ export function MentionMenu({ open, opcoes, indice, onPick }: Props) {
     <div
       role="listbox"
       aria-label={t("Atendentes para mencionar")}
-      className="absolute bottom-14 left-3 z-30 max-h-64 w-72 overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-lg"
+      className="absolute bottom-14 left-3 z-30 max-h-64 w-72 max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md"
     >
       {opcoes.length === 0 ? (
-        <div className="px-3 py-2 text-xs text-muted-foreground">{t("Nenhum atendente encontrado.")}</div>
+        <div className="px-2.5 py-2 text-xs text-muted-foreground">
+          {t("Nenhum atendente encontrado.")}
+        </div>
       ) : (
         opcoes.map((opcao, i) => (
           <button
@@ -102,8 +104,8 @@ export function MentionMenu({ open, opcoes, indice, onPick }: Props) {
             role="option"
             aria-selected={i === indice}
             className={cn(
-              "flex w-full items-center rounded-md px-3 py-2 text-left text-sm hover:bg-muted",
-              i === indice && "bg-muted",
+              "hover:bg-interactive flex min-h-9 w-full items-center rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors",
+              i === indice && "bg-interactive text-interactive-foreground",
             )}
             // `onClick`, e não `mousedown`: quem decide a posição de inserção é
             // o estado do React (`caret`), não a seleção viva do textarea — o

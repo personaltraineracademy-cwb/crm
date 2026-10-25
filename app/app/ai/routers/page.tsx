@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { RouterListItem } from "@/hooks/ai/useRouters";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { RoutersClient } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -44,15 +45,13 @@ export default async function RoutersPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Roteadores", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
-            "Um roteador entende o que o cliente quer e entrega a conversa para o agente certo — plugado em um número de WhatsApp.",
-            idioma,
-          )}
-        </p>
-      </header>
+      <PageHeader
+        title={traduzir("Roteadores", idioma)}
+        description={traduzir(
+          "Um roteador entende o que o cliente quer e entrega a conversa para o agente certo — plugado em um número de WhatsApp.",
+          idioma,
+        )}
+      />
       <RoutersClient initialState={{ routers }} channelSessions={channelSessions} />
     </div>
   );

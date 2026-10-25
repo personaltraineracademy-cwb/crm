@@ -71,7 +71,9 @@ export function AnonymizeDialog({ contactId, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-error-fg">{t("Anonimizar contato (LGPD)")}</DialogTitle>
+          <DialogTitle className="text-danger-foreground">
+            {t("Anonimizar contato (LGPD)")}
+          </DialogTitle>
           <DialogDescription>
             {t(
               "Esta ação é irreversível. O nome será substituído por \"Cliente Anonimizado #N\", email, telefone e documento serão limpos, e atividades terão conteúdo redigido.",
@@ -109,7 +111,7 @@ export function AnonymizeDialog({ contactId, open, onOpenChange }: Props) {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-md border border-error-fg/30 bg-error-bg p-3 text-sm text-error-fg">
+            <div className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-sm">
               {t("Para confirmar, digite")} <strong>{CONFIRM_TEXT}</strong> {t("abaixo.")}
             </div>
             <div className="space-y-2">
@@ -127,7 +129,7 @@ export function AnonymizeDialog({ contactId, open, onOpenChange }: Props) {
                 {t("Voltar")}
               </Button>
               <Button
-                variant="destructive"
+                variant="destructive-solid"
                 onClick={handleSubmit}
                 disabled={confirm !== CONFIRM_TEXT || anon.isPending}
               >

@@ -5,6 +5,7 @@ import { estadoDosDestinosInternos } from "@/lib/automation/destinos-internos-au
 import { traduzir } from "@/lib/i18n/dicionario";
 
 import { FormularioDeDestinosInternos } from "./_form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Destinos internos" };
 export const dynamic = "force-dynamic";
@@ -46,17 +47,13 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {traduzir("Destinos internos", usuario.idioma)}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Destinos internos", usuario.idioma)}
+        description={traduzir(
             "Endereços da rede deste servidor que a instalação pode alcançar.",
             usuario.idioma,
           )}
-        </p>
-      </div>
+      />
       <FormularioDeDestinosInternos
         listaInicial={[...estado.lista]}
         vemDoPiso={estado.vemDoPiso}

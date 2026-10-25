@@ -8,6 +8,7 @@ import { montarEstadoDaChave } from "@/lib/ai/embeddings/estado";
 import { listarAgentesQueUsam } from "@/lib/ai/knowledge/agentes-que-usam";
 import type { SourceRow } from "@/hooks/ai/useKnowledgeSources";
 import { AcervoClient } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -60,14 +61,12 @@ export default async function AcervoPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("O que o agente sabe")}</h1>
-        <p className="text-sm text-text-muted">
-          {t(
-            "O material do seu negócio que os assistentes consultam antes de responder. Cada assistente escolhe, na tela dele, o que pode ler daqui.",
-          )}
-        </p>
-      </header>
+      <PageHeader
+        title={t("O que o agente sabe")}
+        description={t(
+          "O material do seu negócio que os assistentes consultam antes de responder. Cada assistente escolhe, na tela dele, o que pode ler daqui.",
+        )}
+      />
 
       <AcervoClient
         initialSources={initialSources}

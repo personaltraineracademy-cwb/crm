@@ -54,8 +54,8 @@ export function EditLeadTagForm({
         onChange={(e) => gravar(e.target.value)}
         aria-invalid={erro !== null}
       />
-      {erro && <p className="text-xs text-error-fg">{erro}</p>}
-      <p className="text-xs text-text-muted">
+      {erro && <p className="text-danger-foreground text-xs">{erro}</p>}
+      <p className="text-xs text-muted-foreground">
         {t("Separe por vírgula. Tags que o lead já tem são mantidas e nada é apagado.")}
       </p>
     </div>

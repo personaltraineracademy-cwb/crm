@@ -27,13 +27,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   Table,
   TableBody,
@@ -83,7 +77,7 @@ export function SeriePanel() {
           <CardTitle className="text-base">{t("Ganhos por período")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-destructive">
+          <p className="text-danger-foreground text-sm">
             {t("Erro ao carregar a evolução dos ganhos.")}
           </p>
         </CardContent>
@@ -98,24 +92,23 @@ export function SeriePanel() {
   return (
     <Card>
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
-        <CardTitle className="text-base">
+        <CardTitle className="text-base tabular-nums">
           {t("Ganhos por período")} · {serie.total}
         </CardTitle>
-        <Select
+        {/* Trocar a visão do gráfico é controle segmentado no cabeçalho do
+            cartão (DS §12.4), não um seletor. */}
+        <SegmentedControl
+          aria-label={t("Granularidade")}
           value={granularidade}
           onValueChange={(v) => {
             if (granularidadeValida(v)) setGranularidade(v);
           }}
-        >
-          <SelectTrigger className="w-32 md:w-40" aria-label={t("Granularidade")}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="dia">{t("Dia")}</SelectItem>
-            <SelectItem value="semana">{t("Semana")}</SelectItem>
-            <SelectItem value="mes">{t("Mês")}</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "dia", label: t("Dia") },
+            { value: "semana", label: t("Semana") },
+            { value: "mes", label: t("Mês") },
+          ]}
+        />
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {baldes.length === 0 ? (

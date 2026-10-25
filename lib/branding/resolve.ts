@@ -30,6 +30,7 @@ import { resolveBranding, type Branding } from "@/lib/branding";
 import { derivarMarca, type CodigoDeMotivo, type Marca, type Regua, type Tema } from "./contraste";
 import { logoDaCamada } from "./logo";
 import { normalizarHex } from "./rampa";
+import { corEscuraDoUnnify, escuroDoUnnify, marcaDoUnnify } from "./unnify";
 import {
   ALGORITMO_ATUAL,
   ehPapelConhecido,
@@ -296,7 +297,7 @@ function derivarCorEscura(
 
   const semente = normalizarHex(envelope.semente_hex);
   try {
-    const derivada = derivarComCache(semente, regua);
+    const derivada = escuroDoUnnify(semente, regua) ?? derivarComCache(semente, regua);
     if (derivada.origemDaRampa === "produto") {
       motivos.push({
         codigo: "cor_escura_acromatica",
@@ -413,15 +414,16 @@ function resolverCor(
   }
 
   try {
-    const derivada = derivarComCache(semente, regua);
+    const derivada = marcaDoUnnify(semente, regua) ?? derivarComCache(semente, regua);
     // A segunda semente SÓ entra depois de a principal ter pintado: sem accent
     // principal não existe bloco escuro para ela pendurar, e uma camada que
     // declara só a cor do escuro não tem o que a pintar.
     const motivosDoEscuro: MotivoDaMarca[] = [];
     const corEscura =
-      cruEscura === undefined || cruEscura === null
+      (cruEscura === undefined || cruEscura === null
         ? undefined
-        : derivarCorEscura(cruEscura, origem, regua, motivosDoEscuro);
+        : derivarCorEscura(cruEscura, origem, regua, motivosDoEscuro)) ??
+      corEscuraDoUnnify(semente, regua);
     for (const m of derivada.motivos) {
       // Com a segunda semente, o escuro deixa de derivar desta: os ajustes que
       // a principal faria no escuro descrevem um bloco que ela não pinta mais.

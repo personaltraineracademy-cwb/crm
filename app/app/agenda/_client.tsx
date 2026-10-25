@@ -30,6 +30,7 @@ import { recorteDaGrade as recorteDaGradeDe } from "@/lib/agenda/recorte-da-grad
 import { resolverResponsavelDoPainel } from "@/lib/agenda/responsavel-do-painel";
 import { useVinculoDaMarcacao } from "@/lib/agenda/vinculo-da-marcacao";
 import { Button } from "@/components/ui/button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { PainelDeMarcacao } from "@/components/agenda/PainelDeMarcacao";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAgendamentos } from "@/hooks/agenda/useAgendamentos";
@@ -620,36 +621,15 @@ export function AgendaClient({
             alternador de visão em silêncio. */}
         <div className="flex flex-wrap items-center gap-3">
           <FiltroDePessoas pessoas={pessoas} isolada={isolada} onIsolar={setIsolada} />
-          <div
-            data-testid="alternador-de-visao"
-            className="flex items-center gap-0.5 rounded-md border border-border bg-surface p-0.5"
-          >
-            {VISOES.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                data-testid={`visao-${v.id}`}
-                aria-pressed={visao === v.id}
-                onClick={() => setVisao(v.id)}
-                className={cn(
-                  // `min-h-11 px-3` até `lg` — o alternador de visão media
-                  // **24px de altura** em 360px (`py-1` em volta de `text-xs`),
-                  // pouco mais da metade do piso de 44px da Apple HIG. É o
-                  // controle que decide o que a agenda mostra, e no celular ele
-                  // era uma tira fina entre dois outros controles.
-                  //
-                  // `lg:` devolve o compacto onde quem aciona é cursor, no mesmo
-                  // corte que `components/ui/button.tsx` já usa.
-                  "min-h-11 rounded-sm px-3 py-1 text-xs transition-colors duration-fast ease-out lg:min-h-0 lg:px-2.5",
-                  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
-                  visao === v.id
-                    ? "bg-accent font-semibold text-accent-foreground"
-                    : "text-text-muted hover:bg-surface-elevated hover:text-text",
-                )}
-              >
-                {t(v.rotulo)}
-              </button>
-            ))}
+          {/* Visões por `SegmentedControl` (DS §10.8). O invólucro guarda o
+              `data-testid` que as specs usam para achar os botões. */}
+          <div data-testid="alternador-de-visao" className="inline-flex">
+            <SegmentedControl
+              aria-label={t("Visualização")}
+              value={visao}
+              onValueChange={setVisao}
+              options={VISOES.map((v) => ({ value: v.id, label: t(v.rotulo) }))}
+            />
           </div>
         </div>
       </div>

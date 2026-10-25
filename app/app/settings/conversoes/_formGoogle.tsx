@@ -228,7 +228,7 @@ export function FormularioDeConversoesGoogle({
           </p>
         </div>
 
-        <fieldset className="flex flex-col gap-4 rounded-md border p-4">
+        <fieldset className="flex flex-col gap-4 rounded-lg border p-4">
           <legend className="px-1 text-sm font-medium">{t("Venda (negócio ganho)")}</legend>
           <div className="flex flex-col gap-2">
             <Label htmlFor="google_conversion_action_id">
@@ -261,7 +261,7 @@ export function FormularioDeConversoesGoogle({
             <Label htmlFor="google_purchase_category">{t("Categoria da conversão")}</Label>
             <select
               id="google_purchase_category"
-              className="rounded-md border bg-background p-2 text-sm"
+              className="rounded-lg border bg-background p-2 text-sm"
               value={categoriaDaVenda}
               onChange={(e) => setCategoriaDaVenda(e.target.value as CategoriaDeConversao)}
             >
@@ -276,7 +276,7 @@ export function FormularioDeConversoesGoogle({
             <Label htmlFor="google_purchase_value_mode">{t("Valor do negócio")}</Label>
             <select
               id="google_purchase_value_mode"
-              className="rounded-md border bg-background p-2 text-sm"
+              className="rounded-lg border bg-background p-2 text-sm"
               value={modoDeValor}
               onChange={(e) => setModoDeValor(e.target.value as ModoDeValorDaVenda)}
             >

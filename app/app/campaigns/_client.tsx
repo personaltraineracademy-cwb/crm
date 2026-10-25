@@ -19,6 +19,7 @@ import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useT } from "@/hooks/i18n/useT";
 import { Megaphone, Plus } from "@/lib/ui/icons";
 import { STATUS_DA_CAMPANHA } from "@/lib/campanhas/tipos";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function ListaDeCampanhas() {
   const t = useT();
@@ -31,33 +32,33 @@ export function ListaDeCampanhas() {
 
   return (
     <div className="space-y-4 p-6">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Campanhas")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("Escolha o público, escreva a mensagem e acompanhe quem recebeu.")}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-        <Button variant="outline" asChild>
-          <Link href="/app/campaigns/settings">{t("Configuração")}</Link>
-        </Button>
-        <Button asChild>
-          <Link href="/app/campaigns/new">
-            <Plus size={16} weight="bold" aria-hidden />
-            <span>{t("Nova campanha")}</span>
-          </Link>
-        </Button>
-        </div>
-      </header>
+      <PageHeader
+        title={t("Campanhas")}
+        description={t("Escolha o público, escreva a mensagem e acompanhe quem recebeu.")}
+        actions={
+          <>
+            <div className="flex shrink-0 items-center gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/app/campaigns/settings">{t("Configuração")}</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/app/campaigns/new">
+                  <Plus size={16} weight="bold" aria-hidden />
+                  <span>{t("Nova campanha")}</span>
+                </Link>
+              </Button>
+            </div>
+          </>
+        }
+      />
 
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2">
         <label className="text-sm text-muted-foreground" htmlFor="filtro-status">
           {t("Situação")}
         </label>
         <select
           id="filtro-status"
-          className="h-9 rounded-md border border-border bg-surface px-2 text-sm"
+          className="h-9 rounded-md border border-border bg-card px-2 text-sm"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -78,7 +79,7 @@ export function ListaDeCampanhas() {
         </div>
       ) : q.isError ? (
         <Card className="p-6 text-center">
-          <p className="text-sm text-error-fg">{t("Erro ao carregar as campanhas.")}</p>
+          <p className="text-danger-foreground text-sm">{t("Erro ao carregar as campanhas.")}</p>
           <Button size="sm" variant="outline" className="mt-2" onClick={() => q.refetch()}>
             {t("Tentar novamente")}
           </Button>
@@ -101,7 +102,7 @@ export function ListaDeCampanhas() {
               <Link
                 key={c.id}
                 href={`/app/campaigns/${c.id}`}
-                className="flex flex-col gap-2 p-4 transition-colors hover:bg-surface-elevated sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 p-4 transition-colors hover:bg-muted sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
                   <p className="truncate font-medium">{c.name}</p>

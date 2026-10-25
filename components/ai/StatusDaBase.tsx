@@ -51,9 +51,9 @@ export function StatusDaBase({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-0.5">
           <h3 className="text-sm font-medium">{t("Estado da base de conhecimento")}</h3>
-          <p className="text-xs text-text-muted" data-testid="status-da-base-resumo">
+          <p className="text-xs text-muted-foreground" data-testid="status-da-base-resumo">
             {r.total} {t("materiais")} ·{" "}
-            <span className="text-success-fg">
+            <span className="text-success-foreground">
               {r.prontos} {t("prontos")}
             </span>
             {r.preparando > 0 ? (
@@ -67,7 +67,7 @@ export function StatusDaBase({
             {r.comErro > 0 ? (
               <>
                 {" · "}
-                <span className="text-warning-fg">
+                <span className="text-warning-foreground">
                   {r.comErro} {t("com erro")}
                 </span>
               </>
@@ -75,12 +75,12 @@ export function StatusDaBase({
           </p>
         </div>
         {r.preparando > 0 ? (
-          <span className="flex items-center gap-1 text-xs text-text-muted">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
             {t("preparando o material…")}
           </span>
         ) : podeIndexar && r.comErro === 0 && r.prontos === r.total ? (
-          <span className="flex items-center gap-1 text-xs text-success-fg">
+          <span className="text-success-foreground flex items-center gap-1 text-xs">
             <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
             {t("tudo pronto")}
           </span>
@@ -88,7 +88,7 @@ export function StatusDaBase({
       </div>
 
       {r.comErro > 0 ? (
-        <p className="flex items-start gap-1.5 text-xs text-warning-fg">
+        <p className="text-warning-foreground flex items-start gap-1.5 text-xs">
           <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
           {t(
             "Alguns materiais falharam ao preparar. O motivo está no cartão de cada um; depois de corrigir, clique em “Preparar tudo de novo”.",

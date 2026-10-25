@@ -947,7 +947,7 @@ function CallWebhookForm({
           que muda no corpo: quem lê esta tela é justamente quem vai receber o
           POST. "Incluir" aqui é a mesma palavra do schema (`include_owner`),
           para o rótulo e o campo não parecerem coisas diferentes. */}
-      <div className="flex items-center justify-between gap-3 rounded-md border p-3">
+      <div className="flex items-center justify-between gap-3 rounded-lg border p-3">
         <div className="space-y-0.5">
           <Label>{t("Incluir o responsável no corpo")}</Label>
           <p className="text-xs text-muted-foreground">

@@ -404,7 +404,7 @@ export function FunisClient({
                           `onSuccess`; o `disabled` evita o envio em dobro.
                         */}
                         <AlertDialogAction
-                          className={buttonVariants({ variant: "destructive" })}
+                          className={buttonVariants({ variant: "destructive-solid" })}
                           disabled={ocupado}
                           data-testid={`excluir-confirmar-${funil.id}`}
                           onClick={(e) => {
@@ -570,12 +570,12 @@ export function FunisClient({
                       <span className="flex items-center gap-2">
                         <span className="text-sm font-medium group-hover:underline">{funil.name}</span>
                         {funil.is_default && (
-                          <Badge variant="secondary" className="text-[10px]">
+                          <Badge variant="secondary" className="text-xs">
                             {t("Padrão")}
                           </Badge>
                         )}
                         {clientesLigado && funil.is_client_pipeline && (
-                          <Badge variant="secondary" className="text-[10px]">
+                          <Badge variant="secondary" className="text-xs">
                             {t("Clientes")}
                           </Badge>
                         )}

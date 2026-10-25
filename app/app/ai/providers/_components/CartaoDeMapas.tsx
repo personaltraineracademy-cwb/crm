@@ -201,7 +201,7 @@ export function CartaoDeMapas() {
 
       {teste && (
         <div
-          className={`mt-3 rounded-md border p-3 text-sm ${teste.ok ? "border-emerald-500/40 bg-emerald-500/5" : "border-destructive/40 bg-destructive/5"}`}
+          className={`mt-3 rounded-lg border p-3 text-sm ${teste.ok ? "border-success-border bg-success-soft" : "border-destructive/40 bg-destructive/5"}`}
           data-testid="mapas-resultado"
         >
           {teste.ok ? (

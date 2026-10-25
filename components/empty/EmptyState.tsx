@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { EmptyState as EstadoVazio } from "@/components/ui/empty-state";
 import { useT } from "@/hooks/i18n/useT";
 
 export interface EmptyStateAction {
@@ -40,6 +41,15 @@ function ActionButton({
   );
 }
 
+/**
+ * As variantes de vazio do produto desenhadas pelo `EmptyState` do DS
+ * (§10.21): ícone de 32 em `muted-foreground`, frase curta e a ação. Sem o
+ * círculo de 48 e sem o `py-16` de antes, que faziam do vazio uma ilustração.
+ *
+ * O DS pede no máximo uma ação. Quem ainda passa duas (`secondary`) continua
+ * vendo as duas, a secundária em contorno à esquerda, para não sumir com uma
+ * porta que já existia; a regra é não acrescentar a segunda em tela nova.
+ */
 export function EmptyState({
   icon: Icon,
   headline,
@@ -54,20 +64,18 @@ export function EmptyState({
   // não têm entrada, então nenhuma variante piora.
   const t = useT();
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
-        <Icon size={24} weight="duotone" />
-      </div>
-      <h3 className="text-base font-semibold">{t(headline)}</h3>
-      {subcopy ? (
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground">{t(subcopy)}</p>
-      ) : null}
-      {(primary || secondary) && (
-        <div className="mt-4 flex gap-2">
-          {secondary ? <ActionButton action={secondary} variant="outline" /> : null}
-          {primary ? <ActionButton action={primary} variant="default" /> : null}
-        </div>
-      )}
-    </div>
+    <EstadoVazio
+      icon={<Icon size={32} weight="duotone" />}
+      title={t(headline)}
+      description={subcopy ? t(subcopy) : undefined}
+      action={
+        primary || secondary ? (
+          <div className="flex gap-2">
+            {secondary ? <ActionButton action={secondary} variant="outline" /> : null}
+            {primary ? <ActionButton action={primary} variant="default" /> : null}
+          </div>
+        ) : undefined
+      }
+    />
   );
 }

@@ -22,6 +22,7 @@ import { Suspense } from "react";
 import { tagDeIdioma } from "@/lib/i18n/datas";
 import { normalizarIdioma } from "@/lib/i18n/idiomas";
 import { traduzir } from "@/lib/i18n/dicionario";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface IntegrationRow {
   id: string;
@@ -61,15 +62,16 @@ export default async function NuvemshopIntegrationPage() {
       </Suspense>
 
       <header className="flex items-start gap-4">
-        <div className="rounded-md border border-border bg-surface p-3">
+        <div className="rounded-lg border border-border bg-card p-3">
           <Storefront size={28} weight="duotone" className="text-muted-foreground" />
         </div>
-        <div>
-          <h1 className="text-xl font-semibold">Nuvemshop</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {traduzir("Sincroniza pedidos, produtos e clientes via OAuth + webhooks.", idioma)}
-          </p>
-        </div>
+        <PageHeader
+          title={<>Nuvemshop</>}
+          description={traduzir(
+            "Sincroniza pedidos, produtos e clientes via OAuth + webhooks.",
+            idioma,
+          )}
+        />
       </header>
 
       {!configured ? (

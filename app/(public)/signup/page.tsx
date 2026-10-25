@@ -75,9 +75,9 @@ export default async function SignupPage({
 
   if (soPorConvite) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="space-y-6">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-balance">
             {t("Cadastro apenas por convite")}
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -90,7 +90,7 @@ export default async function SignupPage({
                 )}
           </p>
         </div>
-        <Button asChild className="w-full">
+        <Button asChild size="lg" className="w-full">
           <Link href="/login">{t("Entrar")}</Link>
         </Button>
       </div>
@@ -99,8 +99,8 @@ export default async function SignupPage({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1.5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Criar conta")}</h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance">{t("Criar conta")}</h1>
         <p className="text-sm text-muted-foreground">
           {convite
             ? t("Crie sua senha para entrar na empresa que te convidou")
@@ -116,7 +116,7 @@ export default async function SignupPage({
       {conviteExpirado && (
         <p
           role="alert"
-          className="rounded-md border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm dark:border-amber-500/30 dark:bg-amber-950/20"
+          className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border px-3 py-2 text-sm"
         >
           {t(
             "Esse convite expirou ou não é mais válido. Peça um novo a quem te convidou — criar uma conta agora abriria uma empresa nova, e não é isso que você quer.",
@@ -128,17 +128,25 @@ export default async function SignupPage({
       {/* O convite atravessa o Google na URL de retorno: sem ele, quem foi
           convidado e cria a conta com Google ganharia uma empresa própria. */}
       {googleSemPlano ? (
-        <p className="text-center text-xs text-muted-foreground">{t("Para garantir que o plano selecionado seja contratado, conclua o cadastro com e-mail e senha.")}</p>
+        <p className="text-xs text-muted-foreground">
+          {t(
+            "Para garantir que o plano selecionado seja contratado, conclua o cadastro com e-mail e senha.",
+          )}
+        </p>
       ) : (
         <>
           <EntrarComGoogle convite={convite?.token} />
           {planos.length > 0 && (
-            <p className="text-center text-xs text-muted-foreground">{t("Com o Google, a empresa começa no plano padrão. Para escolher outro, use e-mail e senha.")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t(
+                "Com o Google, a empresa começa no plano padrão. Para escolher outro, use e-mail e senha.",
+              )}
+            </p>
           )}
         </>
       )}
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="border-t border-border pt-6 text-sm text-muted-foreground">
         {t("Já tem conta?")}{" "}
         <Link href="/login" className="font-medium text-foreground underline underline-offset-4">
           {t("Entrar")}

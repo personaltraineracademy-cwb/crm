@@ -33,6 +33,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { tagDeIdioma } from "@/lib/i18n/datas";
 import { CredentialsList } from "./_components/CredentialsList";
 import { PainelDeLoginCodex } from "./_components/PainelDeLoginCodex";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -218,12 +219,11 @@ export default async function CredentialsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Chaves de acesso à IA", idioma)}</h1>
-        <p className="text-sm text-muted-foreground">
-          {/* Os provedores saem da lista única: escritos à mão, a frase citava
-              três quando já eram cinco. */}
-          {traduzir(
+      {/* Os provedores saem da lista única: escritos à mão, a frase citava
+          três quando já eram cinco. */}
+      <PageHeader
+        title={traduzir("Chaves de acesso à IA", idioma)}
+        description={traduzir(
             "A conta de inteligência artificial é sua: você contrata direto com {provedores} e cola a chave aqui. A chave fica guardada criptografada e nunca mais aparece na tela depois de salva — nem para você. O Jev (TypeSafe) não conversa com o cliente: a chave dele serve só para decisões rápidas.",
             idioma,
           ).replace(
@@ -232,8 +232,7 @@ export default async function CredentialsPage() {
               PROVEDORES.map((p) => p.rotulo),
             ),
           )}
-        </p>
-      </header>
+      />
       {moduloLoginCodex && sessaoPkce && (
         <PainelDeLoginCodex
           url={sessaoPkce.url}

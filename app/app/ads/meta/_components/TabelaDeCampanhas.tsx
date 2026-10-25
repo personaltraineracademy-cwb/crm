@@ -50,11 +50,11 @@ const ESTADO_LEGIVEL: Record<string, string> = {
 
 /** Verde só para quem está realmente entregando; âmbar para o que pede atenção. */
 const TOM_DO_ESTADO: Record<string, string> = {
-  ACTIVE: "text-emerald-600 dark:text-emerald-400",
-  WITH_ISSUES: "text-amber-600 dark:text-amber-400",
-  DISAPPROVED: "text-red-600 dark:text-red-400",
-  PENDING_BILLING_INFO: "text-amber-600 dark:text-amber-400",
-  PENDING_REVIEW: "text-amber-600 dark:text-amber-400",
+  ACTIVE: "text-success-foreground",
+  WITH_ISSUES: "text-warning-foreground",
+  DISAPPROVED: "text-danger-foreground",
+  PENDING_BILLING_INFO: "text-warning-foreground",
+  PENDING_REVIEW: "text-warning-foreground",
 };
 
 const TRACO = "—";
@@ -158,7 +158,7 @@ export function TabelaDeCampanhas({ linhas, moeda, avisos }: Props) {
 
   if (linhas.length === 0) {
     return (
-      <p className="rounded-md border p-4 text-sm text-muted-foreground">
+      <p className="rounded-xl border p-4 text-sm text-muted-foreground">
         {/*
           Vazio tem duas causas opostas e dizer só "nenhuma campanha" esconderia
           a segunda: ou a conta não tem campanha nenhuma, ou tem e nenhuma delas
@@ -182,7 +182,7 @@ export function TabelaDeCampanhas({ linhas, moeda, avisos }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 z-10 bg-bg">{t("Campanha")}</TableHead>
+            <TableHead className="sticky left-0 z-10 bg-background">{t("Campanha")}</TableHead>
             <TableHead>{t("Status")}</TableHead>
             <TableHead>{t("Veiculação")}</TableHead>
             <TableHead className="text-right">{t("Resultado")}</TableHead>
@@ -234,7 +234,7 @@ export function TabelaDeCampanhas({ linhas, moeda, avisos }: Props) {
             const rotulo = rotuloDoIndicador(linha.resultado.indicador);
             return (
               <TableRow key={linha.campanhaId}>
-                <TableCell className="sticky left-0 z-10 max-w-[9rem] bg-bg font-medium md:max-w-[22rem]">
+                <TableCell className="sticky left-0 z-10 max-w-[9rem] bg-background font-medium md:max-w-[22rem]">
                   <span className="block max-w-[9rem] truncate md:max-w-[22rem]" title={linha.nome}>
                     {linha.nome}
                   </span>

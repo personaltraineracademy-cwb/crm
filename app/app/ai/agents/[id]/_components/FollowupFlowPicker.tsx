@@ -51,8 +51,8 @@ export function FollowupFlowPicker({ value, onChange, disabled }: Props) {
   }
 
   return (
-    <fieldset className="space-y-2 rounded-md border border-border/60 p-3">
-      <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <fieldset className="space-y-2 rounded-lg border border-border/60 p-3">
+      <legend className="px-1 text-xs font-medium text-muted-foreground">
         {t("Fluxos publicados")}
       </legend>
       {publishedFlows.map((f) => {

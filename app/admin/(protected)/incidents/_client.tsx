@@ -19,6 +19,7 @@ import {
   type IncidentSeverity,
 } from "@/hooks/useAdminIncidents";
 import { useT } from "@/hooks/i18n/useT";
+import { PageHeader } from "@/components/ui/page-header";
 
 const STATUS_OPTIONS: { value: IncidentStatus; label: string }[] = [
   { value: "open", label: "Abertos" },
@@ -46,17 +47,16 @@ export function IncidentsClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Incidentes")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+      <PageHeader
+        title={t("Incidentes")}
+        meta={
+          <span className="tabular-nums">
             {isLoading
               ? t("Carregando...")
               : `${total} ${total !== 1 ? t("incidentes") : t("incidente")}${hasNextPage ? "+" : ""}`}
-          </p>
-        </div>
-      </div>
+          </span>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">

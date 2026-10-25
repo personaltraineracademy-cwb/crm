@@ -475,7 +475,10 @@ export function CartaoDoJev({
           contrato da TypeSafe precisa cobrir isso. O produto não guarda o nicho
           como categoria, então o aviso aparece para todos em forma condicional.
           A ida para os EUA já está no consentimento, mais abaixo. */}
-      <p className="mt-3 rounded-md bg-warning-bg p-3 text-sm text-warning-fg" data-testid="jev-aviso-area-saude">
+      <p
+        className="bg-warning-soft text-warning-foreground mt-3 rounded-lg p-3 text-sm"
+        data-testid="jev-aviso-area-saude"
+      >
         {t(
           "Se a sua empresa é da área da saúde: as mensagens que o Jev lê podem conter dado de saúde, que a LGPD trata como sensível. Antes de ligar, confira com quem cuida da LGPD da empresa se o contrato da TypeSafe cobre esse tipo de dado.",
         )}
@@ -486,7 +489,10 @@ export function CartaoDoJev({
           provedor acompanha a origem: via OpenRouter, quem conferiu foi a
           OpenRouter, e a chave é a mesma da conversa. */}
       {dados.chave.validada && (
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-success-fg" data-testid="jev-chave-conferida">
+        <p
+          className="text-success-foreground mt-3 flex items-center gap-1.5 text-xs"
+          data-testid="jev-chave-conferida"
+        >
           <span aria-hidden>✓</span>
           {origemDoCartao(dados) === "openrouter"
             ? t("Chave conferida na OpenRouter")
@@ -569,7 +575,7 @@ function DeOndeResponde({ dados, recarregar }: { dados: DadosDoJev; recarregar: 
       </label>
       <select
         id="jev-origem-escolha"
-        className="block w-full max-w-md rounded-md border bg-background p-2 text-sm"
+        className="block w-full max-w-md rounded-lg border bg-background p-2 text-sm"
         value={confirmandoOpenRouter ? "openrouter" : origem}
         disabled={!dados.pode_editar || enviando}
         onChange={(e) => escolher(e.target.value)}
@@ -578,7 +584,10 @@ function DeOndeResponde({ dados, recarregar }: { dados: DadosDoJev; recarregar: 
         <option value="openrouter">{t("OpenRouter (reaproveita a credencial OpenRouter)")}</option>
       </select>
       {confirmandoOpenRouter && (
-        <div className="max-w-2xl rounded-md border border-border p-3 text-sm" data-testid="jev-origem-aceite">
+        <div
+          className="max-w-2xl rounded-lg border border-border p-3 text-sm"
+          data-testid="jev-origem-aceite"
+        >
           <div className="flex items-start gap-2">
             <input
               id="jev-origem-aceite"
@@ -737,7 +746,10 @@ function ProblemaDaChave({ dados, recarregar }: { dados: DadosDoJev; recarregar:
   }
 
   return (
-    <div className="mt-4 rounded-md bg-warning-bg p-3 text-sm text-warning-fg" data-testid="jev-chave">
+    <div
+      className="bg-warning-soft text-warning-foreground mt-4 rounded-lg p-3 text-sm"
+      data-testid="jev-chave"
+    >
       {/* O código cru fica no `title`, para quem for investigar — nunca na frase. */}
       <p title={dados.chave.erro_de_validacao ?? undefined}>{motivo}</p>
       <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -911,7 +923,7 @@ function ProntoParaLigar({ dados, recarregar }: { dados: DadosDoJev; recarregar:
         </p>
       </div>
 
-      <div className="rounded-md border border-border p-3 text-sm">
+      <div className="rounded-lg border border-border p-3 text-sm">
         <p>
           {/* O aceite nomeia QUEM recebe: via OpenRouter a mensagem passa por ela antes da TypeSafe. */}
           {origemDoCartao(dados) === "openrouter"
@@ -1248,7 +1260,7 @@ function Ligado({
             {tarefa.id === "roteador" && tarefa.estado === "decidindo" && rodando && (
               <div className="mt-2 space-y-1 text-xs" data-testid="jev-modo-roteador">
                 <label htmlFor="jev-router-mode" className="block font-medium">{t("Como o roteador consulta as IAs")}</label>
-                <select id="jev-router-mode" className="block rounded-md border bg-background p-2 text-sm"
+                <select id="jev-router-mode" className="block rounded-lg border bg-background p-2 text-sm"
                   value={roteadorSobDemanda(dados) ? "sob_demanda" : "comparacao"} disabled={!dados.pode_editar || enviando}
                   onChange={(e) => void mudar({ modo_roteador: e.target.value }, t("Modo do roteador salvo."))}>
                   <option value="comparacao">{t("Comparar o Jev e a IA de sempre")}</option>
@@ -1317,7 +1329,10 @@ function Ligado({
       </div>
 
       {falha && (
-        <p className="rounded-md bg-warning-bg p-2 text-xs text-warning-fg" data-testid="jev-ultima-falha">
+        <p
+          className="bg-warning-soft text-warning-foreground rounded-lg p-2 text-xs"
+          data-testid="jev-ultima-falha"
+        >
           <span className="font-medium">
             {t("Última falha")}
             {falha.tarefa ? <> — {t(falha.tarefa)}</> : null} ({new Date(falha.em).toLocaleString(tagDoIdioma)}):

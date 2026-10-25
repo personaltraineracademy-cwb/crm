@@ -435,7 +435,10 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
       </header>
 
       {erro && (
-        <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+        <div
+          role="alert"
+          className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-sm"
+        >
           {erro}
         </div>
       )}
@@ -451,7 +454,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
       <div className="space-y-2">
         <label className="block text-sm font-medium">{t("Condições")}</label>
         <textarea
-          className="w-full rounded-md border p-2 text-sm disabled:bg-muted"
+          className="w-full rounded-lg border p-2 text-sm disabled:bg-muted"
           value={proposta.condicoes ?? ""}
           disabled={!editavel}
           onChange={(e) => setProposta((p) => p && { ...p, condicoes: e.target.value || null })}
@@ -464,7 +467,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
         <label className="block text-sm font-medium">{t("Válido até")}</label>
         <input
           type="date"
-          className="w-full rounded-md border p-2 text-sm disabled:bg-muted"
+          className="w-full rounded-lg border p-2 text-sm disabled:bg-muted"
           value={proposta.valid_until ?? ""}
           disabled={!editavel}
           onChange={(e) => setProposta((p) => p && { ...p, valid_until: e.target.value || null })}
@@ -480,7 +483,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
             min="1"
             max="365"
             step="1"
-            className="w-full rounded-md border p-2 text-sm disabled:bg-muted"
+            className="w-full rounded-lg border p-2 text-sm disabled:bg-muted"
             value={proposta.prazo_dias_uteis ?? ""}
             disabled={!editavel}
             onChange={(e) =>
@@ -494,7 +497,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
             id="forma-de-pagamento"
             type="text"
             maxLength={500}
-            className="w-full rounded-md border p-2 text-sm disabled:bg-muted"
+            className="w-full rounded-lg border p-2 text-sm disabled:bg-muted"
             value={proposta.pagamento ?? ""}
             disabled={!editavel}
             onChange={(e) => setProposta((p) => p && { ...p, pagamento: e.target.value || null })}
@@ -504,7 +507,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
       </div>
 
       {editavel && itensComDrift.length > 0 && !driftIgnorado && (
-        <div className="rounded-lg border border-warning/40 bg-warning-bg p-3 text-sm text-warning-fg">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm">
           <p>
             {itensComDrift.length}{" "}
             {itensComDrift.length === 1
@@ -521,7 +524,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
             'approved' chegando ao resolvedor, fora do escopo deste achado) —
             então a cópia fica honesta em vez de fingir uma trava que não há.
           */}
-          <p className="mt-1 text-xs text-warning-fg">
+          <p className="text-warning-foreground mt-1 text-xs">
             {t("Ao salvar, o preço do catálogo será aplicado de qualquer forma.")}
           </p>
           <div className="mt-2 flex gap-2">
@@ -654,7 +657,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
           <div className="flex-1">
             <input
               type="text"
-              className="w-full rounded-md border px-3 py-2 text-sm"
+              className="w-full rounded-lg border px-3 py-2 text-sm"
               placeholder={t("Buscar produto no catálogo…")}
               value={buscaProdutos}
               onChange={(e) => {
@@ -668,7 +671,7 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
                 {resultadosProdutos.map((produto) => (
                   <button
                     key={produto.id}
-                    className="block w-full border-b px-3 py-2 text-left text-sm hover:bg-accent last:border-b-0"
+                    className="hover:bg-interactive block w-full border-b px-3 py-2 text-left text-sm last:border-b-0"
                     onClick={() => adicionarItemDoCatalogo(produto)}
                   >
                     <div className="font-medium">{produto.nome}</div>
@@ -683,18 +686,20 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
         </div>
       )}
 
-      <div className="flex items-center justify-between rounded-lg border bg-muted p-4">
+      <div className="flex items-center justify-between rounded-xl border bg-muted p-4">
         <div className="text-lg font-semibold">{t("Total")}</div>
-        <div className="text-2xl font-bold tabular-nums">{formatCents(total, proposta.moeda)}</div>
+        <div className="text-2xl font-semibold tabular-nums">
+          {formatCents(total, proposta.moeda)}
+        </div>
       </div>
 
       {proposta.status === "rascunho" && proposta.ultima_falha_envio && (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border p-3 text-sm">
           {t("O último envio falhou")}: {proposta.ultima_falha_envio}
         </div>
       )}
       {proposta.status === "enviando" && (
-        <div className="rounded-lg border border-warning/40 bg-warning-bg p-3 text-sm text-warning-fg">
+        <div className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-sm">
           {t("Na fila do WhatsApp — sai assim que o canal conectar.")}
         </div>
       )}
@@ -702,7 +707,9 @@ export function ProposalEditorClient({ id, podeEditar, podeRevisar = false }: { 
           escrito ao lado, em vez de devolver 422 depois de a pessoa ter
           preenchido a proposta inteira. */}
       {proposta.status === "rascunho" && !proposta.template_slug && (
-        <p className="text-sm text-warning-fg">{t("Escolha e confirme o modelo da proposta antes de enviar.")}</p>
+        <p className="text-warning-foreground text-sm">
+          {t("Escolha e confirme o modelo da proposta antes de enviar.")}
+        </p>
       )}
       {proposta.status === "rascunho" && (
         <div className="flex flex-wrap gap-2">

@@ -13,6 +13,7 @@ import { clientePelaAgendaLigado } from "@/lib/schemas/settings";
 import { AuthProvider } from "@/hooks/auth/AuthProvider";
 import { ProvedorDeCoresDasEtiquetas } from "@/components/tags/CoresDasEtiquetas";
 import { AppShell } from "./_components/AppShell";
+import { toggleSidebar } from "@/app/actions/shell/toggleSidebar";
 import { EstiloDaMarcaDaOrganizacao } from "./_components/EstiloDaMarcaDaOrganizacao";
 import { EstiloDoTemaDaExtensao } from "./_components/EstiloDoTemaDaExtensao";
 import { MfaEnrollGate } from "@/components/auth/MfaEnrollGate";
@@ -270,6 +271,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <AppShell
           sidebarCollapsed={collapsed}
           podeAtender={Boolean(activeOrg && roleAtLeast(activeOrg.role, "agent"))}
+          // A Server Action que grava o cookie `sidebar_collapsed`. Vai por
+          // prop: o botão agora mora na barra de cima (DS §5.6), e a casca é
+          // quem liga as duas barras.
+          alternarBarraLateral={toggleSidebar}
         >
           {children}
         </AppShell>

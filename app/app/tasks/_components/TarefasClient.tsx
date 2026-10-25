@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -78,121 +82,94 @@ export function TarefasClient({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Tarefas")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t(
-              "O que ficou combinado, com prazo. Tarefa presa a um negócio aparece na linha do tempo dele.",
-            )}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Select
-            value={situacao}
-            onValueChange={(v) => setSituacao(v as FiltroDeSituacao)}
-          >
-            <SelectTrigger className="h-11 w-[168px] text-xs lg:h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="aberto">{t("Em aberto")}</SelectItem>
-              <SelectItem value="pending">{t("Pendente")}</SelectItem>
-              <SelectItem value="in_progress">{t("Em andamento")}</SelectItem>
-              <SelectItem value="done">{t("Concluída")}</SelectItem>
-              <SelectItem value="cancelled">{t("Cancelada")}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <div className="flex items-center gap-0.5 rounded-md border bg-muted p-0.5">
-            {([
-              [true, t("Minhas")],
-              [false, t("Todas")],
-            ] as const).map(([valor, rotulo]) => (
-              <button
-                key={rotulo}
-                type="button"
-                onClick={() => setMinhas(valor)}
-                aria-pressed={minhas === valor}
-                className={cn(
-                  "min-h-11 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors lg:min-h-0",
-                  minhas === valor
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {rotulo}
-              </button>
-            ))}
-          </div>
-
-          {/* O calendário tem 7 colunas: a 390px não cabe, e no celular fica a lista. */}
-          <div className="hidden items-center gap-0.5 rounded-md border bg-muted p-0.5 md:flex">
-            <button
-              type="button"
-              onClick={() => setModo("lista")}
-              aria-pressed={modo === "lista"}
-              className={cn(
-                "flex min-h-11 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors lg:min-h-0",
-                modo === "lista"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <ListChecks size={14} aria-hidden />
-              {t("Lista")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setModo("calendario")}
-              aria-pressed={modo === "calendario"}
-              className={cn(
-                "flex min-h-11 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors lg:min-h-0",
-                modo === "calendario"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <CalendarBlank size={14} aria-hidden />
-              {t("Calendário")}
-            </button>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 text-xs md:h-9"
-            onClick={() => recarregar()}
-            disabled={carregando}
-          >
-            <ArrowsClockwise size={14} className={cn(carregando && "animate-spin")} aria-hidden />
-            {t("Atualizar")}
-          </Button>
-
-          {podeEditar && (
-            <Button size="sm" className="gap-1.5 text-xs md:h-9" onClick={() => abrirNova()}>
-              <Plus size={14} aria-hidden />
-              {t("Nova tarefa")}
+    <div className="flex w-full flex-col gap-6 p-4 sm:p-6">
+      <PageHeader
+        title={t("Tarefas")}
+        description={t(
+          "O que ficou combinado, com prazo. Tarefa presa a um negócio aparece na linha do tempo dele.",
+        )}
+        actions={
+          <>
+            <Button variant="outline" size="sm" onClick={() => recarregar()} disabled={carregando}>
+              <ArrowsClockwise size={14} className={cn(carregando && "animate-spin")} aria-hidden />
+              {t("Atualizar")}
             </Button>
-          )}
-        </div>
+            {podeEditar && (
+              <Button size="sm" onClick={() => abrirNova()}>
+                <Plus size={14} aria-hidden />
+                {t("Nova tarefa")}
+              </Button>
+            )}
+          </>
+        }
+      />
+
+      {/* Filtros numa linha de 32, sem caixa (DS §11.2). "Minhas | Todas" e
+          "Lista | Calendário" são visões, não ações: controle segmentado. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Select value={situacao} onValueChange={(v) => setSituacao(v as FiltroDeSituacao)}>
+          <SelectTrigger className="h-8 w-[168px]" aria-label={t("Situação")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="aberto">{t("Em aberto")}</SelectItem>
+            <SelectItem value="pending">{t("Pendente")}</SelectItem>
+            <SelectItem value="in_progress">{t("Em andamento")}</SelectItem>
+            <SelectItem value="done">{t("Concluída")}</SelectItem>
+            <SelectItem value="cancelled">{t("Cancelada")}</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <SegmentedControl
+          aria-label={t("De quem são as tarefas")}
+          value={minhas ? "minhas" : "todas"}
+          onValueChange={(v) => setMinhas(v === "minhas")}
+          options={[
+            { value: "minhas", label: t("Minhas") },
+            { value: "todas", label: t("Todas") },
+          ]}
+        />
+
+        {/* O calendário tem 7 colunas: a 390px não cabe, e no celular fica a lista. */}
+        <SegmentedControl
+          className="hidden md:inline-flex"
+          aria-label={t("Visualização")}
+          value={modo}
+          onValueChange={(v) => setModo(v)}
+          options={[
+            { value: "lista", label: t("Lista"), icon: <ListChecks size={14} aria-hidden /> },
+            {
+              value: "calendario",
+              label: t("Calendário"),
+              icon: <CalendarBlank size={14} aria-hidden />,
+            },
+          ]}
+        />
       </div>
 
       {falhou ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">
-            {t("Não foi possível carregar as tarefas.")}
-          </p>
-          <Button variant="outline" size="sm" className="mt-3 text-xs" onClick={() => recarregar()}>
-            {t("Tentar novamente")}
-          </Button>
-        </div>
+        <Alert
+          variant="destructive"
+          action={
+            <Button variant="outline" size="sm" onClick={() => recarregar()}>
+              {t("Tentar novamente")}
+            </Button>
+          }
+        >
+          {t("Não foi possível carregar as tarefas.")}
+        </Alert>
       ) : carregando ? (
-        <div className="space-y-3" aria-busy>
+        // A forma final da lista: linhas de 56 dentro do cartão.
+        <div
+          className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card"
+          aria-busy
+        >
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 animate-pulse rounded-lg border bg-card" />
+            <div key={i} className="flex h-14 items-center gap-3 px-4">
+              <Skeleton className="size-5 rounded-md" />
+              <Skeleton className="h-4 w-64" />
+              <Skeleton className="ml-auto h-4 w-20" />
+            </div>
           ))}
         </div>
       ) : (

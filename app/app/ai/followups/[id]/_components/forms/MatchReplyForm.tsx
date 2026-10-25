@@ -77,7 +77,7 @@ export function MatchReplyForm({
       <div className="space-y-2">
         <Label>{t("Regras de texto")}</Label>
         {branches.map((branch, index) => (
-          <div key={branch.id} className="space-y-2 rounded-md border border-border p-2">
+          <div key={branch.id} className="space-y-2 rounded-lg border border-border p-2">
             <Input
               aria-label={`Rótulo da regra ${index + 1}`}
               value={branch.label}
@@ -152,7 +152,7 @@ export function MatchReplyForm({
             commit({ branches, graceMin: v, saveTo, ifExists });
           }}
         />
-        <p className="text-xs text-text-muted">{ESPERA_PELA_RESPOSTA.ajuda(t)}</p>
+        <p className="text-xs text-muted-foreground">{ESPERA_PELA_RESPOSTA.ajuda(t)}</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="match-reply-save">{t("Gravar a resposta em")}</Label>
@@ -221,14 +221,14 @@ export function MatchReplyForm({
                 <SelectItem value="confirm">{t(SE_INFORMACAO_JA_EXISTIR.confirm)}</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs text-text-muted">{t(SE_INFORMACAO_JA_EXISTIR.ajuda)}</p>
+            <p className="text-xs text-muted-foreground">{t(SE_INFORMACAO_JA_EXISTIR.ajuda)}</p>
           </div>
         )}
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Crie os campos em Configurações → Funis. A resposta só grava quando o contato responde (não no timeout).")}
         </p>
       </div>
-      {error && <p className="text-xs text-error-fg">{error}</p>}
+      {error && <p className="text-danger-foreground text-xs">{error}</p>}
     </div>
   );
 }

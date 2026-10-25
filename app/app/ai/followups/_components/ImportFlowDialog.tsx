@@ -174,7 +174,7 @@ export function ImportFlowDialog({ open, onOpenChange, baseHref }: Props) {
             </p>
             {bloqueiam.length > 0 && (
               <div className="space-y-1">
-                <p className="text-sm font-medium text-error-fg">
+                <p className="text-danger-foreground text-sm font-medium">
                   {t("Resolva antes de publicar:")}
                 </p>
                 <ul className="list-disc space-y-1 pl-5 text-sm">
@@ -187,7 +187,7 @@ export function ImportFlowDialog({ open, onOpenChange, baseHref }: Props) {
             {avisos.length > 0 && (
               <div className="space-y-1">
                 <p className="text-sm font-medium">{t("Ajustado automaticamente:")}</p>
-                <ul className="list-disc space-y-1 pl-5 text-sm text-text-muted">
+                <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                   {avisos.map((p, i) => (
                     <li key={`a${i}`}>{fraseDaPendencia(p, t)}</li>
                   ))}
@@ -195,7 +195,7 @@ export function ImportFlowDialog({ open, onOpenChange, baseHref }: Props) {
               </div>
             )}
             {resultado.pendencias.length === 0 && (
-              <p className="text-sm text-text-muted">
+              <p className="text-sm text-muted-foreground">
                 {t(
                   "Todas as referências do arquivo existem nesta conta. Revise o fluxo e publique quando quiser.",
                 )}
@@ -221,7 +221,7 @@ export function ImportFlowDialog({ open, onOpenChange, baseHref }: Props) {
                 accept=".json,application/json"
                 onChange={(e) => void aoEscolherArquivo(e)}
               />
-              {nomeDoArquivo && <p className="text-xs text-text-muted">{nomeDoArquivo}</p>}
+              {nomeDoArquivo && <p className="text-xs text-muted-foreground">{nomeDoArquivo}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="import-flow-text">{t("Ou cole o conteúdo do arquivo")}</Label>
@@ -251,7 +251,7 @@ export function ImportFlowDialog({ open, onOpenChange, baseHref }: Props) {
               <div
                 role="alert"
                 data-testid="import-flow-error"
-                className="space-y-1 text-sm text-error-fg"
+                className="text-danger-foreground space-y-1 text-sm"
               >
                 <p>{erro}</p>
                 {problemas.length > 0 && (

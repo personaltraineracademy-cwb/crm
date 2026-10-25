@@ -123,7 +123,7 @@ export function TOTPInput({
           className={cn(
             "h-12 w-10 rounded-md border border-input bg-background text-center font-mono text-lg tabular-nums",
             "shadow-sm outline-hidden transition focus:border-ring focus:ring-2 focus:ring-ring/30",
-            hasError && "border-destructive focus:ring-destructive/30",
+            hasError && "focus:ring-danger-border border-destructive",
             disabled && "opacity-50",
           )}
         />

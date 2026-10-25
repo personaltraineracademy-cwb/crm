@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { cssEfetivo } from "../setup/css-efetivo";
+
 /**
  * Guardas da migração para o Tailwind 4 (config em CSS).
  *
@@ -14,7 +16,7 @@ import { describe, expect, it } from "vitest";
  */
 
 const RAIZ = process.cwd();
-const CSS = fs.readFileSync(path.join(RAIZ, "app/globals.css"), "utf8");
+const CSS = cssEfetivo(); // Unnify: globals.css + app/unnify, o que pinta a tela
 
 /** Recorta `<seletor> { … }` por casamento de chave, ancorado em início de linha. */
 function bloco(seletor: string): string {

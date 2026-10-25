@@ -6,6 +6,21 @@ import { Check, ChevronRight, Circle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Item de menu do Unnify (DS §10.18): altura mínima 36, raio 8, padding
+ * 10 × 6, `sm`, ícone 16 com `gap` 8. O realce é SUAVE — `interactive` com
+ * `interactive-foreground` —, nunca a ação cheia: no CRM, `bg-accent` é o azul
+ * forte do botão primário, e pintava o item inteiro no hover. Com ponteiro
+ * grosso o item sobe a 44 (`pointer-coarse:min-h-11`).
+ */
+const ITEM_BASE = cn(
+  "group/item relative flex min-h-9 cursor-default items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm outline-hidden select-none",
+  "transition-[color,background-color] duration-fast ease-out",
+  "data-[highlighted]:bg-interactive data-[highlighted]:text-interactive-foreground",
+  "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11",
+  "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+);
+
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
@@ -27,8 +42,9 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent data-[state=open]:bg-accent pointer-coarse:min-h-11 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-      inset && "pl-8",
+      ITEM_BASE,
+      "data-[state=open]:bg-interactive data-[state=open]:text-interactive-foreground",
+      inset && "pl-7",
       className,
     )}
     {...props}
@@ -46,8 +62,8 @@ const DropdownMenuSubContent = React.forwardRef<
   /*
     PORTAL, igual ao `DropdownMenuContent` acima — e não é cosmética (#2702).
     Sem portal o submenu nasce DENTRO do menu pai, que tem `overflow-x-hidden`
-    e a animação `ds-painel` (`app/globals.css`): o `translate: 0 0` que a
-    animação deixa aplicado (fill-mode `both`) faz do pai o containing block
+    e anima `translate`/`scale` (`camada-painel`, `app/unnify/camadas.css`):
+    transformação no pai, ainda que só durante a entrada, faz dele o containing block
     dos elementos `position: fixed`, que é como o Popper do Radix posiciona o
     submenu — ele abria ao lado, fora da caixa do pai, e o `overflow-hidden`
     o cortava: a lista de responsáveis não aparecia. Portado para o body, o
@@ -63,7 +79,8 @@ const DropdownMenuSubContent = React.forwardRef<
       className={cn(
         // z-[60] acima do z-50 do menu pai: empate de z-index é empate de
         // sorte na ordem do DOM, e o submenu tem que ficar POR CIMA do pai.
-        "ds-painel z-[60] max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-lg",
+        // Submenu com `shadow-lg`, um degrau acima do menu (DS §6.3).
+        "camada-painel z-[60] max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-32 origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl border bg-popover p-1 text-popover-foreground shadow-lg",
         className,
       )}
       {...props}
@@ -81,7 +98,8 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "ds-painel z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+        // DS §10.18 (Work): raio 12, padding 4, largura mínima 128, sombra `md`.
+        "camada-painel z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-32 overflow-x-hidden overflow-y-auto rounded-xl border bg-popover p-1 text-popover-foreground shadow-md",
         "origin-(--radix-dropdown-menu-content-transform-origin)",
         className,
       )}
@@ -95,13 +113,18 @@ const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
     inset?: boolean;
+    /** `destructive` para excluir, remover, sair. */
+    variant?: "default" | "destructive";
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, inset, variant = "default", ...props }, ref) => (
   <DropdownMenuPrimitive.Item
     ref={ref}
+    data-variant={variant}
     className={cn(
-      "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11 [&>svg]:size-4 [&>svg]:shrink-0",
-      inset && "pl-8",
+      ITEM_BASE,
+      // Destrutivo: texto `danger-foreground` e realce `destructive/10`.
+      "data-[variant=destructive]:text-danger-foreground data-[variant=destructive]:data-[highlighted]:text-danger-foreground data-[variant=destructive]:data-[highlighted]:bg-destructive/10",
+      inset && "pl-7",
       className,
     )}
     {...props}
@@ -115,16 +138,13 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 >(({ className, children, checked, ...props }, ref) => (
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
-    className={cn(
-      "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11",
-      className,
-    )}
+    className={cn(ITEM_BASE, "pl-7", className)}
     checked={checked}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check aria-hidden="true" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -138,15 +158,12 @@ const DropdownMenuRadioItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
-    className={cn(
-      "relative flex cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden transition-colors select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pointer-coarse:min-h-11",
-      className,
-    )}
+    className={cn(ITEM_BASE, "pl-7", className)}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <Circle className="h-2 w-2 fill-current" />
+        <Circle aria-hidden="true" className="size-2 fill-current" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -162,7 +179,11 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
+    className={cn(
+      "px-2.5 py-2 text-xs leading-4 font-semibold text-muted-foreground",
+      inset && "pl-7",
+      className,
+    )}
     {...props}
   />
 ));
@@ -174,7 +195,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    className={cn("-mx-1 my-1 h-px bg-border", className)}
     {...props}
   />
 ));
@@ -182,7 +203,13 @@ DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
-    <span className={cn("ml-auto text-xs tracking-widest opacity-60", className)} {...props} />
+    <span
+      className={cn(
+        "group-data-[highlighted]/item:text-interactive-foreground ml-auto pl-4 text-xs text-muted-foreground",
+        className,
+      )}
+      {...props}
+    />
   );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";

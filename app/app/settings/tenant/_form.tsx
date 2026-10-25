@@ -200,7 +200,7 @@ export function TenantForm({ initial, onSave, onSaved }: Props) {
               <p
                 role="note"
                 data-testid="aviso-revisao-por-ia"
-                className="rounded-md border border-warning bg-warning-bg p-3 text-xs text-warning-fg"
+                className="border-warning-border bg-warning-soft text-warning-foreground rounded-lg border p-3 text-xs"
               >
                 {t(
                   "A citação do RGPD (artigo 15.º do Regulamento (UE) 2016/679) foi conferida contra o texto oficial numa revisão feita por IA, sem advogado em Portugal. Os prazos do sistema (7 e 15 dias úteis) são mais curtos que o prazo legal de um mês, e o relatório de acesso ainda não traz todas as informações do art. 15.º. Trocar o país muda a regra do documento do contato: a partir daí, CPF enviado por API, importação ou integração é recusado como NIF inválido. O sistema não substitui o seu encarregado da proteção de dados: confirme com ele os textos enviados aos titulares, sobretudo nas campanhas de marketing, que em Portugal, em regra, exigem consentimento prévio (Lei 41/2004, art. 13.º-A).",
@@ -219,7 +219,7 @@ export function TenantForm({ initial, onSave, onSaved }: Props) {
               onChange={(e) => set("media_retention_days", Number(e.target.value))}
             />
           </div>
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-lg bg-muted/40 p-3">
             <div>
               <Label htmlFor="media_retention_enforced">
                 {t("Limpeza automática de mídia antiga")}

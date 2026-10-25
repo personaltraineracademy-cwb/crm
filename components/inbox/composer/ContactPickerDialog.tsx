@@ -146,7 +146,7 @@ export function ContactPickerDialog({
           />
         </div>
 
-        <div className="max-h-48 overflow-y-auto rounded-md border border-border">
+        <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
           {list.isLoading && contacts.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">Carregando…</p>
           ) : contacts.length === 0 ? (
@@ -161,13 +161,13 @@ export function ContactPickerDialog({
                     type="button"
                     disabled={sending}
                     className={cn(
-                      "flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm",
-                      "hover:bg-muted disabled:opacity-50",
+                      "flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left text-sm",
+                      "hover:bg-muted/40 disabled:opacity-50",
                     )}
                     onClick={() => pickFromDb(c)}
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                      <UserCircle size={22} weight="duotone" className="text-primary" aria-hidden />
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <UserCircle size={16} weight="duotone" className="text-primary" aria-hidden />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{displayName(c)}</span>
@@ -207,13 +207,13 @@ export function ContactPickerDialog({
                 type="button"
                 disabled={sending}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-md border border-border px-3 py-2.5 text-left text-sm",
-                  "hover:bg-muted disabled:opacity-50",
+                  "flex min-h-12 w-full items-center gap-3 rounded-lg border border-border px-3 py-2 text-left text-sm",
+                  "hover:bg-muted/40 disabled:opacity-50",
                 )}
                 onClick={pickManual}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <UserCircle size={22} weight="duotone" className="text-primary" aria-hidden />
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <UserCircle size={16} weight="duotone" className="text-primary" aria-hidden />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium">

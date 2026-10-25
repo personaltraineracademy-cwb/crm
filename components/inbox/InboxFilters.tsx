@@ -37,6 +37,20 @@ import { useConversationCounts } from "@/hooks/inbox/useConversationCounts";
 import { roleAtLeast, type Role, type VisibilityMode } from "@/lib/auth/types";
 import { SeletorDeAtendente } from "@/components/inbox/SeletorDeAtendente";
 
+/**
+ * Os filtros auxiliares pressionáveis ("Não lidos", "Grupos") e os seletores
+ * da faixa são controles `sm` do Unnify (32, raio 8, `xs`/500 aqui pela coluna
+ * estreita). Ligado = seleção, o fundo suave `interactive` com a borda de
+ * hover (DS §9.1) — e não mais o azul sólido, que é cor de ação primária.
+ */
+const FILTRO_PRESSIONAVEL = [
+  "h-8 shrink-0 rounded-lg border px-3 text-xs font-medium transition-colors",
+  "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+].join(" ");
+const FILTRO_ATIVO = "border-interactive-border bg-interactive text-interactive-foreground";
+const FILTRO_INATIVO =
+  "border-input bg-card text-muted-foreground hover:border-interactive-border hover:bg-interactive hover:text-interactive-foreground";
+
 export type InboxTab = "unassigned" | "mine" | "all" | "closed" | "archived" | "ai";
 
 /**
@@ -395,9 +409,9 @@ export function InboxFilters({ value, onChange }: Props) {
         <div className="flex items-center gap-2">
           <div className="relative min-w-0 flex-1">
             <MagnifyingGlass
-              size={15}
+              size={16}
               weight="regular"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-subtle"
+              className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted-foreground"
               aria-hidden
             />
             {/* "última mensagem", e não "mensagem": a busca alcança apenas
@@ -410,7 +424,8 @@ export function InboxFilters({ value, onChange }: Props) {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("Buscar por nome, telefone ou última mensagem…")}
-              className="h-9 rounded-full border-transparent bg-surface-elevated pl-9 shadow-none focus-visible:border-border focus-visible:bg-background"
+              // Filtro na barra (Unnify §5.2): controle `sm`, 32 de altura, raio 8.
+              className="h-8 rounded-lg pl-8 shadow-none"
               aria-label={t("Buscar conversas")}
             />
           </div>
@@ -422,11 +437,10 @@ export function InboxFilters({ value, onChange }: Props) {
             aria-pressed={value.onlyUnread}
             onClick={() => onChange({ ...value, onlyUnread: !value.onlyUnread })}
             className={cn(
-              "h-9 shrink-0 rounded-full border px-3 text-xs font-medium transition-colors",
-              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              FILTRO_PRESSIONAVEL,
               value.onlyUnread
-                ? "border-accent bg-accent text-accent-foreground"
-                : "border-border bg-transparent text-text-muted hover:bg-surface-elevated",
+                ? FILTRO_ATIVO
+                : FILTRO_INATIVO,
             )}
           >
             {t("Não lidos")}
@@ -439,11 +453,10 @@ export function InboxFilters({ value, onChange }: Props) {
             aria-pressed={value.onlyGroups ?? false}
             onClick={() => onChange({ ...value, onlyGroups: !value.onlyGroups })}
             className={cn(
-              "h-9 shrink-0 rounded-full border px-3 text-xs font-medium transition-colors",
-              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              FILTRO_PRESSIONAVEL,
               value.onlyGroups
-                ? "border-accent bg-accent text-accent-foreground"
-                : "border-border bg-transparent text-text-muted hover:bg-surface-elevated",
+                ? FILTRO_ATIVO
+                : FILTRO_INATIVO,
             )}
           >
             {t("Grupos")}
@@ -461,8 +474,8 @@ export function InboxFilters({ value, onChange }: Props) {
               >
                 <SelectTrigger
                   className={cn(
-                    "h-8 min-w-0 flex-1 rounded-full border-transparent bg-surface-elevated px-3 text-xs shadow-none",
-                    value.channel_session_id != null && "border-accent bg-accent-soft text-accent",
+                    "h-8 min-w-0 flex-1 rounded-lg px-3 text-xs shadow-none",
+                    value.channel_session_id != null && FILTRO_ATIVO,
                   )}
                   aria-label={t("Filtrar por número de WhatsApp")}
                 >
@@ -505,9 +518,9 @@ export function InboxFilters({ value, onChange }: Props) {
                   <button
                     type="button"
                     className={cn(
-                      "h-8 min-w-0 flex-1 truncate rounded-full border border-transparent bg-surface-elevated px-3 text-left text-xs shadow-none",
-                      "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                      etiquetas.length > 0 && "border-accent bg-accent-soft text-accent",
+                      "hover:border-interactive-border h-8 min-w-0 flex-1 truncate rounded-lg border border-input bg-card px-3 text-left text-xs shadow-none transition-colors",
+                      "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden",
+                      etiquetas.length > 0 && FILTRO_ATIVO,
                     )}
                     aria-label={t("Filtrar por tag")}
                   >
@@ -518,9 +531,12 @@ export function InboxFilters({ value, onChange }: Props) {
                             a mesma que a lista mostra ao lado — mesma razão do
                             `border-accent`, que é o que faz o filtro ativo se
                             reconhecer de relance. */}
-                        <ChipDeEtiqueta tag={etiquetas[0]!} className="h-5 px-1.5 text-[11px]" />
+                        <ChipDeEtiqueta
+                          tag={etiquetas[0]!}
+                          className="h-5 rounded-md px-1.5 text-xs leading-4"
+                        />
                         {etiquetas.length > 1 && (
-                          <span className="tabular-nums text-[11px]">+{etiquetas.length - 1}</span>
+                          <span className="text-xs tabular-nums">+{etiquetas.length - 1}</span>
                         )}
                       </span>
                     ) : (
@@ -552,7 +568,7 @@ export function InboxFilters({ value, onChange }: Props) {
                       }}
                       placeholder={t("Buscar etiqueta")}
                       aria-label={t("Buscar etiqueta")}
-                      className="h-8 w-full rounded-md border border-border bg-background px-2 text-xs shadow-none focus-visible:border-border"
+                      className="h-8 w-full rounded-lg px-2.5 text-xs shadow-none"
                     />
                   </div>
                   <DropdownMenuItem
@@ -611,7 +627,7 @@ export function InboxFilters({ value, onChange }: Props) {
                       lista vazia é o caso "organização sem etiqueta", que o
                       seletor nem deveria estar desenhando. */}
                   {termoDaEtiqueta !== "" && opcoesVisiveis.length === 0 && (
-                    <p className="px-2 py-1.5 text-xs text-text-subtle">
+                    <p className="px-2.5 py-1.5 text-xs text-muted-foreground">
                       {t("Nenhuma etiqueta com esse texto")}
                     </p>
                   )}
@@ -665,7 +681,7 @@ export function InboxFilters({ value, onChange }: Props) {
               type="button"
               onClick={() => moveTab(-1)}
               aria-label={t("Aba anterior")}
-              className="flex w-4 shrink-0 items-center justify-center text-text-muted hover:text-text focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex w-4 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
             >
               <CaretLeft size={13} aria-hidden />
             </button>
@@ -684,11 +700,13 @@ export function InboxFilters({ value, onChange }: Props) {
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="shrink-0 gap-1 rounded-none border-b-2 border-transparent px-0 pb-2 pt-1 text-xs font-medium text-text-muted data-[state=active]:border-accent data-[state=active]:bg-transparent data-[state=active]:text-text data-[state=active]:shadow-none"
+                  // Aba `line` do Unnify (§10.7) no tamanho da coluna: rótulo `xs`/500
+                  // `muted-foreground`, ativa em `foreground` com sublinhado de 2px `primary`.
+                  className="shrink-0 gap-1 rounded-none border-b-2 border-transparent px-0 pt-1 pb-2 text-xs font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
                 >
                   {t(meta.label)}
                   {typeof count === "number" && count > 0 && (
-                    <span className="text-[11px] tabular-nums text-text-subtle">{count}</span>
+                    <span className="text-xs text-muted-foreground tabular-nums">{count}</span>
                   )}
                 </TabsTrigger>
               );
@@ -699,7 +717,7 @@ export function InboxFilters({ value, onChange }: Props) {
               type="button"
               onClick={() => moveTab(1)}
               aria-label={t("Próxima aba")}
-              className="flex w-4 shrink-0 items-center justify-center text-text-muted hover:text-text focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex w-4 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
             >
               <CaretRight size={13} aria-hidden />
             </button>

@@ -68,10 +68,10 @@ export function ZonaDePerigoDaOrganizacao({ displayName }: Props) {
   return (
     <Card
       data-testid="zona-de-perigo"
-      className="max-w-2xl space-y-4 border-destructive/40 p-6"
+      className="max-w-2xl space-y-4 border-danger-border p-6"
     >
       <div>
-        <h2 className="text-base font-semibold tracking-tight text-destructive">
+        <h2 className="text-danger-foreground text-base font-semibold tracking-tight">
           {t("Zona de perigo")}
         </h2>
         <p className="text-sm text-muted-foreground">

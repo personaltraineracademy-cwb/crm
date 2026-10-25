@@ -95,9 +95,9 @@ export function AtendimentosSemComanda({
   const escolhida = formas.find((f) => f.id === formaId);
 
   return (
-    <section className="rounded-md border border-border p-3">
+    <section className="rounded-lg border border-border p-3">
       <h2 className="mb-1 text-sm font-semibold">{t("Atendimentos sem comanda")}</h2>
-      <p className="mb-2 text-xs text-text-muted">
+      <p className="mb-2 text-xs text-muted-foreground">
         {t("Já aconteceram e ninguém faturou. Marque o que quer cobrar.")}
       </p>
 
@@ -116,13 +116,15 @@ export function AtendimentosSemComanda({
               />
               <span className="flex-1">
                 {p.service_name ?? p.title}
-                <span className="ml-2 text-xs text-text-muted">
+                <span className="ml-2 text-xs text-muted-foreground">
                   {new Date(p.starts_at).toLocaleDateString()}
                 </span>
               </span>
               <span className="tabular-nums">
                 {semPreco ? (
-                  <span className="text-xs text-danger">{t("sem preço no serviço")}</span>
+                  <span className="text-danger-foreground text-xs">
+                    {t("sem preço no serviço")}
+                  </span>
                 ) : (
                   formatCents(p.suggested_price_cents ?? 0, p.currency ?? moeda)
                 )}
@@ -139,7 +141,7 @@ export function AtendimentosSemComanda({
             value={formaId}
             data-testid="forma-do-lote"
             onChange={(e) => setFormaId(e.target.value)}
-            className="rounded-md border border-border bg-surface-elevated p-2 text-sm text-text"
+            className="rounded-lg border border-border bg-muted p-2 text-sm text-foreground"
           >
             <option value="">{t("Forma de pagamento")}</option>
             {formas.map((f) => (
@@ -170,7 +172,7 @@ export function AtendimentosSemComanda({
             ele evita um erro multiplicado por trinta.
           */}
           {escolhida && !escolhida.account_id ? (
-            <p className="w-full text-xs text-danger">
+            <p className="text-danger-foreground w-full text-xs">
               {t(
                 "Esta forma de pagamento ainda não tem conta de destino. Defina em Configurações › Financeiro.",
               )}

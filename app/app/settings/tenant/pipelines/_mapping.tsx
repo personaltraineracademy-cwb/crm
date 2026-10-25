@@ -205,14 +205,14 @@ export function AgentMappingSection({
 
   if (consulta.isError) {
     return (
-      <p className="text-sm text-text-muted" data-testid="mapeamento-erro-leitura">
+      <p className="text-sm text-muted-foreground" data-testid="mapeamento-erro-leitura">
         {t("Não foi possível carregar as etapas deste funil agora. Recarregue a página.")}
       </p>
     );
   }
   if (!data || !rascunho) {
     return (
-      <p className="text-sm text-text-muted" data-testid="mapeamento-carregando">
+      <p className="text-sm text-muted-foreground" data-testid="mapeamento-carregando">
         {t("Carregando as etapas deste funil…")}
       </p>
     );
@@ -255,7 +255,7 @@ export function AgentMappingSection({
             com o mesmo nome, na mesma tela, fazem o dono da clínica procurar um
             segundo funil que não existe. O título diz o que a seção FAZ. */}
         <h3 className="text-sm font-semibold">{t("Para onde o card vai em cada passo")}</h3>
-        <p className="max-w-3xl text-sm leading-relaxed text-text-muted">
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           {t(
             "Quando o agente avança no atendimento, o card do cliente pode andar sozinho no seu funil. Escolha para qual etapa ele vai em cada momento. Deixar em «não mover» é uma escolha válida — o card fica onde está e o agente segue trabalhando.",
           )}
@@ -277,16 +277,19 @@ export function AgentMappingSection({
             >
               <div className="min-w-0 sm:w-64">
                 <p className="text-sm font-medium">{t(ROTULO_DO_PASSO[passo])}</p>
-                <p className="text-xs text-text-muted">{t(QUANDO_ACONTECE[passo])}</p>
+                <p className="text-xs text-muted-foreground">{t(QUANDO_ACONTECE[passo])}</p>
               </div>
               <ArrowRight
                 size={16}
-                className="hidden shrink-0 text-text-muted sm:block"
+                className="hidden shrink-0 text-muted-foreground sm:block"
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
                 {opcoes.length === 0 ? (
-                  <p className="text-xs leading-relaxed text-text-muted" data-testid={`vazio-${passo}`}>
+                  <p
+                    className="text-xs leading-relaxed text-muted-foreground"
+                    data-testid={`vazio-${passo}`}
+                  >
                     {motivoDaListaVazia(passo, etapas, t)}
                     {/* O ciclo se fecha aqui: o mapeamento APONTA a lacuna, a
                         seção de etapas RESOLVE. Sem o link, o texto acima é um
@@ -336,10 +339,10 @@ export function AgentMappingSection({
 
       {erro && (
         <Card
-          className="flex items-start gap-3 border-warning bg-warning-bg p-4"
+          className="border-warning-border bg-warning-soft flex items-start gap-3 p-4"
           data-testid="mapeamento-erro"
         >
-          <Warning size={18} className="mt-0.5 shrink-0 text-warning-fg" aria-hidden />
+          <Warning size={18} className="text-warning-foreground mt-0.5 shrink-0" aria-hidden />
           <p className="text-sm leading-relaxed">
             {erro}{" "}
             {t(

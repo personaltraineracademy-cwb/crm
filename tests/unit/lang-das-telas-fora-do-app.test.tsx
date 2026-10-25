@@ -45,7 +45,13 @@ vi.mock("@/lib/branding/saida", () => ({
     origens: { nome: "padrao", cor: "#5b5bd6" },
   }),
 }));
-vi.mock("@/lib/branding", () => ({ branding: () => ({ name: "Produto" }) }));
+// `marcaEhADoProduto` é lido pela moldura das telas de acesso
+// (`components/auth/TelaDeAcesso.tsx`), que o convite e o "configure sua
+// organização" também usam.
+vi.mock("@/lib/branding", () => ({
+  branding: () => ({ name: "Produto" }),
+  marcaEhADoProduto: () => false,
+}));
 vi.mock("@/lib/auth/rate-limit", () => ({
   authRateLimited: async () => false,
   AUTH_LIMITS: { invite_accept: {} },

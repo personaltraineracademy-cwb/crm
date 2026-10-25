@@ -156,7 +156,7 @@ function PessoasRelacionadas({ leadId }: { leadId: string | null }) {
   const pessoas = data?.data ?? [];
   return (
     <div className="mt-3 space-y-1" data-testid="pessoas-relacionadas">
-      <p className="text-[11px] font-medium tracking-wide text-text-muted uppercase">
+      <p className="text-xs font-medium text-text-muted">
         {t("Pessoas relacionadas")}
       </p>
       {pessoas.length === 0 ? (
@@ -197,7 +197,7 @@ function RemoverParticipante({ leadId, pessoa }: { leadId: string; pessoa: Conta
       type="button"
       size="sm"
       variant="ghost"
-      className="ml-auto h-6 px-2 text-[11px] text-text-muted hover:text-destructive"
+      className="ml-auto h-6 px-2 text-xs text-text-muted hover:text-destructive"
       disabled={remover.isPending}
       aria-label={`${t("Remover")} ${alvo}`.trim()}
       onClick={() =>
@@ -297,9 +297,9 @@ function FormularioDeParticipante({ leadId, onFechar }: { leadId: string; onFech
           onChange={(e) => setBusca(e.target.value)}
         />
       </div>
-      {isLoading && <p className="text-[11px] text-text-muted">{t("Carregando…")}</p>}
+      {isLoading && <p className="text-xs text-text-muted">{t("Carregando…")}</p>}
       {!isLoading && contatos.length === 0 && (
-        <p className="text-[11px] text-text-muted">{t("Nenhum contato encontrado.")}</p>
+        <p className="text-xs text-text-muted">{t("Nenhum contato encontrado.")}</p>
       )}
       <ul className="space-y-1">
         {contatos.map((contato) => (
@@ -309,7 +309,7 @@ function FormularioDeParticipante({ leadId, onFechar }: { leadId: string; onFech
               type="button"
               size="sm"
               variant="ghost"
-              className="ml-auto h-6 px-2 text-[11px]"
+              className="ml-auto h-6 px-2 text-xs"
               disabled={adicionar.isPending}
               onClick={() => incluir(contato.id)}
             >
@@ -322,7 +322,7 @@ function FormularioDeParticipante({ leadId, onFechar }: { leadId: string; onFech
         type="button"
         size="sm"
         variant="ghost"
-        className="h-6 px-2 text-[11px] text-text-muted"
+        className="h-6 px-2 text-xs text-text-muted"
         onClick={onFechar}
       >
         {t("Cancelar")}
@@ -454,7 +454,7 @@ function FormularioDeLinks({ contato, pipelineId }: { contato: Contact; pipeline
                   </a>
                 )}
               </div>
-              {erro && <p className="text-[11px] text-destructive">{t("Endereço inválido.")}</p>}
+              {erro && <p className="text-xs text-destructive">{t("Endereço inválido.")}</p>}
             </div>
           );
         })}

@@ -8,6 +8,7 @@ import { traduzir } from "@/lib/i18n/dicionario";
 import { lerConteudoDoMaterial } from "@/lib/ai/knowledge/conteudo-do-material";
 import { TIPO_DE_FONTE_POR_ID } from "@/lib/ai/rag/tipos-de-fonte";
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-6">
         <VoltarAoAcervo rotulo={t("Voltar ao acervo")} />
-        <p className="text-sm text-error-fg" data-testid="material-erro">
+        <p className="text-danger-foreground text-sm" data-testid="material-erro">
           {t("Não consegui ler este material agora.")}
         </p>
       </div>
@@ -64,13 +65,13 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
-      <header className="space-y-2">
+      <div className="space-y-2">
         <VoltarAoAcervo rotulo={t("Voltar ao acervo")} />
-        <h1 className="text-2xl font-semibold tracking-tight" data-testid="material-nome">
-          {material.nome}
-        </h1>
-        <p className="text-sm text-text-muted">{meta ? t(meta.rotulo) : material.tipo}</p>
-      </header>
+        <PageHeader
+          title={<span data-testid="material-nome">{material.nome}</span>}
+          description={meta ? t(meta.rotulo) : material.tipo}
+        />
+      </div>
 
       <div className="space-y-4" data-testid="material-conteudo">
         {material.itens ? (
@@ -78,17 +79,13 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
             {material.itens.map((item, i) => (
               <li
                 key={`${i + 1}-${item.question}`}
-                className="rounded-lg border border-border bg-surface p-4"
+                className="rounded-xl border border-border bg-card p-4"
               >
-                <p className="text-xs font-medium tracking-wide text-text-muted uppercase">
-                  {t("Pergunta")}
-                </p>
+                <p className="text-xs font-medium text-muted-foreground">{t("Pergunta")}</p>
                 <p className="mt-1 font-medium" data-testid={`material-pergunta-${i}`}>
                   {item.question}
                 </p>
-                <p className="mt-3 text-xs font-medium tracking-wide text-text-muted uppercase">
-                  {t("Resposta")}
-                </p>
+                <p className="mt-3 text-xs font-medium text-muted-foreground">{t("Resposta")}</p>
                 <p
                   className="mt-1 text-sm break-words whitespace-pre-wrap"
                   data-testid={`material-resposta-${i}`}
@@ -103,7 +100,7 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
           // as quebras de linha são do material, e reformatá-las mudaria o que
           // a pessoa guardou.
           <div
-            className="rounded-lg border border-border bg-surface p-4 text-sm break-words whitespace-pre-wrap"
+            className="rounded-xl border border-border bg-card p-4 text-sm break-words whitespace-pre-wrap"
             data-testid="material-texto"
           >
             {material.conteudo}
@@ -113,13 +110,13 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
         {/* Frase vinda do servidor (arquivo que não pôde ser lido, material sem
             nada guardado): dado, não texto de tela — por isso não passa por t(). */}
         {material.motivo ? (
-          <p className="text-sm text-text-muted" data-testid="material-motivo">
+          <p className="text-sm text-muted-foreground" data-testid="material-motivo">
             {material.motivo}
           </p>
         ) : null}
 
         {material.truncado ? (
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t("Mostrando os primeiros trechos de")} {material.total}.{" "}
             {t(
               "Uma tela não folheia mil pedaços — o restante está no acervo e o agente alcança todos.",
@@ -136,7 +133,7 @@ function VoltarAoAcervo({ rotulo }: { rotulo: string }) {
   return (
     <Link
       href="/app/ai/knowledge/sources"
-      className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-foreground focus-visible:underline"
+      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground focus-visible:underline"
     >
       <ArrowLeft className="h-4 w-4" aria-hidden />
       {rotulo}

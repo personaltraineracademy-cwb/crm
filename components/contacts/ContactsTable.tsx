@@ -12,7 +12,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatRelative, isToday, isYesterday } from "date-fns";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api/client";
-import { CaretDown, CaretUp, ChatCircle, Check, PencilSimple, Trash } from "@/lib/ui/icons";
+import { CaretDown, CaretUp, ChatCircle, PencilSimple, Trash } from "@/lib/ui/icons";
 import {
   Table,
   TableBody,
@@ -24,6 +24,7 @@ import {
 import { ChipDeEtiqueta } from "@/components/tags/ChipDeEtiqueta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -206,10 +207,18 @@ export function ContactsTable({
   // mesmo nas duas larguras). O telefone e a última atividade alinham sob o
   // nome, que começa depois da caixa de seleção quando ela existe.
   const recuoSobONome = onAlternarSelecao ? "max-md:pl-7.5" : "max-md:pl-0";
+  // A coluna de identidade (o nome) não sai da tela quando a tabela rola na
+  // horizontal (DS §11.4). Presa depois da caixa de seleção quando ela existe.
+  // A cabeça leva o mesmo `muted/40` do cabeçalho, já composto sobre o cartão,
+  // porque célula presa precisa de fundo opaco.
+  const presaNaEsquerda = onAlternarSelecao
+    ? "md:sticky md:left-10 md:z-10"
+    : "md:sticky md:left-0 md:z-10";
+  const fundoDaCabecaPresa = "md:bg-[color-mix(in_oklab,var(--color-muted)_40%,var(--color-card))]";
 
   return (
     <>
-    <Table className="max-md:block">
+    <Table className="max-md:block md:min-w-[960px]">
       <TableHeader className="max-md:hidden">
         <TableRow>
           {/*
@@ -218,27 +227,19 @@ export function ContactsTable({
             — quem não liga o lote continua com a tabela de sempre.
           */}
           {onAlternarSelecao && (
-            <TableHead className="w-[40px]">
-              <button
-                type="button"
-                role="checkbox"
-                aria-checked={
-                  selecionados ? contacts.every((c) => selecionados.has(c.id)) : false
-                }
+            <TableHead className={`w-10 pr-0 md:sticky md:left-0 md:z-10 ${fundoDaCabecaPresa}`}>
+              <Checkbox
+                checked={selecionados ? contacts.every((c) => selecionados.has(c.id)) : false}
+                onCheckedChange={() => onSelecionarTodosVisiveis?.()}
                 aria-label={t("Selecionar todos os contatos visíveis")}
                 title={t("Selecionar todas")}
                 data-testid="selecionar-todos-contatos"
-                onClick={onSelecionarTodosVisiveis}
-                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-muted-foreground bg-background transition-colors hover:bg-surface-elevated focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                {selecionados && contacts.every((c) => selecionados.has(c.id)) && (
-                  <Check size={12} weight="bold" aria-hidden />
-                )}
-              </button>
+              />
             </TableHead>
           )}
           <SortableHead
             label={t("Nome")}
+            className={`min-w-56 ${presaNaEsquerda} ${fundoDaCabecaPresa}`}
             column="display_name"
             orderBy={orderBy}
             orderDir={orderDir}
@@ -279,21 +280,16 @@ export function ContactsTable({
             className="cursor-pointer max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-x-3.5 max-md:px-4 max-md:py-2"
           >
             {onAlternarSelecao && (
-              <TableCell className="max-md:p-0">
-                <button
-                  type="button"
-                  role="checkbox"
-                  aria-checked={selecionados?.has(c.id) ?? false}
+              <TableCell className="pr-0 max-md:p-0 md:sticky md:left-0 md:z-10 md:bg-card">
+                <Checkbox
+                  checked={selecionados?.has(c.id) ?? false}
+                  onCheckedChange={() => onAlternarSelecao(c.id)}
                   aria-label={`${t("Selecionar contato")} ${displayName(c, t)}`}
                   data-testid={`selecionar-contato-${c.id}`}
-                  onClick={() => onAlternarSelecao(c.id)}
-                  className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-muted-foreground bg-background transition-colors hover:bg-surface-elevated focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent pointer-coarse:before:absolute pointer-coarse:before:-inset-3.5"
-                >
-                  {selecionados?.has(c.id) && <Check size={12} weight="bold" aria-hidden />}
-                </button>
+                />
               </TableCell>
             )}
-            <TableCell className="font-medium max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:wrap-anywhere">
+            <TableCell className={`font-medium max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:wrap-anywhere md:bg-card ${presaNaEsquerda}`}>
               <Link
                 href={`/app/contacts/${c.id}`}
                 className="hover:underline max-md:flex max-md:min-h-11 max-md:items-center"
@@ -319,7 +315,7 @@ export function ContactsTable({
               </div>
             </TableCell>
             <TableCell
-              className={`text-muted-foreground text-sm max-md:py-0 max-md:pr-0 max-md:text-xs ${recuoSobONome}`}
+              className={`text-muted-foreground text-sm tabular-nums max-md:py-0 max-md:pr-0 max-md:text-xs ${recuoSobONome}`}
             >
               {c.last_activity_at
                 ? formatUltimaAtividade(c.last_activity_at, localeDaData)
@@ -396,7 +392,7 @@ export function ContactsTable({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-muted-foreground hover:text-error-fg md:h-8 md:w-8"
+                  className="text-muted-foreground hover:text-danger-foreground md:h-8 md:w-8"
                   title={t("Excluir contato")}
                   aria-label={`${t("Excluir contato")} ${displayName(c, t)}`}
                   onClick={() => setAlvo(c)}
@@ -425,7 +421,7 @@ export function ContactsTable({
               Agenda — é lá que o compromisso é cancelado.
             */}
             {avisoDeVinculo ? (
-              <span className="mt-2 block text-sm font-medium text-warning-fg">
+              <span className="mt-2 block text-sm font-medium text-warning-foreground">
                 {avisoDeVinculo}{" "}
                 <Link href="/app/agenda" className="underline">
                   {t("Abrir Agenda")}
@@ -437,7 +433,7 @@ export function ContactsTable({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={del.isPending}>{t("Cancelar")}</AlertDialogCancel>
           <Button
-            variant="destructive"
+            variant="destructive-solid"
             onClick={() => void confirmarExclusao()}
             disabled={del.isPending}
           >

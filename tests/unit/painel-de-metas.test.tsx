@@ -58,14 +58,16 @@ describe("MetaDoMesPanel", () => {
     expect(container.querySelector('[data-meta="realizado"]')?.textContent).toBe("3");
     expect(container.querySelector('[data-meta="alvo"]')?.textContent).toBe("10");
     expect(container.querySelector('[data-meta="percentual"]')?.textContent).toBe("30%");
-    expect(container.querySelector('[data-meta="falta"]')?.textContent).toBe("7");
+    // "Faltam 7 para a meta" é a linha de status da meta no `StatCard` (DS §10.11).
+    expect(container.textContent).toContain("Faltam 7 para a meta");
     expect(container.textContent).not.toContain("NaN");
     expect(container.textContent).toContain("09/2026");
   });
 
   it("a barra desenha o percentual — o mesmo desenho do card de funil", () => {
     const { container } = renderizar();
-    const barra = container.querySelector('[data-meta="barra"]') as HTMLElement | null;
+    // A barra é a da meta do `StatCard`: um `progressbar` com o preenchimento dentro.
+    const barra = container.querySelector('[role="progressbar"] > div') as HTMLElement | null;
     expect(barra).not.toBeNull();
     expect(barra!.style.width).toBe("30%");
   });
@@ -75,9 +77,9 @@ describe("MetaDoMesPanel", () => {
       metas: [{ ...EMPRESA, alvo: 2, realizado: 3, percentual: 150, falta: 0, atingida: true }],
     });
     expect(container.querySelector('[data-meta="percentual"]')?.textContent).toBe("150%");
-    expect(container.querySelector('[data-meta="falta"]')).toBeNull();
+    expect(container.textContent).not.toContain("Faltam");
     expect(container.textContent).toContain("Meta atingida.");
-    const barra = container.querySelector('[data-meta="barra"]') as HTMLElement | null;
+    const barra = container.querySelector('[role="progressbar"] > div') as HTMLElement | null;
     expect(barra!.style.width).toBe("100%");
   });
 

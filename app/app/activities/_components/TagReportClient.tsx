@@ -80,7 +80,7 @@ export function TagReportClient() {
     return (
       <div className="flex flex-col gap-6">
         {seletor}
-        <p className="text-sm text-destructive">{t("Erro ao carregar o relatório.")}</p>
+        <p className="text-danger-foreground text-sm">{t("Erro ao carregar o relatório.")}</p>
       </div>
     );
   }
@@ -154,7 +154,7 @@ export function TagReportClient() {
                     <Link
                       href={`/app/inbox?filter=all&tag=${encodeURIComponent(linha.etiqueta)}`}
                       data-testid="link-de-etiqueta"
-                      className="text-accent underline underline-offset-2 max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                      className="text-primary underline underline-offset-2 max-md:inline-flex max-md:min-h-11 max-md:items-center"
                     >
                       {linha.etiqueta}
                     </Link>
@@ -175,7 +175,7 @@ export function TagReportClient() {
                     <div className="flex items-center gap-2">
                       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                         <div
-                          className="h-full rounded-full bg-accent"
+                          className="h-full rounded-full bg-primary"
                           style={{ width: `${linha.fatia}%` }}
                         />
                       </div>

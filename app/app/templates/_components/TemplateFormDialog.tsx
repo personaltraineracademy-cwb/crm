@@ -23,6 +23,7 @@ import { apiClient } from "@/lib/api/client";
 import { showApiError } from "@/components/feedback/ApiErrorToast";
 import type { MessageTemplate } from "@/hooks/inbox/useMessageTemplates";
 import { TIPOS_DE_RECURSO, type TipoDeRecurso } from "@/lib/inbox/recursos";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useUploadTemplateMedia } from "@/hooks/templates/useUploadTemplateMedia";
 import {
   MAXIMO_DE_MIDIAS,
@@ -326,19 +327,17 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t("Tipo de resposta rápida")}</Label>
-            <div className="flex gap-1">
-              {TIPOS_DE_RECURSO.map((opcao) => (
-                <Button
-                  key={opcao}
-                  type="button"
-                  variant={tipo === opcao ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setTipo(opcao)}
-                >
-                  {opcao === "texto" ? t("Texto") : t("Áudio")}
-                </Button>
-              ))}
-            </div>
+            {/* Alternar o tipo é trocar de visão dentro do formulário: controle
+                segmentado (Unnify §10.8), não dois botões com um primário. */}
+            <SegmentedControl<TipoDeRecurso>
+              value={tipo}
+              onValueChange={setTipo}
+              aria-label={t("Tipo de resposta rápida")}
+              options={TIPOS_DE_RECURSO.map((opcao) => ({
+                value: opcao,
+                label: opcao === "texto" ? t("Texto") : t("Áudio"),
+              }))}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="tpl-title">{t("Título")}</Label>
@@ -425,7 +424,7 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
                       <img
                         src={urlDaGravada(midia)}
                         alt={t("Imagem da resposta rápida")}
-                        className="size-16 rounded-md border border-border object-cover"
+                        className="size-16 rounded-lg border border-border object-cover"
                       />
                       <button
                         type="button"
@@ -442,7 +441,7 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
                       <img
                         src={urlsNovas[i]}
                         alt={t("Prévia da imagem")}
-                        className="size-16 rounded-md border border-border object-cover"
+                        className="size-16 rounded-lg border border-border object-cover"
                       />
                       <button
                         type="button"
@@ -472,12 +471,12 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
                 />
                 <Label
                   htmlFor="tpl-midias"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted"
+                  className="hover:border-interactive-border hover:bg-interactive hover:text-interactive-foreground inline-flex h-8 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-medium transition-colors"
                 >
                   {t("Adicionar imagem")}
                 </Label>
                 {estourou && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-danger-foreground text-xs">
                     {t("Cada resposta rápida tem no máximo 5 imagens.")}
                   </p>
                 )}

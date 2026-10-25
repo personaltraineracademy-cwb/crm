@@ -951,7 +951,7 @@ export function AgentForm(props: Props) {
               <p className="text-xs text-destructive">{validation.credential_id}</p>
             ) : null}
             {cred && credSt && credSt !== "validated" ? (
-              <p className="text-xs text-amber-600 dark:text-amber-400">
+              <p className="text-warning-foreground text-xs">
                 {t("Credencial selecionada está com status")} {t(STATUS_LABEL[credSt])}
                 {t(". Publish bloqueado até validar.")}
               </p>
@@ -962,7 +962,7 @@ export function AgentForm(props: Props) {
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Por qual número ele atende")}</h3>
             {props.routerMembership && (
-              <div className="flex items-start gap-2 rounded-md bg-accent-soft p-3 text-xs text-text-muted">
+              <div className="bg-interactive flex items-start gap-2 rounded-lg p-3 text-xs text-muted-foreground">
                 <Info className="mt-0.5 shrink-0" aria-hidden />
                 <p>
                   {t("Este agente é acionado pelo roteador")}{" "}

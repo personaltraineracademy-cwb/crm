@@ -95,7 +95,7 @@ export function FormularioDeComportamento({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="orcamento-de-ia" className="text-base">
               {t("Proteção de gasto de IA")}
@@ -122,7 +122,7 @@ export function FormularioDeComportamento({
           </Select>
         </div>
 
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="assinatura-do-webhook" className="text-base">
               {t("Exigir assinatura nas entregas do canal")}
@@ -177,7 +177,7 @@ export function FormularioDeComportamento({
           />
         </div>
 
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="divulgacao-de-pagamento" className="text-base">
               {t("Divulgação de pagamento no atendimento")}
@@ -209,7 +209,7 @@ export function FormularioDeComportamento({
           </Select>
         </div>
 
-        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4">
           <div className="space-y-1">
             <Label htmlFor="promessa-semantica" className="text-base">
               {t("Conferência de promessa antes de enviar")}
@@ -230,7 +230,7 @@ export function FormularioDeComportamento({
         </div>
 
         {erro && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-danger-foreground text-sm" role="alert">
             {erro}
           </p>
         )}
@@ -453,7 +453,10 @@ export function FormularioDeModulos({
       </CardHeader>
       <CardContent className="space-y-4">
         {MODULOS_NA_TELA.filter((m) => !escondidos.includes(m.modulo)).map((m) => (
-          <div key={m.modulo} className="flex items-start justify-between gap-4 rounded-lg border p-4">
+          <div
+            key={m.modulo}
+            className="flex items-start justify-between gap-4 rounded-lg bg-muted/40 p-4"
+          >
             <div className="space-y-1">
               <Label htmlFor={m.id} className="text-base">
                 {t(m.rotulo)}
@@ -471,7 +474,7 @@ export function FormularioDeModulos({
                 painelEm={m.painelEm}
               />
               {m.modulo === "cobranca" && estado.has("cobranca") && suspensasPorCobranca !== 0 && (
-                <p className="text-sm text-warning-fg">
+                <p className="text-warning-foreground text-sm">
                   {suspensasPorCobranca === null
                     ? t("Não deu para contar as empresas suspensas por falta de pagamento. Desligar libera todas.")
                     : `${t("Empresas suspensas por falta de pagamento que serão liberadas ao desligar:")} ${suspensasPorCobranca}`}
@@ -489,7 +492,7 @@ export function FormularioDeModulos({
         ))}
 
         {erro && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-danger-foreground text-sm" role="alert">
             {erro}
           </p>
         )}

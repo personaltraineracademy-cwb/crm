@@ -14,6 +14,7 @@ import {
 } from "recharts";
 
 import { Card } from "@/components/ui/card";
+import { StatCard as CartaoDeMetrica } from "@/components/ui/stat-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,6 +23,13 @@ import { EvolutionTimeline } from "@/components/ai/EvolutionTimeline";
 import { useEvolution } from "@/hooks/ai/useEvolution";
 import type { EvolutionPayload } from "@/lib/ai/evolution/aggregate";
 import { useT } from "@/hooks/i18n/useT";
+import {
+  COR_DA_SERIE,
+  PROPS_DA_DICA,
+  PROPS_DA_GRADE,
+  PROPS_DO_EIXO,
+  propsDaLinha,
+} from "@/components/ai/grafico/tema-do-grafico";
 
 /**
  * O painel responde UMA pergunta do dono do negócio: "o que meu agente aprendeu
@@ -150,7 +158,7 @@ function Bloco({
     <section className="flex flex-col gap-3" data-testid={testId}>
       <div>
         <h2 className="text-lg font-semibold tracking-tight">{titulo}</h2>
-        <p className="text-sm text-text-muted">{descricao}</p>
+        <p className="text-sm text-muted-foreground">{descricao}</p>
       </div>
       {children}
     </section>
@@ -167,13 +175,9 @@ function StatCard({
   /** O que o número quer dizer. Nunca opcional: número sozinho não informa. */
   significa: string;
 }) {
-  return (
-    <Card className="flex flex-col p-4">
-      <p className="text-xs text-text-muted">{rotulo}</p>
-      <p className="mt-1 text-2xl font-semibold tracking-tight">{valor}</p>
-      <p className="mt-2 text-xs leading-relaxed text-text-muted">{significa}</p>
-    </Card>
-  );
+  // O cartão de métrica do Unnify (§10.11): rótulo, valor grande e o que o
+  // número quer dizer como contexto.
+  return <CartaoDeMetrica label={rotulo} value={valor} context={significa} />;
 }
 
 /**
@@ -191,14 +195,14 @@ function Vazio({
 }) {
   return (
     <div className="flex flex-col items-start gap-2 p-1">
-      <p className="text-sm leading-relaxed text-text-muted">{texto}</p>
+      <p className="text-sm leading-relaxed text-muted-foreground">{texto}</p>
       {acoes && acoes.length > 0 && (
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {acoes.map((a) => (
             <Link
               key={a.href}
               href={a.href}
-              className="text-sm font-medium text-accent underline underline-offset-4"
+              className="text-sm font-medium text-primary underline underline-offset-4"
             >
               {a.label}
             </Link>
@@ -227,47 +231,41 @@ function GraficoDiario({
   const temDado = dados.some((p) => p.value > 0);
   const total = dados.reduce((acc, p) => acc + p.value, 0);
   return (
-    <Card className="p-4">
-      <h3 className="text-sm font-medium">{titulo}</h3>
-      <p className="mt-1 text-xs leading-relaxed text-text-muted">{significa}</p>
+    <Card className="p-4 sm:p-5">
+      <h3 className="text-base font-semibold text-foreground">{titulo}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{significa}</p>
       {!temDado ? (
         <div className="mt-4">{vazio}</div>
       ) : (
         <>
-          <p className="mt-3 text-2xl font-semibold tracking-tight">
+          <p className="mt-3 text-3xl font-semibold tracking-tight tabular-nums">
             {num(total)}{" "}
-            <span className="text-xs font-normal text-text-muted">{t("no período")}</span>
+            <span className="text-xs font-normal tracking-normal text-muted-foreground">
+              {t("no período")}
+            </span>
           </p>
           <div className="mt-2">
             <ResponsiveContainer width="100%" height={160}>
               <LineChart data={dados} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                <CartesianGrid {...PROPS_DA_GRADE} />
                 <XAxis
                   dataKey="day"
                   tickFormatter={(v) => diaCurto(v, tagDoIdioma)}
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
+                  {...PROPS_DO_EIXO}
                   interval="preserveStartEnd"
+                  minTickGap={24}
                 />
                 <YAxis
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
+                  {...PROPS_DO_EIXO}
                   allowDecimals={false}
                   width={36}
                 />
                 <Tooltip
+                  {...PROPS_DA_DICA}
                   formatter={(v) => [num(Number(v)), t("no dia")]}
                   labelFormatter={(l) => diaCurto(String(l), tagDoIdioma)}
-                  contentStyle={{
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface)",
-                  }}
                 />
-                <Line type="monotone" dataKey="value" stroke={cor} strokeWidth={2} dot={false} />
+                <Line {...propsDaLinha(cor)} dataKey="value" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -293,9 +291,9 @@ function Ranking({
     .slice(0, 8);
   const maior = linhas[0]?.[1] ?? 0;
   return (
-    <Card className="p-4">
-      <h3 className="text-sm font-medium">{titulo}</h3>
-      <p className="mt-1 text-xs leading-relaxed text-text-muted">{significa}</p>
+    <Card className="p-4 sm:p-5">
+      <h3 className="text-base font-semibold text-foreground">{titulo}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{significa}</p>
       {linhas.length === 0 ? (
         <div className="mt-4">{vazio}</div>
       ) : (
@@ -306,13 +304,13 @@ function Ranking({
                 <span className="truncate text-sm" title={nome}>
                   {nome}
                 </span>
-                <span className="shrink-0 text-sm tabular-nums text-text-muted">
+                <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
                   {num(qtd)}
                 </span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-surface-elevated">
+              <div className="h-1.5 w-full rounded-full bg-primary/15">
                 <div
-                  className="h-1.5 rounded-full bg-accent"
+                  className="bg-chart-1 h-1.5 rounded-full"
                   style={{ width: `${maior > 0 ? Math.max(4, (qtd / maior) * 100) : 0}%` }}
                 />
               </div>
@@ -327,13 +325,9 @@ function Ranking({
 function Carregando() {
   return (
     <div className="flex flex-col gap-4" data-testid="evolution-carregando">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="p-4">
-            <Skeleton className="h-3 w-28" />
-            <Skeleton className="mt-2 h-8 w-16" />
-            <Skeleton className="mt-3 h-3 w-full" />
-          </Card>
+          <CartaoDeMetrica key={i} label="" value="" loading />
         ))}
       </div>
       <Skeleton className="h-64 w-full" />
@@ -352,7 +346,7 @@ export function EvolutionClient({ defaultRange }: { defaultRange: { from: string
       <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:gap-4">
         <div className="flex-1">
           <p className="text-sm font-medium">{t("Período analisado")}</p>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-muted-foreground">
             {t(
               "Todos os números desta página são só deste intervalo. Mude as datas para comparar um mês com o outro.",
             )}
@@ -360,7 +354,7 @@ export function EvolutionClient({ defaultRange }: { defaultRange: { from: string
         </div>
         <div className="flex gap-3">
           <div className="space-y-1">
-            <Label htmlFor="evolution-de" className="text-xs text-text-muted">
+            <Label htmlFor="evolution-de" className="text-xs text-muted-foreground">
               {t("De")}
             </Label>
             <Input
@@ -372,7 +366,7 @@ export function EvolutionClient({ defaultRange }: { defaultRange: { from: string
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="evolution-ate" className="text-xs text-text-muted">
+            <Label htmlFor="evolution-ate" className="text-xs text-muted-foreground">
               {t("Até")}
             </Label>
             <Input
@@ -419,7 +413,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
         titulo={t("O que seu agente aprendeu")}
         descricao={t("Tudo o que entrou na cabeça dele neste período, e de onde veio.")}
       >
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4">
           <StatCard
             rotulo={t("Regras que você ensinou")}
             valor={num(learned.memory_entries)}
@@ -444,7 +438,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
         </div>
         <Card className="p-4">
           <h3 className="text-sm font-medium">{t("Linha do tempo do aprendizado")}</h3>
-          <p className="mt-1 text-xs text-text-muted">
+          <p className="mt-1 text-xs text-muted-foreground">
             {t("Cada linha é uma coisa nova que o agente passou a saber, na ordem em que aconteceu.")}
           </p>
           <div className="mt-3">
@@ -475,14 +469,14 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
         titulo={t("O que ele fez")}
         descricao={t("O trabalho do dia a dia: quantas vezes ele usou cada recurso que você deu a ele.")}
       >
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           <GraficoDiario
             titulo={t("Habilidades usadas")}
             significa={t(
               "Quantas vezes o agente puxou uma habilidade especializada para dar conta da conversa.",
             )}
             dados={activity.series.skill_activations}
-            cor="hsl(262 83% 58%)"
+            cor={COR_DA_SERIE.principal}
             vazio={
               <Vazio
                 texto={t(
@@ -498,7 +492,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
               "Quantas vezes o sistema leu o que o cliente queria e escolheu qual atendimento devia responder.",
             )}
             dados={activity.series.router_decisions}
-            cor="hsl(199 89% 48%)"
+            cor={COR_DA_SERIE.principal}
             vazio={
               <Vazio
                 texto={t(
@@ -514,7 +508,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
               "Quantas vezes o agente foi procurar a resposta no que você escreveu, em vez de improvisar.",
             )}
             dados={activity.series.knowledge_searches}
-            cor="hsl(142 76% 36%)"
+            cor={COR_DA_SERIE.principal}
             vazio={
               <Vazio
                 texto={t(
@@ -534,7 +528,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
             "Quantas vezes alguém da equipe perguntou ao acervo pela caixa ao lado da conversa. Não entra nos números do agente.",
           )}
           dados={activity.series.knowledge_searches_equipe}
-          cor="hsl(32 95% 44%)"
+          cor={COR_DA_SERIE.principal}
           vazio={
             <Vazio
               texto={t("Ninguém da equipe consultou o acervo pela conversa neste período.")}
@@ -542,7 +536,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
             />
           }
         />
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <Ranking
             titulo={t("Habilidades mais usadas")}
             significa={t("Onde o agente mais precisou de conhecimento especializado.")}
@@ -577,7 +571,7 @@ function Conteudo({ payload }: { payload: NonNullable<ReturnType<typeof useEvolu
         titulo={t("O que mudou no resultado")}
         descricao={descricaoResultado(outcome, t)}
       >
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-4">
           <StatCard
             rotulo={t("Negócios fechados pelo agente")}
             valor={num(outcome.won)}

@@ -42,7 +42,7 @@ export function ScriptDoSite({
       ? `<script defer src="${escapeAttribute(origin)}/rastreio/v1.js" data-org="${escapeAttribute(slug)}" ${attributes.join(" ")} referrerpolicy="no-referrer"></script>`
       : "";
   return (
-    <section className="flex flex-col gap-3 rounded-md border p-4" data-testid="script-do-site">
+    <section className="flex flex-col gap-3 rounded-lg border p-4" data-testid="script-do-site">
       <h2 className="text-lg font-semibold">{t("Script para instalar no site")}</h2>
       <p className="text-sm text-muted-foreground">
         {t(

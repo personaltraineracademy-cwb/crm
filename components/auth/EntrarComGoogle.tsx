@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { useT } from "@/hooks/i18n/useT";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { signInWithGoogle } from "@/app/actions/auth/signInWithGoogle";
 
@@ -43,20 +44,18 @@ export function EntrarComGoogle({ next, convite }: { next?: string; convite?: st
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="h-px flex-1 bg-border" />
-        <span className="text-xs uppercase tracking-wide text-muted-foreground">{t("ou")}</span>
+        <span className="text-xs text-muted-foreground">{t("ou")}</span>
         <span className="h-px flex-1 bg-border" />
       </div>
       {erro && (
-        <div
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          role="alert"
-        >
+        <Alert variant="destructive">
           {erro}
-        </div>
+        </Alert>
       )}
       <Button
         type="button"
         variant="outline"
+        size="lg"
         className="w-full"
         disabled={isPending}
         onClick={onClick}

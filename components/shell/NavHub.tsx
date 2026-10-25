@@ -88,10 +88,16 @@ export function NavHub({
   const secoes = hubSections(group, isPlatformAdmin, role, interfaceSettings, modulosLigados, capacidadesLigadas);
 
   return (
-    <div className="flex h-full flex-col gap-8 p-6">
+    // O painel da tela inicial do Work (DS §10.9, §10.10 e §11.10): cabeçalho
+    // de página (título 24/600, descrição 14 muted), seções com título em frase
+    // normal e uma grade que ganha colunas com a janela. Sem padding próprio: a
+    // margem lateral é o gutter do `<main>` da casca, o mesmo de toda tela.
+    <div className="flex h-full flex-col gap-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{traduzir(title, locale)}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground">{traduzir(subtitle, locale)}</p>}
+        {subtitle && (
+          <p className="mt-1 text-sm text-muted-foreground">{traduzir(subtitle, locale)}</p>
+        )}
       </header>
 
       {secoes.map(({ section, items }) => (
@@ -100,27 +106,23 @@ export function NavHub({
           aria-labelledby={`hub-${group}-${slug(section)}`}
           className="space-y-3"
         >
-          <h2
-            id={`hub-${group}-${slug(section)}`}
-            className="text-xs font-medium tracking-wider text-muted-foreground uppercase"
-          >
+          <h2 id={`hub-${group}-${slug(section)}`} className="text-sm font-semibold">
             {traduzir(section, locale)}
           </h2>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,21rem),1fr))] gap-4">
             {items.map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.href} href={item.href} className="block">
-                  <Card className="flex h-full gap-3 p-4 transition-colors hover:border-border-strong">
-                    <Icon
-                      size={20}
-                      weight="regular"
-                      aria-hidden
-                      className="mt-0.5 shrink-0 text-muted-foreground"
-                    />
-                    <div>
-                      <h3 className="text-sm font-semibold">{traduzir(item.label, locale)}</h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                <Link key={item.href} href={item.href} className="block rounded-xl">
+                  <Card className="hover:border-interactive-border flex h-full gap-3 p-4 shadow-none transition-colors duration-fast sm:p-5">
+                    {/* O bloco de ícone de painel (DS §8): 32, raio 8,
+                        `primary` a 10% com o ícone em `primary`. */}
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                      <Icon size={18} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-base font-semibold">{traduzir(item.label, locale)}</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {traduzir(item.description, locale)}
                       </p>
                     </div>
@@ -136,13 +138,10 @@ export function NavHub({
         <section aria-labelledby="hub-crm-orientacoes-instaladas" className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-2">
             <div>
-              <h2
-                id="hub-crm-orientacoes-instaladas"
-                className="text-xs font-medium tracking-wider text-muted-foreground uppercase"
-              >
+              <h2 id="hub-crm-orientacoes-instaladas" className="text-sm font-semibold">
                 {traduzir("Orientações instaladas", locale)}
               </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {traduzir(
                   "Guias adicionados depois da instalação, sem acesso aos dados do CRM.",
                   locale,
@@ -151,7 +150,7 @@ export function NavHub({
             </div>
             <Link
               href="/app/extensions"
-              className="text-xs font-medium text-accent underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
+              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
               {traduzir("Gerenciar extensões", locale)}
             </Link>
@@ -161,7 +160,6 @@ export function NavHub({
             <Card className="flex gap-3 border-warning/40 bg-warning-bg p-4">
               <Warning
                 size={20}
-                weight="duotone"
                 aria-hidden
                 className="mt-0.5 shrink-0 text-warning-fg"
               />
@@ -178,7 +176,7 @@ export function NavHub({
               </div>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,21rem),1fr))] gap-4">
               {extensionGuides.flatMap((guide) =>
                 // `?? []`: módulo de DADOS não contribui card; ele aparece na ficha do contato,
                 // não no hub. Sem a guarda, o hub quebraria ao encontrar um instalado.
@@ -190,37 +188,34 @@ export function NavHub({
                       key={`${guide.installation_id}:${contribution.id}`}
                       href={`/app/extensions/${encodeURIComponent(guide.installation_id)}?card=${encodeURIComponent(contribution.id)}`}
                       data-testid={`extension-contribution-${guide.installation_id}-${contribution.id}`}
-                      className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+                      className="block rounded-xl"
                     >
                       <Card
-                        className={`flex h-full gap-3 transition-colors hover:border-border-strong ${compact ? "p-3" : "p-4"}`}
+                        className={`hover:border-interactive-border flex h-full gap-3 shadow-none transition-colors duration-fast ${compact ? "p-4" : "p-4 sm:p-5"}`}
                       >
-                        <Icon
-                          size={20}
-                          weight="duotone"
-                          aria-hidden
-                          className="mt-0.5 shrink-0 text-accent"
-                        />
+                        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                          <Icon size={18} aria-hidden />
+                        </span>
                         <div className="min-w-0">
-                          <p className="truncate text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+                          <p className="truncate text-xs font-medium text-muted-foreground">
                             {localize(guide.manifest.display.title, locale).text}
                           </p>
-                          <h3 className="mt-0.5 text-sm font-semibold">
+                          <h3 className="mt-0.5 text-base font-semibold">
                             {localize(contribution.title, locale).text}
                           </h3>
                           {guide.configuration.show_description ? (
-                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                            <p className="mt-1 text-sm text-muted-foreground">
                               {localize(contribution.description, locale).text}
                             </p>
                           ) : null}
                           {localize(contribution.title, locale).fallback ||
                           (guide.configuration.show_description &&
                             localize(contribution.description, locale).fallback) ? (
-                            <p className="mt-1 text-[11px] text-warning-fg">
+                            <p className="mt-1 text-xs text-warning-fg">
                               {traduzir("Texto disponível em português.", locale)}
                             </p>
                           ) : null}
-                          <p className="mt-2 text-[11px] text-text-subtle">
+                          <p className="mt-2 text-xs text-muted-foreground">
                             {portasLegiveis(
                               [permissaoDaCapacidade(contribution.action.capability)],
                               (texto) => traduzir(texto, locale),

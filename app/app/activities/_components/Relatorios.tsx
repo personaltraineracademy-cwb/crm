@@ -25,14 +25,14 @@ export function Relatorios({ abaInicial }: { abaInicial: string }) {
   const t = useT();
   return (
     <Tabs defaultValue={abaInicial} className="flex flex-1 flex-col">
-      <TabsList>
+      <TabsList variant="line">
         <TabsTrigger value="atividades">{t("Atividades")}</TabsTrigger>
         <TabsTrigger value="etiquetas">{t("Por etiqueta")}</TabsTrigger>
       </TabsList>
-      <TabsContent value="atividades" className="mt-4 flex flex-col gap-6">
+      <TabsContent value="atividades" className="mt-6 flex flex-col gap-6">
         <ActivityReportClient />
       </TabsContent>
-      <TabsContent value="etiquetas" className="mt-4 flex flex-col gap-6">
+      <TabsContent value="etiquetas" className="mt-6 flex flex-col gap-6">
         <TagReportClient />
       </TabsContent>
     </Tabs>

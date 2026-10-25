@@ -45,7 +45,7 @@ export function PasswordStrength({ password }: { password: string }) {
         {REQUIREMENTS.map((requirement, index) => (
           <li
             key={requirement.label}
-            className={met[index] ? "text-success-fg" : "text-muted-foreground"}
+            className={met[index] ? "text-success-foreground" : "text-muted-foreground"}
           >
             <span aria-hidden>{met[index] ? "✓" : "•"}</span> {t(requirement.label)}
           </li>

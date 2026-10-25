@@ -1,0 +1,77 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — a casca do app (etapa 6). DS §5.3, §5.5, §5.6, §6.3 e §6.4,
+   e o `.pta-sidebar` / `.pta-toolbar` / `.pta-mobile-dock` do Work.
+
+   Só mora aqui o que um utilitário do Tailwind não diz bem:
+   - a sombra da barra lateral, que muda com o tema (`--surface-shadow`);
+   - as três translucidezes da casca, com `color-mix` em sRGB como o Work
+     (o `bg-x/90` do Tailwind mistura em oklab e dá outro tom);
+   - a volta ao sólido com `prefers-reduced-transparency` e
+     `prefers-contrast: more` (DS §6.4).
+
+   Raio, tamanho, espaçamento e camada ficam nos utilitários do próprio
+   componente, onde quem lê o JSX os enxerga. Este arquivo é importado pelo
+   `AppShell` (fora das camadas do Tailwind): as regras daqui não disputam
+   propriedade com utilitário nenhum, porque os componentes não repetem fundo,
+   sombra nem desfoque nos elementos que usam estas classes.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* O gutter da página (DS §5.3, `--pta-gutter` do Work): 16px no celular, ~32px
+   em 1600px, 40px no máximo. Declarado na raiz da casca para que a barra de
+   cima, o `<main>` e qualquer tela que precise sangrar até a borda leiam o
+   MESMO número (`-mx-(--pta-gutter)`). */
+.casca {
+  --pta-gutter: clamp(1rem, 0.6rem + 1.4vw, 2.5rem);
+  --surface-shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 8px 24px rgba(17, 24, 39, 0.035);
+}
+[data-theme="dark"] .casca,
+[data-theme="dark"].casca {
+  --surface-shadow: 0 1px 2px rgba(0, 0, 0, 0.24), 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* Barra lateral flutuante (DS §5.6): `border` a 75%, `sidebar` a 90%, realce
+   interno de 1px no topo e a sombra de superfície. */
+.casca-barra-lateral {
+  border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+  background: color-mix(in srgb, var(--sidebar) 90%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--card) 72%, transparent),
+    var(--surface-shadow);
+}
+
+/* Barra de cima (DS §5.5): `background` a 92%, sem desfoque — o Work não
+   desfoca a barra de cima, só a barra ancorada do celular. */
+.casca-barra-superior {
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+}
+
+/* Barra ancorada do celular (DS §5.6, `.pta-mobile-dock`). */
+.casca-dock {
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+}
+.casca-dock :is(a, button) {
+  touch-action: manipulation;
+}
+.casca-dock :is(a, button):active {
+  background: var(--interactive-strong);
+  color: var(--interactive-foreground);
+}
+
+/* Sem transparência e com alto contraste, a casca volta a sólido (DS §6.4).
+   O Work pinta as três com `sidebar`; a barra de cima fica com o próprio
+   `background`, que é o fundo da página logo abaixo dela — com `sidebar` ela
+   viraria uma faixa de outra cor só para quem pediu menos efeito. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .casca-barra-lateral,
+  .casca-dock {
+    background: var(--sidebar);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .casca-barra-superior {
+    background: var(--background);
+  }
+}

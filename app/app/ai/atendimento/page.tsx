@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { FollowupFlowPointerRow } from "@/hooks/followup/useFollowupFlows";
 import { FlowsList } from "../followups/_components/FlowsList";
 import { ComoUsar } from "./_components/ComoUsar";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -36,16 +37,12 @@ export default async function AtendimentoFlowsPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("Fluxos de atendimento")}</h1>
-          <p className="text-sm text-text-muted">
-            {t(
-              "Perguntas que a IA faz durante a conversa, em ordem, e o que fazer ao concluir — os dados ficam guardados por cliente.",
-            )}
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        title={t("Fluxos de atendimento")}
+        description={t(
+          "Perguntas que a IA faz durante a conversa, em ordem, e o que fazer ao concluir — os dados ficam guardados por cliente.",
+        )}
+      />
       <ComoUsar t={t} />
       <FlowsList initialData={flows} canWrite={canWrite} surface="atendimento" />
     </div>

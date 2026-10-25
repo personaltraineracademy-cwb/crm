@@ -67,7 +67,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
     <div className="border-t bg-muted/30 p-3" data-testid={`edicao-${produto.codigo}`}>
       {somenteLeitura ? (
         <p
-          className="mb-3 rounded-md border border-warning bg-warning-bg p-3 text-sm text-warning-fg"
+          className="border-warning-border bg-warning-soft text-warning-foreground mb-3 rounded-lg border p-3 text-sm"
           data-testid="aviso-sincronizado"
         >
           {t("Sincronizado de")} {produto.origem}.{" "}
@@ -81,7 +81,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
           <input
             value={rascunho.codigo}
             onChange={(e) => setRascunho({ ...rascunho, codigo: e.target.value })}
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-codigo"
           />
@@ -91,7 +91,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
           <input
             value={rascunho.nome}
             onChange={(e) => setRascunho({ ...rascunho, nome: e.target.value })}
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-nome"
           />
@@ -102,7 +102,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
             value={rascunho.descricao}
             onChange={(e) => setRascunho({ ...rascunho, descricao: e.target.value })}
             rows={3}
-            className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
             disabled={desabilitado}
             data-testid="edicao-descricao"
           />
@@ -112,7 +112,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
           <input
             value={rascunho.marca}
             onChange={(e) => setRascunho({ ...rascunho, marca: e.target.value })}
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-marca"
           />
@@ -122,7 +122,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
           <input
             value={rascunho.categoria}
             onChange={(e) => setRascunho({ ...rascunho, categoria: e.target.value })}
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-categoria"
           />
@@ -133,7 +133,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
             value={rascunho.preco}
             onChange={(e) => setRascunho({ ...rascunho, preco: e.target.value })}
             placeholder="5.499,00"
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-preco"
           />
@@ -144,7 +144,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
             value={rascunho.custo}
             onChange={(e) => setRascunho({ ...rascunho, custo: e.target.value })}
             placeholder="4.100,00"
-            className="mt-1 h-9 w-full rounded-md border px-3"
+            className="mt-1 h-9 w-full rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-custo"
           />
@@ -167,7 +167,7 @@ export function EdicaoDoProduto({ produto, aoFechar }: { produto: Produto; aoFec
           <input
             value={rascunho.quantidade}
             onChange={(e) => setRascunho({ ...rascunho, quantidade: e.target.value })}
-            className="mt-1 h-9 w-32 rounded-md border px-3"
+            className="mt-1 h-9 w-32 rounded-lg border px-3"
             disabled={desabilitado}
             data-testid="edicao-quantidade"
           />

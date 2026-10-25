@@ -103,7 +103,7 @@ export function DeleteTenantDialog({
           <AlertDialogTitle>{t("Excluir tenant definitivamente")}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3 text-sm">
-              <p className="font-medium text-destructive">
+              <p className="text-danger-foreground font-medium">
                 {t("Esta ação é irreversível. Não há como recuperar o tenant depois.")}
               </p>
               <p>
@@ -162,7 +162,7 @@ export function DeleteTenantDialog({
             {t("Cancelar")}
           </AlertDialogCancel>
           <Button
-            variant="destructive"
+            variant="destructive-solid"
             onClick={confirmar}
             disabled={!confere || !motivoOk || excluir.isPending}
           >

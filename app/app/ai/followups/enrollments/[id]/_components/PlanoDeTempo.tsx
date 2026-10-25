@@ -30,10 +30,10 @@ export function PlanoDeTempoBloco({ plano, nos, decididoRelativo }: Props) {
   const porId = Object.fromEntries(nos.map((n) => [n.id, n]));
 
   return (
-    <section className="rounded-md border border-border p-4" data-testid="dossie-plano-de-tempo">
+    <section className="rounded-xl border border-border p-4" data-testid="dossie-plano-de-tempo">
       <header className="mb-3">
         <h2 className="text-sm font-medium">{t("O tempo que o agente escolheu")}</h2>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-muted-foreground">
           {t("Decidido")} {decididoRelativo ?? t("no início do follow-up")}
           {plano.modelo ? ` · ${plano.modelo}` : ""}
         </p>
@@ -44,8 +44,10 @@ export function PlanoDeTempoBloco({ plano, nos, decididoRelativo }: Props) {
           return (
             <li key={nodeId} className="flex flex-col gap-0.5" data-testid="dossie-espera">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-text">{porId[nodeId]?.rotulo ?? nodeId}</span>
-                <span className="text-sm font-medium text-text">{t("esperar")} {d.escolhido}</span>
+                <span className="text-sm text-foreground">{porId[nodeId]?.rotulo ?? nodeId}</span>
+                <span className="text-sm font-medium text-foreground">
+                  {t("esperar")} {d.escolhido}
+                </span>
                 {espera.clampado && (
                   <Badge variant="warning" data-testid="dossie-espera-clampada">
                     {t("bateu no seu limite")}
@@ -59,12 +61,12 @@ export function PlanoDeTempoBloco({ plano, nos, decididoRelativo }: Props) {
                 esta linha existir.
               */}
               {d.pedido && (
-                <p className="text-xs text-warning-fg" data-testid="dossie-espera-pedido">
+                <p className="text-warning-foreground text-xs" data-testid="dossie-espera-pedido">
                   {t("a IA pediu")} {d.pedido}
                 </p>
               )}
-              <p className="text-xs text-text-muted">{d.motivo}</p>
-              <p className="text-[11px] text-text-muted">{d.faixa}</p>
+              <p className="text-xs text-muted-foreground">{d.motivo}</p>
+              <p className="text-xs text-muted-foreground">{d.faixa}</p>
             </li>
           );
         })}

@@ -139,14 +139,14 @@ export function PairingOptions({
                   : t("Gerar código")}
           </Button>
           {error && (
-            <p role="alert" className="text-sm text-error-fg">
+            <p role="alert" className="text-danger-foreground text-sm">
               {error}
             </p>
           )}
           {code && (
-            <div role="status" className="space-y-2 rounded-md border bg-muted/40 p-4 text-center">
+            <div role="status" className="space-y-2 rounded-lg border bg-muted/40 p-4 text-center">
               <p
-                className="font-mono text-2xl font-semibold tracking-widest"
+                className="font-mono text-2xl font-semibold"
                 aria-label={t("Código de pareamento")}
               >
                 {code}

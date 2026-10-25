@@ -560,7 +560,7 @@ export function AntiBanSheet({ item, canWrite, onClose }: Props) {
             </p>
           </fieldset>
 
-          <div className="rounded-md border border-border bg-muted/30 p-3">
+          <div className="rounded-lg border border-border bg-muted/30 p-3">
             <p className="text-xs font-medium">{t("Aquecimento automático de número novo")}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {eff.warmupDailyCaps

@@ -4,6 +4,7 @@ import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
 import { ROLE_RANK } from "@/lib/auth/types";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { EvolutionClient } from "./_client";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -32,15 +33,13 @@ export default async function EvolutionPage() {
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{traduzir("Evolução da IA", idioma)}</h1>
-        <p className="text-sm text-text-muted">
-          {traduzir(
+      <PageHeader
+        title={traduzir("Evolução da IA", idioma)}
+        description={traduzir(
             "O que seu agente aprendeu no período, o que ele fez com isso, o que mudou no seu resultado — e o que ainda está travando.",
             idioma,
           )}
-        </p>
-      </header>
+      />
       <EvolutionClient defaultRange={ultimosTrintaDiasUtc()} />
     </div>
   );

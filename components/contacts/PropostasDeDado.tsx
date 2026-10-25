@@ -116,7 +116,7 @@ export function PropostasDeDado({ contactId, podeDecidir, aoDecidir }: Props) {
   if (!podeDecidir && (itens === null || itens.length === 0)) return null;
 
   return (
-    <Card className="border-warning-fg/30 bg-warning-bg/40 p-4">
+    <Card className="border-warning-border bg-warning-soft p-4">
       <div className="mb-3 flex items-center gap-2">
         <h2 className="text-sm font-semibold">{t("O assistente ouviu isto na conversa")}</h2>
         <Badge variant="warning">{itens?.length ?? 0} {t("aguardando você")}</Badge>
@@ -125,13 +125,13 @@ export function PropostasDeDado({ contactId, podeDecidir, aoDecidir }: Props) {
         {t("Nada foi salvo ainda. Confira o que a pessoa escreveu e decida.")}
       </p>
 
-      {erro && <p className="mb-3 text-sm text-error-fg">{erro}</p>}
+      {erro && <p className="text-danger-foreground mb-3 text-sm">{erro}</p>}
 
       <ul className="space-y-3">
         {(itens ?? []).map((p) => (
-          <li key={p.id} className="rounded-md border bg-background p-3">
+          <li key={p.id} className="rounded-lg bg-muted/40 p-3">
             <div className="flex flex-wrap items-baseline gap-2">
-              <span className="text-xs uppercase tracking-wide text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 {t(NOME_DO_CAMPO[p.campo] ?? p.campo)}
               </span>
               <span className="font-medium">{valorParaExibir(p.campo, p.valor_proposto)}</span>

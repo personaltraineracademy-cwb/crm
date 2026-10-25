@@ -70,7 +70,13 @@ interface Props {
   onDelete?: () => void;
 }
 
-/** Onda 5.2: nota interna inline no thread — nunca vai ao cliente, destaque âmbar (token `warning`). */
+/**
+ * Onda 5.2: nota interna inline no thread — nunca vai ao cliente.
+ *
+ * Unnify: o trio do chip de aviso (`warning-soft` + `warning-border` +
+ * `warning-foreground`, DS §3.3), raio 12 como os balões e sem sombra.
+ * Centralizada: não é fala de ninguém para o cliente.
+ */
 export function NoteCard({ note, onDelete }: Props) {
   const localeDaData = useLocaleDeData();
   const t = useT();
@@ -78,9 +84,9 @@ export function NoteCard({ note, onDelete }: Props) {
 
   return (
     <div className="group flex w-full min-w-0 justify-center px-4 py-1">
-      <div className="max-w-[85%] min-w-0 rounded-xl border border-warning/40 bg-warning-bg px-3 py-2 text-sm text-warning-fg shadow-sm">
+      <div className="border-warning-border bg-warning-soft text-warning-foreground max-w-[85%] min-w-0 rounded-xl border px-3 py-2 text-sm">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold opacity-80">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-medium">
             <NoteIcon size={12} weight="fill" aria-hidden />
             <span>{note.created_by_name ?? t("Alguém")}</span>
             <span aria-hidden>·</span>
@@ -90,10 +96,10 @@ export function NoteCard({ note, onDelete }: Props) {
             <button
               type="button"
               onClick={onDelete}
-              className="opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+              className="ds-alvo-44 hover:text-danger-foreground flex size-6 shrink-0 items-center justify-center rounded-md transition-[opacity,color,background-color] hover:bg-destructive/10 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
               aria-label={t("Excluir nota")}
             >
-              <Trash size={12} weight="bold" />
+              <Trash size={14} weight="bold" aria-hidden />
             </button>
           )}
         </div>
@@ -110,7 +116,7 @@ export function NoteCard({ note, onDelete }: Props) {
           <p className="mt-1 whitespace-pre-wrap wrap-anywhere leading-snug">
             {partesDoCorpo(note.body).map((parte, i) =>
               parte.mencao ? (
-                <span key={i} className="rounded-sm bg-warning/25 px-0.5 font-semibold">
+                <span key={i} className="rounded-sm bg-warning/20 px-0.5 font-semibold">
                   {`@${parte.mencao.nome}`}
                 </span>
               ) : (
@@ -119,7 +125,7 @@ export function NoteCard({ note, onDelete }: Props) {
             )}
           </p>
         )}
-        <div className="mt-1 text-right text-[10px] opacity-70">{time}</div>
+        <div className="mt-1 text-right text-xs tabular-nums">{time}</div>
       </div>
     </div>
   );

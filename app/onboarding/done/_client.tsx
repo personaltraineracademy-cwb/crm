@@ -54,7 +54,7 @@ export function DoneClient({
       : t("Seu funcionário já está de pé. O que ficou para depois continua te esperando.");
 
   return (
-    <div className="space-y-6 rounded-lg border bg-background p-6">
+    <div className="space-y-6 rounded-xl border border-border bg-card p-6">
       <div className="space-y-1 text-center">
         <h2 className="text-2xl font-semibold tracking-tight">{titulo}</h2>
         <p className="text-sm text-muted-foreground">{resumo}</p>
@@ -67,7 +67,7 @@ export function DoneClient({
               aria-hidden
               className={
                 "inline-block h-2 w-2 rounded-full " +
-                (it.feito ? "bg-emerald-500" : "bg-muted-foreground/30")
+                (it.feito ? "bg-success" : "bg-muted-foreground/30")
               }
             />
             <span className={it.feito ? "" : "text-muted-foreground"}>
@@ -113,7 +113,7 @@ export function DoneClient({
         */}
         <ul className="grid gap-2 sm:grid-cols-2">
           {pecas.map((p) => (
-            <li key={p.href} className="rounded-md border p-3">
+            <li key={p.href} className="rounded-lg bg-muted/40 p-3">
               <a href={p.href} className="text-sm font-medium underline-offset-2 hover:underline">
                 {t(p.comoChamar)}
               </a>
@@ -129,7 +129,7 @@ export function DoneClient({
                     <li key={passo} className="flex gap-2 text-xs text-muted-foreground">
                       <span
                         aria-hidden
-                        className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border text-[10px]"
+                        className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border text-xs"
                       >
                         {i + 1}
                       </span>

@@ -195,7 +195,7 @@ function CorpoDoPainel({
                   type="button"
                   className={cn(
                     "flex w-full items-center gap-2 rounded-lg border border-border px-3 py-2 text-left text-sm",
-                    "hover:border-accent hover:bg-accent-soft",
+                    "hover:border-interactive-border hover:bg-interactive transition-colors",
                   )}
                   onClick={() => setContatoEscolhido(c)}
                 >

@@ -333,7 +333,7 @@ export function RouterEditorClient({
             </div>
             <div className="space-y-1">
               <Label>{t("Número de WhatsApp")}</Label>
-              <p className="rounded-md border border-border/60 px-3 py-2 text-sm text-muted-foreground">
+              <p className="rounded-lg border border-border/60 px-3 py-2 text-sm text-muted-foreground">
                 {channel
                   ? `${channel.display_name}${channel.phone_number ? ` · ${channel.phone_number}` : ""}`
                   : t("Número removido")}
@@ -462,7 +462,7 @@ export function RouterEditorClient({
             </div>
 
             {draftMembers.length === 0 ? (
-              <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
+              <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
                 {t(
                   "Nenhuma intenção ainda. Sem intenções, toda conversa cai direto no agente de fallback (ou fica sem resposta automática, se você não escolher um).",
                 )}
@@ -470,7 +470,7 @@ export function RouterEditorClient({
             ) : (
               <ul className="flex flex-col gap-3">
                 {draftMembers.map((m, i) => (
-                  <li key={m.key} className="rounded-md border border-border/60 p-3">
+                  <li key={m.key} className="rounded-lg border border-border/60 p-3">
                     <IntentRow
                       member={m}
                       agents={agents}
@@ -741,7 +741,7 @@ function ExamplesInput({
   return (
     <div className="space-y-1">
       <Label>{t("Frases de exemplo (opcional)")}</Label>
-      <div className="flex flex-wrap gap-1 rounded-md border border-border/60 p-2">
+      <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 p-2">
         {value.map((ex) => (
           <button
             key={ex}
@@ -776,7 +776,7 @@ function ExamplesInput({
           />
           <button
             type="button"
-            className="rounded-md border border-border/60 px-3 text-xs hover:bg-muted"
+            className="rounded-lg border border-border/60 px-3 text-xs hover:bg-muted"
             onClick={() => add(draft)}
             disabled={draft.trim() === ""}
           >
@@ -842,7 +842,7 @@ function TestPanel({
       </CardHeader>
       <CardContent className="space-y-3 p-0">
         {!isActive && (
-          <div className="flex items-start gap-2 rounded-md bg-accent-soft p-3 text-xs text-text-muted">
+          <div className="bg-interactive flex items-start gap-2 rounded-lg p-3 text-xs text-muted-foreground">
             <Info className="mt-0.5 shrink-0" aria-hidden />
             <p>{t("Ative o roteador para poder testar a classificação.")}</p>
           </div>
@@ -865,7 +865,10 @@ function TestPanel({
           {!pending && <ArrowRight />}
         </Button>
         {result && (
-          <div className="rounded-md border border-border/60 p-3 text-sm" data-testid="teste-resultado">
+          <div
+            className="rounded-lg border border-border/60 p-3 text-sm"
+            data-testid="teste-resultado"
+          >
             <p>
               {t("Intenção")}: <span className="font-medium">{vale?.intent_name ?? t("nenhuma casou")}</span>
               {confianca !== null && (
@@ -875,7 +878,7 @@ function TestPanel({
               )}
             </p>
             {abaixoDoMinimo && confianca !== null && (
-              <p className="text-xs text-amber-600">
+              <p className="text-warning-foreground text-xs">
                 {t("Confiança")} {(confianca * 100).toFixed(0)}% — {t("abaixo do mínimo de")}{" "}
                 {(result.min_confidence * 100).toFixed(0)}%, {t("cairia no atendimento padrão em produção.")}
               </p>
@@ -916,7 +919,10 @@ function EscolhasLadoALado({
     result.intent_name !== null && result.confidence !== null && result.confidence < result.min_confidence;
   return (
     <div className="grid gap-2 sm:grid-cols-2" data-testid="teste-com-o-jev">
-      <div className="rounded-md border border-border/60 p-3 text-sm" data-testid="teste-escolha-da-ia">
+      <div
+        className="rounded-lg border border-border/60 p-3 text-sm"
+        data-testid="teste-escolha-da-ia"
+      >
         <p className="text-xs text-muted-foreground">{t("Sua IA escolheu")}</p>
         <p className="font-medium">
           {result.ia_consultada === false ? t("Não foi necessário consultar a IA de sempre.") : result.confidence === null ? t("não respondeu") : (result.agent_name ?? t("nenhum (sem fallback)"))}
@@ -928,7 +934,10 @@ function EscolhasLadoALado({
           </p>
         )}
       </div>
-      <div className="rounded-md border border-border/60 p-3 text-sm" data-testid="teste-escolha-do-jev">
+      <div
+        className="rounded-lg border border-border/60 p-3 text-sm"
+        data-testid="teste-escolha-do-jev"
+      >
         <p className="text-xs text-muted-foreground">{t("O Jev escolheu")}</p>
         <p className="font-medium">
           {jev.respondeu ? (jev.agent_name ?? t("nenhum (sem fallback)")) : t("não respondeu")}
