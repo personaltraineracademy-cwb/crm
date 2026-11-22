@@ -31,7 +31,7 @@ export default async function DesignerDeAutomacaoPage({ params }: { params: Prom
   if (id !== "nova" && !UUID.test(id)) notFound();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="casca-ferramenta flex flex-col">
       <DesignerDeAutomacao id={id} />
     </div>
   );

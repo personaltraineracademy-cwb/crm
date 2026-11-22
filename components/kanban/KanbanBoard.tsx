@@ -1,13 +1,23 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
+import {
+  PAUSA_DEPOIS_DE_SOLTAR_MS,
+  PausaDoMovimentoContext,
+  type PausaDoMovimento,
+} from "./movimento-da-lista";
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@/hooks/i18n/useT";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { chaveDoQuadro, useBoard } from "@/hooks/kanban/useBoard";
-import { useMoveCard, type MoveArgs, type RecusaDeCampos, type RetomadaPendente } from "@/hooks/kanban/useMoveCard";
+import {
+  useMoveCard,
+  type MoveArgs,
+  type RecusaDeCampos,
+  type RetomadaPendente,
+} from "@/hooks/kanban/useMoveCard";
 import { useRenameStage } from "@/hooks/kanban/useRenameStage";
 import { CamposObrigatoriosDialog } from "./CamposObrigatoriosDialog";
 import { LoseLeadDialog } from "./LoseLeadDialog";
@@ -129,6 +139,10 @@ export function KanbanBoard({
     onCamposFaltando: setRecusaDeCampos,
     onRetomada: setRetomada,
   });
+  // `mutate` é estável entre renders (o objeto do hook não é): é ele que entra
+  // nas dependências, para os callbacks que descem às colunas não mudarem a
+  // cada render e não furarem o `memo` delas.
+  const mover = moveCard.mutate;
   const { data: members } = useAssignableMembers(true);
   const ownerNames = useMemo(
     () => new Map((members ?? []).map((m) => [m.user_id, m.full_name])),
@@ -177,20 +191,21 @@ export function KanbanBoard({
     [selectedIds, internalSelected],
   );
 
-  const data = useExternal
-    ? {
-        pipeline: pipelineProp ?? ({} as Pipeline),
-        stages: stagesProp,
-        leads: leadsProp,
-      }
-    : queryResult.data;
+  // Memoizado: um objeto novo a cada render mudava `data` e, com ele, todo
+  // callback que desce às colunas.
+  const dadosExternos = useMemo(
+    () =>
+      useExternal
+        ? { pipeline: pipelineProp ?? ({} as Pipeline), stages: stagesProp, leads: leadsProp }
+        : null,
+    [useExternal, pipelineProp, stagesProp, leadsProp],
+  );
+  const data = dadosExternos ?? queryResult.data;
   const isLoading = useExternal ? false : queryResult.isLoading;
   const isError = useExternal ? false : queryResult.isError;
   const error = useExternal ? null : queryResult.error;
 
-  const leadDoDossie = dossieId
-    ? (data?.leads.find((l) => l.id === dossieId) ?? null)
-    : null;
+  const leadDoDossie = dossieId ? (data?.leads.find((l) => l.id === dossieId) ?? null) : null;
 
   const grouped = useMemo(() => {
     if (!data) return null;
@@ -223,30 +238,44 @@ export function KanbanBoard({
   // Arrastar e "Mover para…" passam por aqui. A etapa de perda sem motivo abre a
   // janela do motivo ANTES do move, com a mesma regra que a rota aplica: sem
   // isso o move ia sem `lost_reason` e voltava como toast.
+  // `data` muda a cada soltura; os dois callbacks abaixo descem a TODAS as
+  // colunas ("Mover para…" do card). Lendo `data` por aqui, só dentro do
+  // handler, eles ficam estáveis e o `memo` das colunas paradas se mantém.
+  const dadosAtuais = useRef(data);
+  useLayoutEffect(() => {
+    dadosAtuais.current = data;
+  });
+
   const moverPara = useCallback(
     (args: MoveArgs) => {
-      const etapa = data?.stages.find((s) => s.id === args.stageId);
-      const lead = data?.leads.find((l) => l.id === args.leadId);
+      const atual = dadosAtuais.current;
+      const etapa = atual?.stages.find((s) => s.id === args.stageId);
+      const lead = atual?.leads.find((l) => l.id === args.leadId);
       // O motivo na linha só vale para o card que JÁ está perdido (reordenar na
       // coluna de perda). O reaberto volta a `open` com o `lost_reason` da perda
       // anterior — `fn_crm_lead_close_on_stage` não o limpa —, e reaproveitá-lo
       // gravaria a perda nova com a causa da antiga.
       const motivoAtual =
-        lead && (lead.status === "lost" || lead.stage_id === args.stageId) ? lead.lost_reason : null;
+        lead && (lead.status === "lost" || lead.stage_id === args.stageId)
+          ? lead.lost_reason
+          : null;
       if (!decideMotivoDaPerda({ etapaDeDestino: etapa, motivoAtual }).ok) {
         setPerdaPendente(args);
         return;
       }
-      moveCard.mutate(args);
+      mover(args);
     },
-    [data, moveCard],
+    [mover],
   );
 
   // O menu não tem ponto de soltura: o card vai para o fim da etapa INTEIRA
   // (cache do quadro, sem o filtro da página — #2545).
   const aoMoverPelaLista = useCallback(
     (lead: Lead, stageId: string) => {
-      const funil = qc.getQueryData<BoardData>(chaveDoQuadro(pipelineId))?.leads ?? data?.leads ?? [];
+      const funil =
+        qc.getQueryData<BoardData>(chaveDoQuadro(pipelineId))?.leads ??
+        dadosAtuais.current?.leads ??
+        [];
       moverPara({
         leadId: lead.id,
         stageId,
@@ -257,18 +286,23 @@ export function KanbanBoard({
         expectedUpdatedAt: lead.updated_at,
       });
     },
-    [qc, pipelineId, data, moverPara],
+    [qc, pipelineId, moverPara],
   );
+
+  // O movimento da lista (entrada, saída, vizinhos) fica parado enquanto a
+  // biblioteca de arrasto manda — ver o cabeçalho de `movimento-da-lista.ts`.
+  const pausaDoMovimento = useRef<PausaDoMovimento>({ ate: 0 });
+  const aoComecarArrasto = useCallback(() => {
+    pausaDoMovimento.current.ate = Number.POSITIVE_INFINITY;
+  }, []);
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
+      pausaDoMovimento.current.ate = performance.now() + PAUSA_DEPOIS_DE_SOLTAR_MS;
       if (!data || !grouped) return;
       const { source, destination, draggableId } = result;
       if (!destination) return;
-      if (
-        source.droppableId === destination.droppableId &&
-        source.index === destination.index
-      ) {
+      if (source.droppableId === destination.droppableId && source.index === destination.index) {
         return;
       }
 
@@ -276,9 +310,7 @@ export function KanbanBoard({
       if (!lead) return;
 
       const destStageId = destination.droppableId;
-      const destList = (grouped.get(destStageId) ?? []).filter(
-        (l) => l.id !== draggableId,
-      );
+      const destList = (grouped.get(destStageId) ?? []).filter((l) => l.id !== draggableId);
 
       const before = destination.index > 0 ? destList[destination.index - 1] : null;
       // `destList` sai do `grouped`, que a página já FILTROU. O de cima fica
@@ -321,6 +353,16 @@ export function KanbanBoard({
     [data, grouped, moverPara, qc, pipelineId],
   );
 
+  // Um callback por etapa, estável: a função inline de antes era nova a cada
+  // render e furava o `memo` de todas as colunas.
+  const renomear = renameStage.mutate;
+  const renomearPorEtapa = useMemo(() => {
+    const m = new Map<string, (nome: string) => void>();
+    for (const s of data?.stages ?? [])
+      m.set(s.id, (nome) => renomear({ stageId: s.id, name: nome }));
+    return m;
+  }, [data?.stages, renomear]);
+
   if (isLoading) {
     return <BoardSkeleton />;
   }
@@ -347,8 +389,9 @@ export function KanbanBoard({
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      {/* UM contêiner de rolagem só, nos dois eixos. Rolar cada coluna por
+    <DragDropContext onDragStart={aoComecarArrasto} onDragEnd={handleDragEnd}>
+      <PausaDoMovimentoContext.Provider value={pausaDoMovimento}>
+        {/* UM contêiner de rolagem só, nos dois eixos. Rolar cada coluna por
           conta própria seria o desenho "Trello", mas o @hello-pangea/dnd não
           suporta Droppable rolável dentro de outro contêiner rolável ("nested
           scroll containers are currently not supported") — o arraste perderia
@@ -367,14 +410,18 @@ export function KanbanBoard({
           `sm`) e 16px entre colunas. A barra de rolagem é a fina do quadro
           (`pta-kanban-scroll`): 12px, trilho e polegar translúcidos, polegar
           puxando para o `primary` no hover. */}
-      <div
-        className={cn(
-          "flex min-h-0 flex-1 items-start gap-4 overflow-auto px-4 pb-4 sm:px-6 sm:pb-6",
-          BARRA_FINA_DO_QUADRO,
-        )}
-        data-quadro-do-funil
-      >
-        {/* A FAIXA entre o rolo e as colunas (#3030). O contêiner de fora é o
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 items-start gap-4 overflow-auto px-4 pb-4 sm:px-6 sm:pb-6",
+            // Esmaecimento de 24px na borda direita (guia M7), deixando os 12px da
+            // barra de rolagem fora da máscara: a coluna que continua além da tela
+            // some em degradê em vez de ser cortada seca.
+            "[mask-image:linear-gradient(to_right,#000_calc(100%-2.25rem),transparent_calc(100%-0.75rem),#000_calc(100%-0.75rem))]",
+            BARRA_FINA_DO_QUADRO,
+          )}
+          data-quadro-do-funil
+        >
+          {/* A FAIXA entre o rolo e as colunas (#3030). O contêiner de fora é o
             único que rola; esta faixa é quem dá altura às colunas. Com o
             `min-h-full` da coluna medido contra a ALTURA VISÍVEL do quadro, a
             coluna vazia parava onde a tela terminava — e a área de soltar card
@@ -384,92 +431,91 @@ export function KanbanBoard({
             Não é um contêiner rolável novo — o de fora continua sendo o único —
             então o `@hello-pangea/dnd` segue com a rolagem automática do
             arraste (Droppable dentro de outro rolável ele não suporta). */}
-        <div
-          className="flex min-h-full w-max min-w-full items-stretch gap-4"
-          data-faixa-das-etapas
-        >
-          {data.stages.map((stage, posicao) => (
-            <StageColumn
-              key={stage.id}
-              stage={stage}
-              posicao={posicao}
-              leads={grouped.get(stage.id) ?? []}
-              pipelineId={pipelineId}
-              ownerNames={ownerNames}
-              coolingIds={coolingIds}
-              reactivations={reactivations}
-              pulses={pulsesProp ?? queryResult.pulses}
-              canonicalTags={canonicalTags}
-              selectedLeadIds={selectedLeadIds}
-              onSelectMany={handleSelectMany}
-              onOpen={setDossieId}
-              etapas={data.stages}
-              onMoverPara={aoMoverPelaLista}
-              podeRenomear={podeRenomearEtapa}
-              onRenomear={(nome) => renameStage.mutate({ stageId: stage.id, name: nome })}
-            />
-          ))}
+          <div
+            className="flex min-h-full w-max min-w-full items-stretch gap-4"
+            data-faixa-das-etapas
+          >
+            {data.stages.map((stage, posicao) => (
+              <StageColumn
+                key={stage.id}
+                stage={stage}
+                posicao={posicao}
+                leads={grouped.get(stage.id) ?? []}
+                pipelineId={pipelineId}
+                ownerNames={ownerNames}
+                coolingIds={coolingIds}
+                reactivations={reactivations}
+                pulses={pulsesProp ?? queryResult.pulses}
+                canonicalTags={canonicalTags}
+                selectedLeadIds={selectedLeadIds}
+                onSelectMany={handleSelectMany}
+                onOpen={setDossieId}
+                etapas={data.stages}
+                onMoverPara={aoMoverPelaLista}
+                podeRenomear={podeRenomearEtapa}
+                onRenomear={renomearPorEtapa.get(stage.id)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-      {leadDoDossie && (
-        <LeadDossier
-          open
-          onOpenChange={(v: boolean) => !v && setDossieId(null)}
-          lead={leadDoDossie}
-          pipelineId={pipelineId}
-          fieldDefs={camposPorEscopo(camposDoFunil(data.pipeline.settings ?? null), "negocio")}
-          stageName={
-            data.stages.find((s) => s.id === leadDoDossie.stage_id)?.name ?? "—"
-          }
-          ownerNames={ownerNames}
-          etapas={data.stages}
-          onMudarEtapa={(stageId) => aoMoverPelaLista(leadDoDossie, stageId)}
-        />
-      )}
+        {leadDoDossie && (
+          <LeadDossier
+            open
+            onOpenChange={(v: boolean) => !v && setDossieId(null)}
+            lead={leadDoDossie}
+            pipelineId={pipelineId}
+            fieldDefs={camposPorEscopo(camposDoFunil(data.pipeline.settings ?? null), "negocio")}
+            stageName={data.stages.find((s) => s.id === leadDoDossie.stage_id)?.name ?? "—"}
+            ownerNames={ownerNames}
+            etapas={data.stages}
+            onMudarEtapa={(stageId) => aoMoverPelaLista(leadDoDossie, stageId)}
+          />
+        )}
 
-      <CamposObrigatoriosDialog
-        open={recusaDeCampos !== null}
-        onOpenChange={(aberto) => {
-          if (!aberto) setRecusaDeCampos(null);
-        }}
-        recusa={recusaDeCampos}
-        isPending={moveCard.isPending}
-        onConfirmar={({ customFields, wonReason }) => {
-          if (!recusaDeCampos) return;
-          const { args } = recusaDeCampos;
-          setRecusaDeCampos(null);
-          moveCard.mutate({
-            ...args,
-            customFields,
-            ...(wonReason !== undefined ? { wonReason } : {}),
-          });
-        }}
-      />
-      {/* Uma instância para o quadro todo: a `key` a remonta a cada pendência,
-          senão o motivo escolhido e cancelado num negócio voltava marcado no próximo. */}
-      <LoseLeadDialog
-        key={perdaPendente?.leadId ?? "fechado"}
-        open={perdaPendente !== null}
-        onOpenChange={(aberto) => {
-          if (!aberto) setPerdaPendente(null);
-        }}
-        pipelineId={pipelineId}
-        submitting={moveCard.isPending}
-        onConfirm={(lostReason) => {
-          if (!perdaPendente) return;
-          setPerdaPendente(null);
-          moveCard.mutate({ ...perdaPendente, lostReason });
-        }}
-      />
-      {retomada && (
-        <RetomarComoNovoNegocioDialog
-          open
-          onOpenChange={(v: boolean) => !v && setRetomada(null)}
-          leadId={retomada.leadId}
-          stageId={retomada.stageId}
-          pipelineId={pipelineId}
+        <CamposObrigatoriosDialog
+          open={recusaDeCampos !== null}
+          onOpenChange={(aberto) => {
+            if (!aberto) setRecusaDeCampos(null);
+          }}
+          recusa={recusaDeCampos}
+          isPending={moveCard.isPending}
+          onConfirmar={({ customFields, wonReason }) => {
+            if (!recusaDeCampos) return;
+            const { args } = recusaDeCampos;
+            setRecusaDeCampos(null);
+            moveCard.mutate({
+              ...args,
+              customFields,
+              ...(wonReason !== undefined ? { wonReason } : {}),
+            });
+          }}
         />
-      )}
+        {/* Uma instância para o quadro todo: a `key` a remonta a cada pendência,
+          senão o motivo escolhido e cancelado num negócio voltava marcado no próximo. */}
+        <LoseLeadDialog
+          key={perdaPendente?.leadId ?? "fechado"}
+          open={perdaPendente !== null}
+          onOpenChange={(aberto) => {
+            if (!aberto) setPerdaPendente(null);
+          }}
+          pipelineId={pipelineId}
+          submitting={moveCard.isPending}
+          onConfirm={(lostReason) => {
+            if (!perdaPendente) return;
+            setPerdaPendente(null);
+            moveCard.mutate({ ...perdaPendente, lostReason });
+          }}
+        />
+        {retomada && (
+          <RetomarComoNovoNegocioDialog
+            open
+            onOpenChange={(v: boolean) => !v && setRetomada(null)}
+            leadId={retomada.leadId}
+            stageId={retomada.stageId}
+            pipelineId={pipelineId}
+          />
+        )}
+      </PausaDoMovimentoContext.Provider>
     </DragDropContext>
   );
 }

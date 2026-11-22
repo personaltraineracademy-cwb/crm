@@ -6,7 +6,8 @@ import type { Locale } from "date-fns";
 import * as React from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 
-import { Badge } from "@/components/ui/badge";
+import { CartaoDeRegistro, GradeDeRegistros } from "@/components/cartao-de-registro";
+import { ChipDeEstado } from "@/components/ai/chip-de-estado";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -78,30 +79,27 @@ export function SourcesTab() {
           <Plus /> {t("Nova fonte")}
         </Button>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <GradeDeRegistros>
         {sources.map((s) => (
-          <Card
-            key={s.id}
-            className="cursor-pointer transition-colors hover:border-accent"
-            onClick={() => setSelected(s)}
-          >
-            <CardHeader className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardTitle className="truncate">{s.name}</CardTitle>
-                <Badge variant={s.is_active ? "success" : "neutral"}>
+          <li key={s.id}>
+            <CartaoDeRegistro
+              aoAbrir={() => setSelected(s)}
+              titulo={s.name}
+              selo={
+                <ChipDeEstado tom={s.is_active ? "sucesso" : "neutro"}>
                   {s.is_active ? t("Ativa") : t("Pausada")}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {lastReceivedLabel(s.last_received_at, t, localeDaData)}
-              </p>
-              {/* Desligada, ela para de receber contatos e ninguém do outro lado
-                  é avisado — então quem a desligou entra na leitura do card. */}
-              <SeloDeAutoria kind={s.last_change_actor_kind} em={s.last_change_at} />
-            </CardHeader>
-          </Card>
+                </ChipDeEstado>
+              }
+              meta={[
+                lastReceivedLabel(s.last_received_at, t, localeDaData),
+                // Desligada, ela para de receber contatos e ninguém do outro lado
+                // é avisado — então quem a desligou entra na leitura do card.
+                <SeloDeAutoria key="autoria" kind={s.last_change_actor_kind} em={s.last_change_at} />,
+              ]}
+            />
+          </li>
         ))}
-      </div>
+      </GradeDeRegistros>
 
       <CreateSourceDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={setSelected} />
       {selected ? (

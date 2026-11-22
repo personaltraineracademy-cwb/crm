@@ -17,68 +17,68 @@ import { GRAUS_DO_UNNIFY, PAPEIS_DO_UNNIFY } from "./unnify";
 /** DESIGN-SYSTEM.md §3.2, copiado à mão — um teste que lê a tabela dela mesma passa sempre. */
 const DS = {
   claro: {
-    primary: "#0066cc",
+    primary: "#24555e",
     primaryForeground: "#ffffff",
-    primaryHover: "#005bb5",
-    primaryPressed: "#004f9e",
-    accent: "#eaf2fc",
-    accentForeground: "#0055aa",
-    ring: "#0066cc",
-    interactive: "#eaf2fc",
-    interactiveStrong: "#dceafa",
-    interactiveBorder: "#9bbbe0",
+    primaryHover: "#1a4951",
+    primaryPressed: "#0b3d45",
+    accent: "#e6f4f7",
+    accentForeground: "#375f62",
+    ring: "#24555e",
+    interactive: "#e6f4f7",
+    interactiveStrong: "#d5eef2",
+    interactiveBorder: "#a0bec4",
   },
   escuro: {
-    primary: "#75b7ff",
-    primaryForeground: "#08131c",
-    primaryHover: "#91c5ff",
-    primaryPressed: "#5ca8fb",
-    accent: "#203750",
-    accentForeground: "#c6e0ff",
-    ring: "#75b7ff",
-    interactive: "#203750",
-    interactiveStrong: "#203d5c",
-    interactiveBorder: "#416d98",
+    primary: "#8fb3bb",
+    primaryForeground: "#001717",
+    primaryHover: "#acc6cb",
+    primaryPressed: "#85acb3",
+    accent: "#1d3b3c",
+    accentForeground: "#c3e4eb",
+    ring: "#8fb3bb",
+    interactive: "#1d3b3c",
+    interactiveStrong: "#254142",
+    interactiveBorder: "#596e70",
   },
 } as const;
 
 /** O bloco que o navegador recebe, por inteiro (mapa de tokens §1.2). */
 const DECLARACOES = {
   claro: [
-    "--color-brand: #0066cc;",
-    "--color-accent-50: #eaf2fc;",
-    "--color-accent-100: #dceafa;",
-    "--color-accent-200: #b8d8ff;",
-    "--color-accent-300: #9bbbe0;",
-    "--color-accent-400: #5992d7;",
-    "--color-accent-500: #0066cc;",
-    "--color-accent-600: #0066cc;",
-    "--color-accent-700: #005bb5;",
-    "--color-accent-800: #004f9e;",
-    "--color-accent-900: #0e2747;",
-    "--color-accent-950: #071a32;",
-    "--color-accent: #0066cc;",
+    "--color-brand: #24555e;",
+    "--color-accent-50: #e6f4f7;",
+    "--color-accent-100: #d5eef2;",
+    "--color-accent-200: #bddbe1;",
+    "--color-accent-300: #a0bec4;",
+    "--color-accent-400: #76969a;",
+    "--color-accent-500: #24555e;",
+    "--color-accent-600: #24555e;",
+    "--color-accent-700: #1a4951;",
+    "--color-accent-800: #0b3d45;",
+    "--color-accent-900: #122c2c;",
+    "--color-accent-950: #002828;",
+    "--color-accent: #24555e;",
     "--color-accent-fg: #ffffff;",
-    "--color-accent-hover: #005bb5;",
-    "--color-accent-soft: #eaf2fc;",
+    "--color-accent-hover: #1a4951;",
+    "--color-accent-soft: #e6f4f7;",
   ],
   escuro: [
-    "--color-brand: #0066cc;",
-    "--color-accent-50: #e5f1ff;",
-    "--color-accent-100: #c6e0ff;",
-    "--color-accent-200: #a9d0ff;",
-    "--color-accent-300: #91c5ff;",
-    "--color-accent-400: #75b7ff;",
-    "--color-accent-500: #5ca8fb;",
-    "--color-accent-600: #416d98;",
-    "--color-accent-700: #203d5c;",
-    "--color-accent-800: #203750;",
-    "--color-accent-900: #0e2747;",
-    "--color-accent-950: #08131c;",
-    "--color-accent: #75b7ff;",
-    "--color-accent-fg: #08131c;",
-    "--color-accent-hover: #91c5ff;",
-    "--color-accent-soft: #203750;",
+    "--color-brand: #24555e;",
+    "--color-accent-50: #dff4f8;",
+    "--color-accent-100: #c3e4eb;",
+    "--color-accent-200: #bad1d6;",
+    "--color-accent-300: #acc6cb;",
+    "--color-accent-400: #8fb3bb;",
+    "--color-accent-500: #85acb3;",
+    "--color-accent-600: #596e70;",
+    "--color-accent-700: #254142;",
+    "--color-accent-800: #1d3b3c;",
+    "--color-accent-900: #122c2c;",
+    "--color-accent-950: #001717;",
+    "--color-accent: #8fb3bb;",
+    "--color-accent-fg: #001717;",
+    "--color-accent-hover: #acc6cb;",
+    "--color-accent-soft: #1d3b3c;",
   ],
 } as const;
 
@@ -109,8 +109,8 @@ function valorNoBloco(css: string, tema: "claro" | "escuro", nome: string): stri
   return alvo?.match(new RegExp(`\\s${nome}: ([^;]+);`))?.[1];
 }
 
-describe("#0066cc pinta exatamente o Unnify", () => {
-  const marca = resolver(comCor("#0066cc"));
+describe("#24555e pinta exatamente o Unnify", () => {
+  const marca = resolver(comCor("#24555e"));
   const css = cssDaMarca(marca.cor).css ?? "";
 
   it("o bloco da instalação é o do Unnify nos dois temas, linha a linha", () => {
@@ -158,9 +158,9 @@ describe("#0066cc pinta exatamente o Unnify", () => {
     expect(parada("escuro", 100)).toBe(DS.escuro.accentForeground);
   });
 
-  it("o accent-foreground claro (#0055aa) NÃO cabe na rampa: a folha estática o declara", () => {
-    // Fica entre o hover (#005bb5) e o pressionado (#004f9e) em luminosidade;
-    // não há grau livre para ele sem quebrar a ordem da rampa. Este caso existe
+  it("o accent-foreground claro (#375f62) NÃO cabe na rampa: a folha estática o declara", () => {
+    // É mais claro que o acento (#24555e) e mais escuro que o fundo suave; não
+    // há grau livre para ele sem quebrar a ordem da rampa. Este caso existe
     // para a ausência ser decisão escrita, não esquecimento.
     expect(css).not.toContain(DS.claro.accentForeground);
   });
@@ -182,12 +182,12 @@ describe("#0066cc pinta exatamente o Unnify", () => {
   });
 
   it("o par escuro vem sozinho, da mesma camada", () => {
-    expect(marca.cor?.corEscura?.semente).toBe("#75b7ff");
+    expect(marca.cor?.corEscura?.semente).toBe("#8fb3bb");
     expect(marca.origens.cor).toBe("teste");
   });
 
-  it("e-mail e GoTrue (claro, sempre) leem #0066cc com frente branca", () => {
-    expect(marca.cor?.derivada?.claro.accent).toBe("#0066cc");
+  it("e-mail e GoTrue (claro, sempre) leem #24555e com frente branca", () => {
+    expect(marca.cor?.derivada?.claro.accent).toBe("#24555e");
     expect(marca.cor?.derivada?.claro.accentFg).toBe("#ffffff");
   });
 
@@ -208,36 +208,36 @@ describe("#0066cc pinta exatamente o Unnify", () => {
 });
 
 describe("as entradas que ligam a tabela", () => {
-  const esperado = cssDe("#0066cc");
+  const esperado = cssDe("#24555e");
 
-  it.each(["#06c", "#0066CC", " #0066cc "])("%s é o mesmo #0066cc", (hex) => {
+  it.each(["#24555E", "#24555e", " #24555e "])("%s é o mesmo #24555e", (hex) => {
     expect(cssDe(hex.trim())).toBe(esperado);
   });
 
-  it("APP_ACCENT_HEX=#0066cc no .env dá o mesmo bloco", () => {
+  it("APP_ACCENT_HEX=#24555e no .env dá o mesmo bloco", () => {
     const cor = resolverMarca(
-      [camadaDoAmbiente({ APP_ACCENT_HEX: "#0066cc" })],
+      [camadaDoAmbiente({ APP_ACCENT_HEX: "#24555e" })],
       REGUA_DO_PRODUTO,
     ).cor;
     expect(cssDaMarca(cor).css).toBe(esperado);
   });
 
-  it.each(["#75b7ff", "#0066cc"])("#0066cc + cor do escuro %s dá o mesmo bloco", (escura) => {
-    expect(cssDe("#0066cc", escura)).toBe(esperado);
+  it.each(["#8fb3bb", "#24555e"])("#24555e + cor do escuro %s dá o mesmo bloco", (escura) => {
+    expect(cssDe("#24555e", escura)).toBe(esperado);
   });
 
-  it("#0066cc + cor do escuro inválida: o escuro continua sendo o do Unnify, com o motivo", () => {
+  it("#24555e + cor do escuro inválida: o escuro continua sendo o do Unnify, com o motivo", () => {
     const marca = resolver({
       origem: "teste",
-      cor: envelopeDeSemente("#0066cc"),
+      cor: envelopeDeSemente("#24555e"),
       corEscura: envelopeDeSemente("azul"),
     });
     expect(cssDaMarca(marca.cor).css).toBe(esperado);
     expect(marca.motivos.map((m) => m.codigo)).toEqual(["semente_invalida"]);
   });
 
-  it("#0066cc + cor do escuro de outra pessoa: o claro é o Unnify, o escuro é o dela", () => {
-    const cor = resolver(comCor("#0066cc", "#d9ac62")).cor;
+  it("#24555e + cor do escuro de outra pessoa: o claro é o Unnify, o escuro é o dela", () => {
+    const cor = resolver(comCor("#24555e", "#d9ac62")).cor;
     const css = cssDaMarca(cor).css ?? "";
     const [claro] = css.split("\n}");
     expect(`${claro}\n}`).toBe(bloco(":root:root", DECLARACOES.claro));
@@ -246,9 +246,9 @@ describe("as entradas que ligam a tabela", () => {
     expect(valorNoBloco(css, "escuro", "--color-accent-hover")).toBe(outra.accentHover);
   });
 
-  it("outra cor principal + escuro #75b7ff: só o escuro vira o do Unnify", () => {
+  it("outra cor principal + escuro #8fb3bb: só o escuro vira o do Unnify", () => {
     const sozinha = cssDe("#7a5cd6") ?? "";
-    const css = cssDe("#7a5cd6", "#75b7ff") ?? "";
+    const css = cssDe("#7a5cd6", "#8fb3bb") ?? "";
     expect(css.split("\n}")[0]).toBe(sozinha.split("\n}")[0]);
     expect(`${(css.split("\n}")[1] ?? "").trimStart()}\n}`).toBe(
       bloco(
@@ -260,10 +260,10 @@ describe("as entradas que ligam a tabela", () => {
     );
   });
 
-  it("#75b7ff como cor PRINCIPAL não é o Unnify no claro e segue derivando", () => {
-    const cor = resolver(comCor("#75b7ff")).cor;
+  it("#8fb3bb como cor PRINCIPAL não é o Unnify no claro e segue derivando", () => {
+    const cor = resolver(comCor("#8fb3bb")).cor;
     expect(cor?.corEscura).toBeUndefined();
-    expect(cor?.derivada?.rampa[K]).toBe("#75b7ff");
+    expect(cor?.derivada?.rampa[K]).toBe("#8fb3bb");
   });
 });
 

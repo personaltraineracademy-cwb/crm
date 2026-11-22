@@ -1,9 +1,7 @@
 "use client";
-import Link from "next/link";
 
+import { CartaoDeRegistro } from "@/components/cartao-de-registro";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useT } from "@/hooks/i18n/useT";
 import type { AgentRow } from "@/hooks/ai/useAgent";
 import { AgentStatusBadge, deriveAgentStatus } from "./AgentStatusBadge";
@@ -52,58 +50,61 @@ export function modeloEmVigor(agent: AgentRow): string {
   return `${provedor} · ${resto.join("/")}`;
 }
 
+/**
+ * O modelo em nome de gente, SÓ para o cartão: «anthropic · claude-sonnet-5» vira
+ * «Claude Sonnet 5». O que não segue o padrão (outro provedor, id desconhecido)
+ * aparece como veio — nunca se inventa um nome. O valor gravado e o
+ * `modeloEmVigor` (que o teste de contrato fixa) não mudam.
+ */
+export function modeloParaLeigo(modelo: string): string {
+  const id = modelo.includes(" · ") ? modelo.split(" · ").slice(1).join(" · ") : modelo;
+  const m = /^claude-(opus|sonnet|haiku|fable)-(\d+(?:-\d+)*)$/.exec(id);
+  if (!m) return modelo;
+  const familia = m[1].charAt(0).toUpperCase() + m[1].slice(1);
+  return `Claude ${familia} ${m[2].replace(/-/g, ".")}`;
+}
+
+/** O tipo do agente em palavra de gente; o valor técnico (`kind`) segue o mesmo no banco. Tipo desconhecido aparece como veio. */
+function tipoDoAgente(kind: string, t: (texto: string) => string): string {
+  if (kind === "mcp_agent") return t("Agente com ferramentas");
+  if (kind === "rag_bot") return t("Responde pela base de conhecimento");
+  return kind;
+}
+
 export function AgentCard({ agent, canWrite }: Props) {
   const t = useT();
   const status = deriveAgentStatus(agent);
 
   return (
-    <Card className="flex h-full flex-col gap-3 p-4">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate font-medium" title={agent.name}>
-            {agent.name}
-          </h3>
-          <p
-            className="truncate text-xs text-muted-foreground"
-            title={
-              origemDoModelo(agent) === "versao_publicada"
-                ? t("Modelo da versão publicada — é o que atende o cliente.")
-                : t("Modelo do cadastro; nenhuma versão publicada ainda.")
-            }
-          >
-            {modeloEmVigor(agent)}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
+    <CartaoDeRegistro
+      href={`/app/ai/agents/${agent.id}`}
+      titulo={agent.name}
+      descricao={agent.description}
+      selo={
+        <span className="inline-flex items-center gap-1">
+          <AgentStatusBadge status={status} />
           {agent.is_default && (
             <Badge variant="secondary" className="text-xs">
               {t("default")}
             </Badge>
           )}
-          <AgentStatusBadge status={status} />
-          {canWrite && <AgentRowMenu agent={agent} />}
-        </div>
-      </div>
-      {agent.description && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">{agent.description}</p>
-      )}
-      <dl className="grid grid-cols-2 gap-2 pt-1 text-xs">
-        <div>
-          <dt className="text-muted-foreground">{t("Tipo")}</dt>
-          <dd className="font-mono">{agent.kind ?? "rag_bot"}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("Prioridade")}</dt>
-          <dd className="font-mono">{agent.priority ?? "—"}</dd>
-        </div>
-      </dl>
-      <div className="mt-auto pt-2">
-        <Link href={`/app/ai/agents/${agent.id}`}>
-          <Button variant="outline" size="sm" className="w-full">
-            {canWrite ? t("Editar") : t("Visualizar")}
-          </Button>
-        </Link>
-      </div>
-    </Card>
+        </span>
+      }
+      meta={[
+        <span
+          key="modelo"
+          title={
+            origemDoModelo(agent) === "versao_publicada"
+              ? t("Modelo da versão publicada — é o que atende o cliente.")
+              : t("Modelo do cadastro; nenhuma versão publicada ainda.")
+          }
+        >
+          {modeloParaLeigo(modeloEmVigor(agent))}
+        </span>,
+        `${t("Tipo")}: ${tipoDoAgente(agent.kind ?? "rag_bot", t)}`,
+        `${t("Ordem de preferência")}: ${agent.priority ?? "—"}`,
+      ]}
+      menu={canWrite ? <AgentRowMenu agent={agent} /> : undefined}
+    />
   );
 }

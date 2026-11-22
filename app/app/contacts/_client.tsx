@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useT } from "@/hooks/i18n/useT";
-import { Plus, DownloadSimple, MagnifyingGlass, UploadSimple, UsersThree, ArrowsClockwise } from "@/lib/ui/icons";
+import { Plus, DotsThree, DownloadSimple, MagnifyingGlass, UploadSimple, UsersThree, ArrowsClockwise } from "@/lib/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -203,30 +203,12 @@ export function ContactsListClient() {
           botões descem de linha e o título não é espremido. Onde cabem
           (1280px), nada muda.
         */}
-          {/*
-            A porta do recurso de duplicados fica AQUI, na tela que já existe, e
-            não num item de menu novo: quem descobre que tem contato repetido
-            descobre olhando a lista, e a barra lateral não precisa crescer para
-            um trabalho que se faz de vez em quando.
-          */}
-          <Button variant="outline" size="sm" onClick={() => setDuplicadosOpen(true)}>
-            <UsersThree size={16} weight="bold" aria-hidden />
-            <span>{t("Duplicados")}</span>
-          </Button>
+          {/* Guia 2.6: uma ação principal (Novo contato), as secundárias em outline e a
+              4ª em diante no menu «⋯». "Importar CSV" e "Exportar" ficam à vista; o
+              que se faz de vez em quando (Duplicados, Sincronizar agenda) mora no menu. */}
           <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
             <UploadSimple size={16} weight="bold" aria-hidden />
             <span>{t("Importar CSV")}</span>
-          </Button>
-          {/*
-            O lado de cá do mesmo gesto (#2736): a base que a equipe já tem
-            mora na agenda do celular pareado, e ela não passa por CSV nenhum.
-            Colado ao "Importar CSV" de propósito — os dois são "trazer base de
-            fora", e separá-los em cantos diferentes da tela faria cada um
-            parecer um recurso que o outro não é.
-          */}
-          <Button variant="outline" size="sm" onClick={() => setSyncOpen(true)}>
-            <ArrowsClockwise size={16} weight="bold" aria-hidden />
-            <span>{t("Sincronizar agenda")}</span>
           </Button>
           {/*
             A porta de VOLTA do mesmo dado: importar sem exportar deixava o CRM
@@ -253,6 +235,38 @@ export function ContactsListClient() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label={t("Mais ações")}
+                title={t("Mais ações")}
+              >
+                <DotsThree size={16} weight="bold" aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {/*
+                A porta do recurso de duplicados fica AQUI, na tela que já existe, e
+                não num item de menu novo: quem descobre que tem contato repetido
+                descobre olhando a lista.
+              */}
+              <DropdownMenuItem onSelect={() => setDuplicadosOpen(true)}>
+                <UsersThree size={16} weight="bold" aria-hidden />
+                {t("Duplicados")}
+              </DropdownMenuItem>
+              {/*
+                O lado de cá do mesmo gesto do "Importar CSV" (#2736): a base que a
+                equipe já tem mora na agenda do celular pareado, e ela não passa por
+                CSV nenhum.
+              */}
+              <DropdownMenuItem onSelect={() => setSyncOpen(true)}>
+                <ArrowsClockwise size={16} weight="bold" aria-hidden />
+                {t("Sincronizar agenda")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus size={16} weight="bold" aria-hidden />
             <span>{t("Novo contato")}</span>

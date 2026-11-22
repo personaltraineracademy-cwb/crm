@@ -34,8 +34,8 @@
   }
 
   /* ── Seleção de texto (DS §9.1): fundo `interactive-strong`, texto no azul
-     do `accent-foreground` do Unnify. Claro `#0055aa` sobre `#dceafa`, escuro
-     `#c6e0ff` sobre `#203d5c`. Substitui as duas regras do original. */
+     do `accent-foreground` do Unnify. Claro `#375f62` sobre `#d5eef2`, escuro
+     `#c3e4eb` sobre `#254142`. Substitui as duas regras do original. */
   ::selection,
   [data-theme] ::selection {
     background-color: var(--interactive-strong);
@@ -80,6 +80,38 @@
   input[type="datetime-local"],
   input[type="number"] {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Segmentos da data nativa (guia de acabamento §4.6) ─────────────────────
+     No claro, o Chrome pinta dia, mês e ano com a cor de destaque do sistema e
+     o valor parece link. Os segmentos seguem o texto do campo; o que ainda não
+     foi preenchido ("dd/mm/aaaa") fica no tom do placeholder. */
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit,
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+    color: var(--foreground);
+    /* No WebKit (Safari, WKWebView) a cor dos segmentos vem do preenchimento do
+       texto, não do `color`: sem isto os dígitos saem na cor de destaque do
+       sistema (verde-água aqui). Medido por injeção no portal da rodada 3. */
+    -webkit-text-fill-color: var(--foreground);
+  }
+  input[type="date"]:invalid::-webkit-datetime-edit,
+  input[type="date"][value=""]::-webkit-datetime-edit {
+    color: var(--muted-foreground);
+    -webkit-text-fill-color: var(--muted-foreground);
   }
 }
 

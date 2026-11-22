@@ -16,13 +16,70 @@
    sombra nem desfoque nos elementos que usam estas classes.
    ───────────────────────────────────────────────────────────────────────── */
 
-/* O gutter da página (DS §5.3, `--pta-gutter` do Work): 16px no celular, ~32px
-   em 1600px, 40px no máximo. Declarado na raiz da casca para que a barra de
-   cima, o `<main>` e qualquer tela que precise sangrar até a borda leiam o
-   MESMO número (`-mx-(--pta-gutter)`). */
+/* A CALHA da página (guia de acabamento §2.2): 16px no celular, 24px no
+   desktop, SEMPRE inteira. Era `clamp(1rem, 0.6rem + 1.4vw, 2.5rem)`, que dava
+   29,746px a 1440 e 28,374px a 1340, e o fracionado fazia o conteúdo ficar a
+   37,7px da barra lateral enquanto o resto da casca usava 8 e 24. Declarada na
+   raiz da casca para que a barra de cima, o `<main>` e qualquer tela que
+   precise sangrar até a borda leiam o MESMO número (`-mx-(--pta-gutter)`).
+
+   A regra, de lg para cima: a barra lateral é um cartão a 8px da borda, e a
+   coluna dela já reserva esses 8px do lado de dentro. A esquerda do `<main>`
+   e da barra de cima desconta os 8 (`--pta-gutter − 8px`), de modo que o
+   respiro entre o cartão da barra e o conteúdo é a calha inteira: 24px.
+   Direita, abaixo do cabeçalho e embaixo também 24px. */
 .casca {
-  --pta-gutter: clamp(1rem, 0.6rem + 1.4vw, 2.5rem);
+  --pta-gutter: 1rem;
+  --pta-gutter-esq: var(--pta-gutter);
   --surface-shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 8px 24px rgba(17, 24, 39, 0.035);
+}
+@media (min-width: 1024px) {
+  .casca {
+    --pta-gutter: 1.5rem;
+    --pta-gutter-esq: calc(var(--pta-gutter) - 0.5rem);
+  }
+}
+
+/* ── Página de FERRAMENTA de altura cheia (guia de acabamento §2.1) ──────────
+   Inbox, quadro do kanban, construtor de follow-up, editor de automação e
+   Casos ocupam a área útil inteira, e quem rola é a ferramenta. Classe
+   `casca-ferramenta` na raiz da página.
+
+   De lg para cima o cartão da ferramenta termina a 8px da borda de baixo, na
+   MESMA linha da base do cartão da barra lateral, e começa a 8px abaixo do
+   cabeçalho. Laterais na calha de 24. Abaixo de lg a ferramenta mantém o
+   respiro de página (16 ou 24 em cima, 24 embaixo).
+
+   A altura desconta o que está acima e abaixo e LÊ `--rodape-ocupado` (o
+   contrato do rodapé fixo, issue #1305), como as fórmulas que ela substitui.
+   Em `@layer components` para que um utilitário da página (a camada da
+   conversa do Inbox no celular) ainda possa trocar a altura. */
+@layer components {
+  .casca-ferramenta {
+    --ferr-t: 1rem;
+    --ferr-b: 1.5rem;
+    height: calc(
+      100dvh - var(--faixas-de-cima, 0px) - 3.5rem - var(--ferr-t) -
+        max(var(--ferr-b), var(--rodape-ocupado, 0px))
+    );
+  }
+  @media (min-width: 640px) {
+    .casca-ferramenta {
+      --ferr-t: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .casca-ferramenta {
+      --ferr-t: 0.5rem;
+      --ferr-b: 0.5rem;
+    }
+  }
+}
+@media (min-width: 1024px) {
+  .casca main:has(.casca-ferramenta) {
+    padding-top: 0.5rem !important;
+    padding-bottom: max(0.5rem, var(--rodape-ocupado, 0px)) !important;
+  }
 }
 [data-theme="dark"] .casca,
 [data-theme="dark"].casca {

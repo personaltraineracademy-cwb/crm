@@ -1,0 +1,432 @@
+/* ==========================================================================
+   Construtor de fluxo (follow-up) — `app/app/ai/followups/[id]`
+
+   Pedido da dona (21/11): "extremamente profissional e fluido". Princípios e
+   fontes na nota "Pesquisa- construtor de workflow" (n8n, Zapier, HubSpot,
+   Intercom, documentação do React Flow 12).
+
+   - Só tokens do tema (claro e escuro saem daqui sem regra própria): fundo,
+     cartão, borda, primária e os tons categóricos `--tone-*`, que o escuro já
+     clareia. A marca aparece só em acento: seleção, foco e fio selecionado.
+   - Movimento só em `transform` e `opacity` (a sombra que "levanta" o cartão
+     é uma camada `::after` que só muda de opacidade). Movimento reduzido segue
+     a convenção de `camadas.css`: `animation: none !important`.
+   - Sem `@layer`: o CSS do @xyflow entra sem camada; as regras daqui também,
+     e vencem pela especificidade (`.fluxo-canvas …`).
+   ========================================================================== */
+
+/* ---- Cores por família de nó (cartão e paleta) ---- */
+[data-categoria="gatilho"] {
+  --no-tom: var(--tone-violet);
+  --no-tom-texto: var(--tone-violet-foreground);
+}
+[data-categoria="espera"] {
+  --no-tom: var(--tone-cyan);
+  --no-tom-texto: var(--tone-cyan-foreground);
+}
+[data-categoria="logica"] {
+  --no-tom: var(--tone-orange);
+  --no-tom-texto: var(--tone-orange-foreground);
+}
+[data-categoria="mensagem"] {
+  --no-tom: var(--tone-teal);
+  --no-tom-texto: var(--tone-teal-foreground);
+}
+[data-categoria="crm"] {
+  --no-tom: var(--tone-blue);
+  --no-tom-texto: var(--tone-blue-foreground);
+}
+[data-categoria="fim"] {
+  --no-tom: var(--tone-stone);
+  --no-tom-texto: var(--tone-stone-foreground);
+}
+
+/* ---- Construtor: altura fixa na janela ----
+   O canvas ocupa a tela e quem rola é a paleta, nunca a página: com altura
+   pelo conteúdo, a paleta agrupada (mais de 800px) empurrava os controles de
+   zoom e o minimapa para fora da vista. 104px = barra superior do app +
+   respiros do `main`. */
+.fluxo-construtor {
+  /* A altura vem da página (`casca-ferramenta`, em `components/shell/casca.css`):
+     ela já desconta o cabeçalho, o rodapé fixo e o respiro, e termina na mesma
+     linha da base da barra lateral. Era `100dvh − 104px`, uma segunda conta do
+     mesmo número que deixava o construtor 16px abaixo do fim da barra. */
+  height: 100%;
+  min-height: 560px;
+}
+
+/* ---- Barra de ações ---- */
+.fluxo-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.fluxo-barra__divisor {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: var(--border);
+}
+
+/* Duas filas no desktop: título + Salvar/Publicar (a ação principal, sempre à
+   direita da linha do título) e, embaixo, as ferramentas (gatilho, política,
+   organizar, versão anterior, menu). */
+.fluxo-barra__titulo {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+.fluxo-barra__principal,
+.fluxo-barra__ferramentas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.fluxo-barra__principal {
+  order: 2;
+}
+.fluxo-barra__ferramentas {
+  order: 3;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* Celular (< 640): o título fica numa linha; embaixo vêm Salvar e Publicar,
+   SEMPRE visíveis e na largura toda (antes ficavam em x=918, fora da tela, no fim
+   de uma fila que rolava de lado); por último as ferramentas, numa fila que rola
+   de lado com esmaecimento de 24px na ponta. O minimapa sai — cobria metade da
+   largura e o texto dos nós. */
+@media (max-width: 639px) {
+  .fluxo-barra__titulo {
+    flex-basis: 100%;
+  }
+  .fluxo-barra__principal {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+  }
+  .fluxo-barra__principal > * {
+    flex: 1 1 0;
+  }
+  .fluxo-barra__ferramentas {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+  }
+  .fluxo-barra__ferramentas > * {
+    flex-shrink: 0;
+  }
+  .fluxo-canvas .react-flow__minimap.fluxo-minimapa {
+    display: none;
+  }
+}
+
+/* ---- Paleta ---- */
+.fluxo-paleta__grupo {
+  padding: 10px 8px 4px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+.fluxo-paleta__item {
+  cursor: grab;
+}
+.fluxo-paleta__item:active {
+  cursor: grabbing;
+}
+.fluxo-paleta__icone {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--no-tom) 14%, transparent);
+  color: var(--no-tom-texto);
+}
+
+/* ---- Canvas ---- */
+.fluxo-canvas {
+  --fluxo-fio: var(--border-strong);
+  --fluxo-fio-ativo: var(--muted-foreground);
+}
+
+/* Fios: 1,75px, cantos arredondados (o caminho já vem arredondado). */
+.fluxo-canvas .react-flow__edge.fluxo-aresta .react-flow__edge-path {
+  stroke: var(--fluxo-fio);
+  stroke-width: 1.75;
+  transition: stroke 150ms ease;
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta:hover .react-flow__edge-path {
+  stroke: var(--fluxo-fio-ativo);
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta.selected .react-flow__edge-path {
+  stroke: var(--primary);
+  stroke-width: 2.25;
+}
+.fluxo-aresta__seta {
+  fill: var(--fluxo-fio);
+  transition: fill 150ms ease;
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta:hover .fluxo-aresta__seta {
+  fill: var(--fluxo-fio-ativo);
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta.selected .fluxo-aresta__seta {
+  fill: var(--primary);
+}
+
+/* Rótulo em pílula: fundo de cartão, borda fina, texto de 12px legível. */
+.fluxo-canvas .react-flow__edge.fluxo-aresta .react-flow__edge-textbg {
+  fill: var(--card);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  cursor: pointer;
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta .react-flow__edge-text {
+  fill: var(--foreground);
+  font-weight: 500;
+  cursor: pointer;
+}
+/* "Sempre" é a ligação comum: mais quieta, para os ramos de verdade se destacarem. */
+.fluxo-canvas .react-flow__edge.fluxo-aresta--sempre .react-flow__edge-textbg {
+  stroke: var(--border);
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta--sempre .react-flow__edge-text {
+  fill: var(--muted-foreground);
+}
+.fluxo-canvas .react-flow__edge.fluxo-aresta.selected .react-flow__edge-textbg {
+  stroke: var(--primary);
+}
+
+/* Bolinhas: discretas em repouso, crescem (só `transform`) no hover. */
+.fluxo-canvas .react-flow__handle.fluxo-bolinha {
+  border: 2px solid var(--card);
+  background: var(--border-strong);
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+.fluxo-canvas .react-flow__handle.fluxo-bolinha:hover,
+.fluxo-canvas .react-flow__handle.fluxo-bolinha.connectingfrom,
+.fluxo-canvas .react-flow__handle.fluxo-bolinha.valid {
+  background: var(--primary);
+  transform: translate(-50%, -50%) scale(1.4);
+}
+.fluxo-canvas .react-flow__handle-bottom.fluxo-bolinha:hover,
+.fluxo-canvas .react-flow__handle-bottom.fluxo-bolinha.connectingfrom {
+  transform: translate(-50%, 50%) scale(1.4);
+}
+.fluxo-canvas .react-flow__handle-top.fluxo-bolinha:hover,
+.fluxo-canvas .react-flow__handle-top.fluxo-bolinha.valid {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+.fluxo-canvas .react-flow__handle-right.fluxo-bolinha:hover,
+.fluxo-canvas .react-flow__handle-right.fluxo-bolinha.connectingfrom {
+  transform: translate(50%, -50%) scale(1.4);
+}
+
+/* Minimapa e crédito do @xyflow (mantido: só a assinatura Pro autoriza tirar). */
+.fluxo-canvas .react-flow__minimap.fluxo-minimapa {
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-md);
+}
+.fluxo-canvas .react-flow__attribution {
+  padding: 2px 6px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+/* ---- Cartão do nó ---- */
+.fluxo-no {
+  position: relative;
+  width: 272px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--card-foreground);
+  transition:
+    border-color 150ms ease,
+    transform 160ms ease;
+}
+/* Nó recém-criado entra crescendo de leve (220 ms). Só ele: o fluxo que já
+   existia aparece no lugar ao abrir. `backwards`, não `both`: depois de
+   entrar, a animação não segura o `transform`, que o arrasto usa. */
+.react-flow__node.fluxo-no-novo > .fluxo-no {
+  animation: fluxo-no-entra 220ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+/* A sombra de "levantar" mora numa camada própria e só muda de opacidade. */
+.fluxo-no::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow:
+    0 10px 24px -8px rgb(0 0 0 / 0.22),
+    0 2px 6px -2px rgb(0 0 0 / 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.react-flow__node:hover > .fluxo-no {
+  border-color: var(--border-strong);
+}
+.react-flow__node:hover > .fluxo-no::after {
+  opacity: 0.45;
+}
+.react-flow__node.dragging > .fluxo-no {
+  transform: scale(1.015);
+}
+.react-flow__node.dragging > .fluxo-no::after {
+  opacity: 1;
+}
+.fluxo-no[data-selecionado] {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+.fluxo-no[data-estado="erro"] {
+  border-color: var(--destructive);
+}
+.fluxo-no[data-estado="erro"][data-selecionado] {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--destructive) 22%, transparent);
+}
+
+.fluxo-no__corpo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+}
+.fluxo-no__icone {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--no-tom) 14%, transparent);
+  color: var(--no-tom-texto);
+}
+.fluxo-no__cabeca {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.fluxo-no__tipo {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+.fluxo-no__titulo {
+  margin-top: 1px;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.fluxo-no__resumo {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--muted-foreground);
+}
+.fluxo-no__selo {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fluxo-no__selo[data-tom="erro"] {
+  background: color-mix(in srgb, var(--destructive) 14%, transparent);
+  color: var(--danger-foreground);
+}
+.fluxo-no__selo[data-tom="pendente"] {
+  background: color-mix(in srgb, var(--warning) 18%, transparent);
+  color: var(--warning-foreground);
+}
+.fluxo-no__selo[data-tom="rascunho"] {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.fluxo-no__faixa-erro {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--danger-border);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--danger-foreground);
+}
+
+.fluxo-no__ramos {
+  border-top: 1px solid var(--border);
+}
+.fluxo-no__ramo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 7px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 17px;
+  color: var(--foreground);
+}
+.fluxo-no__ramo:first-child {
+  border-top: 0;
+}
+.fluxo-no__ponto {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--no-tom);
+}
+.fluxo-no__ramo--resto {
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.fluxo-no__ramo--resto .fluxo-no__ponto {
+  background: var(--border-strong);
+}
+.fluxo-no__ramo--aviso {
+  color: var(--warning-foreground);
+}
+
+@keyframes fluxo-no-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fluxo-no,
+  .fluxo-no::after,
+  .fluxo-canvas .react-flow__handle.fluxo-bolinha,
+  .fluxo-canvas .react-flow__edge.fluxo-aresta .react-flow__edge-path {
+    animation: none !important;
+    transition: none !important;
+  }
+  .react-flow__node.dragging > .fluxo-no {
+    transform: none;
+  }
+}

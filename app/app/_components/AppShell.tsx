@@ -141,16 +141,21 @@ export function AppShell({
           sem depender de o jsdom computar `var()` (ele não computa), e é o que
           aparece no inspetor quando alguém pergunta quanto o rodapé perdeu.
 
-          A MARGEM LATERAL É O GUTTER DO UNNIFY (DS §5.3): `--pta-gutter`,
-          `clamp(1rem, 0.6rem + 1.4vw, 2.5rem)` — 16px no celular, ~32px em
-          1600px, 40px no máximo —, declarado na raiz da casca (`.casca`). A
+          A CALHA É UMA SÓ (guia de acabamento §2.2): `--pta-gutter`, 16px no
+          celular e 24px de lg para cima, SEMPRE inteira — o `clamp` antigo
+          dava 29,746px a 1440 e deixava o conteúdo a 37,7px da barra lateral.
+          Declarada na raiz da casca (`.casca`, em `casca.css`). Em lg a barra
+          lateral já reserva 8px do lado de dentro, então a esquerda usa
+          `--pta-gutter-esq` (a calha menos 8): do cartão da barra até o
+          conteúdo são 24px, como no lado direito e abaixo do cabeçalho. A
           página ocupa a largura toda; o teto de 2400px, centrado, só existe
           para monitor ultralargo.
 
-          Em cima e embaixo continua o par de antes (`pt-4 sm:pt-6` + o piso
-          do rodapé): a grade do Inbox desconta exatamente esses 24px
-          (`components/inbox/InboxLayout.tsx`), e mudar a medida vertical aqui
-          empurraria o composer para fora da tela.
+          Em cima e embaixo: `pt-4 sm:pt-6` + o piso do rodapé. Página de
+          FERRAMENTA de altura cheia leva a classe `casca-ferramenta` (ver
+          `casca.css`): de lg para cima o `main` perde o respiro de cima e de
+          baixo para 8px e a base do cartão alinha com a da barra lateral; a
+          altura sai dali, e lê `--rodape-ocupado` como sempre.
 
           `pb-area-segura` é o piso da faixa de baixo quando NÃO há peça fixa:
           `max(var(--space-6), env(safe-area-inset-bottom))`. Sem ela, no iOS em
@@ -158,7 +163,7 @@ export function AppShell({
           peça fixa quem cobre isso é o terceiro termo do `max()` do contrato.
         */}
         <main
-          className="mx-auto w-full max-w-[2400px] flex-1 overflow-auto px-(--pta-gutter) pt-4 pb-area-segura sm:pt-6"
+          className="mx-auto w-full max-w-[2400px] flex-1 overflow-auto pt-4 pr-(--pta-gutter) pb-area-segura pl-(--pta-gutter-esq) sm:pt-6"
           style={estiloDaReserva(ocupacaoDoRodape)}
           data-rodape-ocupado={ocupacaoDoRodape}
         >

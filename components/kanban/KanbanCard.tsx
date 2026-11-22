@@ -1,6 +1,11 @@
 "use client";
-import { Draggable } from "@hello-pangea/dnd";
-import type { MouseEvent } from "react";
+import {
+  Draggable,
+  type DraggableStateSnapshot,
+  type DraggingStyle,
+  type NotDraggingStyle,
+} from "@hello-pangea/dnd";
+import { memo, type MouseEvent } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { CalendarBlank, DragHandle } from "@/lib/ui/icons";
@@ -61,6 +66,51 @@ interface KanbanCardProps {
   onMoverPara?: (lead: Lead, stageId: string) => void;
 }
 
+/**
+ * Quanto dura o "assentar" depois de soltar, em segundos. O `@hello-pangea/dnd`
+ * calcula de 0,33 a 0,55 s pela distância; a linguagem de movimento do Unnify é
+ * de 150 a 250 ms com saída suave, a mesma do `movimento.css`
+ * (`--kanban-assentar`). Tem de ser MAIOR que zero: a biblioteca só encerra a
+ * soltura no `transitionend` do `transform`, e uma transição de 0 s nunca o
+ * dispara — por isso o movimento reduzido usa 1 ms, como a documentação dela
+ * manda, e não zero.
+ */
+const ASSENTAR_S = 0.22;
+const ASSENTAR_REDUZIDO_S = 0.001;
+
+function movimentoReduzido(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+/**
+ * O estilo que a biblioteca põe no card, com a soltura na linguagem do Unnify:
+ * 220 ms na curva `--ease-out` (a dela é 0,33 a 0,55 s). As propriedades
+ * continuam as dela (`transform` e `opacity`), porque é o `transform` que ela
+ * espera terminar.
+ */
+export function estiloDaSoltura(
+  style: DraggingStyle | NotDraggingStyle | undefined,
+  snapshot: Pick<DraggableStateSnapshot, "isDropAnimating" | "dropAnimation">,
+): DraggingStyle | NotDraggingStyle | undefined {
+  if (!style || !snapshot.isDropAnimating || !snapshot.dropAnimation) return style;
+  const s = movimentoReduzido() ? ASSENTAR_REDUZIDO_S : ASSENTAR_S;
+  return {
+    ...style,
+    transition: `transform ${s}s var(--ease-out), opacity ${s}s var(--ease-out)`,
+  };
+}
+
+/** O estado de arrasto que o `movimento.css` lê (`data-arrasto`). */
+function estadoDoArrasto(snapshot: Pick<DraggableStateSnapshot, "isDragging" | "isDropAnimating">) {
+  if (snapshot.isDropAnimating) return "assentando";
+  if (snapshot.isDragging) return "levantado";
+  return undefined;
+}
+
 function formatValor(cents: number | null, currency: string | null): string | null {
   // A régua do negócio (×100 em qualquer moeda) e o locale da moeda moram em
   // `formatValorDoNegocio` — a mesma função do total da coluna, para o card e o
@@ -88,7 +138,12 @@ function formatValor(cents: number | null, currency: string | null): string | nu
  * e tarefa atrasada em perigo (④). A antiga borda esquerda colorida saiu — o
  * cartão do Work não tem faixa lateral.
  */
-export function KanbanCard({
+/**
+ * `memo`: o card só re-renderiza quando o que ELE mostra muda (o lead, a posição,
+ * a seleção, o pulso). A coluna entrega o `CardInput` memoizado e callbacks
+ * estáveis justamente para isto valer.
+ */
+export const KanbanCard = memo(function KanbanCard({
   card,
   lead,
   index,
@@ -138,11 +193,7 @@ export function KanbanCard({
   // O título é o maior e mais natural alvo do card. Quem lê "Segurando Shift,
   // um clique seleciona tudo entre o card anterior e o que você clicou" e clica
   // no card clica no nome dele — e recebia o dossiê.
-  const decidirClique = (e: {
-    shiftKey: boolean;
-    metaKey: boolean;
-    ctrlKey: boolean;
-  }): void => {
+  const decidirClique = (e: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean }): void => {
     if (e.shiftKey) {
       onSelect?.(card.id, "intervalo");
       return;
@@ -161,7 +212,11 @@ export function KanbanCard({
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
+          style={estiloDaSoltura(provided.draggableProps.style, snapshot)}
           {...provided.dragHandleProps}
+          // Levantar (escala e sombra) e assentar: `movimento.css`, só por
+          // `scale`, `rotate` e opacidade — o `transform` é da biblioteca.
+          data-arrasto={estadoDoArrasto(snapshot)}
           // O dnd marca o handle como role="button"; com o menu de ações dentro,
           // isso vira nested-interactive no axe. "group" mantém o foco e o
           // teclado do dnd (tabIndex e handlers continuam vindo do spread) sem
@@ -172,12 +227,15 @@ export function KanbanCard({
           // Tags saem do card (Lei A): ficam a um hover, sem ocupar altura.
           title={card.tags.length > 0 ? `Tags: ${card.tags.join(", ")}` : undefined}
           className={cn(
-            "group relative overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground",
+            "kanban-card group relative overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground",
             // A sombra do cartão de tarefa do Work (DS §6.3) — o único cartão
-            // com sombra em repouso, porque é o único que se arrasta.
-            "shadow-[0_2px_4px_rgb(0_0_0/3%),0_6px_18px_rgb(0_0_0/2%)] transition-shadow",
+            // com sombra em repouso, porque é o único que se arrasta. Sem
+            // `transition-shadow`: sombra não se anima (a regra de movimento só
+            // anima `transform` e opacidade). A sombra de LEVANTAR é outra
+            // camada, que entra por opacidade (`movimento.css`).
+            "shadow-[0_2px_4px_rgb(0_0_0/3%),0_6px_18px_rgb(0_0_0/2%)]",
             "hover:shadow-[0_4px_16px_rgb(0_0_0/7%)]",
-            snapshot.isDragging && "rotate-1 shadow-md ring-1 ring-primary/40",
+            snapshot.isDragging && "ring-1 ring-primary/40",
             isSelected && "ring-2 ring-primary",
           )}
         >
@@ -201,7 +259,7 @@ export function KanbanCard({
 
           {/* ① identidade — altura FIXA de 2 linhas, com ou sem texto longo. */}
           <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 flex-1 items-start gap-1.5">
+            <div className="relative flex min-w-0 flex-1 items-start gap-1.5">
               {/* A largura é SEMPRE reservada (`h-4 w-4` num wrapper que não
                   some), só a tinta é condicional: o card tem orçamento fixo de
                   altura e largura, e uma caixa que aparece no hover EMPURRANDO
@@ -223,11 +281,12 @@ export function KanbanCard({
                   /* estado vem de `isSelected`; quem decide é o onClick acima */
                 }}
                 className={cn(
-                  "mt-0.5 size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
+                  // SOBREPOSTA, e não reservada (guia M4): a caixa só existe no hover e
+                  // na seleção, e reservar 22px empurrava título, valor e rodapé para
+                  // x diferentes. `bg-card` para ler sobre o texto do título.
+                  "absolute top-0.5 left-0 z-10 size-4 cursor-pointer rounded-sm bg-card accent-primary transition-opacity",
                   "focus:opacity-100 focus-visible:outline-2 focus-visible:outline-ring",
-                  isSelected || isSelecting
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100",
+                  isSelected || isSelecting ? "opacity-100" : "opacity-0 group-hover:opacity-100",
                 )}
               />
               {card.canonicalTag && (
@@ -250,7 +309,7 @@ export function KanbanCard({
                   acessibilidade; deixar só onKeyDown daria uma ação que existe
                   e NÃO É DESCOBERTA por leitor de tela. O título como button
                   atende mouse, teclado e leitor sem desfazer a decisão antiga. */}
-              <h3 className="line-clamp-2 h-10 text-sm leading-5 font-medium text-foreground">
+              <h3 className="line-clamp-2 min-h-5 text-sm leading-5 font-medium text-foreground">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -292,7 +351,7 @@ export function KanbanCard({
           </div>
 
           {/* ② valor — altura reservada mesmo sem valor, senão o card encolhe. */}
-          <div className="mt-1 flex h-5 items-center justify-between gap-2">
+          <div className="mt-3 flex h-5 items-center justify-between gap-2">
             <p
               className={cn(
                 "text-xs leading-5 font-medium tabular-nums",
@@ -322,7 +381,7 @@ export function KanbanCard({
               truncadas. A lista inteira segue no `title` do card. */}
           {etiquetasVisiveis.length > 0 && (
             <ul
-              className="mt-1.5 flex h-5 items-center gap-1.5 overflow-hidden"
+              className="mt-3 flex h-5 items-center gap-1.5 overflow-hidden"
               aria-label={t("Tags")}
             >
               {etiquetasVisiveis.map((tag) => (
@@ -346,7 +405,7 @@ export function KanbanCard({
           )}
 
           {/* ③ a linha do agente — um slot, três estados, nunca três blocos. */}
-          <div className="mt-1.5 flex h-6 items-center gap-2 text-xs">
+          <div className="mt-3 flex h-6 items-center gap-2 text-xs empty:hidden">
             {state.slot.type === "awaiting" && (
               // A proposta do agente é a ÚNICA linha do card com ação: é o
               // ponto onde a decisão do humano entra. Sem os botões aqui, o
@@ -398,8 +457,11 @@ export function KanbanCard({
           <ContatoNoCard lead={lead} />
 
           {/* ④ dono (+ selo de tarefas) · ⑤ tempo no estágio */}
-          <div className="mt-1 flex h-6 items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
+          <div className="mt-3 flex h-6 items-center justify-between gap-2">
+            {/* O dono ocupa o que precisa (`shrink-0`) e o tempo no estágio é quem
+                corta com reticências: antes os dois encolhiam sem limite e o texto
+                de um passava por cima do outro. */}
+            <div className="flex shrink-0 items-center gap-2">
               <OwnerBadge
                 ownerKind={card.owner.kind}
                 ownerName={card.owner.name}
@@ -407,9 +469,19 @@ export function KanbanCard({
               />
               <TarefasNoCard tarefas={lead.tarefas} />
             </div>
-            <span className="min-w-0 truncate text-xs whitespace-nowrap text-muted-foreground tabular-nums">
+            {/* O tempo na etapa tem de CABER: o nome da etapa já está no cabeçalho
+                da coluna, então com tempo o rodapé diz só "1h na etapa" (curto, não
+                corta) e o texto inteiro fica no tooltip. Sem tempo, o nome da etapa. */}
+            <span
+              className="min-w-0 flex-1 truncate text-right text-xs whitespace-nowrap text-muted-foreground tabular-nums"
+              title={
+                state.showStageAge && age
+                  ? `${age} ${t("em")} ${card.stageName}`
+                  : `${t("em")} ${card.stageName}`
+              }
+            >
               {state.showStageAge && age
-                ? `${age} ${t("em")} ${card.stageName}`
+                ? `${age} ${t("na etapa")}`
                 : `${t("em")} ${card.stageName}`}
             </span>
           </div>
@@ -417,4 +489,4 @@ export function KanbanCard({
       )}
     </Draggable>
   );
-}
+});

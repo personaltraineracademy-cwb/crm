@@ -159,7 +159,7 @@ export function SeletorDeCanalParaConversa({
 
   return (
     <Dialog open onOpenChange={(aberto) => { if (!aberto) aoCancelar(); }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{t("Escolha o canal para iniciar a conversa")}</DialogTitle>
           <DialogDescription>

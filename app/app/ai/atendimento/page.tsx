@@ -42,9 +42,16 @@ export default async function AtendimentoFlowsPage() {
         description={t(
           "Perguntas que a IA faz durante a conversa, em ordem, e o que fazer ao concluir — os dados ficam guardados por cliente.",
         )}
+        // A lista de fluxos põe as ações aqui (linha do título, à direita).
+        actions={canWrite ? <div id="acoes-do-cabecalho-atendimento" className="contents" /> : undefined}
       />
       <ComoUsar t={t} />
-      <FlowsList initialData={flows} canWrite={canWrite} surface="atendimento" />
+      <FlowsList
+        initialData={flows}
+        canWrite={canWrite}
+        surface="atendimento"
+        idDoAlvoDasAcoes="acoes-do-cabecalho-atendimento"
+      />
     </div>
   );
 }

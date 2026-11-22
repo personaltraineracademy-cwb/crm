@@ -6,7 +6,16 @@ import { useEffect, useRef, useState } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { useActiveOrg, usePermission, useUser } from "@/hooks/auth/AuthProvider";
 import { ROLE_RANK } from "@/lib/auth/types";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { PencilSimple } from "@/lib/ui/icons";
 import { useLeadTimeline } from "@/hooks/leads/useLeadTimeline";
 import type { Lead } from "@/lib/types/leads";
 import type { Stage } from "@/lib/kanban/types";
@@ -23,6 +32,9 @@ import { SecaoDoDossie, useSecoesRecolhidas } from "./SecaoDoDossie";
 import { resolveLeadOwner } from "@/lib/kanban/owner";
 import { formatValorDoNegocio, MOEDA_PADRAO } from "@/lib/money";
 import type { CustomFieldDef } from "@/components/contacts/CustomFieldsEditor";
+
+/** O id do formulário dos dados do negócio: o botão do rodapé o envia por `form=`. */
+const FORMULARIO_DOS_DADOS = "dossie-dados-do-negocio";
 
 interface Props {
   open: boolean;
@@ -100,6 +112,15 @@ export function LeadDossier({
   const tagDoIdioma = useTagDeIdioma();
   const t = useT();
   const campos = useRef<HTMLDivElement | null>(null);
+  // Quem abriu o dossiê (o card): o Radix devolve o foco ao GATILHO, e o card não é
+  // um gatilho dele — sem isto o foco ia para o <body> ao fechar com Esc, e quem usa
+  // o teclado perdia o lugar no quadro. O quadro monta o dossiê a cada abertura, então
+  // o inicializador roda ANTES de o Radix puxar o foco para dentro do painel.
+  const [abridor] = useState<HTMLElement | null>(() => {
+    if (typeof document === "undefined") return null;
+    const ativo = document.activeElement;
+    return ativo instanceof HTMLElement && ativo !== document.body ? ativo : null;
+  });
   const timeline = useLeadTimeline(open ? lead.id : null, lead.contact_id);
   const { fechadas, alternar, abrir } = useSecoesRecolhidas();
   const timelineRecolhida = fechadas.has("linha-do-tempo");
@@ -112,6 +133,8 @@ export function LeadDossier({
   // O atalho do cabeçalho precisa rolar DEPOIS de a seção estar aberta: rolar
   // num mesmo tique mediria a altura de antes, com os campos ainda escondidos.
   const [pedidoDeRolagem, setPedidoDeRolagem] = useState(0);
+  // O formulário dos dados avisa quando está gravando: o botão do rodapé o espelha.
+  const [salvando, setSalvando] = useState(false);
   useEffect(() => {
     if (pedidoDeRolagem === 0) return;
     campos.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -156,7 +179,22 @@ export function LeadDossier({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-md"
+        size="lg"
+        className="flex flex-col"
+        onCloseAutoFocus={(e) => {
+          // O mouse não foca o card (o arrasto do quadro segura o `mousedown`): sem
+          // abridor guardado, procura o card pelo id que o arrasto grava nele.
+          const card =
+            abridor?.isConnected === true
+              ? abridor
+              : document.querySelector<HTMLElement>(
+                  `[data-rfd-draggable-id="${CSS.escape(lead.id)}"]`,
+                );
+          if (card) {
+            e.preventDefault();
+            card.focus();
+          }
+        }}
         // Observável pelo mesmo motivo do board: "a assinatura morreu" e "nada
         // aconteceu" têm a mesma aparência, que é silêncio.
         data-realtime-status={timeline.realtimeStatus.toLowerCase()}
@@ -165,12 +203,33 @@ export function LeadDossier({
         // negócio sem novidade é um estado normal.
         data-refetch-divergencias={timeline.seguranca.divergencias}
       >
-        <SheetHeader className="pb-3">
-          <SheetTitle className="text-base leading-6">{lead.title}</SheetTitle>
-        </SheetHeader>
-
-        {/* ① cabeçalho vivo */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-border pb-3 text-xs">
+        {/* Cabeçalho FIXO do painel (guia §4.4): título + a linha de contexto
+            (valor · etapa · dono · probabilidade) e o atalho "Editar campos".
+            Só o corpo rola. */}
+        <SheetHeader className="gap-2">
+          <div className="flex items-start justify-between gap-2">
+            <SheetTitle className="min-w-0 text-base leading-6">{lead.title}</SheetTitle>
+            {/* Ação do cabeçalho (guia §4.4): ícone `ghost` de 32 ao lado do X, com o
+                nome acessível "Editar campos" e a dica. Era um texto solto no fim da
+                linha de contexto. Continua um BOTÃO com esse nome. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label={t("Editar campos")}
+              title={t("Editar campos")}
+              className="shrink-0 text-muted-foreground"
+              onClick={() => {
+                // Se os campos estiverem recolhidos, o clique também os abre:
+                // rolar até um título fechado entregaria um destino vazio.
+                abrir("dados-do-negocio");
+                setPedidoDeRolagem((n) => n + 1);
+              }}
+            >
+              <PencilSimple size={16} aria-hidden />
+            </Button>
+          </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
           <span className="font-medium tabular-nums text-text">
             {formatValor(lead.value_cents, lead.currency)}
           </span>
@@ -203,21 +262,10 @@ export function LeadDossier({
               factors={score.factors.slice(0, 3)}
             />
           )}
-
-          <button
-            type="button"
-            onClick={() => {
-              // Se os campos estiverem recolhidos, o clique também os abre:
-              // rolar até um título fechado entregaria um destino vazio.
-              abrir("dados-do-negocio");
-              setPedidoDeRolagem((n) => n + 1);
-            }}
-            className="ml-auto text-text-muted underline-offset-2 hover:text-text hover:underline"
-          >
-            {t("Editar campos")}
-          </button>
         </div>
+        </SheetHeader>
 
+        <SheetBody>
         {/* O score NÃO aparece na timeline: recálculo é telemetria e não emite
             atividade (silêncio para telemetria, pulso para mudança de estado).
             Sem esta linha, quem visse o número mudando no cabeçalho e nunca na
@@ -260,7 +308,14 @@ export function LeadDossier({
           aoAlternar={alternar}
         >
           <div ref={campos}>
-            <LeadFieldsForm lead={lead} pipelineId={pipelineId} fieldDefs={fieldDefs} />
+            <LeadFieldsForm
+              lead={lead}
+              pipelineId={pipelineId}
+              fieldDefs={fieldDefs}
+              formId={FORMULARIO_DOS_DADOS}
+              semBotoes
+              onPendente={setSalvando}
+            />
           </div>
         </SecaoDoDossie>
 
@@ -313,6 +368,19 @@ export function LeadDossier({
           pipelineId={pipelineId}
           podeCriar={podeCriarProposta}
         />
+        </SheetBody>
+
+        {/* O "Salvar" saiu do meio do painel: mora no rodapé FIXO e envia o
+            formulário dos dados do negócio por `form=` (o botão não precisa estar
+            dentro dele). Só existe com a seção aberta, que é quando o formulário
+            está montado. */}
+        {!fechadas.has("dados-do-negocio") && (
+          <SheetFooter>
+            <Button type="submit" form={FORMULARIO_DOS_DADOS} disabled={salvando}>
+              {salvando ? t("Salvando…") : t("Salvar")}
+            </Button>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );

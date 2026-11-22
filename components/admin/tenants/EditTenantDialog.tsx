@@ -54,7 +54,7 @@ export function EditTenantDialog({ open, onClose, organization }: EditTenantDial
         if (!aberto) onClose();
       }}
     >
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent size="lg" className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("Editar dados do tenant")}</DialogTitle>
           <DialogDescription>

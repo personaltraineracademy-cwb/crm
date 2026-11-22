@@ -3,8 +3,8 @@
 
    Valores canônicos do Unnify WORK (DESIGN-SYSTEM.md §3.2), com duas correções
    de acessibilidade que o próprio DS registra e não aplicou:
-   - borda de campo (`--input`) a 3:1: `#868d98` claro, `#6a717a` escuro (§18 #3);
-   - texto do botão destrutivo no escuro `#08131c` (branco sobre `#ff918a` dá 2,17:1).
+   - borda de campo (`--input`) a 3:1: `#7d8d8f` claro, `#627476` escuro (§18 #3);
+   - texto do botão destrutivo no escuro `#001717` (branco sobre `#ff918a` dá 2,17:1).
 
    ─── Três blocos, e por que eles repetem as mesmas chaves ───────────────────
    `:root` (claro), `[data-theme="light"]` (espelho claro, para a subárvore
@@ -32,37 +32,37 @@
 
 :root {
   /* Superfícies (CRM: bg = background, surface = card, surface-elevated = muted) */
-  --color-bg: #f1f3f6;
+  --color-bg: #edf2f3;
   --color-surface: #ffffff;
-  --color-surface-elevated: #e8ecf1;
-  --color-overlay: rgba(17, 20, 25, 0.48);
+  --color-surface-elevated: #e7edee;
+  --color-overlay: rgba(9, 13, 14, 0.4);
 
   /* Texto. `text-subtle` não existe no Unnify: recebe o `muted-foreground`
      (um cinza intermediário reprovaria AA sobre o cartão, mapa §1.1). */
-  --color-text: #20242c;
-  --color-text-muted: #626a77;
-  --color-text-subtle: #626a77;
+  --color-text: #10201f;
+  --color-text-muted: #5a6e6f;
+  --color-text-subtle: #5a6e6f;
 
   /* Bordas */
-  --color-border: #d2d9e2;
-  --color-border-strong: #b4bcc8;
+  --color-border: #d1dadc;
+  --color-border-strong: #b2bec0;
 
   /* Rampa de ação (11 paradas). Os papéis do Unnify caem nos ÍNDICES que o CRM
      já usa: claro acento 600 / hover 700; escuro acento 400 / hover 300
      (mapa §1.2). Rampa própria por tema, como o CRM já permitia. A 500 clara
      repete a 600 de propósito: os componentes usam `ring-accent-500` direto e
-     o anel do Unnify é `#0066cc`. */
-  --color-accent-50: #eaf2fc;
-  --color-accent-100: #dceafa;
-  --color-accent-200: #b8d8ff;
-  --color-accent-300: #9bbbe0;
-  --color-accent-400: #5992d7;
-  --color-accent-500: #0066cc;
-  --color-accent-600: #0066cc;
-  --color-accent-700: #005bb5;
-  --color-accent-800: #004f9e;
-  --color-accent-900: #0e2747;
-  --color-accent-950: #071a32;
+     o anel do Unnify é `#24555e`. */
+  --color-accent-50: #e6f4f7;
+  --color-accent-100: #d5eef2;
+  --color-accent-200: #bddbe1;
+  --color-accent-300: #a0bec4;
+  --color-accent-400: #76969a;
+  --color-accent-500: #24555e;
+  --color-accent-600: #24555e;
+  --color-accent-700: #1a4951;
+  --color-accent-800: #0b3d45;
+  --color-accent-900: #122c2c;
+  --color-accent-950: #002828;
 
   /* Papéis do acento. Mantém a FORMA `var(--color-accent-NNN)`: é o que deixa a
      marca do revendedor (que reescreve as paradas) e a régua continuarem a valer.
@@ -76,17 +76,17 @@
 
   /* Neutros (escala fria). O Unnify não publica rampa neutra, só papéis: cada
      papel na parada de luminosidade equivalente (mapa §1.3). */
-  --color-neutral-50: #f7f8fb;
-  --color-neutral-100: #eef1f5;
-  --color-neutral-200: #d2d9e2;
-  --color-neutral-300: #b4bcc8;
-  --color-neutral-400: #aab3c0;
-  --color-neutral-500: #858e9b;
-  --color-neutral-600: #626a77;
-  --color-neutral-700: #343c48;
-  --color-neutral-800: #2a303a;
-  --color-neutral-900: #20242c;
-  --color-neutral-950: #10141b;
+  --color-neutral-50: #f4f9fa;
+  --color-neutral-100: #ecf2f3;
+  --color-neutral-200: #d1dadc;
+  --color-neutral-300: #b2bec0;
+  --color-neutral-400: #a8b5b7;
+  --color-neutral-500: #819193;
+  --color-neutral-600: #5a6e6f;
+  --color-neutral-700: #284041;
+  --color-neutral-800: #1a3535;
+  --color-neutral-900: #10201f;
+  --color-neutral-950: #001919;
 
   /* Estados. Os nomes `-bg`/`-fg` do CRM = `-soft`/`-foreground` do Unnify
      (apelidos mais abaixo). `-border` é novo. */
@@ -102,10 +102,10 @@
   --color-error-bg: #fff0ee;
   --color-error-fg: #b42318;
   --color-error-border: #fecdca;
-  --color-info: #0066cc;
-  --color-info-bg: #eaf2fc;
-  --color-info-fg: #0055aa;
-  --color-info-border: #b8d8ff;
+  --color-info: #24555e;
+  --color-info-bg: #e6f4f7;
+  --color-info-fg: #375f62;
+  --color-info-border: #bddbe1;
 
   /* Sombras. Claro: os padrões do Tailwind (o Unnify não os redefine) e o
      diálogo do Work no `xl`. Escuro: rasas e opacas, sem brilho (DS §6.3, §15). */
@@ -114,6 +114,7 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 30px 90px rgb(10 12 9 / 0.24), 0 8px 30px rgb(10 12 9 / 0.12);
+  --sombra-camada: 0 30px 90px rgb(10 12 9 / 0.24), 0 8px 30px rgb(10 12 9 / 0.12);
 
   /* Apelidos shadcn (os mesmos nomes do `globals.css`; os que eram apelido
      continuam apelido para seguir marca e tema de extensão). */
@@ -125,8 +126,8 @@
   --popover-foreground: var(--color-text);
   --primary: var(--color-accent);
   --primary-foreground: var(--color-accent-fg);
-  --secondary: #e3e8ef;
-  --secondary-foreground: #343c48;
+  --secondary: #e2e9ea;
+  --secondary-foreground: #284041;
   --muted: var(--color-surface-elevated);
   --muted-foreground: var(--color-text-muted);
   --accent: var(--color-accent-soft);
@@ -134,7 +135,7 @@
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
   --border: var(--color-border);
-  --input: #868d98;
+  --input: #7d8d8f;
   --ring: var(--color-accent-500);
 
   /* Ação e interativo (Unnify). `interactive-foreground` é o `accent-foreground`
@@ -147,7 +148,7 @@
   --interactive-strong: var(--color-interactive-strong);
   --color-interactive-border: var(--color-accent-300);
   --interactive-border: var(--color-interactive-border);
-  --color-interactive-foreground: #0055aa;
+  --color-interactive-foreground: #375f62;
   --interactive-foreground: var(--color-interactive-foreground);
 
   /* Estados com os nomes do Unnify (apelidos dos `--color-*` acima) */
@@ -170,15 +171,15 @@
 
   /* Barra lateral (sem consumidor até a etapa da casca). Ação, anel e indicador
      seguem a rampa, e com ela a marca do revendedor. */
-  --sidebar: #e9edf3;
+  --sidebar: #e8eeef;
   --sidebar-foreground: #29292e;
   --sidebar-primary: var(--color-accent);
   --sidebar-primary-foreground: var(--color-accent-fg);
-  --sidebar-accent: #dde4ec;
+  --sidebar-accent: #dae6e8;
   --sidebar-accent-foreground: #29292e;
-  --sidebar-border: #d9dfe7;
+  --sidebar-border: #d5e1e3;
   --sidebar-ring: var(--color-accent-500);
-  --sidebar-muted: #626a77;
+  --sidebar-muted: #5a6e6f;
   --sidebar-indicator: var(--color-accent);
 
   /* Tons categóricos (colunas, etiquetas, categorias; DS §3.3) */
@@ -206,39 +207,39 @@
   /* Marca Unnify (rampa azul, navy e ciano). `--color-brand` NÃO entra aqui: é a
      semente do revendedor (lib/branding/css.ts). O ciano é `brand-cyan` para não
      colidir com a família `cyan-*` do Tailwind. */
-  --brand-50: #eaf3ff;
-  --brand-100: #d9eaff;
-  --brand-200: #b8d8ff;
-  --brand-400: #4ca8ff;
-  --brand-500: #0b5cff;
-  --brand-600: #0047d9;
-  --brand-700: #0b3aa4;
-  --brand-900: #071a32;
-  --ink: #071a32;
-  --ink-soft: #0e2747;
-  --brand-cyan: #00a8f6;
+  --brand-50: #e5f6f9;
+  --brand-100: #d1eef4;
+  --brand-200: #bddbe1;
+  --brand-400: #82acb3;
+  --brand-500: #3f7480;
+  --brand-600: #2c6569;
+  --brand-700: #1d5052;
+  --brand-900: #002828;
+  --ink: #002828;
+  --ink-soft: #122c2c;
+  --brand-cyan: #b4c8cd;
 
   /* Gráficos (DS §12.2). Hex, e não trio HSL: consumir com `var(--chart-N)`,
      NUNCA dentro de `hsl()` (o valor inteiro fica inválido e a série some). */
-  --chart-1: #0b5cff;
-  --chart-2: #00a8f6;
-  --chart-3: #98a2b3;
+  --chart-1: #3f7480;
+  --chart-2: #b4c8cd;
+  --chart-3: #96a5a7;
   --chart-4: #dc2626;
-  --chart-5: #c8cdd9;
-  --chart-6: #5b6470;
-  --chart-7: #a3aed0;
-  --chart-grid: rgba(16, 24, 40, 0.08);
-  --chart-primary: #0b5cff;
-  --chart-primary-muted: rgba(11, 92, 255, 0.14);
-  --chart-secondary: #7c8796;
-  --chart-success: #0b5cff;
+  --chart-5: #c5cfd1;
+  --chart-6: #546769;
+  --chart-7: #96b6bc;
+  --chart-grid: rgba(3, 29, 29, 0.08);
+  --chart-primary: #3f7480;
+  --chart-primary-muted: rgba(63, 116, 128, 0.14);
+  --chart-secondary: #798a8c;
+  --chart-success: #3f7480;
   --chart-danger: #dc2626;
-  --data-1: #0b5cff;
-  --data-2: #00a8f6;
-  --data-3: #98a2b3;
-  --data-4: #c8cdd9;
-  --data-5: #e4e7ec;
-  --data-success: #0b5cff;
+  --data-1: #3f7480;
+  --data-2: #b4c8cd;
+  --data-3: #96a5a7;
+  --data-4: #c5cfd1;
+  --data-5: #e1e8ea;
+  --data-success: #3f7480;
   --data-danger: #e14d4d;
   --data-warning: #f4a93c;
 
@@ -247,26 +248,41 @@
   --value-positive-bg: rgba(6, 118, 71, 0.1);
   --value-negative: #c62828;
   --value-negative-bg: rgba(220, 38, 38, 0.1);
-  --value-neutral: #a3aed0;
-  --value-neutral-bg: rgba(163, 174, 208, 0.12);
+  --value-neutral: #96b6bc;
+  --value-neutral-bg: rgba(150, 182, 188, 0.12);
 
   /* Utilitários e superfícies extras */
   --overlay: var(--color-overlay);
-  --skeleton-base: #c8cfd9;
+  --skeleton-base: #c6d1d3;
   --skeleton-highlight: #ffffff;
-  --table-header: #f5f6f9;
-  --table-row-hover: #f5f7fa;
-  --text-disabled: #aab2bd;
-  --border-subtle: #e7eaef;
+  --table-header: #f2f7f8;
+  --table-row-hover: #f3f8f9;
+  --text-disabled: #a7b4b7;
+  --border-subtle: #e5ebed;
   --border-strong: var(--color-border-strong);
-  --surface-hover: #eef1f5;
-  --surface-soft: #f7f8fb;
-  --elevated: #f7f8fb;
+  --surface-hover: #ecf2f3;
+  --surface-soft: #f4f9fa;
+  --elevated: #f4f9fa;
 
   /* Movimento (DS §7.1). Sem par por tema, por isso só no `:root`. */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --duration-base: 180ms;
   --duration-slow: 220ms;
+
+  /* Camadas (guia de acabamento): entrar desacelerando, sair acelerando. */
+  --ease-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --duracao-entrada: 200ms;
+  --duracao-saida: 150ms;
+
+  /* Vão entre painéis lado a lado e larguras de diálogo e painel lateral. */
+  --vao-painel: 8px;
+  --largura-dialogo-sm: 400px;
+  --largura-dialogo-md: 560px;
+  --largura-dialogo-lg: 720px;
+  --largura-dialogo-xl: 960px;
+  --largura-painel-md: 480px;
+  --largura-painel-lg: 640px;
 
   /* Camada da dica (DS §5.5) */
   --z-tooltip: 70;
@@ -277,37 +293,37 @@
 
 [data-theme="light"] {
   /* Superfícies (CRM: bg = background, surface = card, surface-elevated = muted) */
-  --color-bg: #f1f3f6;
+  --color-bg: #edf2f3;
   --color-surface: #ffffff;
-  --color-surface-elevated: #e8ecf1;
-  --color-overlay: rgba(17, 20, 25, 0.48);
+  --color-surface-elevated: #e7edee;
+  --color-overlay: rgba(9, 13, 14, 0.4);
 
   /* Texto. `text-subtle` não existe no Unnify: recebe o `muted-foreground`
      (um cinza intermediário reprovaria AA sobre o cartão, mapa §1.1). */
-  --color-text: #20242c;
-  --color-text-muted: #626a77;
-  --color-text-subtle: #626a77;
+  --color-text: #10201f;
+  --color-text-muted: #5a6e6f;
+  --color-text-subtle: #5a6e6f;
 
   /* Bordas */
-  --color-border: #d2d9e2;
-  --color-border-strong: #b4bcc8;
+  --color-border: #d1dadc;
+  --color-border-strong: #b2bec0;
 
   /* Rampa de ação (11 paradas). Os papéis do Unnify caem nos ÍNDICES que o CRM
      já usa: claro acento 600 / hover 700; escuro acento 400 / hover 300
      (mapa §1.2). Rampa própria por tema, como o CRM já permitia. A 500 clara
      repete a 600 de propósito: os componentes usam `ring-accent-500` direto e
-     o anel do Unnify é `#0066cc`. */
-  --color-accent-50: #eaf2fc;
-  --color-accent-100: #dceafa;
-  --color-accent-200: #b8d8ff;
-  --color-accent-300: #9bbbe0;
-  --color-accent-400: #5992d7;
-  --color-accent-500: #0066cc;
-  --color-accent-600: #0066cc;
-  --color-accent-700: #005bb5;
-  --color-accent-800: #004f9e;
-  --color-accent-900: #0e2747;
-  --color-accent-950: #071a32;
+     o anel do Unnify é `#24555e`. */
+  --color-accent-50: #e6f4f7;
+  --color-accent-100: #d5eef2;
+  --color-accent-200: #bddbe1;
+  --color-accent-300: #a0bec4;
+  --color-accent-400: #76969a;
+  --color-accent-500: #24555e;
+  --color-accent-600: #24555e;
+  --color-accent-700: #1a4951;
+  --color-accent-800: #0b3d45;
+  --color-accent-900: #122c2c;
+  --color-accent-950: #002828;
 
   /* Papéis do acento. Mantém a FORMA `var(--color-accent-NNN)`: é o que deixa a
      marca do revendedor (que reescreve as paradas) e a régua continuarem a valer.
@@ -321,17 +337,17 @@
 
   /* Neutros (escala fria). O Unnify não publica rampa neutra, só papéis: cada
      papel na parada de luminosidade equivalente (mapa §1.3). */
-  --color-neutral-50: #f7f8fb;
-  --color-neutral-100: #eef1f5;
-  --color-neutral-200: #d2d9e2;
-  --color-neutral-300: #b4bcc8;
-  --color-neutral-400: #aab3c0;
-  --color-neutral-500: #858e9b;
-  --color-neutral-600: #626a77;
-  --color-neutral-700: #343c48;
-  --color-neutral-800: #2a303a;
-  --color-neutral-900: #20242c;
-  --color-neutral-950: #10141b;
+  --color-neutral-50: #f4f9fa;
+  --color-neutral-100: #ecf2f3;
+  --color-neutral-200: #d1dadc;
+  --color-neutral-300: #b2bec0;
+  --color-neutral-400: #a8b5b7;
+  --color-neutral-500: #819193;
+  --color-neutral-600: #5a6e6f;
+  --color-neutral-700: #284041;
+  --color-neutral-800: #1a3535;
+  --color-neutral-900: #10201f;
+  --color-neutral-950: #001919;
 
   /* Estados. Os nomes `-bg`/`-fg` do CRM = `-soft`/`-foreground` do Unnify
      (apelidos mais abaixo). `-border` é novo. */
@@ -347,10 +363,10 @@
   --color-error-bg: #fff0ee;
   --color-error-fg: #b42318;
   --color-error-border: #fecdca;
-  --color-info: #0066cc;
-  --color-info-bg: #eaf2fc;
-  --color-info-fg: #0055aa;
-  --color-info-border: #b8d8ff;
+  --color-info: #24555e;
+  --color-info-bg: #e6f4f7;
+  --color-info-fg: #375f62;
+  --color-info-border: #bddbe1;
 
   /* Sombras. Claro: os padrões do Tailwind (o Unnify não os redefine) e o
      diálogo do Work no `xl`. Escuro: rasas e opacas, sem brilho (DS §6.3, §15). */
@@ -359,6 +375,7 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 30px 90px rgb(10 12 9 / 0.24), 0 8px 30px rgb(10 12 9 / 0.12);
+  --sombra-camada: 0 30px 90px rgb(10 12 9 / 0.24), 0 8px 30px rgb(10 12 9 / 0.12);
 
   /* Apelidos shadcn (os mesmos nomes do `globals.css`; os que eram apelido
      continuam apelido para seguir marca e tema de extensão). */
@@ -370,8 +387,8 @@
   --popover-foreground: var(--color-text);
   --primary: var(--color-accent);
   --primary-foreground: var(--color-accent-fg);
-  --secondary: #e3e8ef;
-  --secondary-foreground: #343c48;
+  --secondary: #e2e9ea;
+  --secondary-foreground: #284041;
   --muted: var(--color-surface-elevated);
   --muted-foreground: var(--color-text-muted);
   --accent: var(--color-accent-soft);
@@ -379,7 +396,7 @@
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
   --border: var(--color-border);
-  --input: #868d98;
+  --input: #7d8d8f;
   --ring: var(--color-accent-500);
 
   /* Ação e interativo (Unnify). `interactive-foreground` é o `accent-foreground`
@@ -392,7 +409,7 @@
   --interactive-strong: var(--color-interactive-strong);
   --color-interactive-border: var(--color-accent-300);
   --interactive-border: var(--color-interactive-border);
-  --color-interactive-foreground: #0055aa;
+  --color-interactive-foreground: #375f62;
   --interactive-foreground: var(--color-interactive-foreground);
 
   /* Estados com os nomes do Unnify (apelidos dos `--color-*` acima) */
@@ -415,15 +432,15 @@
 
   /* Barra lateral (sem consumidor até a etapa da casca). Ação, anel e indicador
      seguem a rampa, e com ela a marca do revendedor. */
-  --sidebar: #e9edf3;
+  --sidebar: #e8eeef;
   --sidebar-foreground: #29292e;
   --sidebar-primary: var(--color-accent);
   --sidebar-primary-foreground: var(--color-accent-fg);
-  --sidebar-accent: #dde4ec;
+  --sidebar-accent: #dae6e8;
   --sidebar-accent-foreground: #29292e;
-  --sidebar-border: #d9dfe7;
+  --sidebar-border: #d5e1e3;
   --sidebar-ring: var(--color-accent-500);
-  --sidebar-muted: #626a77;
+  --sidebar-muted: #5a6e6f;
   --sidebar-indicator: var(--color-accent);
 
   /* Tons categóricos (colunas, etiquetas, categorias; DS §3.3) */
@@ -451,39 +468,39 @@
   /* Marca Unnify (rampa azul, navy e ciano). `--color-brand` NÃO entra aqui: é a
      semente do revendedor (lib/branding/css.ts). O ciano é `brand-cyan` para não
      colidir com a família `cyan-*` do Tailwind. */
-  --brand-50: #eaf3ff;
-  --brand-100: #d9eaff;
-  --brand-200: #b8d8ff;
-  --brand-400: #4ca8ff;
-  --brand-500: #0b5cff;
-  --brand-600: #0047d9;
-  --brand-700: #0b3aa4;
-  --brand-900: #071a32;
-  --ink: #071a32;
-  --ink-soft: #0e2747;
-  --brand-cyan: #00a8f6;
+  --brand-50: #e5f6f9;
+  --brand-100: #d1eef4;
+  --brand-200: #bddbe1;
+  --brand-400: #82acb3;
+  --brand-500: #3f7480;
+  --brand-600: #2c6569;
+  --brand-700: #1d5052;
+  --brand-900: #002828;
+  --ink: #002828;
+  --ink-soft: #122c2c;
+  --brand-cyan: #b4c8cd;
 
   /* Gráficos (DS §12.2). Hex, e não trio HSL: consumir com `var(--chart-N)`,
      NUNCA dentro de `hsl()` (o valor inteiro fica inválido e a série some). */
-  --chart-1: #0b5cff;
-  --chart-2: #00a8f6;
-  --chart-3: #98a2b3;
+  --chart-1: #3f7480;
+  --chart-2: #b4c8cd;
+  --chart-3: #96a5a7;
   --chart-4: #dc2626;
-  --chart-5: #c8cdd9;
-  --chart-6: #5b6470;
-  --chart-7: #a3aed0;
-  --chart-grid: rgba(16, 24, 40, 0.08);
-  --chart-primary: #0b5cff;
-  --chart-primary-muted: rgba(11, 92, 255, 0.14);
-  --chart-secondary: #7c8796;
-  --chart-success: #0b5cff;
+  --chart-5: #c5cfd1;
+  --chart-6: #546769;
+  --chart-7: #96b6bc;
+  --chart-grid: rgba(3, 29, 29, 0.08);
+  --chart-primary: #3f7480;
+  --chart-primary-muted: rgba(63, 116, 128, 0.14);
+  --chart-secondary: #798a8c;
+  --chart-success: #3f7480;
   --chart-danger: #dc2626;
-  --data-1: #0b5cff;
-  --data-2: #00a8f6;
-  --data-3: #98a2b3;
-  --data-4: #c8cdd9;
-  --data-5: #e4e7ec;
-  --data-success: #0b5cff;
+  --data-1: #3f7480;
+  --data-2: #b4c8cd;
+  --data-3: #96a5a7;
+  --data-4: #c5cfd1;
+  --data-5: #e1e8ea;
+  --data-success: #3f7480;
   --data-danger: #e14d4d;
   --data-warning: #f4a93c;
 
@@ -492,80 +509,84 @@
   --value-positive-bg: rgba(6, 118, 71, 0.1);
   --value-negative: #c62828;
   --value-negative-bg: rgba(220, 38, 38, 0.1);
-  --value-neutral: #a3aed0;
-  --value-neutral-bg: rgba(163, 174, 208, 0.12);
+  --value-neutral: #96b6bc;
+  --value-neutral-bg: rgba(150, 182, 188, 0.12);
 
   /* Utilitários e superfícies extras */
   --overlay: var(--color-overlay);
-  --skeleton-base: #c8cfd9;
+  --skeleton-base: #c6d1d3;
   --skeleton-highlight: #ffffff;
-  --table-header: #f5f6f9;
-  --table-row-hover: #f5f7fa;
-  --text-disabled: #aab2bd;
-  --border-subtle: #e7eaef;
+  --table-header: #f2f7f8;
+  --table-row-hover: #f3f8f9;
+  --text-disabled: #a7b4b7;
+  --border-subtle: #e5ebed;
   --border-strong: var(--color-border-strong);
-  --surface-hover: #eef1f5;
-  --surface-soft: #f7f8fb;
-  --elevated: #f7f8fb;
+  --surface-hover: #ecf2f3;
+  --surface-soft: #f4f9fa;
+  --elevated: #f4f9fa;
 }
 
 [data-theme="dark"] {
-  /* Superfícies (CRM: bg = background, surface = card, surface-elevated = muted) */
-  --color-bg: #181a1e;
-  --color-surface: #23262b;
-  --color-surface-elevated: #202328;
-  --color-overlay: rgba(4, 7, 11, 0.68);
+  /* Superfícies (CRM: bg = background, surface = card, surface-elevated = muted).
+     Escuro quase preto, na luminosidade do #121212 do Material (OKLCH L 0,178),
+     com só um sopro de petróleo (croma <= 0,008). Cada nível de elevação é o
+     mesmo quase-preto clareado: card 5%, muted/soft 7%, popover/elevated 8%,
+     hover 9%, skeleton 11%, borda 16%. A cor da marca fica nos acentos. */
+  --color-bg: #0e1213;
+  --color-surface: #1a1e1f;
+  --color-surface-elevated: #1f2324;
+  --color-overlay: rgba(0, 0, 0, 0.68);
 
   /* Texto. `text-subtle` não existe no Unnify: recebe o `muted-foreground`
      (um cinza intermediário reprovaria AA sobre o cartão, mapa §1.1). */
-  --color-text: #f3f5f8;
-  --color-text-muted: #b4bbc6;
-  --color-text-subtle: #b4bbc6;
+  --color-text: #f1f6f7;
+  --color-text-muted: #b1bdc0;
+  --color-text-subtle: #b1bdc0;
 
   /* Bordas */
-  --color-border: #353a42;
-  --color-border-strong: #505863;
+  --color-border: #343839;
+  --color-border-strong: #4f5556;
 
   /* Rampa de ação (11 paradas). Os papéis do Unnify caem nos ÍNDICES que o CRM
      já usa: claro acento 600 / hover 700; escuro acento 400 / hover 300
      (mapa §1.2). Rampa própria por tema, como o CRM já permitia. A 500 clara
      repete a 600 de propósito: os componentes usam `ring-accent-500` direto e
-     o anel do Unnify é `#0066cc`. */
-  --color-accent-50: #e5f1ff;
-  --color-accent-100: #c6e0ff;
-  --color-accent-200: #a9d0ff;
-  --color-accent-300: #91c5ff;
-  --color-accent-400: #75b7ff;
-  --color-accent-500: #5ca8fb;
-  --color-accent-600: #416d98;
-  --color-accent-700: #203d5c;
-  --color-accent-800: #203750;
-  --color-accent-900: #0e2747;
-  --color-accent-950: #08131c;
+     o anel do Unnify é `#24555e`. */
+  --color-accent-50: #dff4f8;
+  --color-accent-100: #c3e4eb;
+  --color-accent-200: #bad1d6;
+  --color-accent-300: #acc6cb;
+  --color-accent-400: #8fb3bb;
+  --color-accent-500: #85acb3;
+  --color-accent-600: #596e70;
+  --color-accent-700: #254142;
+  --color-accent-800: #1d3b3c;
+  --color-accent-900: #122c2c;
+  --color-accent-950: #001717;
 
   /* Papéis do acento. Mantém a FORMA `var(--color-accent-NNN)`: é o que deixa a
      marca do revendedor (que reescreve as paradas) e a régua continuarem a valer.
      `accent` no CRM = ação CHEIA (o `primary` do Unnify); `accent-soft` = o
      `accent`/`interactive` do Unnify. */
   --color-accent: var(--color-accent-400);
-  --color-accent-fg: #08131c;
+  --color-accent-fg: #001717;
   --color-accent-soft: var(--color-accent-800);
   --color-accent-hover: var(--color-accent-300);
   --color-accent-pressed: var(--color-accent-500);
 
   /* Neutros (escala fria). O Unnify não publica rampa neutra, só papéis: cada
      papel na parada de luminosidade equivalente (mapa §1.3). */
-  --color-neutral-50: #f3f5f8;
+  --color-neutral-50: #f1f6f7;
   --color-neutral-100: #eeeeef;
-  --color-neutral-200: #d3d8df;
-  --color-neutral-300: #b4bbc6;
-  --color-neutral-400: #66717f;
-  --color-neutral-500: #505863;
-  --color-neutral-600: #353a42;
-  --color-neutral-700: #2d3239;
-  --color-neutral-800: #23262b;
-  --color-neutral-900: #181a1e;
-  --color-neutral-950: #0f1115;
+  --color-neutral-200: #d1d9db;
+  --color-neutral-300: #b1bdc0;
+  --color-neutral-400: #6f7677;
+  --color-neutral-500: #4f5556;
+  --color-neutral-600: #343839;
+  --color-neutral-700: #232728;
+  --color-neutral-800: #1a1e1f;
+  --color-neutral-900: #0e1213;
+  --color-neutral-950: #060a0b;
 
   /* Estados. Os nomes `-bg`/`-fg` do CRM = `-soft`/`-foreground` do Unnify
      (apelidos mais abaixo). `-border` é novo. */
@@ -581,10 +602,10 @@
   --color-error-bg: #361f20;
   --color-error-fg: #ffb4ae;
   --color-error-border: #6b2a2a;
-  --color-info: #75b7ff;
-  --color-info-bg: #203750;
-  --color-info-fg: #c6e0ff;
-  --color-info-border: #416d98;
+  --color-info: #98b9c0;
+  --color-info-bg: #1d3b3c;
+  --color-info-fg: #c3e4eb;
+  --color-info-border: #596e70;
 
   /* Sombras. Claro: os padrões do Tailwind (o Unnify não os redefine) e o
      diálogo do Work no `xl`. Escuro: rasas e opacas, sem brilho (DS §6.3, §15). */
@@ -593,6 +614,7 @@
   --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 6px 16px rgba(0, 0, 0, 0.55);
+  --sombra-camada: 0 0 0 1px rgb(255 255 255 / 0.07), 0 24px 64px rgb(0 0 0 / 0.6);
 
   /* Apelidos shadcn (os mesmos nomes do `globals.css`; os que eram apelido
      continuam apelido para seguir marca e tema de extensão). */
@@ -600,20 +622,20 @@
   --foreground: var(--color-text);
   --card: var(--color-surface);
   --card-foreground: var(--color-text);
-  --popover: #292d33;
+  --popover: #202526;
   --popover-foreground: var(--color-text);
   --primary: var(--color-accent);
   --primary-foreground: var(--color-accent-fg);
-  --secondary: #2d3239;
+  --secondary: #232728;
   --secondary-foreground: #eeeeef;
   --muted: var(--color-surface-elevated);
   --muted-foreground: var(--color-text-muted);
   --accent: var(--color-accent-soft);
   --accent-foreground: var(--color-accent-fg);
   --destructive: #ff918a;
-  --destructive-foreground: #08131c;
+  --destructive-foreground: #001717;
   --border: var(--color-border);
-  --input: #6a717a;
+  --input: #6f7677;
   --ring: var(--color-accent-400);
 
   /* Ação e interativo (Unnify). `interactive-foreground` é o `accent-foreground`
@@ -649,15 +671,15 @@
 
   /* Barra lateral (sem consumidor até a etapa da casca). Ação, anel e indicador
      seguem a rampa, e com ela a marca do revendedor. */
-  --sidebar: #1e2126;
+  --sidebar: #1a1e1f;
   --sidebar-foreground: #f5f5f7;
   --sidebar-primary: var(--color-accent);
   --sidebar-primary-foreground: var(--color-accent-fg);
-  --sidebar-accent: #2a2f36;
+  --sidebar-accent: #232728;
   --sidebar-accent-foreground: var(--color-accent-100);
-  --sidebar-border: #30353d;
+  --sidebar-border: #2f3334;
   --sidebar-ring: var(--color-accent-200);
-  --sidebar-muted: #b4bbc6;
+  --sidebar-muted: #b1bdc0;
   --sidebar-indicator: var(--color-accent);
 
   /* Tons categóricos (colunas, etiquetas, categorias; DS §3.3) */
@@ -685,38 +707,38 @@
   /* Marca Unnify (rampa azul, navy e ciano). `--color-brand` NÃO entra aqui: é a
      semente do revendedor (lib/branding/css.ts). O ciano é `brand-cyan` para não
      colidir com a família `cyan-*` do Tailwind. */
-  --brand-50: #181d23;
-  --brand-100: #1c2128;
-  --brand-200: #0b3aa4;
-  --brand-400: #71a8ff;
-  --brand-500: #71a8ff;
-  --brand-600: #4ca8ff;
-  --brand-700: #93bdff;
-  --brand-900: #d9eaff;
-  --ink: #071a32;
-  --ink-soft: #0e2747;
-  --brand-cyan: #00a8f6;
+  --brand-50: #002222;
+  --brand-100: #042626;
+  --brand-200: #1d5052;
+  --brand-400: #8ab0b6;
+  --brand-500: #8ab0b6;
+  --brand-600: #82acb3;
+  --brand-700: #a5c1c7;
+  --brand-900: #d1eef4;
+  --ink: #002828;
+  --ink-soft: #122c2c;
+  --brand-cyan: #b4c8cd;
 
   /* Gráficos (DS §12.2). Hex, e não trio HSL: consumir com `var(--chart-N)`,
      NUNCA dentro de `hsl()` (o valor inteiro fica inválido e a série some). */
-  --chart-1: #71a8ff;
-  --chart-2: #68e2ff;
-  --chart-3: #98a2b3;
+  --chart-1: #8ab0b6;
+  --chart-2: #b6d6dc;
+  --chart-3: #96a5a7;
   --chart-4: #f87171;
-  --chart-5: #667085;
-  --chart-6: #475467;
+  --chart-5: #5a7679;
+  --chart-6: #3d595a;
   --chart-7: #909090;
   --chart-grid: rgba(255, 255, 255, 0.07);
-  --chart-primary: #71a8ff;
-  --chart-primary-muted: rgba(113, 168, 255, 0.2);
-  --chart-secondary: #8f99a7;
+  --chart-primary: #8ab0b6;
+  --chart-primary-muted: rgba(138, 176, 182, 0.2);
+  --chart-secondary: #8c9b9e;
   --chart-success: #34d17f;
   --chart-danger: #f87171;
-  --data-1: #71a8ff;
-  --data-2: #68ddf8;
-  --data-3: #98a2b3;
-  --data-4: #667085;
-  --data-5: rgba(152, 162, 179, 0.2);
+  --data-1: #8ab0b6;
+  --data-2: #b3d1d7;
+  --data-3: #96a5a7;
+  --data-4: #5a7679;
+  --data-5: rgba(150, 165, 167, 0.2);
   --data-success: #34d17f;
   --data-danger: #ef4444;
   --data-warning: #eab308;
@@ -731,16 +753,16 @@
 
   /* Utilitários e superfícies extras */
   --overlay: var(--color-overlay);
-  --skeleton-base: #383d46;
-  --skeleton-highlight: #2a313a;
-  --table-header: #292d33;
-  --table-row-hover: #2d3239;
-  --text-disabled: #66717f;
-  --border-subtle: #2c3138;
+  --skeleton-base: #2f3334;
+  --skeleton-highlight: #282c2d;
+  --table-header: #202526;
+  --table-row-hover: #232728;
+  --text-disabled: #6f7677;
+  --border-subtle: #282c2d;
   --border-strong: var(--color-border-strong);
-  --surface-hover: #2d3239;
-  --surface-soft: #202328;
-  --elevated: #292d33;
+  --surface-hover: #232728;
+  --surface-soft: #1f2324;
+  --elevated: #202526;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -796,7 +818,7 @@ body:has([data-marca-org]) {
   --interactive-strong: var(--color-interactive-strong);
   --color-interactive-border: var(--color-accent-300);
   --interactive-border: var(--color-interactive-border);
-  --color-interactive-foreground: #0055aa;
+  --color-interactive-foreground: #375f62;
   --interactive-foreground: var(--color-interactive-foreground);
   --sidebar-primary: var(--color-accent);
   --sidebar-primary-foreground: var(--color-accent-fg);
@@ -812,7 +834,7 @@ body:has([data-marca-org]) {
   --foreground: var(--color-text);
   --card: var(--color-surface);
   --card-foreground: var(--color-text);
-  --popover: #292d33;
+  --popover: #202526;
   --popover-foreground: var(--color-text);
   --primary: var(--color-accent);
   --primary-foreground: var(--color-accent-fg);
@@ -846,7 +868,7 @@ body:has([data-marca-org]) {
    ───────────────────────────────────────────────────────────────────────── */
 @theme inline {
   /* Redefinidas (mapa §1.6). O anel passa a seguir `--ring`, que muda com o
-     tema: `#0066cc` claro, `#75b7ff` escuro. */
+     tema: `#24555e` claro, `#98b9c0` escuro. */
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-secondary: var(--secondary);

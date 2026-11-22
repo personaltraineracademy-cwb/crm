@@ -1,6 +1,6 @@
 "use client";
 import { Droppable } from "@hello-pangea/dnd";
-import { useRef, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/lib/types/leads";
@@ -8,9 +8,10 @@ import type { Stage } from "@/lib/kanban/types";
 import { buildCardInput } from "@/lib/kanban/card-state";
 import { intervaloDaColuna } from "@/lib/kanban/selecao";
 import { formatSomaPorMoeda, formatValorDoNegocio, MOEDA_PADRAO, somaPorMoeda } from "@/lib/money";
-import { CaretDown, CaretRight } from "@/lib/ui/icons";
+import { CaretDown, CaretRight, Tray } from "@/lib/ui/icons";
 import { KanbanCard, type GestoDeSelecao } from "./KanbanCard";
 import { TOM_MARCADOR, tomDaEtapa } from "./tons";
+import { useMovimentoDaLista } from "./movimento-da-lista";
 
 interface StageColumnProps {
   stage: Stage;
@@ -49,7 +50,28 @@ interface StageColumnProps {
   onRenomear?: (nome: string) => void;
 }
 
-export function StageColumn({
+/**
+ * Comparação do `memo` da coluna e da lista: rasa, com UMA exceção — `leads` é
+ * comparado item a item. O quadro reagrupa os leads num array novo por etapa a
+ * cada mudança de dados, e comparado por referência esse array furava o `memo`
+ * de TODAS as colunas: soltar um card re-renderizava o funil inteiro (medido no
+ * portal: um quadro de 186 a 428 ms exatamente quando o card assentava). Item a
+ * item, só re-renderizam as colunas cujos leads mudaram — origem e destino.
+ */
+function mesmasProps<P extends { leads: Lead[] }>(a: P, b: P): boolean {
+  for (const chave of Object.keys(a) as (keyof P)[]) {
+    if (chave === "leads") continue;
+    if (!Object.is(a[chave], b[chave])) return false;
+  }
+  if (Object.keys(a).length !== Object.keys(b).length) return false;
+  return a.leads.length === b.leads.length && a.leads.every((l, i) => l === b.leads[i]);
+}
+
+/**
+ * `memo` com `mesmasProps`: com os callbacks estáveis do quadro, soltar um card
+ * re-renderiza só as colunas de origem e de destino.
+ */
+export const StageColumn = memo(function StageColumn({
   stage,
   posicao = 0,
   leads,
@@ -127,7 +149,7 @@ export function StageColumn({
   // inteira — inclusive o `Droppable` — a cada card marcado.
   const ancora = useRef<string | null>(null);
 
-  const aoSelecionar = (leadId: string, gesto: GestoDeSelecao) => {
+  const decidirSelecao = (leadId: string, gesto: GestoDeSelecao) => {
     if (gesto === "intervalo") {
       const faixa = intervaloDaColuna(idsVisiveis, ancora.current, leadId);
       ancora.current = leadId;
@@ -137,6 +159,17 @@ export function StageColumn({
     ancora.current = leadId;
     onSelectMany?.([leadId], !selectedLeadIds?.has(leadId));
   };
+  // Identidade ESTÁVEL para os cards: a função acima é nova a cada render, e
+  // passá-la direto furava o `memo` de todos os cards da coluna. A versão mais
+  // recente fica num ref, gravado depois do commit (nunca durante o render).
+  const selecaoAtual = useRef(decidirSelecao);
+  useLayoutEffect(() => {
+    selecaoAtual.current = decidirSelecao;
+  });
+  const aoSelecionar = useCallback(
+    (leadId: string, gesto: GestoDeSelecao) => selecaoAtual.current(leadId, gesto),
+    [],
+  );
 
   const alternarEtapa = () => {
     ancora.current = null;
@@ -150,6 +183,10 @@ export function StageColumn({
   // faixa estreita com o nome e a contagem. O `Droppable` continua montado, então
   // soltar um card numa etapa recolhida segue funcionando.
   const [recolhida, setRecolhida] = useState(false);
+  // Entrada, saída e deslize dos vizinhos fora do arrasto (movimento-da-lista.ts).
+  const listaRef = useRef<HTMLDivElement | null>(null);
+  useMovimentoDaLista(listaRef, idsVisiveis.join(","), !recolhida);
+
   const contagem =
     selecionadosAqui > 0 ? `${selecionadosAqui}/${leads.length}` : String(leads.length);
 
@@ -233,7 +270,7 @@ export function StageColumn({
                     : `${t("Selecionar todos em")} ${stage.name}`
                 }
                 className={cn(
-                  "size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
+                  "order-last size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
                   "focus:opacity-100 disabled:cursor-default",
                   // `pointer-coarse:opacity-100` pelo mesmo motivo da caixa do
                   // card (ver `components/kanban/KanbanCard.tsx`): no toque o
@@ -295,40 +332,56 @@ export function StageColumn({
       <Droppable droppableId={stage.id} type="LEAD">
         {(provided, snapshot) => (
           <div
-            ref={provided.innerRef}
+            ref={(el) => {
+              provided.innerRef(el);
+              listaRef.current = el;
+            }}
             {...provided.droppableProps}
-            className={cn(
-              "flex flex-1 flex-col gap-2 rounded-b-xl p-2 transition-colors",
-              snapshot.isDraggingOver && "bg-interactive",
-            )}
+            // A coluna que vai receber o card ganha um véu (`movimento.css`),
+            // que aparece por OPACIDADE — antes era a cor de fundo trocando,
+            // pintura da coluna inteira a cada entrada e saída do cursor.
+            data-recebendo={snapshot.isDraggingOver || undefined}
+            className="kanban-coluna-destino relative flex flex-1 flex-col gap-2 rounded-b-xl p-2"
           >
-            {!recolhida &&
-              leads.map((lead, idx) => (
-                <KanbanCard
-                  key={lead.id}
-                  card={buildCardInput(lead, {
-                    stageName: stage.name,
-                    ownerNames,
-                    coolingIds,
-                    reactivations,
-                    canonicalTags,
-                  })}
-                  lead={lead}
-                  index={idx}
-                  pipelineId={pipelineId}
-                  isSelected={selectedLeadIds?.has(lead.id)}
-                  isSelecting={(selectedLeadIds?.size ?? 0) > 0}
-                  pulseCount={pulses?.get(lead.id) ?? 0}
-                  onSelect={aoSelecionar}
-                  onOpen={onOpen}
-                  etapas={etapas}
-                  onMoverPara={onMoverPara}
-                />
-              ))}
+            {!recolhida && (
+              <ListaDeCards
+                leads={leads}
+                stageName={stage.name}
+                pipelineId={pipelineId}
+                ownerNames={ownerNames}
+                coolingIds={coolingIds}
+                reactivations={reactivations}
+                canonicalTags={canonicalTags}
+                selectedLeadIds={selectedLeadIds}
+                pulses={pulses}
+                onSelect={aoSelecionar}
+                onOpen={onOpen}
+                etapas={etapas}
+                onMoverPara={onMoverPara}
+              />
+            )}
             {provided.placeholder}
             {leads.length === 0 && !snapshot.isDraggingOver && !recolhida && (
-              <div className="flex h-20 items-center justify-center text-xs text-muted-foreground">
-                {t("vazio")}
+              // Estado vazio da coluna (guia 2.8): ícone de 20 num círculo de 40 em --muted,
+              // título e uma frase que diz o que fazer. Compacto: a coluna tem ~270px.
+              <div
+                data-slot="coluna-vazia"
+                className="flex flex-col items-center gap-2 px-4 py-6 text-center"
+              >
+                <span
+                  aria-hidden
+                  className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground"
+                >
+                  <Tray size={20} />
+                </span>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-sm leading-5 font-semibold text-foreground">
+                    {t("Nenhum lead nesta etapa")}
+                  </p>
+                  <p className="text-xs leading-4 text-muted-foreground">
+                    {t("Arraste um card para cá.")}
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -336,7 +389,78 @@ export function StageColumn({
       </Droppable>
     </div>
   );
+}, mesmasProps);
+
+interface ListaDeCardsProps {
+  leads: Lead[];
+  stageName: string;
+  pipelineId: string;
+  ownerNames?: Map<string, string | null>;
+  coolingIds?: Set<string>;
+  reactivations?: Map<string, { proposalId: string; expiresAt: string }>;
+  canonicalTags?: string[];
+  selectedLeadIds?: Set<string>;
+  pulses?: Map<string, number>;
+  onSelect: (leadId: string, gesto: GestoDeSelecao) => void;
+  onOpen?: (leadId: string) => void;
+  etapas?: Stage[];
+  onMoverPara?: (lead: Lead, stageId: string) => void;
 }
+
+/**
+ * Os cards da coluna FORA do render-prop do `Droppable`. É a recomendação de
+ * desempenho do `@hello-pangea/dnd`: o render-prop roda de novo toda vez que o
+ * cursor entra ou sai da coluna (`isDraggingOver`), e sem este `memo` cada
+ * passagem re-renderizava todos os cards dela no meio do arrasto.
+ */
+const ListaDeCards = memo(function ListaDeCards({
+  leads,
+  stageName,
+  pipelineId,
+  ownerNames,
+  coolingIds,
+  reactivations,
+  canonicalTags,
+  selectedLeadIds,
+  pulses,
+  onSelect,
+  onOpen,
+  etapas,
+  onMoverPara,
+}: ListaDeCardsProps) {
+  // `buildCardInput` devolve um objeto novo a cada chamada, e um objeto novo
+  // fura o `memo` do card. Esta lista só re-renderiza quando os leads dela
+  // mudam (`mesmasProps`), então a coluna parada não reconstrói nada.
+  const cards = useMemo(
+    () =>
+      leads.map((lead) =>
+        buildCardInput(lead, { stageName, ownerNames, coolingIds, reactivations, canonicalTags }),
+      ),
+    [leads, stageName, ownerNames, coolingIds, reactivations, canonicalTags],
+  );
+  const isSelecting = (selectedLeadIds?.size ?? 0) > 0;
+
+  return (
+    <>
+      {leads.map((lead, idx) => (
+        <KanbanCard
+          key={lead.id}
+          card={cards[idx]!}
+          lead={lead}
+          index={idx}
+          pipelineId={pipelineId}
+          isSelected={selectedLeadIds?.has(lead.id)}
+          isSelecting={isSelecting}
+          pulseCount={pulses?.get(lead.id) ?? 0}
+          onSelect={onSelect}
+          onOpen={onOpen}
+          etapas={etapas}
+          onMoverPara={onMoverPara}
+        />
+      ))}
+    </>
+  );
+}, mesmasProps);
 
 /**
  * O nome da etapa, editado no lugar — direto no cabeçalho da coluna.

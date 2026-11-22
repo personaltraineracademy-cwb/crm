@@ -41,6 +41,12 @@ interface Props {
   onSaved?: () => void;
   /** O dossiê não tem "cancelar"; o diálogo tem. */
   onCancel?: () => void;
+  /** O `id` do `<form>`: um botão de fora (o rodapé do painel) o envia por `form=`. */
+  formId?: string;
+  /** Sem os botões de baixo: o painel guarda o "Salvar" no rodapé fixo. */
+  semBotoes?: boolean;
+  /** Avisa quando começa e termina o salvamento (para o botão de fora). */
+  onPendente?: (pendente: boolean) => void;
 }
 
 function centsToReais(cents: number | null | undefined): string {
@@ -57,13 +63,26 @@ function centsToReais(cents: number | null | undefined): string {
  * registro justamente de quem o produziu — a funcionalidade que prova "sua ação
  * fica registrada" provaria isso para todo mundo menos para o autor.
  */
-export function LeadFieldsForm({ lead, pipelineId, fieldDefs = [], onSaved, onCancel }: Props) {
+export function LeadFieldsForm({
+  lead,
+  pipelineId,
+  fieldDefs = [],
+  onSaved,
+  onCancel,
+  formId,
+  semBotoes = false,
+  onPendente,
+}: Props) {
   const t = useT();
   const org = useActiveOrg();
   // A moeda do negócio JÁ GRAVADO vence: trocar a moeda da empresa não
   // reescreve o que nasceu antes, e o cartão e o dossiê mostram a persistida.
   const moedaDoValor = lead.currency ?? org?.currency ?? MOEDA_PADRAO;
   const edit = useEditLead(pipelineId);
+  const pendente = edit.isPending;
+  useEffect(() => {
+    onPendente?.(pendente);
+  }, [pendente, onPendente]);
   const [customFields, setCustomFields] = useState<Record<string, unknown>>(lead.custom_fields ?? {});
   // A RÉGUA do diff (issue #2132): o valor carregado ao abrir. Só o que a
   // pessoa mudar daqui vai viajar — devolver o objeto inteiro sobrescrevia o
@@ -141,7 +160,7 @@ export function LeadFieldsForm({ lead, pipelineId, fieldDefs = [], onSaved, onCa
 
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="title">{t("Título")}</Label>
           <Input
@@ -211,6 +230,7 @@ export function LeadFieldsForm({ lead, pipelineId, fieldDefs = [], onSaved, onCa
           </div>
         )}
 
+      {!semBotoes && (
       <div className="flex justify-end gap-2">
         {onCancel && (
           <Button type="button" variant="ghost" onClick={onCancel} disabled={edit.isPending}>
@@ -221,6 +241,7 @@ export function LeadFieldsForm({ lead, pipelineId, fieldDefs = [], onSaved, onCa
           {edit.isPending ? t("Salvando…") : t("Salvar")}
         </Button>
       </div>
+      )}
     </form>
   );
 }

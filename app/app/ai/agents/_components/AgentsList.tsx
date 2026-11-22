@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { CartaoDeRegistroCarregando, GradeDeRegistros } from "@/components/cartao-de-registro";
 import { Card } from "@/components/ui/card";
 import { Robot, Plus } from "@/lib/ui/icons";
 import { useT } from "@/hooks/i18n/useT";
@@ -70,26 +71,35 @@ export function AgentsList({ initialData, canWrite }: Props) {
           onShowArchivedChange={setShowArchived}
         />
         {canWrite && (
-          <Link href="/app/ai/agents/new">
-            <Button>
+          // Mesmo tratamento de «Nova fonte» (Webhooks): no celular a ação principal ocupa a largura toda.
+          <Link href="/app/ai/agents/new" className="max-sm:w-full">
+            <Button className="w-full sm:w-auto">
               <Plus size={14} aria-hidden className="mr-2" /> {t("Criar novo")}
             </Button>
           </Link>
         )}
       </div>
 
-      {filtered.length === 0 ? (
+      {isLoading && agents.length === 0 ? (
+        <GradeDeRegistros aria-busy="true">
+          {[0, 1, 2].map((i) => (
+            <li key={i}>
+              <CartaoDeRegistroCarregando />
+            </li>
+          ))}
+        </GradeDeRegistros>
+      ) : filtered.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">
           {t("Nenhum agente corresponde aos filtros atuais.")}
         </Card>
       ) : (
-        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <GradeDeRegistros>
           {filtered.map((agent) => (
             <li key={agent.id}>
               <AgentCard agent={agent} canWrite={canWrite} />
             </li>
           ))}
-        </ul>
+        </GradeDeRegistros>
       )}
     </div>
   );

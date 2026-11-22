@@ -1078,7 +1078,7 @@ test.describe("followup flow builder — controle de gatilho na PublishBar (Task
       // que insere em `followup_enrollments`. O publish já o aceita em `KINDS_COM_MOTOR`.
       const OFERECIDOS = [
         "Manual",
-        "Silêncio",
+        "Cliente sem responder",
         "Etapa do funil",
         "Falta confirmada pela equipe",
         "Agente pediu ajuda",
@@ -1094,7 +1094,7 @@ test.describe("followup flow builder — controle de gatilho na PublishBar (Task
         page.getByRole("option", { name: /conversation_end|fim do atendimento/i }),
       ).toHaveCount(0);
 
-      await page.getByRole("option", { name: "Silêncio", exact: true }).click();
+      await page.getByRole("option", { name: "Cliente sem responder", exact: true }).click();
       await expect(panel.getByLabel("Minutos de silêncio")).toBeVisible();
 
       const thresholdInput = panel.getByLabel("Minutos de silêncio");
@@ -1109,7 +1109,7 @@ test.describe("followup flow builder — controle de gatilho na PublishBar (Task
       await saveButton.click();
 
       await expect(page.getByText("Gatilho atualizado.")).toBeVisible();
-      await expect(triggerButton).toHaveText("Gatilho: Silêncio (45 min)");
+      await expect(triggerButton).toHaveText("Gatilho: Cliente sem responder (45 min)");
       await page.screenshot({
         path: "e2e-artifacts/followup-8.5-03-trigger-saved.png",
         fullPage: true,
@@ -1118,7 +1118,7 @@ test.describe("followup flow builder — controle de gatilho na PublishBar (Task
       // Reload — o valor persistido (PATCH round-trip) sobrevive, não é só estado local.
       await page.reload();
       await expect(page.getByTestId("trigger-config-button")).toHaveText(
-        "Gatilho: Silêncio (45 min)",
+        "Gatilho: Cliente sem responder (45 min)",
       );
 
       // Prova via API (não só UI): GET devolve o trigger_config exato que foi salvo.

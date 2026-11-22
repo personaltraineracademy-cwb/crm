@@ -61,7 +61,7 @@ export function PublishConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-lg">
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
             {t("Publicar v")}

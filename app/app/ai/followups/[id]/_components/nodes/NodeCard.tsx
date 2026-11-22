@@ -8,9 +8,9 @@ import type { NomesDeValor } from "@/lib/followup/vocabulario";
 import { Warning } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 import { useT } from "@/hooks/i18n/useT";
-import { BLOCO_DE_ICONE, FAIXA_DO_NO, classesDoNo } from "@/components/fluxo/tema-do-fluxo";
 import { useEtapasDoFluxo } from "../EtapasDoFluxo";
-import type { NodeVisual } from "./nodeVisuals";
+import { useEstadoDoNo } from "../EstadoDosNos";
+import { CATEGORIA_DO_TIPO, type NodeVisual } from "./nodeVisuals";
 
 /**
  * A regra de etapa que não aponta para etapa ativa nenhuma: o nome digitado à
@@ -45,20 +45,22 @@ interface Props {
 }
 
 /**
- * Casca de cartão de todo tipo de nó, no tema do Unnify (`tema-do-fluxo`):
- * cartão de raio 12 sem sombra, bloco de ícone de 32 (`primary/10`), o TIPO em
- * `xs` muted, o título e o subtítulo. Selecionado, o anel de foco; com `errors`
- * (o 422 do publish ancorado neste nó, que a PublishBar liga), a borda
- * inválida e a mensagem em linha.
+ * Casca de cartão de todo tipo de nó. Desenho em `app/unnify/fluxo.css`
+ * (classes `fluxo-no*`): 272px de largura, título de 15px, tipo e resumo de
+ * 13px — legíveis no zoom inicial, que nunca fica abaixo de 93% —, o bloco de
+ * ícone na cor da FAMÍLIA do nó (gatilho, esperas, lógica, mensagens, CRM,
+ * fim) e um selo de estado: erro do publish (vermelho), falta configurar
+ * (âmbar, "Pendente": a mesma validação do publish rodando no navegador; o
+ * `title` do cartão diz o que falta) ou rascunho (nó
+ * novo ou mudado desde o último "Salvar").
  *
- * ⚠️ SUBTÍTULO E SAÍDA QUEBRAM EM DUAS LINHAS, NÃO CORTAM. Eram `truncate` numa
- * linha só dentro de um card de 224px, e o que se perdia era sempre o FIM — que
- * é onde mora o valor da regra. "O fluxo já deu pelo menos 0 pas…" e "O lead não
- * está na etapa “Proposta enviada”" chegavam iguais na tela, e o card deixava de
- * responder "qual aresta sai de qual regra", que é a razão de ele existir. Duas
- * linhas cobrem toda frase do vocabulário (medido); o que ainda passar disso tem
- * o texto inteiro no `title`. O canvas mede o card pelo DOM (`FlowCanvas` passa
- * `measured` ao auto-layout), então o card mais alto não desalinha nada.
+ * ⚠️ SUBTÍTULO E SAÍDA QUEBRAM EM LINHAS, NÃO CORTAM. Eram `truncate` numa
+ * linha só, e o que se perdia era sempre o FIM — que é onde mora o valor da
+ * regra. "O fluxo já deu pelo menos 0 pas…" e "O lead não está na etapa
+ * “Proposta enviada”" chegavam iguais na tela, e o card deixava de responder
+ * "qual aresta sai de qual regra", que é a razão de ele existir. O que ainda
+ * passar das linhas tem o texto inteiro no `title`. O canvas mede o card pelo
+ * DOM, então o card mais alto não desalinha nada.
  */
 export function NodeCard({
   id,
@@ -73,46 +75,62 @@ export function NodeCard({
 }: Props) {
   const t = useT();
   const { nomes } = useEtapasDoFluxo();
+  const estado = useEstadoDoNo(id);
   const Icon = visual.icon;
   const hasError = (errors?.length ?? 0) > 0;
+  const pendente = !hasError && (estado.pendencias?.length ?? 0) > 0;
   // Uma saída só continua sendo a bolinha de sempre no rodapé: não há o que
   // rotular, e mexer nisso quebraria o arrasto de todo nó não-ramificado.
   const branchRows = branches !== undefined && branches.length > 1 ? branches : null;
+  const categoria = CATEGORIA_DO_TIPO[visual.type];
+
+  const selo = hasError
+    ? { tom: "erro", texto: t("Erro") }
+    : pendente
+      ? { tom: "pendente", texto: t("Pendente") }
+      : estado.rascunho
+        ? { tom: "rascunho", texto: t("Rascunho") }
+        : null;
 
   return (
     <div
-      className={classesDoNo({ selecionado: selected, comErro: hasError })}
+      className="fluxo-no"
+      data-categoria={categoria}
+      data-selecionado={selected || undefined}
+      data-estado={selo?.tom}
       data-testid={`node-card-${id}`}
-      title={hasError ? errors!.join("; ") : undefined}
+      title={hasError ? errors!.join("; ") : pendente ? estado.pendencias!.join("; ") : undefined}
     >
-      {showTarget && <Handle type="target" position={Position.Top} />}
-      <div className="flex items-start gap-3 p-3">
-        <span className={BLOCO_DE_ICONE}>
-          <Icon size={16} aria-hidden />
+      {showTarget && <Handle type="target" position={Position.Top} className="fluxo-bolinha" />}
+      <div className="fluxo-no__corpo">
+        <span className="fluxo-no__icone">
+          <Icon size={18} aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs text-muted-foreground">{t(visual.paletteLabel)}</p>
-          <p className="truncate text-sm font-medium text-foreground" title={label}>
+          <div className="fluxo-no__cabeca">
+            <p className="fluxo-no__tipo truncate">{t(visual.paletteLabel)}</p>
+            {selo && (
+              <span className="fluxo-no__selo" data-tom={selo.tom}>
+                {selo.texto}
+              </span>
+            )}
+          </div>
+          <p className="fluxo-no__titulo truncate" title={label}>
             {label}
           </p>
-          <p
-            className="mt-0.5 line-clamp-2 text-xs break-words text-muted-foreground"
-            title={subtitle}
-          >
+          <p className="fluxo-no__resumo line-clamp-2 break-words" title={subtitle}>
             {subtitle}
           </p>
         </div>
       </div>
       {hasError && (
-        <p
-          className={cn(FAIXA_DO_NO, "border-danger-border text-danger-foreground leading-snug")}
-          data-testid={`node-error-${id}`}
-        >
-          {errors![0]}
+        <p className="fluxo-no__faixa-erro" data-testid={`node-error-${id}`}>
+          <Warning size={14} aria-hidden className="shrink-0" />
+          <span>{errors![0]}</span>
         </p>
       )}
       {branchRows !== null && (
-        <ul className="border-t border-border" data-testid={`node-branches-${id}`}>
+        <ul className="fluxo-no__ramos" data-testid={`node-branches-${id}`}>
           {branchRows.map((branch) => {
             const rotulo = t(rotuloDoRamo(branch, nomes));
             const semEtapa = regraSemEtapa(branch, nomes);
@@ -120,11 +138,11 @@ export function NodeCard({
               <li
                 key={branch.id}
                 className={cn(
-                  "relative flex items-center gap-1.5 border-t border-border px-3 py-1.5 first:border-t-0",
+                  "fluxo-no__ramo",
                   // A saída de escape é a única que não veio de uma regra do usuário:
                   // fica em itálico e apagada para se ler como "o resto cai aqui".
-                  branch.kind === "fallback" && "text-muted-foreground italic",
-                  semEtapa && "text-warning-foreground",
+                  branch.kind === "fallback" && "fluxo-no__ramo--resto",
+                  semEtapa && "fluxo-no__ramo--aviso",
                 )}
                 data-testid={`node-branch-${id}-${branch.id}`}
                 data-regra-sem-etapa={semEtapa || undefined}
@@ -135,27 +153,21 @@ export function NodeCard({
                 }
               >
                 {semEtapa ? (
-                  <Warning size={12} aria-hidden className="shrink-0" />
+                  <Warning size={13} aria-hidden className="shrink-0" />
                 ) : (
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "size-1.5 shrink-0 rounded-full",
-                      branch.kind === "fallback" ? "bg-muted-foreground/50" : "bg-primary",
-                    )}
-                  />
+                  <span aria-hidden className="fluxo-no__ponto" />
                 )}
                 {/* Três linhas, não duas: a frase da regra interpola dado do
                     usuário («Etapa · Funil»), e o que estourava era justamente o
                     fim — o nome do funil, que existe para desambiguar. */}
-                <span className="line-clamp-3 break-words text-xs leading-tight">{rotulo}</span>
+                <span className="line-clamp-3 break-words">{rotulo}</span>
                 <Handle
                   type="source"
                   id={branch.id}
                   position={Position.Right}
+                  className="fluxo-bolinha"
                   // Uma bolinha por LINHA: a saída sai ao lado do seu próprio rótulo,
-                  // que é o que torna "qual aresta sai de qual regra" visível. No
-                  // rodapé elas ficariam lado a lado, sem espaço para nome nenhum.
+                  // que é o que torna "qual aresta sai de qual regra" visível.
                   style={{ top: "50%" }}
                 />
               </li>
@@ -163,7 +175,9 @@ export function NodeCard({
           })}
         </ul>
       )}
-      {showSource && branchRows === null && <Handle type="source" position={Position.Bottom} />}
+      {showSource && branchRows === null && (
+        <Handle type="source" position={Position.Bottom} className="fluxo-bolinha" />
+      )}
     </div>
   );
 }

@@ -267,7 +267,7 @@ export function SidebarContent({ collapsed, naGaveta = false, onNavigate }: Side
         protegia de verdade.
       */}
       <nav
-        className="min-h-0 flex-1 overflow-y-auto px-2 pb-2"
+        className="min-h-0 flex-1 overflow-y-auto px-2 pb-8 [mask-image:linear-gradient(to_bottom,#000_calc(100%-1.5rem),transparent)]"
         aria-label={t("Navegação principal")}
       >
         {grupos.map(({ group, items }, indice) => {

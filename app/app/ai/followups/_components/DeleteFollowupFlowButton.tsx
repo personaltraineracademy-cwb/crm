@@ -28,6 +28,11 @@ type Props = {
   listHref?: string;
   variant?: "outline" | "ghost";
   size?: "sm" | "default";
+  /**
+   * Só o ícone (o texto fica para o leitor de tela e no `title`). Usado na
+   * barra do construtor, onde a ação destrutiva não disputa peso com Publicar.
+   */
+  iconOnly?: boolean;
 };
 
 export function DeleteFollowupFlowButton({
@@ -37,6 +42,7 @@ export function DeleteFollowupFlowButton({
   listHref = "/app/ai/followups",
   variant = "outline",
   size = "sm",
+  iconOnly = false,
 }: Props) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -48,8 +54,11 @@ export function DeleteFollowupFlowButton({
       <Button
         type="button"
         variant={variant}
-        size={size}
-        className="text-destructive"
+        size={iconOnly ? "icon" : size}
+        className={
+          iconOnly ? "size-9 text-muted-foreground hover:text-destructive" : "text-destructive"
+        }
+        title={iconOnly ? t("Excluir") : undefined}
         disabled={del.isPending}
         data-testid="delete-followup-flow"
         onClick={(e) => {
@@ -58,8 +67,8 @@ export function DeleteFollowupFlowButton({
           setOpen(true);
         }}
       >
-        <Trash size={14} aria-hidden className="mr-1" />
-        {t("Excluir")}
+        <Trash size={iconOnly ? 16 : 14} aria-hidden className={iconOnly ? undefined : "mr-1"} />
+        {iconOnly ? <span className="sr-only">{t("Excluir")}</span> : t("Excluir")}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent onClick={(e) => e.stopPropagation()}>

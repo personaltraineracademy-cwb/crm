@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
+import { CaretDown } from "@/lib/ui/icons";
 
 /**
  * A seção RECOLHÍVEL do dossiê e o estado lembrado dela (issue #3181).
@@ -140,7 +141,7 @@ export function SecaoDoDossie({
       data-recolhida={recolhida ? "sim" : "nao"}
       className={cn("border-b border-border py-3", className)}
     >
-      <h3 className="mb-2 text-xs font-medium text-text-muted">
+      <h3 className="mb-2 text-sm font-semibold text-foreground">
         <button
           type="button"
           onClick={() => aoAlternar(id)}
@@ -148,11 +149,17 @@ export function SecaoDoDossie({
           className="flex w-full items-center gap-2 text-left hover:text-text"
         >
           <span>{titulo}</span>
-          {/* Mesmo sinal da timeline: `+` fechado, `−` aberto. O `aria-expanded`
-              é quem fala a verdade para quem não vê o sinal. */}
-          <span aria-hidden className="ml-auto text-xs">
-            {recolhida ? "+" : "−"}
-          </span>
+          {/* Chevron, como no resto do app (guia 4.4): aponta para baixo com a seção
+              aberta e gira para a direita fechada. O `aria-expanded` é quem fala a
+              verdade para quem não vê o sinal. */}
+          <CaretDown
+            size={14}
+            aria-hidden
+            className={cn(
+              "ml-auto shrink-0 text-muted-foreground transition-transform duration-150 motion-reduce:transition-none",
+              recolhida && "-rotate-90",
+            )}
+          />
         </button>
       </h3>
       <div hidden={recolhida && !temConteudoRecolhido}>

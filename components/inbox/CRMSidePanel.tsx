@@ -935,7 +935,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   if (recolhido && onAlternarRecolhido) {
     return (
       <aside
-        className="flex h-full flex-col items-center border-l border-border bg-background py-2"
+        className="flex h-full flex-col items-center rounded-xl bg-card py-2"
         data-testid="inbox-painel-recolhido"
       >
         <BotaoDeRecolherDoPainel recolhido onAlternar={onAlternarRecolhido} />
@@ -945,7 +945,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
 
   if (!conversation) {
     return (
-      <aside className="relative flex h-full items-center justify-center border-l border-border p-4 text-center text-xs text-muted-foreground">
+      <aside className="relative flex h-full items-center justify-center rounded-xl bg-card p-4 text-center text-xs text-muted-foreground">
         {onAlternarRecolhido && (
           <div className="absolute top-2 right-2">
             <BotaoDeRecolherDoPainel recolhido={false} onAlternar={onAlternarRecolhido} />
@@ -957,7 +957,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   }
 
   return (
-    <aside className="flex h-full flex-col gap-5 overflow-y-auto border-l border-border bg-background p-4">
+    <aside className="flex h-full flex-col gap-5 overflow-y-auto rounded-xl bg-card p-4">
       {/*
         O CONTROLE DE RECOLHER, NO ALTO (issue #3004) — mesmo lugar do recolher
         do menu da esquerda. `sticky` para não rolar para fora com o conteúdo, e
@@ -967,7 +967,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
         desenha nada: quem já tem o gesto de fechar não precisa deste.
       */}
       {onAlternarRecolhido && (
-        <div className="sticky top-0 z-10 -mx-4 -mt-4 flex shrink-0 justify-end border-b border-border bg-background px-4 py-1">
+        <div className="sticky top-0 z-10 -mx-4 -mt-4 flex shrink-0 justify-end rounded-t-xl border-b border-border-subtle bg-card px-4 py-1">
           <BotaoDeRecolherDoPainel recolhido={false} onAlternar={onAlternarRecolhido} />
         </div>
       )}

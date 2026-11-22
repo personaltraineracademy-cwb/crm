@@ -1,5 +1,5 @@
 /**
- * A régua de tons da tela `/admin/marca` (`TiraDeTons`), com `#0066cc` digitado,
+ * A régua de tons da tela `/admin/marca` (`TiraDeTons`), com `#24555e` digitado,
  * mostra os valores REAIS da tabela do Unnify — antes de salvar.
  *
  * O formulário é o de verdade (`FormularioDaMarca`); só sai do escopo o que não
@@ -22,30 +22,30 @@ afterEach(cleanup);
 
 /** mapa de tokens §1.2 — literais, não lidos da tabela. */
 const RAMPA_CLARA = [
-  "#eaf2fc",
-  "#dceafa",
-  "#b8d8ff",
-  "#9bbbe0",
-  "#5992d7",
-  "#0066cc",
-  "#0066cc",
-  "#005bb5",
-  "#004f9e",
-  "#0e2747",
-  "#071a32",
+  "#e6f4f7",
+  "#d5eef2",
+  "#bddbe1",
+  "#a0bec4",
+  "#76969a",
+  "#24555e",
+  "#24555e",
+  "#1a4951",
+  "#0b3d45",
+  "#122c2c",
+  "#002828",
 ];
 const RAMPA_ESCURA = [
-  "#e5f1ff",
-  "#c6e0ff",
-  "#a9d0ff",
-  "#91c5ff",
-  "#75b7ff",
-  "#5ca8fb",
-  "#416d98",
-  "#203d5c",
-  "#203750",
-  "#0e2747",
-  "#08131c",
+  "#dff4f8",
+  "#c3e4eb",
+  "#bad1d6",
+  "#acc6cb",
+  "#8fb3bb",
+  "#85acb3",
+  "#596e70",
+  "#254142",
+  "#1d3b3c",
+  "#122c2c",
+  "#001717",
 ];
 
 function renderizar(corPrincipal: string, corEscura: string | null) {
@@ -93,12 +93,12 @@ function linhaDaLegenda(rotulo: string): string {
   return item.textContent ?? "";
 }
 
-describe("tira de tons de /admin/marca com #0066cc", () => {
+describe("tira de tons de /admin/marca com #24555e", () => {
   it.each([
-    ["só #0066cc", null],
-    ["#0066cc + escuro #75b7ff", "#75b7ff"],
+    ["só #24555e", null],
+    ["#24555e + escuro #8fb3bb", "#8fb3bb"],
   ])("%s: as duas escalas são as do Unnify, marcadas nos graus do Unnify", (_nome, escura) => {
-    renderizar("#0066cc", escura);
+    renderizar("#24555e", escura);
 
     const [clara, escuraTira, ...resto] = tiras();
     if (!clara || !escuraTira) throw new Error("as duas tiras não foram desenhadas");
@@ -112,8 +112,8 @@ describe("tira de tons de /admin/marca com #0066cc", () => {
     // "Botões no modo escuro": o 400.
     expect(marcados(escuraTira)).toEqual([4]);
 
-    expect(linhaDaLegenda("Sua cor")).toContain("#0066cc");
-    expect(linhaDaLegenda("Botões no modo claro")).toContain("#0066cc");
-    expect(linhaDaLegenda("Botões no modo escuro")).toContain("#75b7ff");
+    expect(linhaDaLegenda("Sua cor")).toContain("#24555e");
+    expect(linhaDaLegenda("Botões no modo claro")).toContain("#24555e");
+    expect(linhaDaLegenda("Botões no modo escuro")).toContain("#8fb3bb");
   });
 });

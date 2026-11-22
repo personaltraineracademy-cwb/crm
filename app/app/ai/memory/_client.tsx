@@ -334,7 +334,7 @@ export function OrgMemoryClient({ initialState }: Props) {
       </Card>
 
       <Dialog open={historyTarget != null} onOpenChange={(o) => !o && setHistoryTarget(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent size="lg">
           <DialogHeader>
             <DialogTitle>
               {t("Versão")} v{historyTarget?.version_number}

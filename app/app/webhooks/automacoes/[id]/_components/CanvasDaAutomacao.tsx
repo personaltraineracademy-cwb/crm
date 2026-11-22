@@ -533,6 +533,7 @@ export function CanvasDaAutomacao({ regra }: Props) {
             edges={ligacoesNaTela}
             nodeTypes={nodeTypes}
             className={CLASSE_DO_CANVAS}
+            proOptions={{ hideAttribution: true }}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}

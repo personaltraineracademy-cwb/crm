@@ -116,7 +116,7 @@ export function EditorDeSkill({ nome, aberto, aoMudarAberto }: Props) {
 
   return (
     <Dialog open={aberto} onOpenChange={aoMudarAberto}>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent size="lg" className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("Editar skill")} “{nome}”</DialogTitle>
           <DialogDescription>

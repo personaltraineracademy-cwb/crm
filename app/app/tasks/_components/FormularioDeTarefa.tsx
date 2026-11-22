@@ -5,13 +5,22 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldControl,
+  FieldError,
+  FieldHint,
+  FieldLabel,
+  FieldRow,
+  FieldSection,
+} from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -23,12 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/auth/AuthProvider";
 import { useT } from "@/hooks/i18n/useT";
 import { useAssignableMembers } from "@/hooks/inbox/useAssignableMembers";
-import type {
-  NovaTarefa,
-  PrioridadeDaTarefa,
-  SituacaoDaTarefa,
-  Tarefa,
-} from "@/lib/tarefas/tipos";
+import type { NovaTarefa, PrioridadeDaTarefa, SituacaoDaTarefa, Tarefa } from "@/lib/tarefas/tipos";
 
 interface Props {
   aberto: boolean;
@@ -109,13 +113,15 @@ export function FormularioDeTarefa({
   const [responsavel, setResponsavel] = useState<string>(responsavelInicial);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [erroTitulo, setErroTitulo] = useState<string | null>(null);
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     if (!titulo.trim()) {
-      setErro(t("Escreva um título para a tarefa."));
+      setErroTitulo(t("Escreva um título para a tarefa."));
       return;
     }
+    setErroTitulo(null);
     // Prazo é OPCIONAL — a coluna é nullable de propósito (migration 0210).
     // Sem dia não há hora que valha, e uma hora solta viraria "hoje às 9h" sem
     // ninguém ter pedido.
@@ -155,137 +161,155 @@ export function FormularioDeTarefa({
 
   return (
     <Dialog open={aberto} onOpenChange={aoMudarAbertura}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{editando ? t("Editar tarefa") : t("Nova tarefa")}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={enviar} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="tarefa-titulo">{t("O que precisa ser feito")}</Label>
-            <Input
-              id="tarefa-titulo"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              placeholder={t("Ex.: ligar de volta para fechar a proposta")}
-              autoFocus
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="tarefa-descricao">{t("Detalhes")}</Label>
-            <Textarea
-              id="tarefa-descricao"
-              rows={2}
-              className="resize-none"
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              placeholder={t("O que você vai querer lembrar quando chegar a hora")}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="tarefa-dia">{t("Prazo")}</Label>
-              <Input
-                id="tarefa-dia"
-                type="date"
-                value={dia}
-                onChange={(e) => setDia(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="tarefa-hora">{t("Horário")}</Label>
-              <Input
-                id="tarefa-hora"
-                type="time"
-                value={hora}
-                disabled={!dia}
-                onChange={(e) => setHora(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="tarefa-prioridade">{t("Prioridade")}</Label>
-              <Select
-                value={prioridade}
-                onValueChange={(v) => setPrioridade(v as PrioridadeDaTarefa)}
+        <form onSubmit={enviar} className="contents">
+          <DialogBody>
+            {erro ? (
+              <p
+                role="alert"
+                className="border-danger-border bg-danger-soft text-danger-foreground mb-4 rounded-lg border px-3 py-2 text-sm"
               >
-                <SelectTrigger id="tarefa-prioridade">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">{t("Baixa")}</SelectItem>
-                  <SelectItem value="medium">{t("Média")}</SelectItem>
-                  <SelectItem value="high">{t("Alta")}</SelectItem>
-                  <SelectItem value="urgent">{t("Urgente")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                {erro}
+              </p>
+            ) : null}
 
-            <div className="space-y-1.5">
-              <Label htmlFor="tarefa-situacao">{t("Situação")}</Label>
-              <Select value={situacao} onValueChange={(v) => setSituacao(v as SituacaoDaTarefa)}>
-                <SelectTrigger id="tarefa-situacao">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">{t("Pendente")}</SelectItem>
-                  <SelectItem value="in_progress">{t("Em andamento")}</SelectItem>
-                  <SelectItem value="done">{t("Concluída")}</SelectItem>
-                  <SelectItem value="cancelled">{t("Cancelada")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+            <FieldSection title={t("O quê")}>
+              <Field invalid={erroTitulo !== null}>
+                <FieldLabel obrigatorio>{t("O que precisa ser feito")}</FieldLabel>
+                <FieldControl>
+                  <Input
+                    value={titulo}
+                    onChange={(e) => {
+                      setTitulo(e.target.value);
+                      if (erroTitulo) setErroTitulo(null);
+                    }}
+                    placeholder={t("Ex.: ligar de volta para fechar a proposta")}
+                    autoFocus
+                  />
+                </FieldControl>
+                <FieldError>{erroTitulo}</FieldError>
+              </Field>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="tarefa-responsavel">{t("Responsável")}</Label>
-            <Select value={responsavel} onValueChange={setResponsavel}>
-              <SelectTrigger id="tarefa-responsavel">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NINGUEM}>{t("Ninguém")}</SelectItem>
-                {(membros.data ?? []).map((membro) => (
-                  <SelectItem key={membro.user_id} value={membro.user_id}>
-                    {membro.user_id === usuario.id
-                      ? t("Eu")
-                      : (membro.full_name ?? t("Membro sem nome"))}
-                  </SelectItem>
-                ))}
-                {/* O responsável de hoje pode não estar mais na lista (saiu da
-                    equipe): ele continua como opção para o Select não ficar em
-                    branco, e quem abre vê que a tarefa tem dono. */}
-                {responsavelInicial !== NINGUEM &&
-                !(membros.data ?? []).some((m) => m.user_id === responsavelInicial) ? (
-                  <SelectItem value={responsavelInicial}>
-                    {responsavelInicial === usuario.id
-                      ? t("Eu")
-                      : membros.isSuccess
-                        ? t("Fora da equipe")
-                        : t("Carregando…")}
-                  </SelectItem>
-                ) : null}
-              </SelectContent>
-            </Select>
-          </div>
+              <Field>
+                <FieldLabel>{t("Detalhes")}</FieldLabel>
+                <FieldControl>
+                  <Textarea
+                    rows={2}
+                    className="resize-none"
+                    value={descricao}
+                    onChange={(e) => setDescricao(e.target.value)}
+                    placeholder={t("O que você vai querer lembrar quando chegar a hora")}
+                  />
+                </FieldControl>
+              </Field>
+            </FieldSection>
 
-          {erro ? (
-            <p
-              role="alert"
-              className="border-danger-border bg-danger-soft text-danger-foreground rounded-lg border px-3 py-2 text-sm"
-            >
-              {erro}
-            </p>
-          ) : null}
+            <FieldSection title={t("Quando")}>
+              <FieldRow>
+                <Field>
+                  <FieldLabel>{t("Prazo")}</FieldLabel>
+                  <FieldControl>
+                    <Input type="date" value={dia} onChange={(e) => setDia(e.target.value)} />
+                  </FieldControl>
+                </Field>
+                <Field>
+                  <FieldLabel>{t("Horário")}</FieldLabel>
+                  <FieldControl>
+                    <Input
+                      type="time"
+                      value={hora}
+                      disabled={!dia}
+                      onChange={(e) => setHora(e.target.value)}
+                    />
+                  </FieldControl>
+                  {!dia ? (
+                    <FieldHint>{t("Escolha um prazo para definir o horário.")}</FieldHint>
+                  ) : null}
+                </Field>
+              </FieldRow>
+            </FieldSection>
 
-          <DialogFooter className="pt-2">
+            <FieldSection title={t("Andamento")}>
+              <FieldRow>
+                <Field>
+                  <FieldLabel htmlFor="tarefa-prioridade">{t("Prioridade")}</FieldLabel>
+                  <Select
+                    value={prioridade}
+                    onValueChange={(v) => setPrioridade(v as PrioridadeDaTarefa)}
+                  >
+                    <SelectTrigger id="tarefa-prioridade">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">{t("Baixa")}</SelectItem>
+                      <SelectItem value="medium">{t("Média")}</SelectItem>
+                      <SelectItem value="high">{t("Alta")}</SelectItem>
+                      <SelectItem value="urgent">{t("Urgente")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="tarefa-situacao">{t("Situação")}</FieldLabel>
+                  <Select
+                    value={situacao}
+                    onValueChange={(v) => setSituacao(v as SituacaoDaTarefa)}
+                  >
+                    <SelectTrigger id="tarefa-situacao">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">{t("Pendente")}</SelectItem>
+                      <SelectItem value="in_progress">{t("Em andamento")}</SelectItem>
+                      <SelectItem value="done">{t("Concluída")}</SelectItem>
+                      <SelectItem value="cancelled">{t("Cancelada")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </FieldRow>
+
+              <Field>
+                <FieldLabel htmlFor="tarefa-responsavel">{t("Responsável")}</FieldLabel>
+                <Select value={responsavel} onValueChange={setResponsavel}>
+                  <SelectTrigger id="tarefa-responsavel">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NINGUEM}>{t("Ninguém")}</SelectItem>
+                    {(membros.data ?? []).map((membro) => (
+                      <SelectItem key={membro.user_id} value={membro.user_id}>
+                        {membro.user_id === usuario.id
+                          ? t("Eu")
+                          : (membro.full_name ?? t("Membro sem nome"))}
+                      </SelectItem>
+                    ))}
+                    {/* O responsável de hoje pode não estar mais na lista (saiu da
+                        equipe): ele continua como opção para o Select não ficar em
+                        branco, e quem abre vê que a tarefa tem dono. */}
+                    {responsavelInicial !== NINGUEM &&
+                    !(membros.data ?? []).some((m) => m.user_id === responsavelInicial) ? (
+                      <SelectItem value={responsavelInicial}>
+                        {responsavelInicial === usuario.id
+                          ? t("Eu")
+                          : membros.isSuccess
+                            ? t("Fora da equipe")
+                            : t("Carregando…")}
+                      </SelectItem>
+                    ) : null}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </FieldSection>
+          </DialogBody>
+
+          <DialogFooter>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               disabled={salvando}
               onClick={() => aoMudarAbertura(false)}
             >

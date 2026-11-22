@@ -66,6 +66,8 @@ export default async function KanbanPickerPage() {
 
   return (
     <div className="flex h-full flex-col gap-4 p-6">
+      <FunisClient
+        titulo={
       <header className="flex items-center gap-3">
         <Kanban size={28} className="text-muted-foreground" weight="duotone" />
         {/* Era "Pipelines" — nome de quem construiu o sistema, não de quem
@@ -77,8 +79,7 @@ export default async function KanbanPickerPage() {
             gerou o comentário — é uma delas. Todas atualizadas junto. */}
         <h1 className="text-2xl font-semibold tracking-tight">{t("Funis")}</h1>
       </header>
-
-      <FunisClient
+        }
         funis={funis}
         arquivados={arquivados}
         podeGerenciar={podeGerenciar}

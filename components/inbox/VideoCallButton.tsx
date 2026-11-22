@@ -205,7 +205,7 @@ function DialogoVideo({
 
   return (
     <Dialog open onOpenChange={(v) => !v && onFechar()}>
-      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-4">
+      <DialogContent size="lg" className="flex max-h-[90vh] flex-col gap-4">
         <DialogHeader>
           <DialogTitle>{t("Videochamada")}</DialogTitle>
           <DialogDescription>

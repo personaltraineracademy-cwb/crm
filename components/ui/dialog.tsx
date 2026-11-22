@@ -8,15 +8,23 @@ import { cn } from "@/lib/utils";
 import { useT } from "@/hooks/i18n/useT";
 
 /**
- * Diálogo do Unnify (DS §10.14, Work).
+ * Diálogo do Unnify (DS §10.14, Work; guia de acabamento §4.3).
  *
- * Raio 16, padding e espaçamento de 24, largura de 448 (a tela − 32 no
- * celular), teto de altura com rolagem por dentro, fundo `popover` com borda e
- * a sombra do Work (`shadow-xl` já é a do Work no claro e a rasa no escuro).
- * Sobreposição `overlay` com 2px de desfoque. O movimento (fade + zoom 0,985
- * em 120ms) está em `app/unnify/camadas.css`.
+ * Esqueleto: cabeçalho FIXO / `DialogBody` que rola / rodapé FIXO. O
+ * `DialogContent` é um grid de 3 linhas (auto, 1fr, auto) com `overflow:
+ * hidden` e teto de `calc(100dvh − 2rem)`; só o corpo rola, então o botão de
+ * ação nunca sai da janela. Formulário que embrulha corpo e rodapé leva
+ * `className="contents"`, para os dois continuarem sendo linhas do grid. Largura pela prop `size` (sm 400 · md 560 · lg 720 · xl 960; os
+ * números são os tokens `--largura-dialogo-*`). Raio 16, camada `popover`,
+ * sombra `--sombra-camada` (com contorno no escuro, onde só o tom não separa).
  *
- * Foco preso e devolvido ao gatilho e `Esc` para fechar são do Radix.
+ * Diálogo legado, sem `DialogBody`, continua valendo: o conteúdo inteiro rola
+ * com padding de 24 e o rodapé fica colado embaixo (`position: sticky`). A
+ * regra mora em `app/unnify/camadas.css`, junto do movimento (entrada de
+ * 200ms desacelerando, saída de 150ms acelerando).
+ *
+ * X a 12px do canto. Teclado: `Esc` fecha e o foco volta ao gatilho (Radix); `Cmd/Ctrl+Enter`
+ * envia o formulário que estiver dentro do diálogo.
  */
 
 const Dialog = DialogPrimitive.Root;
@@ -56,66 +64,139 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+const LARGURA_DO_DIALOGO = {
+  sm: "max-w-[var(--largura-dialogo-sm)]",
+  md: "max-w-[var(--largura-dialogo-md)]",
+  lg: "max-w-[var(--largura-dialogo-lg)]",
+  xl: "max-w-[var(--largura-dialogo-xl)]",
+} as const;
+
 type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
   /** Mostra o X no canto (padrão). A paleta de comando o esconde, como no Work. */
   showCloseButton?: boolean;
+  /** Largura: sm 400 (confirmação) · md 560 (padrão) · lg 720 · xl 960 (editor). */
+  size?: keyof typeof LARGURA_DO_DIALOGO;
+  /** Cmd/Ctrl+Enter envia o formulário de dentro (padrão). */
+  submitShortcut?: boolean;
 };
+
+/** Cmd/Ctrl+Enter: envia o formulário do diálogo, o do foco ou o único dentro dele. */
+export function enviarPeloAtalho(e: React.KeyboardEvent<HTMLElement>) {
+  if (e.key !== "Enter" || !(e.metaKey || e.ctrlKey) || e.defaultPrevented) return;
+  const alvo = e.target instanceof Element ? e.target.closest("form") : null;
+  const form = alvo ?? e.currentTarget.querySelector("form");
+  if (!form) return;
+  e.preventDefault();
+  form.requestSubmit();
+}
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, showCloseButton = true, ...props }, ref) => {
-  const t = useT();
-  return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        ref={ref}
-        data-slot="dialog-content"
-        className={cn(
-          // ⚠️ `translate-x-[-50%] translate-y-[-50%]` é a centralização e não
-          // depende da animação: o diálogo anima só opacidade e escala.
-          // `w-[calc(100%-2rem)]` com `max-w-md`: no celular sobram 16px de
-          // cada lado; quem passa outro `max-w-*` troca só o teto.
-          "camada-dialogo fixed top-[50%] left-[50%] z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md translate-x-[-50%] translate-y-[-50%] gap-6 overflow-y-auto overscroll-contain",
-          "rounded-2xl border bg-popover p-6 text-sm text-popover-foreground shadow-xl outline-hidden",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close className={cn(fecharCamadaClassName, "absolute top-3 right-3")}>
-            <X aria-hidden="true" />
-            <span className="sr-only">{t("Fechar")}</span>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  );
-});
+>(
+  (
+    {
+      className,
+      children,
+      showCloseButton = true,
+      size = "md",
+      submitShortcut = true,
+      onKeyDown,
+      ...props
+    },
+    ref,
+  ) => {
+    const t = useT();
+    return (
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogPrimitive.Content
+          ref={ref}
+          data-slot="dialog-content"
+          data-size={size}
+          onKeyDown={(e) => {
+            onKeyDown?.(e);
+            if (submitShortcut) enviarPeloAtalho(e);
+          }}
+          className={cn(
+            // ⚠️ `translate-x-[-50%] translate-y-[-50%]` é a centralização e não
+            // depende da animação: o diálogo anima só opacidade e escala.
+            // `w-[calc(100%-2rem)]` com o teto da `size`: no celular sobram 16px
+            // de cada lado; quem passa outro `max-w-*` troca só o teto.
+            // Esta base é o modo LEGADO (sem `DialogBody`): grid com padding e gap
+            // de 24, teto de altura e o conteúdo inteiro rolando por dentro (#2044,
+            // guardado por `dialog-base-roda-e-tem-teto.test.ts`). Com `DialogBody`
+            // dentro, `.camada-dialogo` (camadas.css) troca para cabeçalho fixo /
+            // corpo que rola / rodapé fixo. A sombra também mora lá.
+            "camada-dialogo fixed top-[50%] left-[50%] z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-6 overflow-y-auto overscroll-contain",
+            LARGURA_DO_DIALOGO[size],
+            "rounded-2xl border bg-popover p-6 text-sm text-popover-foreground outline-hidden",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+          {showCloseButton && (
+            <DialogPrimitive.Close className={cn(fecharCamadaClassName, "absolute top-3 right-3")}>
+              <X aria-hidden="true" />
+              <span className="sr-only">{t("Fechar")}</span>
+            </DialogPrimitive.Close>
+          )}
+        </DialogPrimitive.Content>
+      </DialogPortal>
+    );
+  },
+);
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-/** Título e descrição, com 40px livres à direita para não bater no X. */
+/** Cabeçalho fixo: padding 24 24 16, com 56px livres à direita para o X. */
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     data-slot="dialog-header"
-    className={cn("flex flex-col gap-2 pr-10 text-left", className)}
+    className={cn("flex shrink-0 flex-col gap-1 px-6 pt-6 pr-14 pb-4 text-left", className)}
     {...props}
   />
 );
 DialogHeader.displayName = "DialogHeader";
 
 /**
- * Rodapé `muted/30` com borda superior que SANGRA até as bordas do diálogo
- * (as margens negativas devolvem o padding de 24 do conteúdo). Botões à
- * direita; no celular, coluna invertida (a ação principal fica em cima).
+ * Corpo: a ÚNICA parte que rola. Padding horizontal 24; o fio sob o cabeçalho
+ * só aparece depois que o corpo rolou (`data-rolou`).
+ */
+const DialogBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, onScroll, ...props }, ref) => {
+    const [rolou, setRolou] = React.useState(false);
+    return (
+      <div
+        ref={ref}
+        data-slot="dialog-body"
+        data-rolou={rolou ? "" : undefined}
+        onScroll={(e) => {
+          onScroll?.(e);
+          setRolou(e.currentTarget.scrollTop > 0);
+        }}
+        className={cn(
+          "min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-transparent px-6 py-1 pb-6",
+          "data-[rolou]:border-border-subtle",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
+DialogBody.displayName = "DialogBody";
+
+/**
+ * Rodapé fixo: padding 16 24, fio de ponta a ponta em cima, fundo `muted/40`,
+ * botões à direita com 8 de vão: [Cancelar outline] [Ação principal]. No
+ * celular, coluna invertida (a ação principal fica em cima).
  */
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     data-slot="dialog-footer"
     className={cn(
-      "-mx-6 -mb-6 flex flex-col-reverse gap-3 rounded-b-2xl border-t bg-muted/30 p-6 sm:flex-row sm:justify-end",
+      "border-border-subtle flex shrink-0 flex-col-reverse gap-2 rounded-b-2xl border-t bg-muted/40 px-6 py-4 sm:flex-row sm:items-center sm:justify-end",
       className,
     )}
     {...props}
@@ -155,6 +236,7 @@ export {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogBody,
   DialogFooter,
   DialogTitle,
   DialogDescription,

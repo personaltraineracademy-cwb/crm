@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/hooks/i18n/useT";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CaretLeft, CaretRight, MagnifyingGlass } from "@/lib/ui/icons";
+import { CaretDown, CaretLeft, CaretRight, MagnifyingGlass } from "@/lib/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -135,6 +135,15 @@ export function InboxFilters({ value, onChange }: Props) {
   const [searchInput, setSearchInput] = useState(value.search);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const [moreTabs, setMoreTabs] = useState({ left: false, right: false });
+  // As abas que NÃO cabem na coluna vão para o menu "Mais" (guia de acabamento
+  // §2.5: uma linha só, e o que não cabe sobe para um menu — nunca quebra em
+  // duas linhas e nunca fica cortado atrás da seta, #2745). Sem layout (jsdom)
+  // a medida é zero, tudo "cabe" e as seis abas aparecem como sempre.
+  const faixaRef = useRef<HTMLDivElement>(null);
+  const [ocultas, setOcultas] = useState<InboxTab[]>([]);
+  // O observador de tamanho é UM só (o da centralização logo abaixo): ele chama
+  // a medição mais recente por aqui, em vez de cada efeito criar o seu.
+  const medirAbasRef = useRef<() => void>(() => {});
   const updateMoreTabs = useCallback(() => {
     const list = tabsListRef.current;
     if (!list) return;
@@ -162,7 +171,10 @@ export function InboxFilters({ value, onChange }: Props) {
     };
     centerSelectedTab();
     if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(centerSelectedTab);
+    const observer = new ResizeObserver(() => {
+      centerSelectedTab();
+      medirAbasRef.current();
+    });
     observer.observe(list);
     list.querySelectorAll<HTMLElement>('[role="tab"]').forEach((tab) => observer.observe(tab));
     return () => observer.disconnect();
@@ -262,6 +274,49 @@ export function InboxFilters({ value, onChange }: Props) {
     closed: counts?.closed,
     archived: counts?.archived,
   };
+  // Quais abas cabem na coluna agora. As larguras vêm do DOM (`offsetWidth`,
+  // que vale mesmo para a aba escondida, porque ela sai do fluxo mas continua
+  // dimensionada), então a conta não depende de quebra de linha nem de rolagem.
+  const assinaturaDasAbas = tabs.map((aba) => `${aba}:${countFor[aba] ?? ""}`).join(",");
+  useEffect(() => {
+    const faixa = faixaRef.current;
+    const lista = tabsListRef.current;
+    if (!faixa || !lista) return;
+    const GAP = 4; // `gap-x-1`
+    const MAIS = 60; // o botão "Mais"
+    const medir = () => {
+      const larguras = [...lista.querySelectorAll<HTMLElement>('[role="tab"]')].map(
+        (g) => g.offsetWidth,
+      );
+      const largura = faixa.clientWidth;
+      const total = larguras.reduce((a, b) => a + b, 0) + GAP * Math.max(0, larguras.length - 1);
+      const disponivel = largura;
+      let proximas: InboxTab[] = [];
+      if (largura > 0 && total > disponivel) {
+        const orcamento = largura - MAIS - GAP;
+        let soma = 0;
+        let cabem = 0;
+        for (let i = 0; i < larguras.length; i++) {
+          const w = (larguras[i] ?? 0) + (i > 0 ? GAP : 0);
+          if (soma + w > orcamento) break;
+          soma += w;
+          cabem++;
+        }
+        const visiveis = new Set(tabs.slice(0, cabem));
+        if (!visiveis.has(value.tab)) {
+          const ultima = tabs[cabem - 1];
+          if (ultima) visiveis.delete(ultima);
+          visiveis.add(value.tab);
+        }
+        proximas = tabs.filter((aba) => !visiveis.has(aba));
+      }
+      setOcultas((antes) => (antes.join() === proximas.join() ? antes : proximas));
+    };
+    medirAbasRef.current = medir;
+    medir();
+    // `tabs` entra pela assinatura (a lista é refeita a cada render).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assinaturaDasAbas, value.tab]);
   // Filtrar por um número que saiu da lista (o operador acabou de excluir o
   // canal) deixa o inbox mostrando um subconjunto — às vezes vazio — sem nada na
   // tela dizendo que há filtro. O número some do dropdown junto com o canal, e o
@@ -404,7 +459,7 @@ export function InboxFilters({ value, onChange }: Props) {
   }, [searchInput]);
 
   return (
-    <div className="border-b border-border bg-background">
+    <div className="border-b border-border-subtle">
       <div className="space-y-2 px-3 pt-3 pb-2">
         <div className="flex items-center gap-2">
           <div className="relative min-w-0 flex-1">
@@ -423,15 +478,18 @@ export function InboxFilters({ value, onChange }: Props) {
             <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t("Buscar por nome, telefone ou última mensagem…")}
+              placeholder={t("Buscar conversas…")}
               // Filtro na barra (Unnify §5.2): controle `sm`, 32 de altura, raio 8.
               className="h-8 rounded-lg pl-8 shadow-none"
               aria-label={t("Buscar conversas")}
             />
           </div>
-          {/* Botão pressionável em vez de Switch: o filtro vive na mesma linha
-              da busca, e o Switch com rótulo pedia uma linha inteira só para
-              si numa coluna de 280px. */}
+        </div>
+        {/* A busca ocupa a linha inteira (o placeholder inteiro cabe) e os dois
+            filtros auxiliares descem para a linha deles. Botão pressionável em
+            vez de Switch: o Switch com rótulo pedia uma linha inteira só para
+            si numa coluna de 280px. */}
+        <div className="flex items-center gap-2">
           <button
             type="button"
             aria-pressed={value.onlyUnread}
@@ -675,7 +733,7 @@ export function InboxFilters({ value, onChange }: Props) {
         onValueChange={(v) => onChange(comAba(value, v as InboxTab))}
         className="px-3"
       >
-        <div className="flex items-center gap-1">
+        <div ref={faixaRef} className="flex items-center gap-1">
           {moreTabs.left ? (
             <button
               type="button"
@@ -685,13 +743,11 @@ export function InboxFilters({ value, onChange }: Props) {
             >
               <CaretLeft size={13} aria-hidden />
             </button>
-          ) : (
-            <span className="w-4 shrink-0" aria-hidden />
-          )}
+          ) : null}
           <TabsList
             ref={tabsListRef}
             onScroll={updateMoreTabs}
-            className="h-auto min-w-0 flex-1 flex-wrap justify-between gap-x-1 gap-y-2 rounded-none bg-transparent p-0 [scrollbar-width:none]"
+            className="h-auto max-h-9 min-w-0 flex-1 flex-wrap justify-start gap-x-1 overflow-hidden rounded-none bg-transparent p-0 [scrollbar-width:none]"
           >
             {tabs.map((tab) => {
               const meta = INBOX_TABS.find((t) => t.value === tab)!;
@@ -702,7 +758,10 @@ export function InboxFilters({ value, onChange }: Props) {
                   value={tab}
                   // Aba `line` do Unnify (§10.7) no tamanho da coluna: rótulo `xs`/500
                   // `muted-foreground`, ativa em `foreground` com sublinhado de 2px `primary`.
-                  className="shrink-0 gap-1 rounded-none border-b-2 border-transparent px-0 pt-1 pb-2 text-xs font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  className={cn(
+                    "shrink-0 gap-1 rounded-none border-b-2 border-transparent px-1.5 pt-1 pb-2 text-xs font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent",
+                    ocultas.includes(tab) && "pointer-events-none invisible absolute",
+                  )}
                 >
                   {t(meta.label)}
                   {typeof count === "number" && count > 0 && (
@@ -712,7 +771,36 @@ export function InboxFilters({ value, onChange }: Props) {
               );
             })}
           </TabsList>
-          {moreTabs.right ? (
+          {ocultas.length > 0 ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={t("Mais abas")}
+                  className="flex h-7 shrink-0 items-center gap-1 rounded-md px-2 text-xs font-medium text-muted-foreground hover:bg-interactive hover:text-interactive-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
+                >
+                  {t("Mais")}
+                  <CaretDown size={12} aria-hidden />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {ocultas.map((aba) => {
+                  const meta = INBOX_TABS.find((x) => x.value === aba)!;
+                  const contagem = countFor[aba];
+                  return (
+                    <DropdownMenuItem key={aba} onSelect={() => onChange(comAba(value, aba))}>
+                      {t(meta.label)}
+                      {typeof contagem === "number" && contagem > 0 && (
+                        <span className="ml-auto pl-3 text-xs text-muted-foreground tabular-nums">
+                          {contagem}
+                        </span>
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : moreTabs.right ? (
             <button
               type="button"
               onClick={() => moveTab(1)}
@@ -721,9 +809,7 @@ export function InboxFilters({ value, onChange }: Props) {
             >
               <CaretRight size={13} aria-hidden />
             </button>
-          ) : (
-            <span className="w-4 shrink-0" aria-hidden />
-          )}
+          ) : null}
         </div>
       </Tabs>
     </div>

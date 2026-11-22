@@ -99,7 +99,7 @@ describe("o cartão da lista", () => {
     h.lista = [FLUXO];
     const { container } = render(noIdioma("es", <FlowsList initialData={[FLUXO]} canWrite />));
     const tela = textoDaTela(container);
-    expect(screen.getByText("Transferencia")).toBeTruthy();
+    expect(screen.getByText("Cuando una persona asume")).toBeTruthy();
     expect(tela).toMatch(/Actualizado el/);
     expect(tela).toContain("Pausar");
     expect(tela).not.toMatch(/\bpause\b/);
@@ -110,7 +110,7 @@ describe("o cartão da lista", () => {
     h.lista = [FLUXO];
     const { container } = render(noIdioma("pt-BR", <FlowsList initialData={[FLUXO]} canWrite />));
     const tela = textoDaTela(container);
-    expect(tela).toContain("Handoff");
+    expect(tela).toContain("Quando um humano assume");
     expect(tela).toMatch(/Atualizado em/);
     expect(tela).toContain("Pausar");
     expect(tela).not.toMatch(/\bpause\b/);

@@ -8,6 +8,7 @@ import { roleAtLeast } from "@/lib/auth/types";
 import { PAIS_PADRAO, perfilDoPais } from "@/lib/legal/perfil-do-pais";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,7 +17,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldControl,
+  FieldHint,
+  FieldLabel,
+  FieldRow,
+  FieldSection,
+} from "@/components/ui/field";
 import { normalizarTags } from "@/lib/contacts/tag-normalizada";
 import { camposQueMudaram, mensagemDaRecusa, recusasDePadrao } from "@/lib/leads/padrao-do-campo";
 import { contactPatchSchemaDoPais, type ContactPatch } from "@/lib/schemas/contacts";
@@ -186,67 +194,86 @@ export function EditContactDialog({
           <DialogTitle>{t("Editar contato")}</DialogTitle>
           <DialogDescription>{t("Atualize os dados deste contato.")}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="ec-name">{t("Nome")}</Label>
-            <Input id="ec-name" {...form.register("name")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="ec-email">Email</Label>
-            <Input id="ec-email" type="email" {...form.register("email")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="ec-phone">
-              {perfil.codigo === PAIS_PADRAO
-                ? t("Telefone (DDD + número)")
-                : t("Telefone (E.164)")}
-            </Label>
-            <Input id="ec-phone" {...form.register("phone_number")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="ec-birthdate">{t("Data de nascimento")}</Label>
-            <Input id="ec-birthdate" type="date" {...form.register("birthdate")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="ec-tags">{t("Tags")}</Label>
-            <EtiquetasDoContato
-              inputId="ec-tags"
-              value={tags}
-              onPendente={setEtiquetaPendente}
-              onChange={(next) => form.setValue("tags", next, { shouldDirty: true })}
-              vocabulario={vocabulario}
-              canonicalTags={canonicalTags}
-              disabled={update.isPending}
-              onDefinirCor={
-                podeDefinirCor ? (tag, cor) => void definirCor(tag, cor) : undefined
-              }
-            />
-          </div>
-          {customFieldDefs.length > 0 && (
-            <div className="space-y-3 rounded-lg border border-border p-3">
-              <div>
-                <h3 className="text-sm font-medium">{t("Campos personalizados")}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {t("Campos definidos no funil padrão da organização.")}
-                </p>
-              </div>
-              <CustomFieldsEditor
-                fields={customFieldDefs}
-                mode="contact"
-                value={customFields ?? {}}
-                onChange={(next) => form.setValue("custom_fields", next, { shouldDirty: true })}
-              />
-            </div>
-          )}
-          {serverError && (
-            <p role="alert" className="text-danger-foreground text-sm">
-              {serverError}
-            </p>
-          )}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="contents">
+          <DialogBody>
+            {serverError && (
+              <p role="alert" className="text-danger-foreground mb-4 text-sm">
+                {serverError}
+              </p>
+            )}
+            <FieldSection title={t("Identificação")}>
+              <FieldRow>
+                <Field>
+                  <FieldLabel>{t("Nome")}</FieldLabel>
+                  <FieldControl>
+                    <Input {...form.register("name")} />
+                  </FieldControl>
+                </Field>
+                <Field>
+                  <FieldLabel>{t("Data de nascimento")}</FieldLabel>
+                  <FieldControl>
+                    <Input type="date" {...form.register("birthdate")} />
+                  </FieldControl>
+                </Field>
+              </FieldRow>
+            </FieldSection>
+            <FieldSection title={t("Como falar")}>
+              <FieldRow>
+                <Field>
+                  <FieldLabel>{t("Email")}</FieldLabel>
+                  <FieldControl>
+                    <Input type="email" {...form.register("email")} />
+                  </FieldControl>
+                </Field>
+                <Field>
+                  <FieldLabel>{t("Telefone")}</FieldLabel>
+                  <FieldControl>
+                    <Input {...form.register("phone_number")} />
+                  </FieldControl>
+                  <FieldHint>
+                    {perfil.codigo === PAIS_PADRAO
+                      ? t("DDD + número")
+                      : t("Formato internacional (E.164)")}
+                  </FieldHint>
+                </Field>
+              </FieldRow>
+            </FieldSection>
+            <FieldSection title={t("Mais dados")}>
+              <Field>
+                <FieldLabel htmlFor="ec-tags">{t("Tags")}</FieldLabel>
+                <EtiquetasDoContato
+                  ocultarVazio
+                  inputId="ec-tags"
+                  value={tags}
+                  onPendente={setEtiquetaPendente}
+                  onChange={(next) => form.setValue("tags", next, { shouldDirty: true })}
+                  vocabulario={vocabulario}
+                  canonicalTags={canonicalTags}
+                  disabled={update.isPending}
+                  onDefinirCor={
+                    podeDefinirCor ? (tag, cor) => void definirCor(tag, cor) : undefined
+                  }
+                />
+              </Field>
+            </FieldSection>
+            {customFieldDefs.length > 0 && (
+              <FieldSection
+                title={t("Campos personalizados")}
+                description={t("Campos definidos no funil padrão da organização.")}
+              >
+                <CustomFieldsEditor
+                  fields={customFieldDefs}
+                  mode="contact"
+                  value={customFields ?? {}}
+                  onChange={(next) => form.setValue("custom_fields", next, { shouldDirty: true })}
+                />
+              </FieldSection>
+            )}
+          </DialogBody>
           <DialogFooter>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={() => mudarAbertura(false)}
               disabled={update.isPending}
             >

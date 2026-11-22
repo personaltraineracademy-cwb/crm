@@ -189,7 +189,7 @@ export function FilterBar({ filters, onChange, leads, settings }: FilterBarProps
   const categoriaLabel = filters.lostCategory ?? t("Todas");
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Input
         type="search"
         placeholder={t("Buscar por título…")}

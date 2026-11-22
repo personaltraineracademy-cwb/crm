@@ -12,7 +12,8 @@ import { buttonVariants, type ButtonProps } from "@/components/ui/button";
  * Ícone opcional em bloco de 40 (`AlertDialogMedia`), título `base`/500,
  * descrição `sm` muted, rodapé `muted/50` sangrado e duas ações: cancelar
  * (`outline`) e confirmar (`destructive-solid` ou `default`, pela prop `variant`).
- * Larguras do Work: `default` 384, `sm` 320 (a tela − 32 no celular).
+ * Larguras: `default` 400 (`--largura-dialogo-sm`, guia §4.5), `sm` 320 (a tela − 32 no celular).
+ * Foco inicial: o Radix põe em `AlertDialogCancel`, que é o certo para o irreversível.
  */
 
 const AlertDialog = AlertDialogPrimitive.Root;
@@ -53,8 +54,8 @@ const AlertDialogContent = React.forwardRef<
         // ⚠️ `translate-x-[-50%] translate-y-[-50%]` é a centralização; a
         // animação (`camada-dialogo`) só mexe em opacidade e escala.
         "group/alert-dialog-content camada-dialogo fixed top-[50%] left-[50%] z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 overflow-y-auto overscroll-contain",
-        "rounded-2xl border bg-popover p-4 text-sm text-popover-foreground shadow-xl outline-hidden",
-        size === "sm" ? "max-w-xs" : "max-w-sm",
+        "rounded-2xl border bg-popover p-4 text-sm text-popover-foreground outline-hidden",
+        size === "sm" ? "max-w-xs" : "max-w-[var(--largura-dialogo-sm)]",
         className,
       )}
       {...props}

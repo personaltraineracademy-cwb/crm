@@ -70,7 +70,7 @@ export function DialogoDeNovaEtiqueta({
         if (!aberto) onFechar();
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{t("Adicionar tag")}</DialogTitle>
         </DialogHeader>

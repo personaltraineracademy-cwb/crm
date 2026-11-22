@@ -47,7 +47,7 @@ test.describe("Pausa de reentrada do gatilho de silêncio", () => {
 
     const botao = page.getByTestId("trigger-config-button");
     await expect(botao).toBeVisible({ timeout: 60_000 });
-    await expect(botao).toHaveText(/Silêncio \(60 min\)/);
+    await expect(botao).toHaveText(/Cliente sem responder \(60 min\)/);
 
     await botao.click();
     const painel = page.getByTestId("trigger-config-panel");
