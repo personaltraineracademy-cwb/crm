@@ -61,6 +61,12 @@ vi.mock("@/hooks/leads/useLeadTimeline", () => ({
 
 vi.mock("./ContatoDoNegocio", () => ({ ContatoDoNegocio: () => <div data-peca="contato" /> }));
 vi.mock("./LeadFieldsForm", () => ({ LeadFieldsForm: () => <div data-peca="campos" /> }));
+// Título e valor editáveis no lugar usam a mutação (fila de consultas), como o
+// formulário acima: aqui viram o texto puro, que é o que estes testes leem.
+vi.mock("./CabecalhoEditavel", () => ({
+  TituloEditavel: ({ lead }: { lead: { title: string } }) => <>{lead.title}</>,
+  ValorEditavel: () => <span data-peca="valor" />,
+}));
 vi.mock("./TarefasDoNegocio", () => ({ TarefasDoNegocio: () => <div data-peca="tarefas" /> }));
 vi.mock("./PropostasDoNegocio", () => ({ PropostasDoNegocio: () => null }));
 vi.mock("./ConversaNoDossie", () => ({ ConversaNoDossie: () => null }));

@@ -46,6 +46,11 @@ import {
   ePreenchidoPorRotina,
   type TipoDeFonteId,
 } from "@/lib/ai/rag/tipos-de-fonte";
+import {
+  montarFaqMarkdown,
+  paresCompletos,
+  type ParPerguntaResposta,
+} from "@/lib/ai/rag/montar-material";
 
 // Os DOIS exemplos ficam em português de propósito. O de FAQ é obrigação:
 // `## Pergunta:`/`## Resposta:` são os marcadores que
@@ -53,21 +58,34 @@ import {
 // traduzido ensinaria um formato que o parser recusa. O de documento vai junto
 // porque meio exemplo traduzido, meio não, dentro do mesmo campo, lê pior que
 // os dois iguais.
-const EXEMPLO_FAQ = `## Pergunta: Qual o prazo de entrega?
-## Resposta: De 2 a 3 dias úteis após a confirmação do pagamento.
+const EXEMPLO_FAQ = `## Pergunta: Quanto custa o plano mensal?
+## Resposta: R$ 197 por mês, com avaliação inicial incluída.
 
-## Pergunta: Vocês fazem troca?
-## Resposta: Sim, em até 30 dias, com o produto sem uso.`;
+## Pergunta: Como funciona o acompanhamento?
+## Resposta: Você recebe o treino no aplicativo e fala comigo toda semana pelo WhatsApp.`;
 
-const EXEMPLO_DOCUMENTO = `# Política de troca
+const EXEMPLO_DOCUMENTO = `# Como funciona a consultoria
 
-Aceitamos troca em até 30 dias da entrega, com o produto sem uso e na embalagem
-original. O frete de devolução é por nossa conta quando o defeito for de fábrica.`;
+Depois do pagamento você responde uma avaliação. Em até 3 dias úteis recebe o
+plano, e toda semana conversamos pelo WhatsApp para ajustar o que for preciso.`;
+
+/**
+ * O formulário de perguntas e respostas. Existe porque o formato que o
+ * indexador lê (`## Pergunta:` / `## Resposta:`) é de quem programa: a pessoa
+ * tinha de escrever os marcadores à mão. Aqui ela preenche dois campos por
+ * item, e quem escreve os marcadores é `montarFaqMarkdown`.
+ */
+const PAR_VAZIO: ParPerguntaResposta = { pergunta: "", resposta: "" };
+const TETO_DE_PARES = 30;
 
 interface Props {
   aberto: boolean;
   onFechar: () => void;
-  onCriado: () => void;
+  /**
+   * Recebe o id do material criado, quando a rota o devolve — é o que deixa a
+   * tela do agente já marcar o material que a pessoa acabou de cadastrar ali.
+   */
+  onCriado: (id?: string) => void;
   /** Quando falso, o diálogo avisa que o material vai ficar esperando. */
   podeIndexar: boolean;
 }
@@ -77,6 +95,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
   const [tipo, setTipo] = useState<TipoDeFonteId>("faq");
   const [nome, setNome] = useState("");
   const [conteudo, setConteudo] = useState("");
+  const [pares, setPares] = useState<ParPerguntaResposta[]>([PAR_VAZIO]);
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [enviando, setEnviando] = useState(false);
   const inputArquivo = useRef<HTMLInputElement>(null);
@@ -87,6 +106,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
   function limpar(): void {
     setNome("");
     setConteudo("");
+    setPares([PAR_VAZIO]);
     setArquivo(null);
     if (inputArquivo.current) inputArquivo.current.value = "";
   }
@@ -97,13 +117,23 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
       toast.error(t("Dê um nome ao material — é assim que você o encontra depois."));
       return;
     }
-    if (!arquivo && conteudo.trim().length === 0) {
-      toast.error(t("Envie um arquivo ou cole o conteúdo."));
+    // Perguntas e respostas: o que veio dos campos e o que foi colado entram
+    // JUNTOS no mesmo material — quem preencheu dois itens e colou outros dez
+    // não tem de escolher um dos dois caminhos.
+    const dosCampos = ePerguntaEResposta(tipo) ? montarFaqMarkdown(pares) : "";
+    const corpo = [dosCampos, conteudo.trim()].filter((parte) => parte.length > 0).join("\n\n");
+    if (!arquivo && corpo.length === 0) {
+      toast.error(
+        ePerguntaEResposta(tipo)
+          ? t("Escreva pelo menos uma pergunta com a resposta.")
+          : t("Envie um arquivo ou cole o conteúdo."),
+      );
       return;
     }
 
     setEnviando(true);
     try {
+      let idCriado: string | undefined;
       if (arquivo) {
         const form = new FormData();
         form.append("file", arquivo);
@@ -112,17 +142,21 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
           method: "POST",
           body: form,
         });
-        const json = (await res.json()) as { error?: { message?: string } };
+        const json = (await res.json()) as {
+          data?: { id?: string };
+          error?: { message?: string };
+        };
         if (!res.ok) {
           toast.error(json.error?.message ? t(json.error.message) : t("Não consegui guardar o arquivo."));
           return;
         }
+        idCriado = json.data?.id;
       } else {
-        await apiClient.post("/api/v1/ai/knowledge/sources", {
-          source_type: tipo,
-          name: nomeLimpo,
-          markdown_blob: conteudo,
-        });
+        const res = await apiClient.post<{ data?: { id?: string } }>(
+          "/api/v1/ai/knowledge/sources",
+          { source_type: tipo, name: nomeLimpo, markdown_blob: corpo },
+        );
+        idCriado = res?.data?.id;
       }
 
       toast.success(
@@ -131,7 +165,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
           : t("Material cadastrado. Ele fica esperando uma chave de embedding para ser preparado."),
       );
       limpar();
-      onCriado();
+      onCriado(idCriado);
       onFechar();
     } catch (err) {
       showApiError(err);
@@ -194,7 +228,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
             <Input
               id="material-nome"
               data-testid="material-nome"
-              placeholder={tipo === "faq" ? t("Perguntas frequentes da loja") : t("Política de troca")}
+              placeholder={tipo === "faq" ? t("Dúvidas mais comuns") : t("Como funciona a consultoria")}
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               disabled={enviando || porRotina}
@@ -221,15 +255,89 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
             </div>
           ) : null}
 
+          {ePerguntaEResposta(tipo) ? (
+            <div className="space-y-3" data-testid="material-pares">
+              {pares.map((par, i) => (
+                <div
+                  // O índice é a identidade certa aqui: a lista só cresce pelo
+                  // fim e só encolhe pelo botão do próprio item.
+                  key={i}
+                  className="space-y-2 rounded-lg border border-border p-3"
+                  data-testid="material-par"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <Label htmlFor={`material-pergunta-${i}`}>
+                      {t("Pergunta")} {i + 1}
+                    </Label>
+                    {pares.length > 1 ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setPares((atual) => atual.filter((_, j) => j !== i))}
+                        disabled={enviando}
+                      >
+                        {t("Remover")}
+                      </Button>
+                    ) : null}
+                  </div>
+                  <Input
+                    id={`material-pergunta-${i}`}
+                    data-testid={`material-pergunta-${i}`}
+                    placeholder={t("Quanto custa o plano mensal?")}
+                    value={par.pergunta}
+                    onChange={(e) =>
+                      setPares((atual) =>
+                        atual.map((p, j) => (j === i ? { ...p, pergunta: e.target.value } : p)),
+                      )
+                    }
+                    disabled={enviando}
+                  />
+                  <Label htmlFor={`material-resposta-${i}`}>{t("Resposta")}</Label>
+                  <Textarea
+                    id={`material-resposta-${i}`}
+                    data-testid={`material-resposta-${i}`}
+                    rows={3}
+                    placeholder={t("R$ 197 por mês, com avaliação inicial incluída.")}
+                    value={par.resposta}
+                    onChange={(e) =>
+                      setPares((atual) =>
+                        atual.map((p, j) => (j === i ? { ...p, resposta: e.target.value } : p)),
+                      )
+                    }
+                    disabled={enviando}
+                  />
+                </div>
+              ))}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPares((atual) => [...atual, PAR_VAZIO])}
+                  disabled={enviando || pares.length >= TETO_DE_PARES}
+                  data-testid="material-par-adicionar"
+                >
+                  {t("Adicionar outra pergunta")}
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  {paresCompletos(pares).length} {t("prontas para guardar")}
+                </span>
+              </div>
+            </div>
+          ) : null}
+
           {!porRotina && !arquivo ? (
             <div className="space-y-2">
               <Label htmlFor="material-conteudo">
-                {aceitaArquivo(tipo) ? t("…ou cole o texto aqui") : t("Conteúdo")}
+                {aceitaArquivo(tipo)
+                  ? t("…ou cole o texto aqui")
+                  : t("…ou cole várias de uma vez")}
               </Label>
               <Textarea
                 id="material-conteudo"
                 data-testid="material-conteudo"
-                rows={10}
+                rows={ePerguntaEResposta(tipo) ? 5 : 10}
                 placeholder={ePerguntaEResposta(tipo) ? EXEMPLO_FAQ : EXEMPLO_DOCUMENTO}
                 value={conteudo}
                 onChange={(e) => setConteudo(e.target.value)}
@@ -247,7 +355,7 @@ export function NovoMaterialDialog({ aberto, onFechar, onCriado, podeIndexar }: 
           {!podeIndexar ? (
             <p className="text-warning-foreground text-xs" data-testid="material-aviso-sem-chave">
               {t(
-                "Sem uma chave de embedding, o material fica guardado e esperando — o agente só passa a conhecê-lo depois que a chave for cadastrada.",
+                "A leitura de materiais ainda não está ligada. O material fica guardado e esperando — o agente só passa a conhecê-lo depois que a chave for cadastrada.",
               )}
             </p>
           ) : null}

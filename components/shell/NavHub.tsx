@@ -11,8 +11,8 @@ import { localize, type ExtensionManifest } from "@/lib/extensions/manifest";
 import type { ExtensionGuideView } from "@/lib/extensions/view";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idiomas";
-import { hubSections, type NavGroupId } from "@/lib/navigation/registry";
-import { BookOpen, Lightbulb, ListChecks, Warning } from "@/lib/ui/icons";
+import { hubSections, searchable, type NavGroupId } from "@/lib/navigation/registry";
+import { BookOpen, CaretDown, Lightbulb, ListChecks, Warning } from "@/lib/ui/icons";
 
 interface NavHubProps {
   interfaceSettings?: InterfaceSettings;
@@ -31,6 +31,18 @@ interface NavHubProps {
   subtitle: string;
   extensionGuides?: ExtensionGuideView[];
   extensionsUnavailable?: boolean;
+  /**
+   * As portas que este hub mostra PRIMEIRO, em cartões grandes — o que quem é
+   * dono do negócio ajusta no primeiro mês. Todo o resto do grupo continua no
+   * hub, recolhido sob "Avançado": nada some, só muda de lugar (divulgação
+   * progressiva; pesquisa em docs/research/2026-11-adaptacao-fitness/03-ux.md).
+   *
+   * São hrefs do catálogo e podem ser de OUTRO grupo (o WhatsApp é de Canais e
+   * é a primeira coisa que se procura em Configurações). Papel, módulo e a
+   * interface da empresa seguem decidindo: porta que a pessoa não alcança não
+   * vira cartão. Ausente = o hub de sempre, todas as seções abertas.
+   */
+  essenciais?: readonly string[];
   /**
    * Idioma da interface. `traduzir` é pura — roda em Server Component sem
    * provider. O default mantém os demais hubs (ex.: /app/ai) como estão até
@@ -84,8 +96,64 @@ export function NavHub({
   locale = IDIOMA_PADRAO,
   extensionGuides = [],
   extensionsUnavailable = false,
+  essenciais,
 }: NavHubProps) {
-  const secoes = hubSections(group, isPlatformAdmin, role, interfaceSettings, modulosLigados, capacidadesLigadas);
+  const todasAsSecoes = hubSections(group, isPlatformAdmin, role, interfaceSettings, modulosLigados, capacidadesLigadas);
+
+  // Na ORDEM em que a página pediu, e só o que esta pessoa alcança.
+  const alcancaveis = essenciais
+    ? searchable(isPlatformAdmin, role, interfaceSettings, modulosLigados, capacidadesLigadas)
+    : [];
+  const destaques = (essenciais ?? []).flatMap((href) => {
+    const destino = alcancaveis.find((d) => d.href === href);
+    return destino ? [destino] : [];
+  });
+  const emDestaque = new Set(destaques.map((d) => d.href));
+  // Sem destaque nenhum (ou sem `essenciais`), o hub é o de sempre.
+  const recolher = destaques.length > 0;
+  const secoes = recolher
+    ? todasAsSecoes
+        .map(({ section, items }) => ({
+          section,
+          items: items.filter((item) => !emDestaque.has(item.href)),
+        }))
+        .filter(({ items }) => items.length > 0)
+    : todasAsSecoes;
+  const totalRecolhido = secoes.reduce((soma, { items }) => soma + items.length, 0);
+
+  const listaDeSecoes = secoes.map(({ section, items }) => (
+    <section
+      key={section}
+      aria-labelledby={`hub-${group}-${slug(section)}`}
+      className="space-y-3"
+    >
+      <h2 id={`hub-${group}-${slug(section)}`} className="text-sm font-semibold">
+        {traduzir(section, locale)}
+      </h2>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,21rem),1fr))] gap-4">
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link key={item.href} href={item.href} className="block rounded-xl">
+              <Card className="hover:border-interactive-border flex h-full gap-3 p-4 shadow-none transition-colors duration-fast sm:p-5">
+                {/* O bloco de ícone de painel (DS §8): 32, raio 8,
+                    `primary` a 10% com o ícone em `primary`. */}
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <Icon size={18} aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold">{traduzir(item.label, locale)}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {traduzir(item.description, locale)}
+                  </p>
+                </div>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  ));
 
   return (
     // O painel da tela inicial do Work (DS §10.9, §10.10 e §11.10): cabeçalho
@@ -100,39 +168,58 @@ export function NavHub({
         )}
       </header>
 
-      {secoes.map(({ section, items }) => (
-        <section
-          key={section}
-          aria-labelledby={`hub-${group}-${slug(section)}`}
-          className="space-y-3"
-        >
-          <h2 id={`hub-${group}-${slug(section)}`} className="text-sm font-semibold">
-            {traduzir(section, locale)}
-          </h2>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,21rem),1fr))] gap-4">
-            {items.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link key={item.href} href={item.href} className="block rounded-xl">
-                  <Card className="hover:border-interactive-border flex h-full gap-3 p-4 shadow-none transition-colors duration-fast sm:p-5">
-                    {/* O bloco de ícone de painel (DS §8): 32, raio 8,
-                        `primary` a 10% com o ícone em `primary`. */}
-                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-                      <Icon size={18} aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="text-base font-semibold">{traduzir(item.label, locale)}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {traduzir(item.description, locale)}
-                      </p>
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      ))}
+      {recolher ? (
+        <>
+          <section aria-labelledby={`hub-${group}-essencial`} className="space-y-3">
+            <h2 id={`hub-${group}-essencial`} className="text-sm font-semibold">
+              {traduzir("O essencial", locale)}
+            </h2>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,17rem),1fr))] gap-4">
+              {destaques.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link key={item.href} href={item.href} className="block rounded-xl">
+                    <Card className="hover:border-interactive-border flex h-full flex-col gap-4 p-5 shadow-none transition-colors duration-fast sm:p-6">
+                      <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                        <Icon size={26} aria-hidden />
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-semibold">{traduzir(item.label, locale)}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {traduzir(item.description, locale)}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          {totalRecolhido > 0 ? (
+            // `<details>` nativo: abre e fecha sem JavaScript (o hub é Server
+            // Component), anda por teclado e o leitor de tela anuncia o estado.
+            <details className="group/avancado rounded-xl border border-border">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+                <span>
+                  {traduzir("Avançado", locale)}
+                  <span className="ml-2 font-normal text-muted-foreground">
+                    {traduzir("O que se ajusta de vez em quando.", locale)} ({totalRecolhido})
+                  </span>
+                </span>
+                <CaretDown
+                  size={16}
+                  aria-hidden
+                  className="shrink-0 transition-transform duration-fast group-open/avancado:rotate-180"
+                />
+              </summary>
+              <div className="flex flex-col gap-6 border-t border-border p-4">{listaDeSecoes}</div>
+            </details>
+          ) : null}
+        </>
+      ) : (
+        listaDeSecoes
+      )}
 
       {group === "crm" && (extensionGuides.length > 0 || extensionsUnavailable) ? (
         <section aria-labelledby="hub-crm-orientacoes-instaladas" className="space-y-3">

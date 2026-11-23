@@ -212,6 +212,20 @@ export function KanbanBoard({
     return groupLeadsByStage(data.stages, data.leads);
   }, [data]);
 
+  // Os vizinhos do negócio aberto no dossiê, na ordem em que o quadro é lido:
+  // etapa por etapa, de cima para baixo. É o que as setas ‹ › do painel andam.
+  const vizinhosDoDossie = useMemo(() => {
+    if (!data || !grouped || !dossieId) return null;
+    const fila = data.stages.flatMap((etapa) => (grouped.get(etapa.id) ?? []).map((l) => l.id));
+    const i = fila.indexOf(dossieId);
+    if (i < 0) return null;
+    return {
+      anterior: fila[i - 1] ?? null,
+      proximo: fila[i + 1] ?? null,
+      posicao: { atual: i + 1, total: fila.length },
+    };
+  }, [data, grouped, dossieId]);
+
   // Um conjunto por vez, e não um card por vez: o board recebe o resultado do
   // gesto já resolvido pela coluna (um card, um intervalo, a etapa inteira). A
   // versão anterior só sabia alternar UM id, e é por isso que "selecionar tudo"
@@ -469,6 +483,15 @@ export function KanbanBoard({
             ownerNames={ownerNames}
             etapas={data.stages}
             onMudarEtapa={(stageId) => aoMoverPelaLista(leadDoDossie, stageId)}
+            posicaoNaLista={vizinhosDoDossie?.posicao}
+            onAnterior={
+              vizinhosDoDossie?.anterior
+                ? () => setDossieId(vizinhosDoDossie.anterior)
+                : undefined
+            }
+            onProximo={
+              vizinhosDoDossie?.proximo ? () => setDossieId(vizinhosDoDossie.proximo) : undefined
+            }
           />
         )}
 

@@ -182,7 +182,11 @@ export const StageColumn = memo(function StageColumn({
   // Recolher é só da tela (DS §10.23, "Coluna do quadro"): a coluna vira uma
   // faixa estreita com o nome e a contagem. O `Droppable` continua montado, então
   // soltar um card numa etapa recolhida segue funcionando.
-  const [recolhida, setRecolhida] = useState(false);
+  //
+  // Ganho e Perdido NASCEM recolhidas: são destino, não fila de trabalho. Viram
+  // dois alvos estreitos onde se solta o card, e o quadro fica com as etapas em
+  // que alguém ainda precisa agir. Um clique no cabeçalho abre a coluna inteira.
+  const [recolhida, setRecolhida] = useState(stage.is_won === true || stage.is_lost === true);
   // Entrada, saída e deslize dos vizinhos fora do arrasto (movimento-da-lista.ts).
   const listaRef = useRef<HTMLDivElement | null>(null);
   useMovimentoDaLista(listaRef, idsVisiveis.join(","), !recolhida);

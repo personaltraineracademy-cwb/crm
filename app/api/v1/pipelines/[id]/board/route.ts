@@ -12,6 +12,7 @@
  * (PGRST116). Routing through the API ensures the server-side cookie reader
  * runs, same as every other authed query.
  */
+import { resumoDaOrigem, type OrigemResumida } from "@/lib/leads/origem-resumida";
 import { randomUUID } from "node:crypto";
 import { type NextRequest } from "next/server";
 
@@ -350,17 +351,44 @@ async function withMarcadoresDoContato(
   ];
   if (contactIds.length === 0) return { leads: leadsDoQuadro, error: null };
 
-  const { data, error } = await buscaEmLotes(contactIds, (lote) =>
-    supabase
-      .from("contacts")
-      .select("id, tags, phone_number, email, custom_fields, is_anonymized")
-      .eq("organization_id", organizationId)
-      .in("id", lote),
-  );
+  // A origem (UTM/anúncio) vai em consulta PRÓPRIA, em paralelo com a dos
+  // marcadores: o custo de espera é o mesmo, e a consulta abaixo — que um teste
+  // de fiação lê ao pé da letra — fica como estava. Falha aqui não derruba o
+  // quadro: o card só fica sem a linha de origem.
+  const [{ data, error }, origens] = await Promise.all([
+    buscaEmLotes(contactIds, (lote) =>
+      supabase
+        .from("contacts")
+        .select("id, tags, phone_number, email, custom_fields, is_anonymized")
+        .eq("organization_id", organizationId)
+        .in("id", lote),
+    ),
+    buscaEmLotes(contactIds, (lote) =>
+      supabase
+        .from("contacts")
+        .select("id, source, source_metadata, is_anonymized")
+        .eq("organization_id", organizationId)
+        .in("id", lote),
+    ),
+  ]);
   if (error) return { leads: leadsDoQuadro, error: error.message };
 
   const linhas = (data ?? []) as Array<{ id: string; tags: string[] | null } & LinhaDoContatoNoQuadro>;
-  const leads = anexarDadosDoContato(leadsDoQuadro, linhas);
+  // Contato anonimizado (LGPD) não leva origem: é dado da pessoa.
+  const origemPorContato = new Map<string, OrigemResumida>();
+  for (const row of (origens.data ?? []) as Array<{
+    id: string;
+    source: string | null;
+    source_metadata: unknown;
+    is_anonymized: boolean | null;
+  }>) {
+    if (row.is_anonymized) continue;
+    origemPorContato.set(row.id, resumoDaOrigem(row.source_metadata, row.source));
+  }
+  const leads = anexarDadosDoContato(leadsDoQuadro, linhas).map((lead) => {
+    const contact_origem = lead.contact_id ? origemPorContato.get(lead.contact_id) : undefined;
+    return contact_origem ? { ...lead, contact_origem } : lead;
+  });
 
   const porContato = new Map<string, string[]>();
   for (const row of linhas) {

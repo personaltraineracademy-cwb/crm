@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Captura a sequência do arrastar pelo teclado em evidence/movimento/.
 P="Portal Movimento"
-OUT="/Users/wesleymaciel/Library/Mobile Documents/com~apple~CloudDocs/Principal/Projetos/PTA/CRM/evidence/movimento"
+OUT="/Users/wesleymaciel/Library/Mobile Documents/com~apple~CloudDocs/Principal/Projetos/Wenorth/03 - CRM/evidence/movimento"
 mkdir -p "$OUT"
 cap() { f=$(maestri portal screenshot "$P" 2>&1 | tail -1); cp "$f" "$OUT/$1.png"; echo "$OUT/$1.png"; }
 maestri portal evaluate "$P" "(() => { const el=document.querySelector('[data-etapa-do-quadro] [data-rfd-draggable-id]'); el.focus(); return el.getAttribute('data-rfd-draggable-id') })()"

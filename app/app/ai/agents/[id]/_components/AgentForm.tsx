@@ -57,6 +57,8 @@ import { PainelDeSeguranca } from "./PainelDeSeguranca";
 import { BasesDoAgente, type MaterialDoAcervo } from "./BasesDoAgente";
 import { FunisDoAgente, type CoberturaPorFunil } from "./FunisDoAgente";
 import { PublishConfirmDialog } from "./PublishConfirmDialog";
+import { AjustesAvancados } from "./AjustesAvancados";
+import { AparenciaDoAgente } from "./AparenciaDoAgente";
 import { ComandosDoCelular } from "./ComandosDoCelular";
 import { ServidorExternoNoAtendimento } from "./ServidorExternoNoAtendimento";
 import {
@@ -887,6 +889,17 @@ export function AgentForm(props: Props) {
             </div>
           </Card>
 
+          {/* A cara do agente no cartão da lista. Só em edição: salva direto em
+              `ai_agents.config.aparencia`, e o agente precisa existir. */}
+          {isEdit && (
+            <AparenciaDoAgente
+              agentId={props.agent.id}
+              nome={props.agent.name}
+              config={props.agent.config}
+              disabled={disabled}
+            />
+          )}
+
           {/* Provider + credential + model */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("A inteligência que ele usa")}</h3>
@@ -1035,6 +1048,10 @@ export function AgentForm(props: Props) {
             </div>
           </Card>
 
+          <AjustesAvancados
+            titulo={t("Ajustes avançados")}
+            resumo={t("Limites de custo, de ações e de leitura por atendimento.")}
+          >
           {/* Limits */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Freios de segurança")}</h3>
@@ -1143,6 +1160,7 @@ export function AgentForm(props: Props) {
               </div>
             </div>
           </Card>
+          </AjustesAvancados>
         </div>
 
         {/* COLUMN 2 */}
@@ -1264,19 +1282,12 @@ export function AgentForm(props: Props) {
             value={form.knowledge_source_ids}
             onChange={(ids) => patch({ knowledge_source_ids: ids })}
             disabled={disabled}
+            // A lista de materiais vem do servidor: recarregar a rota traz o
+            // que acabou de ser cadastrado, sem perder o que está no formulário.
+            aoCadastrarMaterial={() => router.refresh()}
           />
 
-          {/* Triggers */}
-          <Card className="space-y-2 p-4">
-            <h3 className="text-sm font-medium">{t("Quando ele entra em ação")}</h3>
-            <TriggerEditor
-              value={form.trigger_config}
-              onChange={(v) => patch({ trigger_config: v })}
-              disabled={disabled}
-              organizationTimezone={props.organizationTimezone}
-            />
-          </Card>
-
+          {/* Passar para uma pessoa vem ANTES do recolhido: é decisão do dono. */}
           {/* Handoff */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Passar para uma pessoa")}</h3>
@@ -1325,6 +1336,22 @@ export function AgentForm(props: Props) {
               disabled={disabled}
             />
           </Card>
+
+          <AjustesAvancados
+            titulo={t("Ajustes avançados")}
+            resumo={t("Quando ele responde, clima da conversa, pedidos de ajuda, propostas, follow-up e comandos.")}
+          >
+          {/* Triggers */}
+          <Card className="space-y-2 p-4">
+            <h3 className="text-sm font-medium">{t("Quando ele entra em ação")}</h3>
+            <TriggerEditor
+              value={form.trigger_config}
+              onChange={(v) => patch({ trigger_config: v })}
+              disabled={disabled}
+              organizationTimezone={props.organizationTimezone}
+            />
+          </Card>
+
 
           {/* O OUTRO caminho para uma pessoa: o clima fechado
               (`ai.sentiment_alert`, em `workers/ai-sentiment-worker.ts`).
@@ -1455,6 +1482,7 @@ export function AgentForm(props: Props) {
               disabled={disabled}
             />
           )}
+          </AjustesAvancados>
         </div>
       </div>
 

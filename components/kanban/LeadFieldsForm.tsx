@@ -112,6 +112,16 @@ export function LeadFieldsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lead.id]);
 
+  // Título e valor também se editam NO LUGAR, no cabeçalho do dossiê. Quando um
+  // deles muda por lá, este formulário acompanha — senão o "Salvar" daqui
+  // regravaria o valor antigo por cima do que a pessoa acabou de mudar.
+  useEffect(() => {
+    form.setValue("title", lead.title);
+  }, [form, lead.title]);
+  useEffect(() => {
+    form.setValue("valueReais", centsToReais(lead.value_cents));
+  }, [form, lead.value_cents]);
+
   async function onSubmit(values: FormShape) {
     const reais = values.valueReais.trim();
     let valueCents: number | null = null;

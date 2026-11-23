@@ -34,6 +34,11 @@ export interface CartaoDeRegistroProps {
   /** O cartão inteiro como botão: para quem abre um painel ou diálogo em vez de navegar. */
   aoAbrir?: () => void;
   titulo: string;
+  /**
+   * O rosto do registro, à esquerda do título (ex.: o avatar de um agente).
+   * Decorativo: quem nomeia o cartão continua sendo o `titulo`.
+   */
+  avatar?: React.ReactNode;
   /** Chip de estado (`ChipDeEstado`), na linha dos metadados. */
   selo?: React.ReactNode;
   /** Até 2 linhas, em tom secundário. */
@@ -55,6 +60,7 @@ export function CartaoDeRegistro({
   href,
   aoAbrir,
   titulo,
+  avatar,
   selo,
   descricao,
   meta,
@@ -80,7 +86,8 @@ export function CartaoDeRegistro({
         className,
       )}
     >
-      <div className="flex items-start gap-2">
+      <div className={cn("flex gap-3", avatar ? "items-center" : "items-start gap-2")}>
+        {avatar}
         <h3 className="min-w-0 flex-1 text-base leading-6 font-medium text-card-foreground">
           {href ? (
             <Link href={href} title={titulo} className={CLASSES_DO_TITULO}>

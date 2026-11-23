@@ -1,5 +1,8 @@
 "use client";
 
+import { TituloEditavel, ValorEditavel } from "./CabecalhoEditavel";
+import { OrigemDoLead } from "@/components/contacts/OrigemDoLead";
+import { origemDoNegocio } from "@/lib/leads/origem-resumida";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,7 +18,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { PencilSimple } from "@/lib/ui/icons";
+import { CaretLeft, CaretRight, PencilSimple } from "@/lib/ui/icons";
 import { useLeadTimeline } from "@/hooks/leads/useLeadTimeline";
 import type { Lead } from "@/lib/types/leads";
 import type { Stage } from "@/lib/kanban/types";
@@ -51,6 +54,15 @@ interface Props {
    */
   etapas?: Pick<Stage, "id" | "name">[];
   onMudarEtapa?: (stageId: string) => void;
+  /**
+   * Ir para o negócio anterior ou o próximo, na ordem do quadro (etapa por
+   * etapa, de cima para baixo), sem fechar o painel. `undefined` na ponta da
+   * lista ou quando quem abre não tem lista (o calendário): o botão desliga.
+   */
+  onAnterior?: () => void;
+  onProximo?: () => void;
+  /** "3 de 25": onde este negócio está na lista que as setas percorrem. */
+  posicaoNaLista?: { atual: number; total: number };
 }
 
 function formatValor(cents: number | null, currency: string | null): string {
@@ -108,6 +120,9 @@ export function LeadDossier({
   ownerNames,
   etapas,
   onMudarEtapa,
+  onAnterior,
+  onProximo,
+  posicaoNaLista,
 }: Props) {
   const tagDoIdioma = useTagDeIdioma();
   const t = useT();
@@ -208,7 +223,47 @@ export function LeadDossier({
             Só o corpo rola. */}
         <SheetHeader className="gap-2">
           <div className="flex items-start justify-between gap-2">
-            <SheetTitle className="min-w-0 text-base leading-6">{lead.title}</SheetTitle>
+            <SheetTitle className="min-w-0 text-base leading-6">
+              {podeEditarTarefas ? (
+                // Edição no lugar: clicar no título vira campo; Enter grava.
+                <TituloEditavel lead={lead} pipelineId={pipelineId} />
+              ) : (
+                lead.title
+              )}
+            </SheetTitle>
+            {posicaoNaLista ? (
+              // Anterior / próximo: percorrer a fila sem fechar e reabrir o
+              // painel a cada negócio.
+              <div className="ml-auto flex shrink-0 items-center gap-0.5" data-navegacao-do-dossie>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t("Negócio anterior")}
+                  title={t("Negócio anterior")}
+                  className="text-muted-foreground"
+                  disabled={!onAnterior}
+                  onClick={onAnterior}
+                >
+                  <CaretLeft size={16} aria-hidden />
+                </Button>
+                <span className="text-xs tabular-nums text-muted-foreground">
+                  {posicaoNaLista.atual}/{posicaoNaLista.total}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t("Próximo negócio")}
+                  title={t("Próximo negócio")}
+                  className="text-muted-foreground"
+                  disabled={!onProximo}
+                  onClick={onProximo}
+                >
+                  <CaretRight size={16} aria-hidden />
+                </Button>
+              </div>
+            ) : null}
             {/* Ação do cabeçalho (guia §4.4): ícone `ghost` de 32 ao lado do X, com o
                 nome acessível "Editar campos" e a dica. Era um texto solto no fim da
                 linha de contexto. Continua um BOTÃO com esse nome. */}
@@ -230,9 +285,13 @@ export function LeadDossier({
             </Button>
           </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-          <span className="font-medium tabular-nums text-text">
-            {formatValor(lead.value_cents, lead.currency)}
-          </span>
+          {podeEditarTarefas ? (
+            <ValorEditavel lead={lead} pipelineId={pipelineId} />
+          ) : (
+            <span className="font-medium tabular-nums text-text">
+              {formatValor(lead.value_cents, lead.currency)}
+            </span>
+          )}
           {etapas && onMudarEtapa ? (
             <EtapaNoDossie
               etapaAtual={lead.stage_id}
@@ -297,6 +356,15 @@ export function LeadDossier({
             pipelineId={pipelineId}
             leadId={lead.id}
           />
+          {/* Origem — de onde este lead veio (UTM do link ou anúncio). Dentro
+              de "Contato", e não em seção própria: a ordem das seções do
+              dossiê é contrato (#3181), e a origem é dado de quem chegou. */}
+          <div className="mt-4 border-t border-border pt-3">
+            <h4 className="mb-2 text-xs font-medium text-muted-foreground">{t("Origem")}</h4>
+            <OrigemDoLead
+              origem={origemDoNegocio(lead.contact_origem, lead.source_metadata, lead.source)}
+            />
+          </div>
         </SecaoDoDossie>
 
         {/* ② Dados do negócio — o que se PREENCHE, agora ANTES da linha do

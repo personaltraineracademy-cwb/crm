@@ -1,4 +1,6 @@
 "use client";
+import { useRotuloDaOrigem } from "@/components/contacts/OrigemDoLead";
+import { origemDoNegocio } from "@/lib/leads/origem-resumida";
 import {
   Draggable,
   type DraggableStateSnapshot,
@@ -162,6 +164,8 @@ export const KanbanCard = memo(function KanbanCard({
   const age = stageAgeLabel(card.hoursInStage, t);
   const tagDeIdioma = useTagDeIdioma();
   const prazo = prazoRelativo(lead.expected_close_date, new Date(), t, tagDeIdioma);
+  const origem = origemDoNegocio(lead.contact_origem, lead.source_metadata, lead.source);
+  const rotuloDaOrigem = useRotuloDaOrigem();
   // A cor cadastrada da etiqueta (Configurações › Tags) manda; ela vira o
   // `tone-*` mais próximo. Sem cor cadastrada, o tom sai do próprio texto.
   const coresDasEtiquetas = useCoresDasEtiquetas();
@@ -376,6 +380,23 @@ export const KanbanCard = memo(function KanbanCard({
               </span>
             )}
           </div>
+
+          {/* Origem rastreada (UTM do link ou anúncio): uma linha só, e só
+              quando existe — "cadastro manual" não gasta espaço do card. */}
+          {origem.rastreada && (
+            <p
+              className="mt-2 flex items-center gap-1 truncate text-xs text-muted-foreground"
+              title={[rotuloDaOrigem(origem.origem), origem.meio, origem.campanha, origem.anuncio]
+                .filter(Boolean)
+                .join(" · ")}
+              data-origem-do-card
+            >
+              <span className="shrink-0">{t("Origem")}:</span>
+              <span className="truncate font-medium text-foreground">
+                {[rotuloDaOrigem(origem.origem), origem.campanha].filter(Boolean).join(" · ")}
+              </span>
+            </p>
+          )}
 
           {/* Etiquetas (DS §10.23): chips de tom, gap 6, até 128px cada,
               truncadas. A lista inteira segue no `title` do card. */}

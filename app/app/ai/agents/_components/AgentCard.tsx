@@ -4,6 +4,8 @@ import { CartaoDeRegistro } from "@/components/cartao-de-registro";
 import { Badge } from "@/components/ui/badge";
 import { useT } from "@/hooks/i18n/useT";
 import type { AgentRow } from "@/hooks/ai/useAgent";
+import { aparenciaDoAgente } from "@/lib/ai/agents/aparencia";
+import { AvatarDoAgente } from "./AvatarDoAgente";
 import { AgentStatusBadge, deriveAgentStatus } from "./AgentStatusBadge";
 import { AgentRowMenu } from "./AgentRowMenu";
 
@@ -79,6 +81,7 @@ export function AgentCard({ agent, canWrite }: Props) {
     <CartaoDeRegistro
       href={`/app/ai/agents/${agent.id}`}
       titulo={agent.name}
+      avatar={<AvatarDoAgente aparencia={aparenciaDoAgente(agent.config, agent.name)} />}
       descricao={agent.description}
       selo={
         <span className="inline-flex items-center gap-1">
@@ -101,8 +104,14 @@ export function AgentCard({ agent, canWrite }: Props) {
         >
           {modeloParaLeigo(modeloEmVigor(agent))}
         </span>,
-        `${t("Tipo")}: ${tipoDoAgente(agent.kind ?? "rag_bot", t)}`,
-        `${t("Ordem de preferência")}: ${agent.priority ?? "—"}`,
+        // "Agente com ferramentas" é o tipo de quase todo agente: repetido em todo
+        // cartão, não diz nada. Só aparece o tipo que FOGE do comum.
+        agent.kind === "mcp_agent" || !agent.kind
+          ? null
+          : `${t("Tipo")}: ${tipoDoAgente(agent.kind, t)}`,
+        // A ordem só importa quando alguém a mexeu; "Ordem de preferência: 0" em
+        // todo cartão era ruído para quem tem um agente só.
+        agent.priority ? `${t("Ordem de preferência")}: ${agent.priority}` : null,
       ]}
       menu={canWrite ? <AgentRowMenu agent={agent} /> : undefined}
     />

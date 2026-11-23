@@ -20,6 +20,11 @@ import {
 import { KnowledgeSourceCard } from "@/components/ai/KnowledgeSourceCard";
 import { NovoMaterialDialog } from "@/components/ai/NovoMaterialDialog";
 import {
+  NOME_DO_MATERIAL_SOBRE_O_NEGOCIO,
+  SobreONegocioDialog,
+} from "@/components/ai/SobreONegocioDialog";
+import { AcervoSearch } from "@/components/inbox/AcervoSearch";
+import {
   ChaveDeConhecimento,
   type EstadoDaChave,
 } from "@/components/ai/ChaveDeConhecimento";
@@ -38,6 +43,7 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
   const t = useT();
   const qc = useQueryClient();
   const [novoAberto, setNovoAberto] = useState(false);
+  const [negocioAberto, setNegocioAberto] = useState(false);
 
   const { data: sources } = useKnowledgeSources({ initialData: initialSources });
   const { data: chave } = useEstadoDaChave(initialChave);
@@ -63,6 +69,13 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
   const lista = (sources ?? []).filter((s) => s.status !== "archived");
   const arquivados = (sources ?? []).filter((s) => s.status === "archived");
   const estado = chave ?? initialChave;
+
+  // O guia cria UM material de nome fixo. Enquanto ele existir, o botão do guia
+  // sai da frente: criar o segundo daria erro de nome repetido, e o lugar de
+  // completar o que já foi escrito é o próprio material.
+  const jaTemSobreONegocio = (sources ?? []).some(
+    (s) => s.name === NOME_DO_MATERIAL_SOBRE_O_NEGOCIO,
+  );
 
   function usadoPor(sourceId: string): string[] {
     return agentes.filter((a) => a.materiais.includes(sourceId)).map((a) => a.nome);
@@ -94,6 +107,15 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
               {reindexAll.isPending ? t("Preparando…") : t("Preparar tudo de novo")}
             </Button>
           ) : null}
+          {lista.length > 0 && !jaTemSobreONegocio ? (
+            <Button
+              variant="outline"
+              onClick={() => setNegocioAberto(true)}
+              data-testid="acervo-sobre-o-negocio"
+            >
+              {t("Contar sobre o meu negócio")}
+            </Button>
+          ) : null}
           <Button onClick={() => setNovoAberto(true)} data-testid="acervo-adicionar">
             <Plus className="mr-2 h-4 w-4" aria-hidden />
             {t("Adicionar material")}
@@ -104,6 +126,13 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
       <NovoMaterialDialog
         aberto={novoAberto}
         onFechar={() => setNovoAberto(false)}
+        onCriado={recarregar}
+        podeIndexar={estado.pode_indexar}
+      />
+
+      <SobreONegocioDialog
+        aberto={negocioAberto}
+        onFechar={() => setNegocioAberto(false)}
         onCriado={recarregar}
         podeIndexar={estado.pode_indexar}
       />
@@ -119,6 +148,16 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
               "Comece pelo que ele mais vai precisar: as perguntas que se repetem, e a política que você mais explica. Ele passa a consultar isso antes de responder, em vez de improvisar.",
             )}
           </p>
+          {!jaTemSobreONegocio ? (
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <Button onClick={() => setNegocioAberto(true)} data-testid="acervo-vazio-sobre-o-negocio">
+                {t("Contar sobre o meu negócio")}
+              </Button>
+              <Button variant="outline" onClick={() => setNovoAberto(true)}>
+                {t("Adicionar material")}
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -139,6 +178,28 @@ export function AcervoClient({ initialSources, initialChave, agentes }: Props) {
           ))}
         </div>
       )}
+
+      {lista.length > 0 ? (
+        // A MESMA busca que o agente faz, na tela onde o material é cadastrado:
+        // quem acabou de ensinar quer saber se foi entendido. Reusa o componente
+        // do Inbox de propósito — duas buscas responderiam diferente sobre o
+        // mesmo acervo.
+        <section
+          aria-labelledby="acervo-perguntar-titulo"
+          className="space-y-2 rounded-xl border border-border p-4"
+          data-testid="acervo-perguntar"
+        >
+          <h2 id="acervo-perguntar-titulo" className="text-sm font-semibold">
+            {t("Perguntar como o assistente")}
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            {t(
+              "Escreva uma dúvida de cliente e veja o que o agente encontraria no seu material para responder.",
+            )}
+          </p>
+          <AcervoSearch />
+        </section>
+      ) : null}
 
       {arquivados.length > 0 ? (
         <details className="rounded-xl border border-border p-4" data-testid="acervo-arquivados">

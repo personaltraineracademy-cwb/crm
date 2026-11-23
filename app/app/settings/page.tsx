@@ -25,6 +25,23 @@ export const metadata: Metadata = { title: "Configurações" };
  * oficial" por nome — a pergunta passa a ter um lugar só, que é o que a ponte
  * tentava ensinar apontando para outro.
  */
+/**
+ * O que o dono do negócio ajusta no primeiro mês, na ordem em que precisa.
+ * O resto do grupo continua no hub, recolhido sob "Avançado". Conexões é de
+ * Canais, e está aqui porque "ligar o WhatsApp" é a primeira coisa que se
+ * procura em Configurações.
+ */
+const ESSENCIAIS_DE_CONFIGURACOES = [
+  "/app/settings/tenant",
+  "/app/connections",
+  "/app/team",
+  "/app/settings/tenant/agenda",
+  "/app/settings/tenant/pipelines",
+  "/app/settings/tags",
+  "/app/settings/profile",
+  "/app/settings/notifications",
+] as const;
+
 export default async function SettingsHubPage() {
   const user = await requireAuth();
   const activeOrg = await resolveActiveOrg(user);
@@ -41,6 +58,7 @@ export default async function SettingsHubPage() {
       title={traduzir("Configurações", idioma)}
       subtitle={traduzir("Sua conta, os dados da empresa e quem tem acesso ao quê.", idioma)}
       locale={idioma}
+      essenciais={ESSENCIAIS_DE_CONFIGURACOES}
     />
   );
 }

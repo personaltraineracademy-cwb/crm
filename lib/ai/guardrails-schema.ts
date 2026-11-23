@@ -4,6 +4,8 @@
  */
 import { z } from "zod";
 
+import { aparenciaDoAgenteSchema } from "@/lib/ai/agents/aparencia";
+
 import { DEFAULT_SENTIMENT_THRESHOLD } from "@/lib/ai/prompts/sentiment";
 
 // ---------------------------------------------------------------------------
@@ -162,6 +164,13 @@ export const agentConfigSchema = z.object({
    * Só quem é admin grava `config` (rota PATCH e RLS de `ai_agents`).
    */
   mcp_externo_no_atendimento: z.boolean().default(false),
+  /**
+   * A cara do agente na lista e na tela dele: emoji e cor de listas fechadas
+   * (`lib/ai/agents/aparencia.ts`). Só apresentação — o motor não lê. Opcional
+   * e SEM default: agente que nunca escolheu não ganha a chave no jsonb, e a
+   * tela calcula uma cara estável a partir do nome.
+   */
+  aparencia: aparenciaDoAgenteSchema.optional(),
 });
 export type AgentConfig = z.infer<typeof agentConfigSchema>;
 

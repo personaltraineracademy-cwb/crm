@@ -179,9 +179,9 @@ export const NAV_CATALOG = [
   },
   {
     href: "/app/radar",
-    label: "Radar",
-    description: "Quem esfriou e ainda está aberto — o que corre risco de morrer sem resposta.",
-    icon: "ClockCountdown",
+    label: "Dashboard",
+    description: "Leads do período, tempo de resposta, origem e quem esfriou no funil.",
+    icon: "Gauge",
     group: "atendimento",
     sidebar: true,
   },

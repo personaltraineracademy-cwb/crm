@@ -26,6 +26,7 @@
  * alternativa (status por seção) triplicaria os estados no componente, e a
  * doença que esta rota cura é exatamente estados distintos colapsados num só.
  */
+import { resumoDaOrigem } from "@/lib/leads/origem-resumida";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lerAnuncioDaMensagem, lerAnuncioDoContato, mesmoAnuncio } from "@/lib/leads/atribuicao-de-anuncio";
 import { prospectEnrichmentSchema } from "@/lib/prospecting/schema";
@@ -94,7 +95,7 @@ export async function GET(
   }
 
   const { data: contactScope, error: scopeError } = await supabase.from("contacts")
-    .select("organization_id, is_anonymized, source_metadata").eq("id", contactId).maybeSingle();
+    .select("organization_id, is_anonymized, source, source_metadata").eq("id", contactId).maybeSingle();
   if (scopeError) return fail("internal_error", scopeError.message, 500, { requestId });
   if (!contactScope) return fail("not_found", "Contato não encontrado.", 404, { requestId });
   // Candidates are worker-only. Authorize the contact through RLS first, then
@@ -207,6 +208,14 @@ export async function GET(
       demandas: demandas.data ?? [],
       fatos: fatos.data ?? [], historico: historico.data ?? [],
       ...anuncios,
+      // De onde a pessoa veio (UTM do link ou anúncio), para o painel ao lado
+      // da conversa. Contato anonimizado (LGPD) não leva.
+      origem: contactScope.is_anonymized
+        ? null
+        : resumoDaOrigem(
+            contactScope.source_metadata,
+            (contactScope as { source?: string | null }).source,
+          ),
     },
     { requestId },
   );
