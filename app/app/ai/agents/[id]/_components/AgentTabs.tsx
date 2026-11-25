@@ -99,6 +99,11 @@ export function AgentTabs(props: Props) {
     ["capacidades", t("Uso das capacidades"), ChartBar],
   ];
 
+  const rotuloDaVisao =
+    visao === "teste"
+      ? t("Teste sua IA")
+      : ([...secoes, ...acompanhar].find(([id]) => id === visao)?.[1] ?? "");
+
   function itemDoMenu([id, rotulo, Ic]: [Visao, string, Icone]) {
     const ativo = visao === id;
     return (
@@ -138,7 +143,7 @@ export function AgentTabs(props: Props) {
           />
         </div>
         <div className="text-center">
-          <p className="font-semibold">{props.agent.name}</p>
+          <h2 className="font-semibold">{props.agent.name}</h2>
           {props.agent.description ? (
             <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{props.agent.description}</p>
           ) : null}
@@ -183,7 +188,7 @@ export function AgentTabs(props: Props) {
       </aside>
 
       {/* ─── A seção aberta ─── */}
-      <section className="min-w-0 p-5 sm:p-8">
+      <section className="min-w-0 p-5 sm:p-8" aria-label={rotuloDaVisao}>
         {/* O formulário fica montado sempre: esconder não perde o que foi digitado. */}
         <div className={ehFormulario ? undefined : "hidden"}>
           <AgentForm

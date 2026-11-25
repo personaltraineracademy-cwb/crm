@@ -273,7 +273,7 @@ test("testa sem enviar, pausa preserva publicação e duas aprovações entregam
     const f = await fixture(pool);
     await login(page, f);
     await page.goto(`/app/ai/agents/${f.agent}`);
-    await page.getByRole("tab", { name: "Teste", exact: true }).click();
+    await page.locator('[data-menu-do-agente="teste"]').click();
     await page.getByLabel("Mensagem do cliente (sample)").fill("Quais informações vocês oferecem?");
     await page.getByLabel("Nome (opcional)").fill("Maria do cenário");
     await page.getByLabel("Telefone (opcional)").fill("+15551234567");

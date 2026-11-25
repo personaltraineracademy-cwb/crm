@@ -127,6 +127,8 @@ test.describe("Criar um agente pela tela", () => {
 
     // E as capacidades que liguei ANTES de criar sobreviveram ao nascimento —
     // é aqui que uma tela de criação costuma perder metade do formulário.
+    // As capacidades moram na seção Trabalho do menu à esquerda.
+    await page.locator('[data-menu-do-agente="trabalho"]').click({ timeout: 60_000 });
     await page.getByTestId("tool-picker").waitFor({ state: "visible", timeout: 60_000 });
     await expect(page.getByTestId("consumo-teto")).toHaveText(ligadas!.trim());
     await expect(page.getByTestId("pacote-atender")).toHaveAttribute("data-estado", "ligado");

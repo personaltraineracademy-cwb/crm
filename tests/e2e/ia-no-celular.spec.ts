@@ -320,8 +320,9 @@ test("[P1] o gestor pausa o agente, abre o aviso e acompanha a IA pelo celular",
   });
 
   await test.step("3. execuções em cartão", async () => {
-    await page.getByRole("tab", { name: "Execuções" }).tap();
-    const painel = page.getByRole("tabpanel", { name: "Execuções" });
+    // Execuções saiu das abas do alto para o grupo "Acompanhar" do menu.
+    await page.locator('[data-menu-do-agente="runs"]').tap();
+    const painel = page.getByRole("region", { name: "Execuções" });
     const linhas = painel.locator("tbody tr");
     await expect(linhas).toHaveCount(2, { timeout: 30_000 });
     await provaOCartao(painel.locator("table"), "execuções");
