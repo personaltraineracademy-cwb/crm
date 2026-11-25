@@ -26,6 +26,7 @@ export function OwnerBadge({
   ownerName,
   agentVersion,
   compacto = false,
+  soDisco = false,
 }: {
   ownerKind: OwnerKind;
   ownerName: string | null;
@@ -40,18 +41,29 @@ export function OwnerBadge({
    * segundo arquivo é como duas telas passam a dizer a mesma coisa de dois jeitos.
    */
   compacto?: boolean;
+  /**
+   * Só o disco, sem o nome ao lado (o rodapé do card no desenho de referência).
+   * O nome continua no rótulo acessível e na dica: some da tinta, não da página.
+   */
+  soDisco?: boolean;
 }) {
   const t = useT();
   if (!ownerKind) {
     // Mesma geometria dos outros dois estados (disco de 24px + rótulo), para o
     // rodapé do card não mudar de altura conforme o lead tem dono ou não.
     return (
-      <div className="flex items-center gap-1.5" aria-label={t("Sem responsável")}>
+      <div
+        className="flex items-center gap-1.5"
+        aria-label={t("Sem responsável")}
+        title={soDisco ? t("Sem responsável") : undefined}
+      >
         <span
           className={`${compacto ? "h-4 w-4" : "h-6 w-6"} shrink-0 rounded-full border border-dashed border-border-strong`}
           aria-hidden
         />
-        <span className={`truncate text-muted-foreground ${compacto ? "text-[10px]" : "text-xs"}`}>
+        <span
+          className={`truncate text-muted-foreground ${compacto ? "text-[10px]" : "text-xs"} ${soDisco ? "sr-only" : ""}`}
+        >
           {t("Sem responsável")}
         </span>
       </div>
@@ -84,7 +96,7 @@ export function OwnerBadge({
         {ownerName ? ownerInitials(ownerName) : "?"}
       </span>
       <span
-        className={`truncate text-muted-foreground ${compacto ? "max-w-[7rem] text-[10px]" : "max-w-[9rem] text-xs"}`}
+        className={`truncate text-muted-foreground ${compacto ? "max-w-[7rem] text-[10px]" : "max-w-[9rem] text-xs"} ${soDisco ? "sr-only" : ""}`}
       >
         {label}
       </span>

@@ -273,6 +273,18 @@ export const PONTOS_DE_IA: readonly PontoDeIa[] = [
     registraEm: "llm_calls",
   },
   {
+    id: "dashboard_assistant",
+    rotulo: "Montar o painel por conversa",
+    oQueFaz:
+      "Lê o que a pessoa quer analisar no Dashboard e escolhe, de uma lista fechada de indicadores do CRM, quais cartões mostrar. Não calcula números: a tela os busca no banco.",
+    papel: "entender",
+    exige: { tools: true },
+    emissor: "lib/metrics/assistente-do-painel.ts",
+    sintomaDeFalha:
+      "O chat do Dashboard não monta painel nenhum, e a pessoa só vê o painel padrão.",
+    registraEm: "llm_calls",
+  },
+  {
     id: "proposal_fill_from_conversation",
     rotulo: "Preencher proposta com a conversa",
     oQueFaz:

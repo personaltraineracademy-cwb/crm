@@ -1,3 +1,5 @@
+import { PageHeader } from "@/components/ui/page-header";
+import { traduzir } from "@/lib/i18n/dicionario";
 import { notFound, redirect } from "next/navigation";
 
 import { requireAuth, resolveActiveOrg } from "@/lib/auth/server";
@@ -221,6 +223,13 @@ export default async function AgentEditorPage({ params }: { params: Promise<{ id
 
   return (
     <div className="flex h-full flex-col gap-6 p-6">
+      <PageHeader
+        title={traduzir("Dados do agente", user.idioma)}
+        description={traduzir(
+          "Veja as informações, treine, ligue integrações e escolha os canais do seu agente.",
+          user.idioma,
+        )}
+      />
       <AgentOperation agent={agent} readOnly={readOnly} />
       {(agent.kind ?? "rag_bot") !== "mcp_agent" && !agent.published_version_id && (
         <LegacyRecovery

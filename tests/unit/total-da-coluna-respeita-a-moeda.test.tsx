@@ -231,13 +231,23 @@ describe("total da coluna do funil", () => {
     );
   });
 
-  it("coluna sem nenhum valor não mostra a faixa de total", () => {
+  it("coluna sem nenhum valor mostra ZERO numa moeda só (desenho de referência)", () => {
+    // Até 24/11/2026 a faixa de total sumia sem valor; o desenho novo do funil
+    // mostra "R$ 0,00" no cabeçalho de toda coluna. O que continua proibido é a
+    // soma inventada: zero sai na moeda do primeiro negócio, nunca "R$ 0 + 0 €".
     montar([
       lead({ id: "v1", currency: "BRL", value_cents: null }),
       lead({ id: "v2", currency: "EUR", value_cents: null }),
     ]);
 
-    expect(document.body.textContent).not.toContain("R$");
+    const total = document.querySelector("[data-total-da-etapa]");
+    expect(semNbsp(total?.textContent ?? "")).toBe("R$ 0,00");
     expect(document.body.textContent).not.toContain("€");
+    expect(document.body.textContent).not.toContain(" + ");
+  });
+
+  it("coluna vazia mostra zero na moeda padrão", () => {
+    montar([]);
+    expect(semNbsp(document.querySelector("[data-total-da-etapa]")?.textContent ?? "")).toBe("R$ 0,00");
   });
 });

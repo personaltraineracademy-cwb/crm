@@ -10,7 +10,7 @@ import {
 import { memo, type MouseEvent } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
-import { CalendarBlank, DragHandle } from "@/lib/ui/icons";
+import { CalendarBlank, DragHandle, Plus } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatValorDoNegocio, MOEDA_PADRAO } from "@/lib/money";
 import type { Lead } from "@/lib/types/leads";
@@ -66,6 +66,8 @@ interface KanbanCardProps {
   /** Repassados ao menu de ações ("Mover para…"). */
   etapas?: Stage[];
   onMoverPara?: (lead: Lead, stageId: string) => void;
+  /** O "+ Criar tarefa" do rodapé. Ausente = sem o rodapé. */
+  onCriarTarefa?: (leadId: string) => void;
 }
 
 /**
@@ -99,6 +101,10 @@ export function estiloDaSoltura(
   snapshot: Pick<DraggableStateSnapshot, "isDropAnimating" | "dropAnimation">,
 ): DraggingStyle | NotDraggingStyle | undefined {
   if (!style || !snapshot.isDropAnimating || !snapshot.dropAnimation) return style;
+  // Só o card em arrasto (`position: fixed`) aceita `transition` livre; o do
+  // card parado é `"none"` no tipo da biblioteca. Durante a soltura ela entrega
+  // sempre o estilo de arrasto, então esta linha só convence o compilador.
+  if (!("position" in style)) return style;
   const s = movimentoReduzido() ? ASSENTAR_REDUZIDO_S : ASSENTAR_S;
   return {
     ...style,
@@ -157,6 +163,7 @@ export const KanbanCard = memo(function KanbanCard({
   onOpen,
   etapas,
   onMoverPara,
+  onCriarTarefa,
 }: KanbanCardProps) {
   const t = useT();
   const value = formatValor(card.valueCents, card.currency);
@@ -261,6 +268,30 @@ export const KanbanCard = memo(function KanbanCard({
               mas sem tinta: a cor mora no texto do slot ③. */}
           <span aria-hidden data-estado-do-card={state.border} className="hidden" />
 
+          {/* Situação do negócio (desenho de referência): a primeira linha do
+              card diz se ele está em andamento, ganho ou perdido. */}
+          <p
+            className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
+            data-situacao-do-card={lead.status}
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "size-1.5 rounded-full",
+                lead.status === "won"
+                  ? "bg-success"
+                  : lead.status === "lost"
+                    ? "bg-danger"
+                    : "bg-primary",
+              )}
+            />
+            {lead.status === "won"
+              ? t("Ganho")
+              : lead.status === "lost"
+                ? t("Perdido")
+                : t("Em andamento")}
+          </p>
+
           {/* ① identidade — altura FIXA de 2 linhas, com ou sem texto longo. */}
           <div className="flex items-start justify-between gap-2">
             <div className="relative flex min-w-0 flex-1 items-start gap-1.5">
@@ -313,7 +344,7 @@ export const KanbanCard = memo(function KanbanCard({
                   acessibilidade; deixar só onKeyDown daria uma ação que existe
                   e NÃO É DESCOBERTA por leitor de tela. O título como button
                   atende mouse, teclado e leitor sem desfazer a decisão antiga. */}
-              <h3 className="line-clamp-2 min-h-5 text-sm leading-5 font-medium text-foreground">
+              <h3 className="line-clamp-2 min-h-5 text-[0.9375rem] leading-5 font-semibold text-foreground">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -355,10 +386,10 @@ export const KanbanCard = memo(function KanbanCard({
           </div>
 
           {/* ② valor — altura reservada mesmo sem valor, senão o card encolhe. */}
-          <div className="mt-3 flex h-5 items-center justify-between gap-2">
+          <div className="mt-2 flex h-6 items-center justify-between gap-2">
             <p
               className={cn(
-                "text-xs leading-5 font-medium tabular-nums",
+                "text-base leading-6 font-semibold tabular-nums",
                 value ? "text-foreground" : "text-muted-foreground",
               )}
             >
@@ -477,35 +508,52 @@ export const KanbanCard = memo(function KanbanCard({
               negócio não tem nada disso, como a conversa acima. */}
           <ContatoNoCard lead={lead} />
 
-          {/* ④ dono (+ selo de tarefas) · ⑤ tempo no estágio */}
+          {/* ④ selo de tarefas · ⑤ tempo no estágio · dono no canto (desenho de
+              referência: o responsável é o disco à direita, o nome fica na dica). */}
           <div className="mt-3 flex h-6 items-center justify-between gap-2">
-            {/* O dono ocupa o que precisa (`shrink-0`) e o tempo no estágio é quem
-                corta com reticências: antes os dois encolhiam sem limite e o texto
-                de um passava por cima do outro. */}
-            <div className="flex shrink-0 items-center gap-2">
-              <OwnerBadge
-                ownerKind={card.owner.kind}
-                ownerName={card.owner.name}
-                agentVersion={card.owner.agentVersion}
-              />
+            <div className="flex min-w-0 flex-1 items-center gap-2">
               <TarefasNoCard tarefas={lead.tarefas} />
+              {/* O tempo na etapa tem de CABER: o nome da etapa já está no
+                  cabeçalho da coluna, então aqui vai só "1h na etapa"; o texto
+                  inteiro fica no tooltip. Sem tempo, o nome da etapa. */}
+              <span
+                className="min-w-0 truncate text-xs whitespace-nowrap text-muted-foreground tabular-nums"
+                title={
+                  state.showStageAge && age
+                    ? `${age} ${t("em")} ${card.stageName}`
+                    : `${t("em")} ${card.stageName}`
+                }
+              >
+                {state.showStageAge && age
+                  ? `${age} ${t("na etapa")}`
+                  : `${t("em")} ${card.stageName}`}
+              </span>
             </div>
-            {/* O tempo na etapa tem de CABER: o nome da etapa já está no cabeçalho
-                da coluna, então com tempo o rodapé diz só "1h na etapa" (curto, não
-                corta) e o texto inteiro fica no tooltip. Sem tempo, o nome da etapa. */}
-            <span
-              className="min-w-0 flex-1 truncate text-right text-xs whitespace-nowrap text-muted-foreground tabular-nums"
-              title={
-                state.showStageAge && age
-                  ? `${age} ${t("em")} ${card.stageName}`
-                  : `${t("em")} ${card.stageName}`
-              }
-            >
-              {state.showStageAge && age
-                ? `${age} ${t("na etapa")}`
-                : `${t("em")} ${card.stageName}`}
-            </span>
+            <OwnerBadge
+              ownerKind={card.owner.kind}
+              ownerName={card.owner.name}
+              agentVersion={card.owner.agentVersion}
+              soDisco
+            />
           </div>
+
+          {/* "+ Criar tarefa" no rodapé (desenho de referência): abre o negócio
+              direto em Atividades, com o formulário de tarefa nova. */}
+          {onCriarTarefa && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCriarTarefa(card.id);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="-mx-3 mt-3 -mb-3 flex w-[calc(100%+1.5rem)] items-center justify-center gap-1.5 border-t border-border py-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+              data-criar-tarefa-no-card
+            >
+              <Plus size={12} aria-hidden />
+              {t("Criar tarefa")}
+            </button>
+          )}
         </div>
       )}
     </Draggable>

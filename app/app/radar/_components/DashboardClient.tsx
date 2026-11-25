@@ -28,12 +28,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MetaNoDashboard } from "./MetaNoDashboard";
+import { EquipeNoDashboard } from "./EquipeNoDashboard";
+import { rotuloDaOrigem as rotuloDaOrigemComum } from "./rotulo-da-origem";
 import {
   duracaoLegivel,
   etapaGargalo,
   etapasDoFunil,
   funilInicial,
   funisDoDashboard,
+  PERIODOS,
   porcentagem,
   variacaoPercentual,
   type LeadDoDashboard,
@@ -129,27 +132,7 @@ export function DashboardClient() {
   const maiorOrigem = Math.max(1, ...d.origens.map((o) => o.leads));
   const leadsNaTela = verTodos ? d.leads : d.leads.slice(0, LEADS_VISIVEIS);
 
-  /** Rótulo da origem: literal por literal, para o guardião de idioma enxergar. */
-  const rotuloDaOrigem = (origem: string): string => {
-    switch (origem.toLowerCase()) {
-      case "sem_origem":
-        return t("Sem origem informada");
-      case "manual":
-        return t("Cadastro manual");
-      case "whatsapp":
-        return t("WhatsApp direto");
-      case "whatsapp_agenda":
-        return t("Agenda do celular");
-      case "site":
-        return t("Site");
-      case "webhook":
-        return t("Integração");
-      case "import":
-        return t("Importação");
-      default:
-        return origem;
-    }
-  };
+  const rotuloDaOrigem = (origem: string): string => rotuloDaOrigemComum(origem, t);
 
   const celulaDaResposta = (lead: LeadDoDashboard) => {
     if (lead.resposta_segundos == null) {
@@ -232,6 +215,9 @@ export function DashboardClient() {
 
       {/* ─── Meta do mês e ritmo ─── */}
       <MetaNoDashboard />
+
+      {/* ─── A equipe: o essencial de Desempenho e Atividades ─── */}
+      <EquipeNoDashboard dias={PERIODOS.find((p) => p.value === periodo)?.dias ?? 30} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ─── De onde vieram ─── */}

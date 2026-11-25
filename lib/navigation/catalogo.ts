@@ -18,7 +18,7 @@ import type { CapacidadeDaOrganizacao } from "@/lib/organizacao/capacidades";
  * Doutrina: docs/doctrine/sistema-vivo.md — "por qual porta se chega até mim?"
  */
 
-export type NavGroupId = "atendimento" | "crm" | "ia" | "canais" | "analise" | "organizacao";
+export type NavGroupId = "atendimento" | "crm" | "ia" | "canais" | "organizacao";
 
 export interface NavGroup {
   id: NavGroupId;
@@ -92,7 +92,9 @@ export const NAV_GROUPS: NavGroup[] = [
   { id: "crm", label: "CRM", hub: { href: "/app/crm", label: "Ver tudo em CRM" } },
   { id: "ia", label: "Agente de IA", hub: { href: "/app/ai", label: "Ver tudo em IA" } },
   { id: "canais", label: "Canais" },
-  { id: "analise", label: "Análise", hub: { href: "/app/analise", label: "Ver tudo em Análise" } },
+  // "Análise" saiu em 25/11/2026 (pedido da dona): o essencial de Desempenho e
+  // Atividades foi para o Dashboard; Faturamento, Honorários e Audit Log moram
+  // em Configurações; Evolução da IA, no Agente de IA; Meta Ads saiu do menu.
   {
     id: "organizacao",
     label: "Organização",
@@ -823,8 +825,8 @@ export const NAV_CATALOG = [
     label: "Faturamento",
     description: "Quanto entrou, de que forma, e quanto cada pessoa tem a receber.",
     icon: "ChartBar",
-    group: "analise",
-    section: "Dinheiro",
+    group: "organizacao",
+    section: "Sua empresa",
     minRole: "viewer",
   },
   {
@@ -837,19 +839,10 @@ export const NAV_CATALOG = [
     label: "Honorários",
     description: "O modelo de cobrança de cada caso e o calendário de parcelas.",
     icon: "ChartBar",
-    group: "analise",
-    section: "Dinheiro",
+    group: "organizacao",
+    section: "Sua empresa",
     minRole: "viewer",
     modulo: "honorarios",
-  },
-  {
-    href: "/app/metrics",
-    label: "Desempenho",
-    description: "Funil e performance por atendente nos últimos 30 dias.",
-    icon: "ChartBar",
-    group: "analise",
-    section: "Os números do período",
-    sidebar: true,
   },
   {
     // ── A porta do ALVO (#3025, fatia 1) ────────────────────────────────────
@@ -878,44 +871,13 @@ export const NAV_CATALOG = [
     minRole: "manager",
   },
   {
-    // Logo abaixo de Desempenho porque responde a metade da MESMA pergunta: lá
-    // está o que aconteceu depois que a pessoa chegou; aqui, quanto custou
-    // trazê-la. Ler as duas juntas é o que fecha a conta do custo por cliente.
-    href: "/app/ads/meta",
-    label: "Meta Ads",
-    description: "Quanto custou cada resultado das campanhas que trazem gente para cá.",
-    icon: "Megaphone",
-    group: "analise",
-    section: "Os números do período",
-    // `manager`, e não o `viewer` de Desempenho: aqui não há recorte por
-    // pessoa — orçamento e criativo são da empresa inteira. Mesmo grau dos
-    // outros dois vizinhos do grupo.
-    minRole: "manager",
-    sidebar: true,
-  },
-  {
-    // Irmã de "Desempenho", não a mesma coisa: lá é DESFECHO (funil agora,
-    // ganho/perdido por atendente); aqui é o TRABALHO que aconteceu no
-    // período, com quem fez cada coisa. Um mês inteiro atendido pela IA e um
-    // mês inteiro atendido pela equipe têm o mesmo desfecho e histórias
-    // opostas — só esta tela distingue as duas.
-    href: "/app/activities",
-    label: "Atividades",
-    description:
-      "Relatório do que a equipe e os agentes fizeram no período: quanto, quem e de que tipo.",
-    icon: "ClockCounterClockwise",
-    group: "analise",
-    section: "Os números do período",
-    sidebar: true,
-  },
-  {
     // Observabilidade, não configuração: por isso não fica junto dos agentes.
     href: "/app/ai/evolution",
     label: "Evolução da IA",
     description: "Se o agente está melhorando, onde ele erra e o que falta ensinar.",
     icon: "ChartLineUp",
-    group: "analise",
-    section: "O histórico que se consulta",
+    group: "ia",
+    section: "Acompanhar o agente",
     minRole: "manager",
   },
   {
@@ -923,8 +885,8 @@ export const NAV_CATALOG = [
     label: "Audit Log",
     description: "Quem fez o quê, quando — o histórico que não se apaga.",
     icon: "ClockCounterClockwise",
-    group: "analise",
-    section: "O histórico que se consulta",
+    group: "organizacao",
+    section: "Dados e acesso",
     minRole: "manager",
   },
 
@@ -1055,25 +1017,6 @@ export const NAV_CATALOG = [
     // `admin` pelo mesmo critério das vizinhas: o token grava na conta de
     // anúncios da empresa, e quem o troca decide para onde vai o dinheiro de
     // mídia. Um `manager` ficaria acima de billing na mesma prancheta.
-    minRole: "admin",
-  },
-  {
-    // Vizinha de Conversões, e SEPARADA dela de propósito. As duas conectam "a
-    // Meta" e a tentação de fundi-las é real — mas são credenciais de escopos
-    // diferentes, em tabelas diferentes (0214), com consequências opostas
-    // quando vencem: o token de leitura vencido deixa uma tela vazia, o de
-    // conversões vencido faz a empresa parar de reportar vendas sem sintoma.
-    // Uma tela só, com dois campos de token parecidos, é como se cola o token
-    // errado no campo errado e se perde uma semana achando que quebrou.
-    href: "/app/settings/meta-ads",
-    label: "Meta Ads",
-    description: "Conectar a conta de anúncios para ler o desempenho das campanhas.",
-    icon: "Megaphone",
-    group: "organizacao",
-    section: "Sua empresa",
-    // `admin` pelo mesmo critério da vizinha, mesmo o token sendo só de
-    // leitura: ele expõe orçamento e performance da conta inteira, e quem
-    // apenas LÊ a tela (`manager`) não precisa poder trocar a credencial.
     minRole: "admin",
   },
   {

@@ -25,6 +25,7 @@ import { useAssignableMembers } from "@/hooks/inbox/useAssignableMembers";
 import { useAtRiskLeads } from "@/hooks/leads/useAtRiskLeads";
 import { useReactivations } from "@/hooks/leads/useReactivations";
 import { midpoint } from "@/lib/kanban/fractional-indexing";
+import { compararNaOrdem, type OrdemDoQuadro } from "@/lib/kanban/ordem-do-quadro";
 import { posicaoNoFimDaEtapa, proximoNaEtapaInteira } from "@/lib/kanban/vizinho-na-etapa";
 import { decideMotivoDaPerda } from "@/lib/leads/motivo-da-perda";
 import type { Lead } from "@/lib/types/leads";
@@ -60,9 +61,17 @@ interface KanbanBoardProps {
    * então o cabeçalho fica só leitura para eles.
    */
   podeRenomearEtapa?: boolean;
+  /** A ordem dos cards em cada etapa. Ausente = a ordem manual (arrasto). */
+  ordem?: OrdemDoQuadro;
+  /** O "+ Adicionar negócio" no pé de cada coluna. Ausente = sem o botão. */
+  onAdicionarNaEtapa?: (stageId: string) => void;
 }
 
-function groupLeadsByStage(stages: Stage[], leads: Lead[]): Map<string, Lead[]> {
+function groupLeadsByStage(
+  stages: Stage[],
+  leads: Lead[],
+  ordem: OrdemDoQuadro = "manual",
+): Map<string, Lead[]> {
   const map = new Map<string, Lead[]>();
   for (const stage of stages) map.set(stage.id, []);
   for (const lead of leads) {
@@ -70,8 +79,9 @@ function groupLeadsByStage(stages: Stage[], leads: Lead[]): Map<string, Lead[]> 
     if (bucket) bucket.push(lead);
   }
   // Already ordered by position_in_stage at fetch time, but be defensive.
+  const comparar = compararNaOrdem(ordem);
   for (const list of map.values()) {
-    list.sort((a, b) => a.position_in_stage - b.position_in_stage);
+    list.sort(comparar);
   }
   return map;
 }
@@ -119,6 +129,8 @@ export function KanbanBoard({
   onSelectionChange,
   leadInicial,
   podeRenomearEtapa = false,
+  ordem = "manual",
+  onAdicionarNaEtapa,
 }: KanbanBoardProps) {
   const t = useT();
   const useExternal = stagesProp !== undefined && leadsProp !== undefined;
@@ -184,7 +196,19 @@ export function KanbanBoard({
   // nenhuma outra tela do produto conseguia apontar para um lead específico —
   // o histórico de captação tinha o id e nenhum lugar para levá-lo. Uma vez
   // aberto, o estado local manda (fechar não reabre pela URL).
-  const [dossieId, setDossieId] = useState<string | null>(leadInicial ?? null);
+  const [dossieId, setDossieIdCru] = useState<string | null>(leadInicial ?? null);
+  // O "+ Criar tarefa" do card: o negócio para o qual se pediu atividade nova.
+  // Esquecido a cada troca de negócio no painel, para o formulário não reabrir
+  // sozinho ao voltar a ele pelas setas.
+  const [tarefaPedidaPara, setTarefaPedidaPara] = useState<string | null>(null);
+  const setDossieId = useCallback((id: string | null) => {
+    setTarefaPedidaPara(null);
+    setDossieIdCru(id);
+  }, []);
+  const criarTarefaNoCard = useCallback((leadId: string) => {
+    setDossieIdCru(leadId);
+    setTarefaPedidaPara(leadId);
+  }, []);
   const [internalSelected, setInternalSelected] = useState<Set<string>>(new Set());
   const selectedLeadIds = useMemo(
     () => (selectedIds ? new Set(selectedIds) : internalSelected),
@@ -209,8 +233,8 @@ export function KanbanBoard({
 
   const grouped = useMemo(() => {
     if (!data) return null;
-    return groupLeadsByStage(data.stages, data.leads);
-  }, [data]);
+    return groupLeadsByStage(data.stages, data.leads, ordem);
+  }, [data, ordem]);
 
   // Os vizinhos do negócio aberto no dossiê, na ordem em que o quadro é lido:
   // etapa por etapa, de cima para baixo. É o que as setas ‹ › do painel andam.
@@ -324,6 +348,32 @@ export function KanbanBoard({
       if (!lead) return;
 
       const destStageId = destination.droppableId;
+
+      // FORA DA ORDEM MANUAL (ver `lib/kanban/ordem-do-quadro.ts`): a coluna é
+      // mostrada por data ou valor, então "entre estes dois cards" não é uma
+      // posição que exista na ordem gravada. Na mesma etapa, soltar não muda
+      // nada; em outra etapa, o card entra no TOPO dela na ordem manual.
+      if (ordem !== "manual") {
+        if (source.droppableId === destStageId) return;
+        const etapa =
+          qc
+            .getQueryData<BoardData>(chaveDoQuadro(pipelineId))
+            ?.leads.filter((l) => l.stage_id === destStageId && l.id !== draggableId) ?? [];
+        const primeiro = etapa.reduce<Lead | null>(
+          (min, l) => (min === null || l.position_in_stage < min.position_in_stage ? l : min),
+          null,
+        );
+        const noTopo = midpoint(null, primeiro?.position_in_stage ?? null);
+        if (Number.isNaN(noTopo)) return;
+        moverPara({
+          leadId: lead.id,
+          stageId: destStageId,
+          positionInStage: noTopo,
+          expectedUpdatedAt: lead.updated_at,
+        });
+        return;
+      }
+
       const destList = (grouped.get(destStageId) ?? []).filter((l) => l.id !== draggableId);
 
       const before = destination.index > 0 ? destList[destination.index - 1] : null;
@@ -364,7 +414,7 @@ export function KanbanBoard({
         expectedUpdatedAt: lead.updated_at,
       });
     },
-    [data, grouped, moverPara, qc, pipelineId],
+    [data, grouped, moverPara, qc, pipelineId, ordem],
   );
 
   // Um callback por etapa, estável: a função inline de antes era nova a cada
@@ -467,6 +517,8 @@ export function KanbanBoard({
                 etapas={data.stages}
                 onMoverPara={aoMoverPelaLista}
                 podeRenomear={podeRenomearEtapa}
+                onAdicionar={onAdicionarNaEtapa}
+                onCriarTarefa={criarTarefaNoCard}
                 onRenomear={renomearPorEtapa.get(stage.id)}
               />
             ))}
@@ -483,14 +535,23 @@ export function KanbanBoard({
             ownerNames={ownerNames}
             etapas={data.stages}
             onMudarEtapa={(stageId) => aoMoverPelaLista(leadDoDossie, stageId)}
-            posicaoNaLista={vizinhosDoDossie?.posicao}
-            onAnterior={
-              vizinhosDoDossie?.anterior
-                ? () => setDossieId(vizinhosDoDossie.anterior)
+            nomeDoFunil={data.pipeline?.name}
+            novaTarefaPedida={tarefaPedidaPara === leadDoDossie.id}
+            navegacao={
+              vizinhosDoDossie
+                ? {
+                    ...vizinhosDoDossie.posicao,
+                    // Na ponta da lista o vizinho é `null` e a seta já está
+                    // desligada pela posição; a guarda é só para o clique que
+                    // chegar no mesmo instante em que a lista encolhe.
+                    irParaAnterior: () => {
+                      if (vizinhosDoDossie.anterior) setDossieId(vizinhosDoDossie.anterior);
+                    },
+                    irParaProximo: () => {
+                      if (vizinhosDoDossie.proximo) setDossieId(vizinhosDoDossie.proximo);
+                    },
+                  }
                 : undefined
-            }
-            onProximo={
-              vizinhosDoDossie?.proximo ? () => setDossieId(vizinhosDoDossie.proximo) : undefined
             }
           />
         )}

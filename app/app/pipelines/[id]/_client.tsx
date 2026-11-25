@@ -26,7 +26,6 @@ import { FilterBar } from "@/components/kanban/FilterBar";
 import { BulkActionBar } from "@/components/kanban/BulkActionBar";
 import { NewLeadDialog } from "@/components/kanban/NewLeadDialog";
 import { Button } from "@/components/ui/button";
-import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   Select,
   SelectContent,
@@ -34,7 +33,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "@/lib/ui/icons";
+import Link from "next/link";
+import { CalendarBlank, Gear, Kanban, Plus } from "@/lib/ui/icons";
+import { cn } from "@/lib/utils";
+import type { OrdemDoQuadro } from "@/lib/kanban/ordem-do-quadro";
 import type { LeadFilters } from "@/lib/kanban/filters";
 import { applyFilters, filtersFromParams, filtersToParams } from "@/lib/kanban/filters";
 import { categoriaDoMotivo } from "@/lib/leads/motivos-de-perda-do-funil";
@@ -79,6 +81,16 @@ export function PipelinePageClient({
    * e o quadro de volta no mesmo lugar onde ficou é o que se espera ao voltar.
    */
   const [visao, setVisao] = useState<"quadro" | "calendario">("quadro");
+  /** A ordem dos cards em cada etapa — ver `lib/kanban/ordem-do-quadro.ts`. */
+  const [ordem, setOrdem] = useState<OrdemDoQuadro>("manual");
+  /** A etapa de onde o "Novo negócio" foi aberto (o "+" no pé da coluna). */
+  const [etapaDoNovo, setEtapaDoNovo] = useState<string | null>(null);
+  const abrirNovo = useCallback((stageId: string | null) => {
+    setEtapaDoNovo(stageId);
+    setNewOpen(true);
+  }, []);
+  // A engrenagem leva às etapas do funil, que só gestor edita.
+  const podeConfigurar = ROLE_RANK[role] >= ROLE_RANK.manager;
 
   /**
    * Motivo e categoria da perda (#1537): a categoria NÃO vem no lead — ela é
@@ -150,23 +162,55 @@ export function PipelinePageClient({
       data-refetch-divergencias={seguranca.divergencias}
       data-refetch-em={seguranca.ultimaVerificacao ?? ""}
     >
-      {/* `flex-col` no mobile: nome de funil comprido (é texto livre, sem
-          limite curto) + botão na mesma linha sem quebra empurrava o botão pra
-          fora da viewport em telas estreitas. De `sm:` pra cima volta a ser
-          uma linha só, como sempre foi. */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* A BARRA DO FUNIL, numa linha só (desenho de referência): visão, funil,
+          filtros e, à direita, configurações e "Criar". Quebra em várias linhas
+          no celular em vez de empurrar o "Criar" para fora da tela. */}
+      <header className="flex flex-wrap items-center gap-2" data-cabecalho-do-funil>
         {/*
-          O TÍTULO É O SELETOR. Com um funil só, `h1` puro (nada para trocar);
-          com vários, o gatilho do `Select` veste o título e o `h1` real vai
-          para `sr-only` — botão dentro de `h1` é HTML inválido, e sem o `h1`
-          o leitor de tela perde o título da página. Trocar zera a query
-          string: filtro de um funil aplicado no outro é resultado fantasma.
+          A visão do funil (#2770): quadro é o padrão. Dois botões de ícone com
+          `aria-pressed`, e o nome por extenso no rótulo acessível e na dica.
+        */}
+        <div
+          role="group"
+          aria-label={t("Visualização")}
+          className="inline-flex h-9 items-center gap-0.5 rounded-full border border-border bg-card p-0.5"
+        >
+          {(
+            [
+              { valor: "quadro", rotulo: t("Quadro"), Icone: Kanban },
+              { valor: "calendario", rotulo: t("Calendário"), Icone: CalendarBlank },
+            ] as const
+          ).map(({ valor, rotulo, Icone }) => (
+            <button
+              key={valor}
+              type="button"
+              aria-pressed={visao === valor}
+              aria-label={rotulo}
+              title={rotulo}
+              onClick={() => setVisao(valor)}
+              className={cn(
+                "inline-flex size-8 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+                visao === valor
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              <Icone size={16} aria-hidden />
+            </button>
+          ))}
+        </div>
+
+        {/*
+          O FUNIL. Com um funil só, `h1` visível (nada para trocar); com vários, o
+          gatilho do `Select` veste o nome e o `h1` real vai para `sr-only` —
+          botão dentro de `h1` é HTML inválido. Trocar zera a query string:
+          filtro de um funil aplicado no outro é resultado fantasma.
         */}
         <h1
           className={
             podeTrocar
               ? "sr-only"
-              : "min-w-0 truncate text-2xl font-semibold tracking-tight"
+              : "inline-flex h-9 max-w-64 min-w-0 items-center truncate rounded-full border border-border bg-card px-3.5 text-sm font-semibold"
           }
         >
           {nomeAtual}
@@ -181,7 +225,7 @@ export function PipelinePageClient({
             <SelectTrigger
               aria-label={`${t("Trocar de funil")}: ${nomeAtual}`}
               data-testid="trocar-funil"
-              className="h-auto w-auto min-w-0 max-w-full gap-1.5 border-0 bg-transparent p-0 text-2xl font-semibold tracking-tight shadow-none focus:ring-1 focus:ring-ring sm:max-w-[60%] [&>span]:truncate"
+              className="h-9 w-auto max-w-64 min-w-0 gap-1.5 rounded-full border-border bg-card px-3.5 text-sm font-semibold shadow-none [&>span]:truncate"
             >
               <SelectValue placeholder={nomeAtual} />
             </SelectTrigger>
@@ -198,27 +242,46 @@ export function PipelinePageClient({
             </SelectContent>
           </Select>
         )}
-        {/*
-          A TERCEIRA ABA DO FUNIL (#2770), ao lado do quadro. O seletor fica no
-          cabeçalho e não dentro do conteúdo: quem troca de visão está mudando
-          COMO olha o funil, e a pergunta é anterior a qualquer filtro ou card —
-          é a mesma lógica do interruptor Lista/Calendário da tela de Tarefas.
-        */}
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <SegmentedControl
-            aria-label={t("Visualização")}
-            value={visao}
-            onValueChange={setVisao}
-            options={[
-              { value: "quadro", label: t("Quadro") },
-              { value: "calendario", label: t("Calendário") },
-            ]}
-          />
-          <Button onClick={() => setNewOpen(true)} disabled={!data} className="shrink-0">
-            <Plus size={16} className="mr-2" /> {t("Novo Lead")}
+
+        <FilterBar
+          filters={filters}
+          onChange={setFilters}
+          leads={data?.leads ?? []}
+          settings={data?.pipeline.settings}
+          ordem={visao === "quadro" ? ordem : undefined}
+          onOrdemChange={setOrdem}
+        />
+
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {podeConfigurar && (
+            <Link
+              href="/app/settings/tenant/pipelines"
+              aria-label={t("Configurar funis e etapas")}
+              title={t("Configurar funis e etapas")}
+              className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+            >
+              <Gear size={16} aria-hidden />
+            </Link>
+          )}
+          <Button
+            onClick={() => abrirNovo(null)}
+            disabled={!data}
+            className="h-9 shrink-0 rounded-full px-4"
+          >
+            <Plus size={16} className="mr-1.5" /> {t("Criar")}
           </Button>
         </div>
       </header>
+      {data && (
+        <p className="-mt-2 px-1 text-xs text-muted-foreground tabular-nums" data-total-do-funil>
+          {filteredLeads.length === 1
+            ? t("1 negociação")
+            : t("{n} negociações").replace("{n}", String(filteredLeads.length))}
+          {filteredLeads.length !== data.leads.length && (
+            <> · {t("de {n} no funil").replace("{n}", String(data.leads.length))}</>
+          )}
+        </p>
+      )}
       {data && (
         <NewLeadDialog
           open={newOpen}
@@ -231,14 +294,9 @@ export function PipelinePageClient({
           // #3038: os campos que a etapa exige são preenchidos no PRÓPRIO
           // formulário — a lista sai do `settings` que o quadro já tem em mãos.
           settings={data.pipeline.settings}
+          etapaInicial={etapaDoNovo}
         />
       )}
-      <FilterBar
-        filters={filters}
-        onChange={setFilters}
-        leads={data?.leads ?? []}
-        settings={data?.pipeline.settings}
-      />
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm">
           {t("Não consegui carregar este funil:")} {formatError(error, t)}
@@ -267,6 +325,8 @@ export function PipelinePageClient({
           onSelectionChange={setSelectedIds}
           leadInicial={searchParams.get("lead")}
           podeRenomearEtapa={ROLE_RANK[role] >= ROLE_RANK.manager}
+          ordem={ordem}
+          onAdicionarNaEtapa={abrirNovo}
         />
       )}
       <BulkActionBar

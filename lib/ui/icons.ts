@@ -159,4 +159,17 @@ export {
   ArrowsOutSimple,
   // /admin/modulos: módulo opcional com tabela própria (ADR-0002)
   Stack,
+  // funil no desenho de referência: ordenação, filtros, colunas de ganho/perda
+  // e o painel do negócio (atividades, roteiro, concluídas)
+  ArrowsDownUp,
+  SlidersHorizontal,
+  Trophy,
+  XCircle,
+  Target,
+  CheckSquare,
+  Square,
+  Eraser,
+  SelectionPlus,
+  ArrowUp,
+  Briefcase,
 } from "@phosphor-icons/react/dist/ssr";

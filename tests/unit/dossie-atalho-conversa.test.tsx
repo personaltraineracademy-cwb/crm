@@ -74,18 +74,24 @@ describe("a porta para a conversa", () => {
 describe("o elo que some sem barulho", () => {
   it("o dossiê MONTA o bloco — o componente sozinho não abre porta nenhuma", () => {
     // O defeito original não era o componente faltando: era o dossiê não o
-    // chamar. Um teste que só exercitasse `ConversaNoDossie` ficaria verde com
-    // a tela exatamente como o usuário a encontrou.
+    // chamar. Desde o painel em abas, a porta mora na aba Mensagens: o dossiê
+    // monta a aba, e a aba monta o bloco quando o negócio ainda não tem conversa.
     const fonte = readFileSync("components/kanban/LeadDossier.tsx", "utf8");
-    expect(fonte, "o dossiê não monta o bloco da conversa").toMatch(
+    expect(fonte, "o dossiê não monta a aba Mensagens").toMatch(
+      /<MensagensDoNegocio\s+lead=\{lead\}/,
+    );
+    const aba = readFileSync("components/kanban/dossie/MensagensDoNegocio.tsx", "utf8");
+    expect(aba, "a aba Mensagens não monta o bloco da conversa").toMatch(
       /<ConversaNoDossie\s+conversa=\{lead\.conversa\}/,
     );
   });
 
-  it("e o bloco vem ANTES da linha do tempo que anuncia o canal", () => {
-    // É a timeline que diz "Entrou no funil". A porta atrás do anúncio
-    // obrigaria a rolar para achar o que o próprio texto acabou de prometer.
+  it("e a aba Mensagens vem ANTES do Histórico, que anuncia o canal", () => {
+    // É a linha do tempo que diz "Entrou no funil". A porta atrás do anúncio
+    // obrigaria a procurar o que o próprio texto acabou de prometer.
     const fonte = readFileSync("components/kanban/LeadDossier.tsx", "utf8");
-    expect(fonte.indexOf("<ConversaNoDossie")).toBeLessThan(fonte.indexOf("<LeadTimeline"));
+    const mensagens = fonte.indexOf("<MensagensDoNegocio");
+    expect(mensagens, "a aba Mensagens sumiu do dossiê").toBeGreaterThan(-1);
+    expect(mensagens).toBeLessThan(fonte.indexOf("<LeadTimeline"));
   });
 });

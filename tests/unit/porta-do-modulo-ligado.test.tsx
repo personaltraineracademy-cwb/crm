@@ -218,7 +218,9 @@ describe("o grupo é o que está NA TELA, não o rótulo do modelo de dados", ()
   it("os outros grupos seguem pelo próprio rótulo (controle)", () => {
     expect(ondeOModuloAparece("crm_b2b")[0]!.grupo).toBe("CRM");
     expect(ondeOModuloAparece("fluxos_atendimento")[0]!.grupo).toBe("Agente de IA");
-    expect(ondeOModuloAparece("honorarios")[0]!.grupo).toBe("Análise");
+    // Honorários morava em Análise; com o grupo fora do menu (25/11/2026), mora
+    // em Configurações, ao lado de Faturamento.
+    expect(ondeOModuloAparece("honorarios")[0]!.grupo).toBe("Configurações");
   });
 });
 

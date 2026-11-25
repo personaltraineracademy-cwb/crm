@@ -27,7 +27,19 @@ import { FlowArrow } from "@/lib/ui/icons";
  * tinha como começar a sequência na hora. A rota usa a mesma função do motor, e
  * reaplicar o mesmo plano não duplica tarefa — a tela diz que já estava aplicado.
  */
-export function AplicarPlanoNoNegocio({ leadId, aberto }: { leadId: string; aberto: boolean }) {
+export function AplicarPlanoNoNegocio({
+  leadId,
+  aberto,
+  rotulo,
+  classeDoGatilho,
+}: {
+  leadId: string;
+  aberto: boolean;
+  /** O texto do gatilho. Padrão: "Aplicar plano". O painel novo diz "Escolher template". */
+  rotulo?: string;
+  /** Troca a aparência do gatilho (o link discreto vira botão largo no painel). */
+  classeDoGatilho?: string;
+}) {
   const t = useT();
   const queryClient = useQueryClient();
 
@@ -70,11 +82,14 @@ export function AplicarPlanoNoNegocio({ leadId, aberto }: { leadId: string; aber
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-1 text-xs font-medium text-accent hover:underline disabled:opacity-50"
+        className={
+          classeDoGatilho ??
+          "flex items-center gap-1 text-xs font-medium text-accent hover:underline disabled:opacity-50"
+        }
         disabled={aplicar.isPending}
       >
         <FlowArrow size={12} aria-hidden />
-        {aplicar.isPending ? t("Aplicando…") : t("Aplicar plano")}
+        {aplicar.isPending ? t("Aplicando…") : (rotulo ?? t("Aplicar plano"))}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuLabel>{t("Planos de tarefa")}</DropdownMenuLabel>

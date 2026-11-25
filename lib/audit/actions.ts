@@ -1312,6 +1312,14 @@ export const AUDIT_ACTIONS = [
   // mesma razão do `ai.case_alert_settings_changed`: `api_audit_log` é
   // append-only e a cascata de LGPD não o alcança.
   "ai.case_alert_settings_removed",
+
+  // Plano de tarefas APLICADO a um negócio pelo botão "Aplicar plano" do dossiê
+  // (`POST /api/v1/leads/[id]/task-plan`). É outra coisa que
+  // `task_plans.settings_updated`, que registra a edição da lista de planos: aqui
+  // nasceram tarefas num negócio. A rota só audita quando houve efeito —
+  // reaplicar um plano já aplicado não grava nada. O metadata leva o id do plano
+  // e a CONTAGEM de tarefas, nunca o texto delas.
+  "crm_task_plan.applied",
 ] as const;
 
 /** Um código de auditoria. Derivado de `AUDIT_ACTIONS` — não redigite a lista. */

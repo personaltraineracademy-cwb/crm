@@ -87,6 +87,13 @@ interface Props {
    * que não exige nada continua com o formulário byte a byte como era.
    */
   settings?: Record<string, unknown> | null;
+  /**
+   * A etapa em que o negócio nasce quando o diálogo é aberto de DENTRO de uma
+   * coluna ("+ Adicionar negócio" no pé dela). Ausente = a etapa padrão do
+   * funil, como sempre. Aplicada a cada abertura: quem abriu pela coluna
+   * "Proposta" e depois pelo botão Criar não pode herdar a etapa anterior.
+   */
+  etapaInicial?: string | null;
 }
 
 function defaultStageId(stages: Stage[]): string {
@@ -103,13 +110,20 @@ export function NewLeadDialog({
   leads,
   settings,
   onCreated,
+  etapaInicial,
 }: Props) {
   const t = useT();
   const org = useActiveOrg();
   // Negócio NOVO nasce na moeda da organização (createLeadHandler).
   const moedaDoValor = org?.currency ?? MOEDA_PADRAO;
   const create = useCreateLead(pipelineId);
-  const initialStage = useMemo(() => defaultStageId(stages), [stages]);
+  const initialStage = useMemo(
+    () =>
+      etapaInicial && stages.some((s) => s.id === etapaInicial)
+        ? etapaInicial
+        : defaultStageId(stages),
+    [stages, etapaInicial],
+  );
   // Quem abre o diálogo já sabendo o contato (Inbox) não escolhe de novo.
   // O texto de etiqueta ainda digitado no campo (vai junto no envio).
   const [etiquetaPendente, setEtiquetaPendente] = useState<string | null>(null);
@@ -192,6 +206,13 @@ export function NewLeadDialog({
       form.setValue("stage_id", initialStage);
     }
   }, [initialStage, form]);
+  // Aberto pela coluna: a etapa dela vale a CADA abertura (o componente não
+  // desmonta ao fechar, então o valor da abertura anterior ficaria).
+  useEffect(() => {
+    if (open && etapaInicial && initialStage === etapaInicial) {
+      form.setValue("stage_id", etapaInicial);
+    }
+  }, [open, etapaInicial, initialStage, form]);
 
   const stageId = form.watch("stage_id");
 

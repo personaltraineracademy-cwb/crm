@@ -85,5 +85,8 @@ export function aparenciaDoAgente(config: unknown, nome: string): AparenciaDoAge
 
   let soma = 0;
   for (const letra of nome) soma = (soma * 31 + (letra.codePointAt(0) ?? 0)) % 9973;
-  return { emoji: "🤖", cor: NOMES_DAS_CORES[soma % NOMES_DAS_CORES.length] };
+  // O índice nunca sai da lista (resto da divisão pelo tamanho dela); o `??` só
+  // existe porque o compilador trata todo acesso por índice como talvez vazio.
+  const cor = NOMES_DAS_CORES[soma % NOMES_DAS_CORES.length] ?? NOMES_DAS_CORES[0];
+  return { emoji: "🤖", cor };
 }

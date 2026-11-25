@@ -46,6 +46,16 @@ const NAV_ALLOWLIST: Record<string, string> = {
     "redirect para /app/connections?aba=oficial&sub=templates — template da Meta só existe por causa do canal oficial, e vive como sub-aba dele",
   "/app/settings/atualizacao":
     "porta é o rodapé de versão (VersionFooter), que aparece justamente quando há versão nova — melhor que um card fixo. Além disso é só do dono do servidor (is_platform_admin), papel que o registro não modela",
+  "/app/metrics":
+    "o relatório completo de Desempenho: o grupo Análise saiu do menu (25/11/2026) e o essencial foi para o Dashboard, cujo cartão 'Desempenho por vendedor' tem o link 'Ver relatório completo' — essa é a porta",
+  "/app/activities":
+    "o relatório completo de Atividades: o grupo Análise saiu do menu (25/11/2026) e o essencial foi para o Dashboard, cujo cartão 'Quem fez o trabalho' tem o link 'Ver relatório completo' — essa é a porta",
+  "/app/ads/meta":
+    "redirect para /app/radar desde 25/11/2026: Meta Ads saiu do produto a pedido da dona; mantido por links salvos",
+  "/app/settings/meta-ads":
+    "redirect para /app/radar desde 25/11/2026: Meta Ads saiu do produto a pedido da dona; mantido por links salvos",
+  "/app/analise":
+    "redirect para /app/radar desde 25/11/2026: o hub Análise saiu do menu e as telas dele mudaram de casa; mantido por links salvos",
   "/app/proposals/novo":
     "sub-fluxo de criação de proposta, alcançado pelo botão 'Nova proposta' em /app/proposals",
 };

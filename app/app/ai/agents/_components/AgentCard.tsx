@@ -1,6 +1,6 @@
 "use client";
+import Link from "next/link";
 
-import { CartaoDeRegistro } from "@/components/cartao-de-registro";
 import { Badge } from "@/components/ui/badge";
 import { useT } from "@/hooks/i18n/useT";
 import type { AgentRow } from "@/hooks/ai/useAgent";
@@ -61,9 +61,10 @@ export function modeloEmVigor(agent: AgentRow): string {
 export function modeloParaLeigo(modelo: string): string {
   const id = modelo.includes(" · ") ? modelo.split(" · ").slice(1).join(" · ") : modelo;
   const m = /^claude-(opus|sonnet|haiku|fable)-(\d+(?:-\d+)*)$/.exec(id);
-  if (!m) return modelo;
-  const familia = m[1].charAt(0).toUpperCase() + m[1].slice(1);
-  return `Claude ${familia} ${m[2].replace(/-/g, ".")}`;
+  const [, nomeDaFamilia, versao] = m ?? [];
+  if (!nomeDaFamilia || !versao) return modelo;
+  const familia = nomeDaFamilia.charAt(0).toUpperCase() + nomeDaFamilia.slice(1);
+  return `Claude ${familia} ${versao.replace(/-/g, ".")}`;
 }
 
 /** O tipo do agente em palavra de gente; o valor técnico (`kind`) segue o mesmo no banco. Tipo desconhecido aparece como veio. */
@@ -73,47 +74,64 @@ function tipoDoAgente(kind: string, t: (texto: string) => string): string {
   return kind;
 }
 
+/**
+ * O AGENTE NA LISTA, como LINHA (pedido da dona, 25/11/2026, com print de
+ * referência): rosto, nome, estado e, embaixo, a descrição e o modelo; o menu
+ * de ações na ponta. O nome é o link para a tela do agente.
+ */
 export function AgentCard({ agent, canWrite }: Props) {
   const t = useT();
   const status = deriveAgentStatus(agent);
+  const meta = [
+    <span
+      key="modelo"
+      title={
+        origemDoModelo(agent) === "versao_publicada"
+          ? t("Modelo da versão publicada — é o que atende o cliente.")
+          : t("Modelo do cadastro; nenhuma versão publicada ainda.")
+      }
+    >
+      {modeloParaLeigo(modeloEmVigor(agent))}
+    </span>,
+    // "Agente com ferramentas" é o tipo de quase todo agente: repetido em toda
+    // linha, não diz nada. Só aparece o tipo que FOGE do comum.
+    agent.kind === "mcp_agent" || !agent.kind ? null : `${t("Tipo")}: ${tipoDoAgente(agent.kind, t)}`,
+    // A ordem só importa quando alguém a mexeu.
+    agent.priority ? `${t("Ordem de preferência")}: ${agent.priority}` : null,
+  ].filter(Boolean);
 
   return (
-    <CartaoDeRegistro
-      href={`/app/ai/agents/${agent.id}`}
-      titulo={agent.name}
-      avatar={<AvatarDoAgente aparencia={aparenciaDoAgente(agent.config, agent.name)} />}
-      descricao={agent.description}
-      selo={
-        <span className="inline-flex items-center gap-1">
+    <div className="group relative flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5">
+      <AvatarDoAgente aparencia={aparenciaDoAgente(agent.config, agent.name)} className="rounded-full" />
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/app/ai/agents/${agent.id}`}
+            className="truncate text-base font-semibold text-foreground after:absolute after:inset-0 hover:underline"
+          >
+            {agent.name}
+          </Link>
           <AgentStatusBadge status={status} />
           {agent.is_default && (
             <Badge variant="secondary" className="text-xs">
               {t("default")}
             </Badge>
           )}
-        </span>
-      }
-      meta={[
-        <span
-          key="modelo"
-          title={
-            origemDoModelo(agent) === "versao_publicada"
-              ? t("Modelo da versão publicada — é o que atende o cliente.")
-              : t("Modelo do cadastro; nenhuma versão publicada ainda.")
-          }
-        >
-          {modeloParaLeigo(modeloEmVigor(agent))}
-        </span>,
-        // "Agente com ferramentas" é o tipo de quase todo agente: repetido em todo
-        // cartão, não diz nada. Só aparece o tipo que FOGE do comum.
-        agent.kind === "mcp_agent" || !agent.kind
-          ? null
-          : `${t("Tipo")}: ${tipoDoAgente(agent.kind, t)}`,
-        // A ordem só importa quando alguém a mexeu; "Ordem de preferência: 0" em
-        // todo cartão era ruído para quem tem um agente só.
-        agent.priority ? `${t("Ordem de preferência")}: ${agent.priority}` : null,
-      ]}
-      menu={canWrite ? <AgentRowMenu agent={agent} /> : undefined}
-    />
+        </div>
+        {agent.description ? (
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">{agent.description}</p>
+        ) : null}
+        <p className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">
+          {meta.map((m, n) => (
+            <span key={n}>{m}</span>
+          ))}
+        </p>
+      </div>
+      {canWrite ? (
+        <div className="relative z-10 shrink-0">
+          <AgentRowMenu agent={agent} />
+        </div>
+      ) : null}
+    </div>
   );
 }
