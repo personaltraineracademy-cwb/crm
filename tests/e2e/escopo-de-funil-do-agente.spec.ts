@@ -90,6 +90,8 @@ function agenteDeTeste(): string {
 /** Abre a aba do Operador, onde a marcação de funis vive. */
 async function abrirOperacao(): Promise<void> {
   await pagina.goto(`/app/ai/agents/${agenteDeTeste()}`);
+  // Desde o menu à esquerda (25/11/2026), a operação mora em Configurações.
+  await pagina.locator('[data-menu-do-agente="configuracoes"]').click();
   await pagina.getByTestId("papel-operacao").click();
   await expect(pagina.getByText(/em que neg(ó|o)cios ele pode mexer/i)).toBeVisible({
     timeout: 20_000,

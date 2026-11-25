@@ -95,18 +95,28 @@ function agenteDeTeste(): string {
 /** Abre o agente semeado e vai para a aba do papel que organiza o sistema. */
 async function abrirAbaDoOperador(): Promise<void> {
   await pagina.goto(`/app/ai/agents/${agenteDeTeste()}`);
+  await abrirConfiguracoes();
   await pagina.getByTestId("papel-operacao").click();
+}
+
+/**
+ * Desde o menu à esquerda (25/11/2026), os papéis "Organiza o sistema" e
+ * "Confere antes de enviar" são abas de Configurações.
+ */
+async function abrirConfiguracoes(): Promise<void> {
+  await pagina.locator('[data-menu-do-agente="configuracoes"]').click();
 }
 
 test.describe("A aba do papel que organiza o sistema", () => {
   test("os TRÊS papéis aparecem, e os nomes dizem o que cada um faz", async () => {
     await pagina.goto(`/app/ai/agents/${agenteDeTeste()}`);
+    await abrirConfiguracoes();
 
     // Os rótulos são o contrato com quem configura. "Conversador"/"Operador" é
     // vocabulário nosso; quem tem uma clínica pensa em quem fala com o cliente
     // e em quem mantém a casa em ordem.
-    await expect(pagina.getByTestId("papel-conversa")).toHaveText(/conversa com o cliente/i);
-    await expect(pagina.getByTestId("papel-operacao")).toHaveText(/organiza o sistema/i);
+    await expect(pagina.getByTestId("papel-conversa")).toHaveText(/conversa/i);
+    await expect(pagina.getByTestId("papel-operacao")).toHaveText(/funil e opera(ç|c)(ã|a)o/i);
     // O TERCEIRO. O épico se chama "os três papéis" e foi entregue com dois na
     // tela — a cadeia de conferências rodava e ninguém que configura sabia.
     await expect(pagina.getByTestId("papel-seguranca")).toHaveText(/confere antes de enviar/i);
@@ -114,6 +124,7 @@ test.describe("A aba do papel que organiza o sistema", () => {
 
   test("o papel que confere mostra a lista inteira, aberta, e sem interruptor decorativo", async () => {
     await pagina.goto(`/app/ai/agents/${agenteDeTeste()}`);
+    await abrirConfiguracoes();
     await pagina.getByTestId("papel-seguranca").click();
 
     const painel = pagina.getByTestId("painel-de-seguranca");
@@ -236,6 +247,7 @@ test.describe("A aba do papel que organiza o sistema", () => {
     // o Zod, o VERSION_COLUMNS e o SELECT que relê. É onde um campo que ninguém
     // propagou some em silêncio.
     await pagina.reload();
+    await abrirConfiguracoes();
     await pagina.getByTestId("papel-operacao").click();
 
     await expect(
@@ -258,6 +270,7 @@ test.describe("A aba do papel que organiza o sistema", () => {
     await expect(pagina.getByText(/rascunho v\d+ salvo/i)).toBeVisible({ timeout: 20_000 });
 
     await pagina.reload();
+    await abrirConfiguracoes();
     await pagina.getByTestId("papel-operacao").click();
     // `operator_model` NULL = herda o do Conversador. Se o refresh trouxesse
     // uma string vazia virando "modelo escolhido", o botão apareceria — e o

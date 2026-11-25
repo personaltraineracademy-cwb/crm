@@ -383,6 +383,9 @@ test.describe("followup — jornada completa (Task 8.3)", () => {
 
       await page.goto(`/app/ai/agents/${agentId}`);
       await expect(page.getByRole("heading", { name: agentName })).toBeVisible();
+      // Follow-up mora em Configurações › Follow-up desde o menu à esquerda.
+      await page.locator('[data-menu-do-agente="configuracoes"]').click();
+      await page.getByTestId("aba-followup").click();
       const followupHeading = page.getByRole("heading", { name: "Follow-up", exact: true });
       await followupHeading.scrollIntoViewIfNeeded();
       const followupToggle = page.getByLabel("Habilitar gatilhos automáticos de follow-up");

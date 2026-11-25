@@ -135,7 +135,13 @@ async function abrirConfiguracao(page: Page): Promise<void> {
   await page.goto(`/app/ai/agents/${AGENTE}`);
   // A primeira renderização desta rota em `next start` leva dezenas de
   // segundos (medido: >30s no primeiro acesso, 4s nos seguintes).
-  await page.getByTestId("tool-picker").waitFor({ state: "visible", timeout: 90_000 });
+  await abrirTrabalho(page, 90_000);
+}
+
+/** As capacidades moram na seção Trabalho do menu à esquerda (25/11/2026). */
+async function abrirTrabalho(page: Page, timeout = 30_000): Promise<void> {
+  await page.locator('[data-menu-do-agente="trabalho"]').click({ timeout });
+  await page.getByTestId("tool-picker").waitFor({ state: "visible", timeout });
 }
 
 /** Marcada ou não, lido do atributo que o componente publica. */
@@ -349,7 +355,7 @@ test.describe("Configurar o que o agente pode fazer", () => {
     await salvarRascunho(page);
 
     await page.reload();
-    await page.getByTestId("tool-picker").waitFor({ state: "visible" });
+    await abrirTrabalho(page);
     await expect(page.getByTestId("pacote-vender")).toHaveAttribute("data-estado", "ligado");
     expect(await consumo(page)).toBe(consumoDepoisDeLigar);
 
@@ -359,7 +365,7 @@ test.describe("Configurar o que o agente pode fazer", () => {
     // cenário do próximo diferente do que ele espera.
     seed("seed-e2e-capacidades.ts");
     await page.reload();
-    await page.getByTestId("tool-picker").waitFor({ state: "visible" });
+    await abrirTrabalho(page);
     await expect(page.getByTestId("consumo-teto")).toHaveText(
       `${TOOLS_DO_SEED.length} de ${TETO_TOOLS_POR_AGENTE}`,
     );
@@ -379,7 +385,7 @@ test.describe("Olhar o agente funcionando", () => {
   test("o painel mostra o uso real, e o que fazer com cada número", async ({ page }) => {
     await login(page, creds.users.manager!.email);
     await page.goto(`/app/ai/agents/${AGENTE}`);
-    await page.getByRole("tab", { name: /capacidades/i }).click();
+    await page.locator('[data-menu-do-agente="capacidades"]').click();
 
     const painel = page.getByTestId("uso-das-capacidades");
     await painel.waitFor({ state: "visible" });

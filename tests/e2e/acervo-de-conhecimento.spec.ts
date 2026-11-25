@@ -293,6 +293,7 @@ test.describe("acervo de conhecimento", () => {
 
     // O assistente B (que NÃO é o primeiro da organização) marca a FAQ.
     await page.goto(`/app/ai/agents/${b}`);
+    await page.locator('[data-menu-do-agente="treinamentos"]').click();
     const secao = page.getByTestId("agente-bases");
     await expect(secao).toBeVisible();
 
@@ -305,6 +306,7 @@ test.describe("acervo de conhecimento", () => {
     // assistente. Enquanto o acervo pertencia ao agente e o indexador resolvia
     // pela organização, esta distinção não existia.
     await page.goto(`/app/ai/agents/${a}`);
+    await page.locator('[data-menu-do-agente="treinamentos"]').click();
     await expect(page.getByTestId("agente-bases")).toBeVisible();
     const marcadosEmA = await page
       .getByTestId("agente-bases")

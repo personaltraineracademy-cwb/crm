@@ -92,6 +92,8 @@ test.describe("Lote 12 — #942 a capacidade na tela do agente", () => {
     await loginComTotp(page, c.users.admin!.email, c.password);
     await page.goto(`/app/ai/agents/${agenteId}`);
     await page.waitForLoadState("networkidle").catch(() => {});
+    // As capacidades moram na seção Trabalho do menu à esquerda.
+    await page.locator('[data-menu-do-agente="trabalho"]').click({ timeout: 60_000 });
 
     const secao = page.getByText("O que o agente pode fazer");
     await expect(secao).toBeVisible({ timeout: 60_000 });
