@@ -4,9 +4,11 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Badge } from "@/components/ui/badge";
+import { CartaoDeRegistro, GradeDeRegistros, MenuDoCartao } from "@/components/cartao-de-registro";
+import { ChipDeEstado } from "@/components/ai/chip-de-estado";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -21,7 +23,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Robot, Plus, Trash, PencilSimple, FlowArrow } from "@/lib/ui/icons";
 import { SeloDeAutoria } from "@/components/operacao/SeloDeAutoria";
-import { classesDoChipDaEtapa } from "@/components/fluxo/tema-do-fluxo";
 import {
   useAutomationRules,
   useUpdateAutomationRule,
@@ -125,67 +126,55 @@ export function RulesTab() {
           <Plus /> {t("Nova automação")}
         </Button>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <GradeDeRegistros>
         {rules.map((r) => (
-          <Card key={r.id}>
-            <CardHeader className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardTitle className="truncate">{r.name}</CardTitle>
-                <Badge variant={r.is_active ? "success" : "neutral"}>
+          <li key={r.id}>
+            <CartaoDeRegistro
+              href={`/app/webhooks/automacoes/${r.id}`}
+              titulo={r.name}
+              selo={
+                <ChipDeEstado tom={r.is_active ? "sucesso" : "neutro"}>
                   {r.is_active ? t("Ativa") : t("Pausada")}
-                </Badge>
-              </div>
-              <p className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className={classesDoChipDaEtapa("gatilho")}>{t("Quando")}</span>
-                <span className="min-w-0 truncate">{triggerLabel(r.trigger_event, t)}</span>
-              </p>
-              <p className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className={classesDoChipDaEtapa("acao")}>{t("Então")}</span>
-                <span className="tabular-nums">
-                  {r.actions.length} {r.actions.length === 1 ? t("ação") : t("ações")}
-                </span>
-              </p>
-              {/* Uma regra ligada roda sozinha para sempre: quem a ligou é parte
-                  do estado dela, não um detalhe de auditoria. */}
-              <SeloDeAutoria kind={r.last_change_actor_kind} em={r.last_change_at} />
-            </CardHeader>
-            <CardContent className="flex items-center justify-between gap-2">
-              <Switch
-                checked={r.is_active}
-                disabled={update.isPending}
-                onCheckedChange={(checked) => toggleActive(r, checked)}
-                aria-label={`${r.is_active ? t("Pausar") : t("Ligar")} ${r.name}`}
-              />
-              <div className="flex items-center gap-1">
-                <Button asChild variant="ghost" size="icon">
-                  <Link href={`/app/webhooks/automacoes/${r.id}`} aria-label={t("Abrir no designer")}>
-                    <FlowArrow />
-                  </Link>
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openEdit(r)}
-                  aria-label={t("Editar automação")}
-                >
-                  <PencilSimple />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setDeleting(r)}
-                  aria-label={t("Excluir automação")}
-                >
-                  <Trash />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                </ChipDeEstado>
+              }
+              meta={[
+                triggerLabel(r.trigger_event, t),
+                `${r.actions.length} ${r.actions.length === 1 ? t("ação") : t("ações")}`,
+                // Uma regra ligada roda sozinha para sempre: quem a ligou é parte
+                // do estado dela, não um detalhe de auditoria.
+                <SeloDeAutoria key="autoria" kind={r.last_change_actor_kind} em={r.last_change_at} />,
+              ]}
+              acao={
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+                  <Switch
+                    checked={r.is_active}
+                    disabled={update.isPending}
+                    onCheckedChange={(checked) => toggleActive(r, checked)}
+                    aria-label={`${r.is_active ? t("Pausar") : t("Ligar")} ${r.name}`}
+                  />
+                  <span aria-hidden>{r.is_active ? t("Pausar") : t("Ligar")}</span>
+                </label>
+              }
+              menu={
+                <MenuDoCartao rotulo={`${t("Menu de ações")}: ${r.name}`}>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/app/webhooks/automacoes/${r.id}`}>
+                      <FlowArrow aria-hidden /> {t("Abrir no designer")}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => openEdit(r)}>
+                    <PencilSimple aria-hidden /> {t("Editar automação")}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="destructive" onSelect={() => setDeleting(r)}>
+                    <Trash aria-hidden /> {t("Excluir automação")}
+                  </DropdownMenuItem>
+                </MenuDoCartao>
+              }
+            />
+          </li>
         ))}
-      </div>
-
+      </GradeDeRegistros>
       <RuleEditor open={editorOpen} onOpenChange={setEditorOpen} rule={editing} />
 
       <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>

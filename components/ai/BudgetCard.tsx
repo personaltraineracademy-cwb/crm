@@ -37,14 +37,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PISO_DE_TETO_CENTS } from "@/lib/agent-engine/edge/llm/orcamento";
@@ -377,22 +378,23 @@ function EditBudgetDialog({ status }: { status: BudgetStatus }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button size="sm" variant="outline">
           {t("Editar limite")}
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("Orçamento de IA")}</DialogTitle>
-          <DialogDescription>
+      </SheetTrigger>
+      <SheetContent side="right" size="md">
+        <SheetHeader>
+          <SheetTitle>{t("Orçamento de IA")}</SheetTitle>
+          <SheetDescription>
             {t(
               "Escolha o que acontece quando o gasto do mês chega no limite. Os valores são em dólar — é a moeda em que o provedor de IA cobra.",
             )}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-4">
+          </SheetDescription>
+        </SheetHeader>
+        <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+          <SheetBody className="space-y-4">
           <div className="space-y-2">
             <OpcaoDeModo
               valor="off"
@@ -497,7 +499,8 @@ function EditBudgetDialog({ status }: { status: BudgetStatus }) {
             </div>
           )}
 
-          <DialogFooter>
+          </SheetBody>
+          <SheetFooter>
             <Button
               type="button"
               variant="ghost"
@@ -509,9 +512,9 @@ function EditBudgetDialog({ status }: { status: BudgetStatus }) {
             <Button type="submit" disabled={update.isPending || !centsValidos || tetoInsuficiente}>
               {update.isPending ? t("Salvando...") : t("Salvar")}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

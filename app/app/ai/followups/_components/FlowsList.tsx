@@ -3,35 +3,49 @@
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
 
 import { useT } from "@/hooks/i18n/useT";
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
+import {
+  CartaoDeRegistro,
+  CartaoDeRegistroCarregando,
+  GradeDeRegistros,
+} from "@/components/cartao-de-registro";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { cn } from "@/lib/utils";
 import { FlowArrow, Plus, Sparkle, UploadSimple } from "@/lib/ui/icons";
 import { useFollowupFlows, type FollowupFlowPointerRow } from "@/hooks/followup/useFollowupFlows";
 import type { FollowupFlowSurface } from "@/lib/followup/api-schemas";
-import { DeleteFollowupFlowButton } from "./DeleteFollowupFlowButton";
-import { DuplicateFollowupFlowButton } from "./DuplicateFollowupFlowButton";
-import { ExportFollowupFlowButton } from "./ExportFollowupFlowButton";
 import { FlowStatusBadge } from "./FlowStatusBadge";
 import { ImportFlowDialog } from "./ImportFlowDialog";
 import { ModelosDialog } from "./ModelosDialog";
+import { MenuDoFluxo } from "./MenuDoFluxo";
 import { NewFlowDialog } from "./NewFlowDialog";
-import { RenameFollowupFlowButton } from "./RenameFollowupFlowButton";
 
 interface Props {
   initialData: FollowupFlowPointerRow[];
   canWrite: boolean;
   /** Recorte por superfície. Ausente = todos (comportamento atual). */
   surface?: FollowupFlowSurface;
+  /**
+   * `id` de um elemento do CABEÇALHO da página onde as ações da lista (Importar,
+   * Começar de um modelo, Novo fluxo) devem aparecer — na linha do título, à
+   * direita (guia 2.6). Sem ele, ou se o elemento não existe, elas ficam acima
+   * da lista, como antes.
+   */
+  idDoAlvoDasAcoes?: string;
 }
 
+/** «21/11» no ano corrente; com o ano («21/11/2025») quando é de outro. */
 function formatUpdatedAt(iso: string, idioma: string): string {
-  return new Date(iso).toLocaleDateString(idioma, {
+  const data = new Date(iso);
+  const outroAno = data.getFullYear() !== new Date().getFullYear();
+  return data.toLocaleDateString(idioma, {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
+    ...(outroAno ? { year: "numeric" as const } : {}),
   });
 }
 
@@ -41,52 +55,61 @@ function formatUpdatedAt(iso: string, idioma: string): string {
  * A coluna mostrava o valor CRU do banco (`pause`, `cancel`, `allow`) ao lado
  * de «Handoff» — com o perfil em espanhol, «Transferencia: pause». O `value`
  * gravado continua o mesmo; o seletor da barra de publicação mantém as frases
- * longas dele («Pausar durante handoff»), porque ali há espaço para explicar.
+ * longas dele («Pausar quando um humano assume»), porque ali há espaço para explicar.
  */
 const HANDOFF_EM_PALAVRA: Record<string, string> = {
   pause: "Pausar",
   cancel: "Cancelar",
-  allow: "Permitir",
+  allow: "Continuar",
 };
 
-export function FlowsList({ initialData, canWrite, surface }: Props) {
+export function FlowsList({ initialData, canWrite, surface, idDoAlvoDasAcoes }: Props) {
   const tagDoIdioma = useTagDeIdioma();
   const t = useT();
-  const { data } = useFollowupFlows({ initialData, ...(surface ? { surface } : {}) });
+  const { data, isLoading } = useFollowupFlows({ initialData, ...(surface ? { surface } : {}) });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [modelosOpen, setModelosOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const deAtendimento = surface === "atendimento";
+  // O alvo mora no cabeçalho (componente de servidor); só existe no DOM depois da hidratação.
+  const [alvoDasAcoes, setAlvoDasAcoes] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    setAlvoDasAcoes(idDoAlvoDasAcoes ? document.getElementById(idDoAlvoDasAcoes) : null);
+  }, [idDoAlvoDasAcoes]);
 
   const flows = data ?? [];
   // Cada superfície tem a SUA rota de editor: abrir um fluxo de atendimento não
   // pode jogar o usuário na lista de Follow-ups.
   const baseHref = deAtendimento ? "/app/ai/atendimento" : "/app/ai/followups";
 
-  // ⚠️ "Começar de um modelo" vem ANTES de "Novo fluxo", e na tela vazia é o
-  // botão cheio. Quem chega aqui numa instalação nova não sabe o que é nó, ramo
-  // ou prazo de graça — mandá-lo para uma tela em branco é o caminho mais curto
-  // para a clínica nunca ter follow-up nenhum. Desenhar do zero continua a um
-  // clique, para quem já sabe o que quer.
-  const modelosButton = (
-    <Button onClick={() => setModelosOpen(true)} className="w-full sm:w-auto">
-      <Sparkle size={14} aria-hidden className="mr-2" /> {t("Começar de um modelo")}
+  // ⚠️ Na tela VAZIA, "Começar de um modelo" é o botão cheio: quem chega aqui numa
+  // instalação nova não sabe o que é nó, ramo ou prazo de graça, e mandá-lo para
+  // uma tela em branco é o caminho mais curto para a clínica nunca ter follow-up
+  // nenhum. Na LISTA (já há fluxos) a ação principal é "Novo fluxo", e o modelo
+  // e a importação ficam como secundários.
+  const modelosButton = (cheio: boolean) => (
+    <Button
+      onClick={() => setModelosOpen(true)}
+      variant={cheio ? "default" : "outline"}
+      className="w-full sm:w-auto"
+    >
+      <Sparkle size={14} aria-hidden /> {t("Começar de um modelo")}
     </Button>
   );
 
-  const newFlowButton = (
+  const newFlowButton = (cheio: boolean, className?: string) => (
     <Button
       onClick={() => setDialogOpen(true)}
-      variant={deAtendimento ? "default" : "outline"}
-      className="w-full sm:w-auto"
+      variant={cheio ? "default" : "outline"}
+      className={cn("w-full sm:w-auto", className)}
     >
-      <Plus size={14} aria-hidden className="mr-2" />
+      <Plus size={14} aria-hidden />
       {deAtendimento ? t("Novo fluxo de atendimento") : t("Novo fluxo")}
     </Button>
   );
 
-  // Importar fica ao lado de "Novo fluxo", sempre como botão secundário: é o
-  // caminho de quem JÁ tem um fluxo pronto (exportado aqui ou em outra conta).
+  // Importar é o caminho de quem JÁ tem um fluxo pronto (exportado aqui ou em
+  // outra conta): sempre secundário.
   const importButton = (
     <Button
       onClick={() => setImportOpen(true)}
@@ -94,7 +117,7 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
       className="w-full sm:w-auto"
       data-testid="import-followup-flow"
     >
-      <UploadSimple size={14} aria-hidden className="mr-2" /> {t("Importar fluxo")}
+      <UploadSimple size={14} aria-hidden /> {t("Importar fluxo")}
     </Button>
   );
 
@@ -112,30 +135,44 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
     </>
   );
 
+  if (isLoading && flows.length === 0) {
+    return (
+      <GradeDeRegistros aria-busy="true">
+        {[0, 1, 2].map((i) => (
+          <li key={i}>
+            <CartaoDeRegistroCarregando />
+          </li>
+        ))}
+      </GradeDeRegistros>
+    );
+  }
+
   if (flows.length === 0) {
     return (
       <>
-        <Card className="flex flex-col items-center gap-3 p-10 text-center">
-          <FlowArrow size={36} aria-hidden className="text-muted-foreground" />
-          <h2 className="font-medium">
-            {deAtendimento ? t("Nenhum fluxo de atendimento ainda") : t("Nenhum fluxo de follow-up ainda")}
-          </h2>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            {deAtendimento
-              ? t(
-                  "Os fluxos de atendimento cadastram as perguntas que a IA faz durante a conversa e o que acontece ao concluir — os dados ficam guardados por cliente.",
-                )
-              : t(
-                  "Follow-ups reengajam contatos após silêncio, mudança de etapa, uma regra em Webhooks ou a resposta do contato — sem depender de alguém lembrar de mandar mensagem.",
-                )}
-          </p>
-          {canWrite && (
-            <div className="mt-1 flex flex-col items-center gap-2 sm:flex-row">
-              {!deAtendimento && modelosButton}
-              {newFlowButton}
-              {importButton}
-            </div>
-          )}
+        <Card>
+          <EmptyState
+            icon={FlowArrow}
+            title={deAtendimento ? t("Nenhum fluxo de atendimento ainda") : t("Nenhum fluxo de follow-up ainda")}
+            description={
+              deAtendimento
+                ? t(
+                    "Os fluxos de atendimento cadastram as perguntas que a IA faz durante a conversa e o que acontece ao concluir — os dados ficam guardados por cliente.",
+                  )
+                : t(
+                    "Follow-ups reengajam contatos após silêncio, mudança de etapa, uma regra em Webhooks ou a resposta do contato — sem depender de alguém lembrar de mandar mensagem.",
+                  )
+            }
+            action={
+              canWrite ? (
+                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                  {deAtendimento ? newFlowButton(true) : modelosButton(true)}
+                  {!deAtendimento && newFlowButton(false)}
+                  {importButton}
+                </div>
+              ) : undefined
+            }
+          />
         </Card>
         {dialogos}
       </>
@@ -147,56 +184,46 @@ export function FlowsList({ initialData, canWrite, surface }: Props) {
   // resultado sumia: o que resolver antes de publicar e o link « Abrir o fluxo » nunca apareciam.
   return (
     <>
-    <div className="flex flex-col gap-4">
-      {canWrite && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-          {!deAtendimento && modelosButton}
-          {newFlowButton}
-          {importButton}
-        </div>
-      )}
+      <div className="flex flex-col gap-4">
+        {canWrite &&
+          (() => {
+            const acoes = (
+              <>
+                {importButton}
+                {!deAtendimento && modelosButton(false)}
+                {/* No celular a ação principal sobe para o topo da pilha. */}
+                {newFlowButton(true, "max-sm:order-first")}
+              </>
+            );
+            return alvoDasAcoes ? (
+              createPortal(acoes, alvoDasAcoes)
+            ) : (
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+                {acoes}
+              </div>
+            );
+          })()}
 
-      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {flows.map((flow) => (
-          <li key={flow.id}>
-            <Card className="flex h-full flex-col gap-3 p-4 transition-colors hover:border-interactive-border">
-              <Link href={`${baseHref}/${flow.id}`} className="flex flex-1 flex-col gap-3">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="min-w-0 flex-1 truncate font-medium" title={flow.name}>
-                    {flow.name}
-                  </h3>
-                  <FlowStatusBadge status={flow.status} />
-                </div>
-                <dl className="grid grid-cols-2 gap-2 pt-1 text-xs">
-                  <div>
-                    <dt className="text-muted-foreground">{t("Versão")}</dt>
-                    <dd className="font-mono">{flow.active_version_id ? t("publicada") : "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">{t("Handoff")}</dt>
-                    <dd className="font-mono">
-                      {t(HANDOFF_EM_PALAVRA[flow.handoff_policy] ?? flow.handoff_policy)}
-                    </dd>
-                  </div>
-                </dl>
-                <p className="mt-auto pt-2 text-xs text-muted-foreground">
-                  {t("Atualizado em")} {formatUpdatedAt(flow.updated_at, tagDoIdioma)}
-                </p>
-              </Link>
-              {canWrite && (
-                <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-2">
-                  <RenameFollowupFlowButton flowId={flow.id} flowName={flow.name} />
-                  <DuplicateFollowupFlowButton flowId={flow.id} />
-                  <ExportFollowupFlowButton flowId={flow.id} />
-                  <DeleteFollowupFlowButton flowId={flow.id} flowName={flow.name} listHref={baseHref} />
-                </div>
-              )}
-            </Card>
-          </li>
-        ))}
-      </ul>
-    </div>
-    {dialogos}
+        <GradeDeRegistros>
+          {flows.map((flow) => (
+            <li key={flow.id}>
+              <CartaoDeRegistro
+                href={`${baseHref}/${flow.id}`}
+                titulo={flow.name}
+                selo={<FlowStatusBadge status={flow.status} />}
+                meta={[
+                  <>
+                    <span>{t("Quando um humano assume")}</span>: {t(HANDOFF_EM_PALAVRA[flow.handoff_policy] ?? flow.handoff_policy)}
+                  </>,
+                  `${t("Atualizado em")} ${formatUpdatedAt(flow.updated_at, tagDoIdioma)}`,
+                ]}
+                menu={canWrite ? <MenuDoFluxo flowId={flow.id} flowName={flow.name} /> : undefined}
+              />
+            </li>
+          ))}
+        </GradeDeRegistros>
+      </div>
+      {dialogos}
     </>
   );
 }

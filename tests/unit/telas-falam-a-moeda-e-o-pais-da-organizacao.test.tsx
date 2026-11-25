@@ -152,7 +152,7 @@ describe("o documento e o exemplo de telefone seguem o país da organização", 
   it("país com documento próprio: o rótulo e os dois exemplos são dele", () => {
     orgAtiva.atual = { currency: "EUR", country: "XI" };
     render(<NewContactDialog open onOpenChange={() => {}} />);
-    expect(screen.getByText(/Bilhete \(opcional\)/)).toBeTruthy();
+    expect(screen.getByText(/^Bilhete$/)).toBeTruthy();
     expect(screen.getByPlaceholderText("+999123456789")).toBeTruthy();
     expect(screen.getByPlaceholderText("003862011LA042")).toBeTruthy();
   });
@@ -220,7 +220,7 @@ describe("o documento e o exemplo de telefone seguem o país da organização", 
   it("sem país declarado, vale o Brasil — nada muda para quem já usa", () => {
     orgAtiva.atual = { currency: "BRL", country: null };
     render(<NewContactDialog open onOpenChange={() => {}} />);
-    expect(screen.getByText(/CPF \(opcional\)/)).toBeTruthy();
+    expect(screen.getByText(/^CPF$/)).toBeTruthy();
     expect(screen.getByPlaceholderText("+5511999998888")).toBeTruthy();
   });
 });

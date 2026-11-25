@@ -109,7 +109,7 @@ function DialerDialog() {
       <DialogTrigger asChild>
         <Button>{t("Nova ligação")}</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-sm">
+      <DialogContent size="sm">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{t("Nova ligação")}</DialogTitle>
@@ -210,7 +210,7 @@ export function CallsClient() {
       </Card>
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent size="md">
           {selected && (
             <>
               <DialogHeader>

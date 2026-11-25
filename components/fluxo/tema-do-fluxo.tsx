@@ -111,8 +111,7 @@ export const ROTULO_DA_ARESTA = {
 } satisfies Partial<Edge>;
 
 /**
- * A casca do nó, a mesma nos dois editores. Largura 224 (`w-56`) porque o
- * auto-layout mede a partir dela (`LAYOUT_NODE_WIDTH`).
+ * A casca do nó, a mesma nos dois editores. Largura 224 (`w-56`).
  */
 export function classesDoNo({
   selecionado,

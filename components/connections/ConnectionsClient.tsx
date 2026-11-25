@@ -844,7 +844,7 @@ function ExcluirCanalDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && !excluindo && onCancel()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>
             {t("Excluir")} {channelLabel(canal, t)}?
@@ -964,7 +964,7 @@ function QrDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>

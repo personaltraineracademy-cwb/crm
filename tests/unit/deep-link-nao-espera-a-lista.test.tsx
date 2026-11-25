@@ -215,6 +215,8 @@ describe("deep-link para conversa fora do filtro", () => {
         <InboxLayout />
       </QueryClientProvider>,
     );
-    await waitFor(() => expect(screen.getByTestId("painel")).toHaveTextContent("sem-conversa"));
+    // Sem conversa aberta o painel do contato nem monta (guia de acabamento: um só
+    // estado vazio, no centro).
+    await waitFor(() => expect(screen.queryByTestId("painel")).not.toBeInTheDocument());
   });
 });

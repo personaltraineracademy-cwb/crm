@@ -60,7 +60,7 @@ export function TopBar({
   const titulo = rota ? t(rota.label) : (activeOrg?.marca?.nome ?? marca.name);
 
   return (
-    <header className="casca-barra-superior sticky top-[var(--faixas-de-cima,0px)] z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border px-(--pta-gutter)">
+    <header className="casca-barra-superior sticky top-[var(--faixas-de-cima,0px)] z-30 flex h-14 shrink-0 items-center gap-2 pr-(--pta-gutter) pl-(--pta-gutter-esq)">
       <div className="flex min-w-0 flex-1 items-center gap-1 lg:basis-0">
         <MobileSidebar />
         {aoAlternarBarra && (
@@ -121,7 +121,7 @@ function BotaoDeRecolher({
             disabled={alternando}
             aria-label={rotulo}
             aria-expanded={!recolhida}
-            className="hidden shrink-0 text-muted-foreground lg:inline-flex"
+            className="hidden shrink-0 text-muted-foreground aria-expanded:bg-transparent aria-expanded:text-muted-foreground lg:inline-flex"
           >
             {recolhida ? (
               <CaretDoubleRight size={16} aria-hidden />

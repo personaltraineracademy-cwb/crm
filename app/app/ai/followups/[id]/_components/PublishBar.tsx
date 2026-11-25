@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { toast } from "sonner";
 
@@ -36,7 +36,13 @@ import {
   useUpdateHandoffPolicy,
   type FollowupFlowDetailRow,
 } from "@/hooks/followup/useFollowupFlow";
-import { Trash, TreeStructure } from "@/lib/ui/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ClockCounterClockwise, DotsThree, Trash, TreeStructure } from "@/lib/ui/icons";
 import { FlowStatusBadge } from "../../_components/FlowStatusBadge";
 import { DeleteFollowupFlowButton } from "../../_components/DeleteFollowupFlowButton";
 import { RenameFollowupFlowButton } from "../../_components/RenameFollowupFlowButton";
@@ -46,6 +52,12 @@ interface Props {
   flowId: string;
   flow: FollowupFlowDetailRow;
   graph: FlowGraph;
+  /**
+   * O grafo NO INSTANTE do clique. O canvas passa `graph` adiado (para não
+   * recalcular a cada quadro do arrasto); salvar e publicar leem daqui, para
+   * um clique logo depois de digitar nunca gravar o estado de um quadro antes.
+   */
+  obterGrafo?: () => FlowGraph;
   dirty: boolean;
   selection: "node" | "edge" | null;
   onDeleteSelection: () => void;
@@ -57,15 +69,16 @@ interface Props {
 }
 
 const HANDOFF_LABEL: Record<FollowupFlowDetailRow["handoff_policy"], string> = {
-  pause: "Pausar durante handoff",
-  cancel: "Cancelar durante handoff",
-  allow: "Permitir durante handoff",
+  pause: "Pausar quando um humano assume",
+  cancel: "Cancelar quando um humano assume",
+  allow: "Continuar quando um humano assume",
 };
 
-export function PublishBar({
+function PublishBarBase({
   flowId,
   flow,
   graph,
+  obterGrafo,
   dirty,
   selection,
   onDeleteSelection,
@@ -85,13 +98,15 @@ export function PublishBar({
   const deRoteiro = flow.surface === "atendimento";
 
   const onSave = () => {
-    save.mutate(graph, { onSuccess: () => onSaved(graph) });
+    const atual = obterGrafo?.() ?? graph;
+    save.mutate(atual, { onSuccess: () => onSaved(atual) });
   };
 
   const onPublish = async () => {
+    const atual = obterGrafo?.() ?? graph;
     try {
-      await save.mutateAsync(graph);
-      onSaved(graph);
+      await save.mutateAsync(atual);
+      onSaved(atual);
     } catch {
       return; // save's own onError already toasted — don't attempt publish on a failed save
     }
@@ -129,9 +144,11 @@ export function PublishBar({
   const busy = save.isPending || publish.isPending || disable.isPending || rollback.isPending;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3">
-      <div className="flex items-center gap-1">
-        <h1 className="text-sm font-semibold text-foreground">{flow.name}</h1>
+    <div className="fluxo-barra" data-testid="flow-toolbar">
+      <div className="fluxo-barra__titulo">
+        <h1 className="truncate text-base font-semibold text-foreground" title={flow.name}>
+          {flow.name}
+        </h1>
         <RenameFollowupFlowButton
           flowId={flowId}
           flowName={flow.name}
@@ -146,16 +163,43 @@ export function PublishBar({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        {/* O roteiro de atendimento começa por palavra-gatilho ou roteador (no
+      <div className="fluxo-barra__principal">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!dirty || busy}
+          onClick={onSave}
+        >
+          {save.isPending ? t("Salvando…") : t("Salvar")}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          disabled={busy}
+          onClick={onPublish}
+          data-testid="publish-button"
+        >
+          {publish.isPending ? t("Publicando…") : t("Publicar")}
+        </Button>
+      </div>
+
+      <div className="fluxo-barra__ferramentas">
+        {/* Configuração do fluxo: o que dispara e o que fazer no handoff.
+            O roteiro de atendimento começa por palavra-gatilho ou roteador (no
             Início do grafo) e encerra quando um humano assume (0397): o gatilho
             de relógio e a política de handoff do follow-up não valem para ele —
             na prova do #1130 esta barra aparecia igual e confundia. */}
         {!deRoteiro && <TriggerConfigControl flowId={flowId} triggerConfig={flow.trigger_config} />}
 
         {!deRoteiro && (
-          <Select value={flow.handoff_policy} onValueChange={(v) => handoffPolicy.mutate(v as FollowupFlowDetailRow["handoff_policy"])}>
-            <SelectTrigger className="w-56" aria-label={t("Política de handoff")}>
+          <Select
+            value={flow.handoff_policy}
+            onValueChange={(v) =>
+              handoffPolicy.mutate(v as FollowupFlowDetailRow["handoff_policy"])
+            }
+          >
+            <SelectTrigger size="sm" className="w-80" aria-label={t("Quando um humano assume")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -168,49 +212,61 @@ export function PublishBar({
           </Select>
         )}
 
-        <Button type="button" variant="secondary" size="sm" disabled={!dirty || busy} onClick={onSave}>
-          {save.isPending ? t("Salvando…") : t("Salvar")}
-        </Button>
-        <Button type="button" size="sm" disabled={busy} onClick={onPublish} data-testid="publish-button">
-          {publish.isPending ? t("Publicando…") : t("Publicar")}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={busy || flow.status === "disabled"}
-          onClick={onDisable}
-        >
-          {t("Desativar")}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={busy || !canRollback}
-          onClick={onRollback}
-          data-testid="rollback-button"
-        >
-          {t("Rollback")}
-        </Button>
+        <span aria-hidden className="fluxo-barra__divisor" />
+
+        {/* Ferramentas do desenho e da versão: peso baixo (ghost). */}
         {onAutoFit && (
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={!canAutoFit}
             onClick={onAutoFit}
             data-testid="auto-fit-flow"
+            title={t("Organizar")}
           >
-            <TreeStructure size={14} aria-hidden className="mr-1" />
+            <TreeStructure size={16} aria-hidden className="mr-1" />
             {t("Organizar")}
           </Button>
         )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          disabled={busy || !canRollback}
+          onClick={onRollback}
+          data-testid="rollback-button"
+          title={t("Voltar para a versão anterior")}
+        >
+          <ClockCounterClockwise size={16} aria-hidden className="mr-1" />
+          {t("Versão anterior")}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-9"
+              aria-label={t("Mais ações")}
+              title={t("Mais ações")}
+            >
+              <DotsThree size={18} weight="bold" aria-hidden />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem disabled={busy || flow.status === "disabled"} onSelect={onDisable}>
+              {t("Desativar")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Destrutivas: só ícone, separadas da ação principal, sempre com confirmação. */}
         {selection ? (
           <>
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
               className="text-destructive"
               data-testid="delete-selection"
@@ -227,7 +283,9 @@ export function PublishBar({
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     {selection === "node"
-                      ? t("Este nó e as arestas ligadas a ele são apagados. Não é possível desfazer.")
+                      ? t(
+                          "Este nó e as arestas ligadas a ele são apagados. Não é possível desfazer.",
+                        )
                       : t("A aresta entre os dois nós é apagada. Não é possível desfazer.")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -252,9 +310,17 @@ export function PublishBar({
             flowName={flow.name}
             redirectToList
             listHref={deRoteiro ? "/app/ai/atendimento" : "/app/ai/followups"}
+            variant="ghost"
+            iconOnly
           />
         )}
       </div>
+
+      {/* A ação principal fica no fim, sozinha com peso de primária. No celular
+            ela sobe para a linha de baixo do título e nunca sai da tela. */}
     </div>
   );
 }
+
+/** `memo`: o canvas passa callbacks estáveis e o grafo adiado — a barra não re-renderiza a cada quadro do arrasto. */
+export const PublishBar = memo(PublishBarBase);

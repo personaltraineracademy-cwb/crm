@@ -57,6 +57,7 @@ import { PainelDeSeguranca } from "./PainelDeSeguranca";
 import { BasesDoAgente, type MaterialDoAcervo } from "./BasesDoAgente";
 import { FunisDoAgente, type CoberturaPorFunil } from "./FunisDoAgente";
 import { PublishConfirmDialog } from "./PublishConfirmDialog";
+import { AparenciaDoAgente } from "./AparenciaDoAgente";
 import { ComandosDoCelular } from "./ComandosDoCelular";
 import { ServidorExternoNoAtendimento } from "./ServidorExternoNoAtendimento";
 import {
@@ -97,6 +98,16 @@ export type { ChannelSessionLite };
  */
 const ID_DO_MOTIVO_DO_PUBLICAR = "motivo-do-publicar";
 
+/**
+ * AS SEÇÕES DO EDITOR (pedido da dona, 25/11/2026: a tela do agente com menu à
+ * esquerda — Perfil, Trabalho, Treinamentos, Canais, Integrações e
+ * Configurações). Continua UM formulário e UM salvar: a seção só escolhe o que
+ * aparece; os campos das outras seguem montados (classe `hidden`), então nada
+ * do que foi digitado se perde ao trocar de seção.
+ */
+export type SecaoDoAgente = "perfil" | "trabalho" | "treinamentos" | "canais" | "integracoes" | "configuracoes";
+type AbaDasConfiguracoes = "conversa" | "followup" | "operacao" | "seguranca" | "limites";
+
 interface BaseProps {
   credentials: CredentialRow[];
   /**
@@ -126,6 +137,8 @@ interface BaseProps {
   routerMembership?: { routerId: string; routerName: string; channelSessionId: string; channelStatus: string | null } | null;
   readOnly?: boolean;
   organizationTimezone?: string;
+  /** A seção que o menu da esquerda abriu. Sem ela, todas aparecem. */
+  secao?: SecaoDoAgente;
 }
 
 interface EditProps extends BaseProps {
@@ -415,11 +428,17 @@ export function AgentForm(props: Props) {
   const [publishing, setPublishing] = React.useState(false);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   /**
-   * Qual papel está aberto. Estado LOCAL e não rota: trocar de papel não é
-   * navegação — o rascunho é um só, e uma URL por papel faria o usuário achar
-   * que salvou um e não o outro.
+   * A aba aberta dentro de Configurações. Estado LOCAL e não rota: trocar de aba
+   * não é navegação — o rascunho é um só, e uma URL por aba faria o usuário
+   * achar que salvou uma e não a outra. "Organiza o sistema" e "Confere antes
+   * de enviar" (os papéis da spec 16) moram aqui, como abas.
    */
-  const [papel, setPapel] = React.useState<"conversa" | "operacao" | "seguranca">("conversa");
+  const [abaDaConfig, setAbaDaConfig] = React.useState<AbaDasConfiguracoes>("conversa");
+  /** Esta seção aparece? Sem `secao` (a tela de criar antiga, os testes), todas. */
+  const ve = (s: SecaoDoAgente) => props.secao === undefined || props.secao === s;
+  const naSecao = (s: SecaoDoAgente) => (ve(s) ? "flex flex-col gap-4" : "hidden");
+  const naConfig = (a: AbaDasConfiguracoes) =>
+    ve("configuracoes") && (props.secao === undefined || abaDaConfig === a) ? "flex flex-col gap-4" : "hidden";
 
   /**
    * A pergunta é "salvar mudaria alguma coisa?", e não "os dois objetos são
@@ -700,11 +719,11 @@ export function AgentForm(props: Props) {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold tracking-tight">
-              {isEdit ? props.agent.name : t("Novo agente")}
+              {props.secao ? tituloDaSecao(props.secao, t) : isEdit ? props.agent.name : t("Novo agente")}
             </h2>
             {statusBadge}
           </div>
-          {isEdit && props.agent.description ? (
+          {isEdit && !props.secao && props.agent.description ? (
             <p className="text-xs text-muted-foreground">{props.agent.description}</p>
           ) : null}
         </div>
@@ -763,47 +782,44 @@ export function AgentForm(props: Props) {
       ) : null}
 
       {/*
-        NAVEGAÇÃO POR PAPEL (spec 16 §6). Um form só, um save só — os papéis são
-        SEÇÕES, não telas separadas: separá-las em abas com save próprio faria o
-        usuário publicar metade da configuração e criaria dois caminhos para o
-        mesmo `ai_agent_versions`.
-
-        Os rótulos dizem o que cada papel FAZ. "Conversador"/"Operador" é o nosso
-        vocabulário interno; quem configura pensa em "quem fala com meu cliente" e
-        "quem organiza minha casa".
+        AS ABAS DE CONFIGURAÇÕES. Um form só, um save só — os papéis da spec 16
+        ("Organiza o sistema", "Confere antes de enviar") viraram abas daqui: são
+        SEÇÕES, não telas separadas com save próprio, que fariam o usuário
+        publicar metade da configuração.
       */}
-      <div className="flex flex-wrap gap-1 border-b" role="tablist" aria-label={t("Papéis do agente")}>
-        {(
-          [
-            ["conversa", t("Conversa com o cliente")],
-            ["operacao", t("Organiza o sistema")],
-            // O TERCEIRO PAPEL. O rótulo diz o que ele FAZ, como os outros dois:
-            // "Segurança" é o nosso nome; quem configura quer saber o que é
-            // conferido antes de a mensagem chegar ao cliente dele.
-            ["seguranca", t("Confere antes de enviar")],
-          ] as const
-        ).map(([id, rotulo]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={papel === id}
-            data-testid={`papel-${id}`}
-            onClick={() => setPapel(id)}
-            className={
-              papel === id
-                ? "border-b-2 border-foreground px-3 py-2 text-sm font-medium"
-                : "border-b-2 border-transparent px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
-            }
-          >
-            {t(rotulo)}
-          </button>
-        ))}
-      </div>
+      {ve("configuracoes") ? (
+        <div className="flex flex-wrap gap-1 border-b" role="tablist" aria-label={t("Configurações do agente")}>
+          {(
+            [
+              ["conversa", t("Conversa"), "papel-conversa"],
+              ["followup", t("Follow-up"), "aba-followup"],
+              ["operacao", t("Funil e operação"), "papel-operacao"],
+              ["seguranca", t("Confere antes de enviar"), "papel-seguranca"],
+              ["limites", t("Limites"), "aba-limites"],
+            ] as const
+          ).map(([id, rotulo, testid]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={abaDaConfig === id}
+              data-testid={testid}
+              onClick={() => setAbaDaConfig(id)}
+              className={
+                abaDaConfig === id
+                  ? "border-b-2 border-primary px-3 py-2 text-sm font-medium text-foreground"
+                  : "border-b-2 border-transparent px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+              }
+            >
+              {rotulo}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
-      {papel === "seguranca" ? <PainelDeSeguranca /> : null}
+      {ve("configuracoes") && abaDaConfig === "seguranca" ? <PainelDeSeguranca /> : null}
 
-      {papel === "operacao" ? (
+      {ve("configuracoes") && abaDaConfig === "operacao" ? (
         <PainelDoOperador
           enabled={form.operator_enabled}
           onEnabledChange={(v) => patch({ operator_enabled: v })}
@@ -818,10 +834,9 @@ export function AgentForm(props: Props) {
         />
       ) : null}
 
-      {/* Fica na aba de OPERAÇÃO e não na de conversa: é permissão de mexer em
-          negócio, não de falar com cliente — a mesma separação que a spec 16
-          impôs no resto da tela. */}
-      {papel === "operacao" ? (
+      {/* Fica junto da operação e não da conversa: é permissão de mexer em
+          negócio, não de falar com cliente — a separação da spec 16. */}
+      {ve("configuracoes") && abaDaConfig === "operacao" ? (
         <FunisDoAgente
           funis={funis}
           cobertura={props.cobertura}
@@ -831,10 +846,9 @@ export function AgentForm(props: Props) {
         />
       ) : null}
 
-      {/* Two-column grid */}
-      <div className={papel === "conversa" ? "grid grid-cols-1 gap-4 lg:grid-cols-2" : "hidden"}>
-        {/* COLUMN 1 */}
-        <div className="space-y-4">
+      {/* As seções. A ordem dentro de cada uma é a ordem do arquivo. */}
+      <div className="flex flex-col gap-4">
+        <div className={naSecao("perfil")} data-secao="perfil">
           {/* Identification */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Quem é este agente")}</h3>
@@ -886,6 +900,17 @@ export function AgentForm(props: Props) {
               </p>
             </div>
           </Card>
+
+          {/* A cara do agente no cartão da lista. Só em edição: salva direto em
+              `ai_agents.config.aparencia`, e o agente precisa existir. */}
+          {isEdit && (
+            <AparenciaDoAgente
+              agentId={props.agent.id}
+              nome={props.agent.name}
+              config={props.agent.config}
+              disabled={disabled}
+            />
+          )}
 
           {/* Provider + credential + model */}
           <Card className="space-y-3 p-4">
@@ -958,6 +983,9 @@ export function AgentForm(props: Props) {
             ) : null}
           </Card>
 
+        </div>
+
+        <div className={naSecao("canais")} data-secao="canais">
           {/* WhatsApp session */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Por qual número ele atende")}</h3>
@@ -1034,7 +1062,9 @@ export function AgentForm(props: Props) {
               ) : null}
             </div>
           </Card>
+        </div>
 
+        <div className={naConfig("limites")} data-secao="limites">
           {/* Limits */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Freios de segurança")}</h3>
@@ -1145,8 +1175,7 @@ export function AgentForm(props: Props) {
           </Card>
         </div>
 
-        {/* COLUMN 2 */}
-        <div className="space-y-4">
+        <div className={naSecao("perfil")} data-secao="instrucoes">
           {/* Prompt */}
           <Card className="space-y-2 p-4">
             <div className="flex items-center justify-between">
@@ -1200,6 +1229,9 @@ export function AgentForm(props: Props) {
             ) : null}
           </Card>
 
+        </div>
+
+        <div className={naConfig("conversa")} data-secao="conversa">
           {/* Estilo de resposta (split de mensagens — Onda 4) */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Estilo de resposta")}</h3>
@@ -1240,6 +1272,9 @@ export function AgentForm(props: Props) {
             ) : null}
           </Card>
 
+        </div>
+
+        <div className={naSecao("trabalho")} data-secao="trabalho">
           {/* Capacidades */}
           <Card className="space-y-2 p-4">
             <h3 className="text-sm font-medium">{t("O que o agente pode fazer")}</h3>
@@ -1258,25 +1293,23 @@ export function AgentForm(props: Props) {
             ) : null}
           </Card>
 
+        </div>
+
+        <div className={naSecao("treinamentos")} data-secao="treinamentos">
           {/* O acervo que este assistente consulta (0181) */}
           <BasesDoAgente
             materiais={materiais}
             value={form.knowledge_source_ids}
             onChange={(ids) => patch({ knowledge_source_ids: ids })}
             disabled={disabled}
+            // A lista de materiais vem do servidor: recarregar a rota traz o
+            // que acabou de ser cadastrado, sem perder o que está no formulário.
+            aoCadastrarMaterial={() => router.refresh()}
           />
 
-          {/* Triggers */}
-          <Card className="space-y-2 p-4">
-            <h3 className="text-sm font-medium">{t("Quando ele entra em ação")}</h3>
-            <TriggerEditor
-              value={form.trigger_config}
-              onChange={(v) => patch({ trigger_config: v })}
-              disabled={disabled}
-              organizationTimezone={props.organizationTimezone}
-            />
-          </Card>
+        </div>
 
+        <div className={naSecao("trabalho")} data-secao="passar-para-pessoa">
           {/* Handoff */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Passar para uma pessoa")}</h3>
@@ -1325,6 +1358,20 @@ export function AgentForm(props: Props) {
               disabled={disabled}
             />
           </Card>
+        </div>
+
+        <div className={naConfig("conversa")} data-secao="gatilhos">
+          {/* Triggers */}
+          <Card className="space-y-2 p-4">
+            <h3 className="text-sm font-medium">{t("Quando ele entra em ação")}</h3>
+            <TriggerEditor
+              value={form.trigger_config}
+              onChange={(v) => patch({ trigger_config: v })}
+              disabled={disabled}
+              organizationTimezone={props.organizationTimezone}
+            />
+          </Card>
+
 
           {/* O OUTRO caminho para uma pessoa: o clima fechado
               (`ai.sentiment_alert`, em `workers/ai-sentiment-worker.ts`).
@@ -1339,6 +1386,9 @@ export function AgentForm(props: Props) {
             />
           )}
 
+        </div>
+
+        <div className={naSecao("trabalho")} data-secao="pedidos">
           {/* Casos humanos */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Pedir ajuda sem sair da conversa")}</h3>
@@ -1376,6 +1426,9 @@ export function AgentForm(props: Props) {
             </div>
           </Card>
 
+        </div>
+
+        <div className={naConfig("followup")} data-secao="followup">
           {/* Follow-up */}
           <Card className="space-y-3 p-4">
             <h3 className="text-sm font-medium">{t("Follow-up")}</h3>
@@ -1436,6 +1489,14 @@ export function AgentForm(props: Props) {
             />
           </Card>
 
+        </div>
+
+        <div className={naSecao("integracoes")} data-secao="integracoes">
+          {!isEdit ? (
+            <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+              {t("As integrações ficam disponíveis depois que o agente for criado.")}
+            </p>
+          ) : null}
           {/* Comandos pelo celular (`#on`/`#off`, C-076). Salva em
               `ai_agents.config.aceita_comandos_celular`. */}
           {isEdit && (
@@ -1471,4 +1532,22 @@ export function AgentForm(props: Props) {
       ) : null}
     </div>
   );
+}
+
+/** O título de cada seção no alto do painel da direita. */
+export function tituloDaSecao(secao: SecaoDoAgente, t: (texto: string) => string): string {
+  switch (secao) {
+    case "perfil":
+      return t("Perfil do agente");
+    case "trabalho":
+      return t("O trabalho dele");
+    case "treinamentos":
+      return t("Treinamentos");
+    case "canais":
+      return t("Canais");
+    case "integracoes":
+      return t("Integrações");
+    case "configuracoes":
+      return t("Configurações");
+  }
 }

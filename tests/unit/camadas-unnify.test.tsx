@@ -89,11 +89,10 @@ describe("diálogo (DS §10.14)", () => {
         "rounded-2xl",
         "p-6",
         "gap-6",
-        "max-w-md",
+        "max-w-[var(--largura-dialogo-md)]",
         "w-[calc(100%-2rem)]",
         "bg-popover",
         "border",
-        "shadow-xl",
         "max-h-[calc(100dvh-2rem)]",
         "overflow-y-auto",
       ]),
@@ -116,17 +115,17 @@ describe("diálogo (DS §10.14)", () => {
         </DialogContent>
       </Dialog>,
     );
-    expect(classes(screen.getByTestId("cabecalho"))).toContain("pr-10");
+    expect(classes(screen.getByTestId("cabecalho"))).toContain("pr-14");
     expect(classes(screen.getByTestId("rodape"))).toEqual(
       expect.arrayContaining([
-        "-mx-6",
-        "-mb-6",
-        "bg-muted/30",
+        "px-6",
+        "py-4",
+        "bg-muted/40",
         "border-t",
         "flex-col-reverse",
         "sm:flex-row",
         "sm:justify-end",
-        "gap-3",
+        "gap-2",
       ]),
     );
   });
@@ -200,7 +199,7 @@ describe("diálogo de alerta (DS §10.14, Work)", () => {
       </AlertDialog>,
     );
     expect(classes(screen.getByRole("alertdialog"))).toEqual(
-      expect.arrayContaining(["rounded-2xl", "bg-popover", "shadow-xl", "max-w-sm"]),
+      expect.arrayContaining(["rounded-2xl", "bg-popover", "max-w-[var(--largura-dialogo-sm)]"]),
     );
     expect(classes(screen.getByTestId("midia"))).toEqual(
       expect.arrayContaining(["size-10", "rounded-md", "bg-muted"]),
@@ -248,7 +247,7 @@ describe("painel lateral (DS §10.15, Work)", () => {
     const painel = screen.getByRole("dialog");
     expect(painel.getAttribute("data-lado")).toBe("left");
     expect(classes(painel)).toEqual(
-      expect.arrayContaining(["camada-gaveta", "w-3/4", "sm:max-w-sm", "bg-popover", "shadow-xl"]),
+      expect.arrayContaining(["camada-gaveta", "w-3/4", "sm:max-w-sm", "bg-popover"]),
     );
     expect(classes(screen.getByText("Filtros"))).toEqual(
       expect.arrayContaining(["text-lg", "leading-8", "font-semibold"]),
@@ -256,7 +255,7 @@ describe("painel lateral (DS §10.15, Work)", () => {
     // 24 do padding + 40 = 64 livres à direita
     expect(classes(screen.getByTestId("cabecalho"))).toContain("pr-10");
     expect(classes(screen.getByTestId("rodape"))).toEqual(
-      expect.arrayContaining(["mt-auto", "bg-muted/30", "border-t", "-mx-6", "-mb-6"]),
+      expect.arrayContaining(["mt-auto", "bg-muted/40", "border-t", "px-6", "py-4"]),
     );
     expect(classes(sobreposicao())).toEqual(
       expect.arrayContaining(["bg-overlay", "backdrop-blur-xs"]),
@@ -414,16 +413,17 @@ describe("fonte dos primitivos e do movimento", () => {
   it("o movimento segue o DS §7 e respeita movimento reduzido", () => {
     const css = ler("app/unnify/camadas.css");
     expect(ler("app/unnify/app.css")).toContain('@import "./camadas.css";');
-    // Diálogo: zoom 0,985 em 120ms com a curva emphasized
-    expect(css).toMatch(/scale:\s*0\.985/);
+    // Diálogo (guia de acabamento §4.3): escala 0,98, 200ms desacelerando na entrada
+    expect(css).toMatch(/scale:\s*0\.98\b/);
     expect(css).toMatch(
-      /\.camada-dialogo\[data-state="open"\]\s*\{\s*animation:[^;]*var\(--duration-fast\)\s+var\(--ease-out-slow\)/,
+      /\.camada-dialogo\[data-state="open"\]\s*\{\s*animation:[^;]*var\(--duracao-entrada\)\s+var\(--ease-entrada\)/,
     );
-    // Painel lateral: 2,5rem em 180ms
-    expect(css).toMatch(/--camada-gaveta-de:\s*2\.5rem 0/);
-    expect(css).toMatch(
-      /\.camada-gaveta\[data-state="open"\]\s*\{\s*animation:[^;]*var\(--duration-base\)/,
-    );
+    // Painel lateral (guia §4.4): 1,5rem (24px), 250ms na entrada
+    expect(css).toMatch(/--camada-gaveta-de:\s*1\.5rem 0/);
+    expect(css).toMatch(/\.camada-gaveta\[data-state="open"\]\s*\{\s*animation:[^;]*250ms/);
+    // A sombra das camadas é a `--sombra-camada` (com contorno no escuro)
+    expect(css).toMatch(/\.camada-dialogo\s*\{\s*box-shadow:\s*var\(--sombra-camada\)/);
+    expect(css).toMatch(/\.camada-gaveta\s*\{[^}]*box-shadow:\s*var\(--sombra-camada\)/);
     // Dica: 100ms
     expect(css).toMatch(/camada-dica-entra 100ms/);
     // Movimento reduzido: todas as camadas sem animação

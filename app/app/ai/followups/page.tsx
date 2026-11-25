@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
+const ALVO_DAS_ACOES = "acoes-do-cabecalho-followups";
 const FLOW_COLUMNS = "id, name, status, active_version_id, handoff_policy, updated_at";
 
 export default async function FollowupFlowsPage() {
@@ -44,6 +45,8 @@ export default async function FollowupFlowsPage() {
         description={t(
           "Fluxos automáticos de reengajamento — silêncio, etapa, webhook ou resposta do contato, sem intervenção em cada mensagem.",
         )}
+        // A lista de fluxos põe as ações aqui (linha do título, à direita).
+        actions={canWrite ? <div id={ALVO_DAS_ACOES} className="contents" /> : undefined}
       />
       <Tabs defaultValue="fluxos" className="flex flex-1 flex-col">
         <TabsList>
@@ -51,7 +54,7 @@ export default async function FollowupFlowsPage() {
           <TabsTrigger value="fila">{t("Fila")}</TabsTrigger>
         </TabsList>
         <TabsContent value="fluxos">
-          <FlowsList initialData={flows} canWrite={canWrite} />
+          <FlowsList initialData={flows} canWrite={canWrite} idDoAlvoDasAcoes={ALVO_DAS_ACOES} />
         </TabsContent>
         <TabsContent value="fila">
           <QueueTab canWrite={canWrite} />

@@ -272,7 +272,8 @@ function montar(props: { painelRecolhidoInicial?: boolean } = {}) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={qc}>
-      <InboxLayout {...props} />
+      {/* Com conversa aberta: o painel do contato (e a divisória dele) só existem então. */}
+      <InboxLayout initialSelectedId="conv-1" {...props} />
     </QueryClientProvider>,
   );
 }
@@ -496,12 +497,13 @@ describe("no layout — duas divisorias arrastáveis (#2579)", () => {
   it("seta direita na alça da ficha leva a alça para a direita (a ficha encolhe)", async () => {
     montar();
     const ficha = await alca(1);
-    expect(ficha.style.right).toBe("296px");
+    // A alça mora no meio do vão de 8px entre os painéis: `right` = largura da ficha + 4.
+    expect(ficha.style.right).toBe("300px");
     fireEvent.keyDown(ficha, { key: "ArrowRight" });
     expect(ficha).toHaveAttribute("aria-valuenow", String(296 - PASSO_TECLADO));
-    expect(ficha.style.right).toBe(`${296 - PASSO_TECLADO}px`);
+    expect(ficha.style.right).toBe(`${296 - PASSO_TECLADO + 4}px`);
     fireEvent.keyDown(ficha, { key: "ArrowLeft" });
-    expect(ficha.style.right).toBe("296px");
+    expect(ficha.style.right).toBe("300px");
   });
 
   it("armazenamento bloqueado no navegador não derruba o Inbox", async () => {

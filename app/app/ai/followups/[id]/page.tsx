@@ -62,7 +62,7 @@ export default async function FollowupFlowBuilderPage({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="casca-ferramenta flex flex-col">
       <FlowBuilder flowId={id} initialData={flow} />
     </div>
   );

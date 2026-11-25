@@ -12,13 +12,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { apiClient } from "@/lib/api/client";
 import { showApiError } from "@/components/feedback/ApiErrorToast";
 import type { MessageTemplate } from "@/hooks/inbox/useMessageTemplates";
@@ -316,15 +317,16 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{isEdit ? t("Editar resposta rápida") : t("Nova resposta rápida")}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" size="md">
+        <SheetHeader>
+          <SheetTitle>{isEdit ? t("Editar resposta rápida") : t("Nova resposta rápida")}</SheetTitle>
+          <SheetDescription>
             {t("Respostas rápidas: o texto cai no campo editável do Inbox; a imagem e o áudio entram na fila de anexos, com prévia, e você revisa antes de enviar.")}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-4">
+          </SheetDescription>
+        </SheetHeader>
+        <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+          <SheetBody className="space-y-4">
           <div className="space-y-2">
             <Label>{t("Tipo de resposta rápida")}</Label>
             {/* Alternar o tipo é trocar de visão dentro do formulário: controle
@@ -494,16 +496,17 @@ export function TemplateFormDialog({ open, onOpenChange, canShare, template }: P
               <Label htmlFor="tpl-shared">{t("Compartilhar com a equipe")}</Label>
             </div>
           )}
-          <DialogFooter>
+          </SheetBody>
+          <SheetFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               {t("Cancelar")}
             </Button>
             <Button type="submit" disabled={pending || (tipo === "texto" && estourou)}>
               {isEdit ? t("Salvar") : t("Criar resposta rápida")}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

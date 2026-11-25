@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { CLASSES_DO_GATILHO_DO_MENU } from "@/components/cartao-de-registro";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,7 +81,7 @@ export function AgentRowMenu({ agent }: Props) {
             size="icon"
             aria-label={t("Menu de ações")}
             disabled={isPending}
-            className="md:size-8"
+            className={cn(CLASSES_DO_GATILHO_DO_MENU, "md:size-8")}
           >
             <DotsThree size={18} aria-hidden />
           </Button>

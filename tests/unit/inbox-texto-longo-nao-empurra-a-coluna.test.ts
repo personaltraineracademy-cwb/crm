@@ -112,7 +112,15 @@ describe("inbox — texto longo não empurra a coluna (#1802)", () => {
     const fonte = ler(LAYOUT);
 
     // Coluna da conversa — protegida pelo f7b1ef4, é a que o #1802 aponta.
-    expect(fonte).toMatch(/h-full min-h-0 min-w-0 flex-col lg:flex/);
+    // Ancorada no marcador da coluna (`group/conversa`), não na cadeia inteira
+    // de classes: o tema petróleo acrescentou `overflow-hidden rounded-xl
+    // bg-card` no meio dela e a régua reprovou com o `min-w-0` no lugar. O que
+    // importa é a classe estar na coluna, não a vizinhança dela.
+    const conversa = fonte.split("\n").filter((l) => l.includes("group/conversa"));
+    expect(conversa, "esperava UMA coluna da conversa no layout").toHaveLength(1);
+    for (const classe of ["min-w-0", "min-h-0", "flex-col", "lg:flex"]) {
+      expect(conversa[0], `a coluna da conversa precisa de ${classe}`).toContain(classe);
+    }
 
     // Coluna do CRM, trilha fixa do grid: min-w-0 como defesa uniforme com a
     // coluna da conversa (o transbordo do fato ficava dentro do painel).

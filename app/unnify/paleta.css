@@ -20,7 +20,7 @@
    substitui as chaves padrão.
 
    - sky, blue e indigo: a rampa de ação/informação do Unnify (o sky-500 do
-     Tailwind é ciano; o `info` do Unnify é `#0066cc`). A 400 é o primário
+     Tailwind é ciano; o `info` do Unnify é `#24555e`). A 400 é o primário
      escuro, porque `dark:text-sky-400` é o uso típico.
    - gray: a escala neutra clara do Unnify, constante.
    - yellow: a rampa do amber abaixo (um segundo amarelo só somava cor).
@@ -31,53 +31,53 @@
    ───────────────────────────────────────────────────────────────────────── */
 @theme {
   /* sky → ação/informação */
-  --color-sky-50: #eaf2fc;
-  --color-sky-100: #dceafa;
-  --color-sky-200: #b8d8ff;
-  --color-sky-300: #9bbbe0;
-  --color-sky-400: #75b7ff;
-  --color-sky-500: #0066cc;
-  --color-sky-600: #005bb5;
-  --color-sky-700: #0055aa;
-  --color-sky-800: #004f9e;
-  --color-sky-900: #203d5c;
-  --color-sky-950: #203750;
+  --color-sky-50: #e6f4f7;
+  --color-sky-100: #d5eef2;
+  --color-sky-200: #bddbe1;
+  --color-sky-300: #a0bec4;
+  --color-sky-400: #8fb3bb;
+  --color-sky-500: #24555e;
+  --color-sky-600: #1a4951;
+  --color-sky-700: #254142;
+  --color-sky-800: #1d3b3c;
+  --color-sky-900: #122c2c;
+  --color-sky-950: #002828;
   /* blue → ação/informação */
-  --color-blue-50: #eaf2fc;
-  --color-blue-100: #dceafa;
-  --color-blue-200: #b8d8ff;
-  --color-blue-300: #9bbbe0;
-  --color-blue-400: #75b7ff;
-  --color-blue-500: #0066cc;
-  --color-blue-600: #005bb5;
-  --color-blue-700: #0055aa;
-  --color-blue-800: #004f9e;
-  --color-blue-900: #203d5c;
-  --color-blue-950: #203750;
+  --color-blue-50: #e6f4f7;
+  --color-blue-100: #d5eef2;
+  --color-blue-200: #bddbe1;
+  --color-blue-300: #a0bec4;
+  --color-blue-400: #8fb3bb;
+  --color-blue-500: #24555e;
+  --color-blue-600: #1a4951;
+  --color-blue-700: #254142;
+  --color-blue-800: #1d3b3c;
+  --color-blue-900: #122c2c;
+  --color-blue-950: #002828;
   /* indigo → ação/informação (0 usos hoje; prevenção) */
-  --color-indigo-50: #eaf2fc;
-  --color-indigo-100: #dceafa;
-  --color-indigo-200: #b8d8ff;
-  --color-indigo-300: #9bbbe0;
-  --color-indigo-400: #75b7ff;
-  --color-indigo-500: #0066cc;
-  --color-indigo-600: #005bb5;
-  --color-indigo-700: #0055aa;
-  --color-indigo-800: #004f9e;
-  --color-indigo-900: #203d5c;
-  --color-indigo-950: #203750;
+  --color-indigo-50: #e6f4f7;
+  --color-indigo-100: #d5eef2;
+  --color-indigo-200: #bddbe1;
+  --color-indigo-300: #a0bec4;
+  --color-indigo-400: #8fb3bb;
+  --color-indigo-500: #24555e;
+  --color-indigo-600: #1a4951;
+  --color-indigo-700: #254142;
+  --color-indigo-800: #1d3b3c;
+  --color-indigo-900: #122c2c;
+  --color-indigo-950: #002828;
   /* gray → escala neutra clara do Unnify */
-  --color-gray-50: #f7f8fb;
-  --color-gray-100: #eef1f5;
-  --color-gray-200: #d2d9e2;
-  --color-gray-300: #b4bcc8;
-  --color-gray-400: #aab3c0;
-  --color-gray-500: #858e9b;
-  --color-gray-600: #626a77;
-  --color-gray-700: #343c48;
-  --color-gray-800: #2a303a;
-  --color-gray-900: #20242c;
-  --color-gray-950: #10141b;
+  --color-gray-50: #f4f9fa;
+  --color-gray-100: #ecf2f3;
+  --color-gray-200: #d1dadc;
+  --color-gray-300: #b2bec0;
+  --color-gray-400: #a8b5b7;
+  --color-gray-500: #819193;
+  --color-gray-600: #5a6e6f;
+  --color-gray-700: #284041;
+  --color-gray-800: #1a3535;
+  --color-gray-900: #10201f;
+  --color-gray-950: #001919;
   /* yellow → rampa do amber (aviso) */
   --color-yellow-50: #fffbeb;
   --color-yellow-100: #fef3c7;

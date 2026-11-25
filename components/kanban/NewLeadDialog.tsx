@@ -3,10 +3,11 @@
 import { useActiveOrg } from "@/hooks/auth/AuthProvider";
 import { useT } from "@/hooks/i18n/useT";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,7 +16,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldHint,
+  FieldLabel,
+  FieldRow,
+  FieldSection,
+} from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -41,6 +48,7 @@ import { rotuloDoContato } from "@/lib/contacts/rotulo-do-contato";
 import type { Contact } from "@/lib/types/contacts";
 import { EcoDoValor } from "./EcoDoValor";
 import { SeletorDeContato } from "./SeletorDeContato";
+import { EtiquetasDoContato } from "@/components/contacts/EtiquetasDoContato";
 
 interface FormShape {
   title: string;
@@ -79,6 +87,13 @@ interface Props {
    * que não exige nada continua com o formulário byte a byte como era.
    */
   settings?: Record<string, unknown> | null;
+  /**
+   * A etapa em que o negócio nasce quando o diálogo é aberto de DENTRO de uma
+   * coluna ("+ Adicionar negócio" no pé dela). Ausente = a etapa padrão do
+   * funil, como sempre. Aplicada a cada abertura: quem abriu pela coluna
+   * "Proposta" e depois pelo botão Criar não pode herdar a etapa anterior.
+   */
+  etapaInicial?: string | null;
 }
 
 function defaultStageId(stages: Stage[]): string {
@@ -95,14 +110,27 @@ export function NewLeadDialog({
   leads,
   settings,
   onCreated,
+  etapaInicial,
 }: Props) {
   const t = useT();
   const org = useActiveOrg();
   // Negócio NOVO nasce na moeda da organização (createLeadHandler).
   const moedaDoValor = org?.currency ?? MOEDA_PADRAO;
   const create = useCreateLead(pipelineId);
-  const initialStage = useMemo(() => defaultStageId(stages), [stages]);
+  const initialStage = useMemo(
+    () =>
+      etapaInicial && stages.some((s) => s.id === etapaInicial)
+        ? etapaInicial
+        : defaultStageId(stages),
+    [stages, etapaInicial],
+  );
   // Quem abre o diálogo já sabendo o contato (Inbox) não escolhe de novo.
+  // O texto de etiqueta ainda digitado no campo (vai junto no envio).
+  const [etiquetaPendente, setEtiquetaPendente] = useState<string | null>(null);
+  // "Mais dados" (descrição e tags) abre RECOLHIDO — guia: o que não é do caminho
+  // principal não pesa no primeiro olhar. O corpo segue montado, então o que foi
+  // digitado não se perde ao fechar.
+  const [maisAberto, setMaisAberto] = useState(false);
   const [contato, setContato] = useState<Contact | null>(null);
   /**
    * OS CAMPOS PERSONALIZADOS QUE A ETAPA EXIGE (issue #3038) — o valor que o
@@ -145,6 +173,8 @@ export function NewLeadDialog({
     if (!open) {
       setContato(null);
       setAviso(null);
+      setEtiquetaPendente(null);
+      setMaisAberto(false);
       setCamposDoNegocio({});
     }
   }
@@ -160,12 +190,29 @@ export function NewLeadDialog({
     },
   });
 
+  // As etiquetas do negócio novo, como chips (guia M2): o seletor grava em
+  // `tagsRaw` (a lista unida por vírgula), que o envio já sabia ler. O texto
+  // ainda digitado no campo entra no envio, para o clique em "Criar lead" sem
+  // Enter não perder a etiqueta em silêncio.
+  const tagsRawAtual = useWatch({ control: form.control, name: "tagsRaw" }) ?? "";
+  const tagsDoNegocio = tagsRawAtual
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+
   // Reset stage_id default if stages change while dialog mounted.
   useEffect(() => {
     if (!form.getValues("stage_id") && initialStage) {
       form.setValue("stage_id", initialStage);
     }
   }, [initialStage, form]);
+  // Aberto pela coluna: a etapa dela vale a CADA abertura (o componente não
+  // desmonta ao fechar, então o valor da abertura anterior ficaria).
+  useEffect(() => {
+    if (open && etapaInicial && initialStage === etapaInicial) {
+      form.setValue("stage_id", etapaInicial);
+    }
+  }, [open, etapaInicial, initialStage, form]);
 
   const stageId = form.watch("stage_id");
 
@@ -241,10 +288,13 @@ export function NewLeadDialog({
     // não mostrava.
     if (faltandoNaEtapa.length > 0) return;
 
-    const tags = values.tagsRaw
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const tags = [
+      ...values.tagsRaw
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      ...(etiquetaPendente ? [etiquetaPendente] : []),
+    ];
 
     const reais = values.valueReais.trim();
     let valueCents: number | null = null;
@@ -327,6 +377,8 @@ export function NewLeadDialog({
       });
       setContato(null);
       setAviso(null);
+      setEtiquetaPendente(null);
+      setMaisAberto(false);
       setCamposDoNegocio({});
       onOpenChange(false);
     } catch {
@@ -356,39 +408,33 @@ export function NewLeadDialog({
             {t("Crie um lead manualmente neste pipeline.")}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="contents">
+          <DialogBody>
           {!contactId && (
-            <>
+            <FieldSection title={t("Cliente")}>
               <SeletorDeContato escolhido={contato} onEscolher={escolherContato} />
               {faltaContato && (
-                <p className="text-xs text-muted-foreground">
+                <FieldHint>
                   {t("Sem contato, este lead não recebe WhatsApp nem entra nas automações.")}
-                </p>
+                </FieldHint>
               )}
-            </>
+            </FieldSection>
           )}
+          <FieldSection title={t("Negócio")}>
 
-          <div className="space-y-2">
-            <Label htmlFor="title">{t("Título")}</Label>
+          <Field>
+            <FieldLabel obrigatorio htmlFor="title">
+              {t("Título")}
+            </FieldLabel>
             <Input
               id="title"
               placeholder={t("Ex: Pedido Maria — combo presente")}
               {...form.register("title", { required: true, minLength: 2 })}
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">{t("Descrição")}</Label>
-            <Textarea
-              id="description"
-              rows={3}
-              placeholder={t("Contexto, observações, links…")}
-              {...form.register("description")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>{t("Etapa")}</Label>
+          <Field>
+            <FieldLabel>{t("Etapa")}</FieldLabel>
             <Select
               value={stageId}
               onValueChange={(v) => form.setValue("stage_id", v)}
@@ -406,13 +452,15 @@ export function NewLeadDialog({
                   ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
+          <FieldRow>
+            <Field>
               {/* Negócio novo: o rótulo segue a moeda da organização, que é onde ele
                   vai nascer. `R$` em duro mentia para quem opera em euro. */}
-              <Label htmlFor="valueReais">{t("Valor")} ({simboloDaMoeda(moedaDoValor)})</Label>
+              <FieldLabel htmlFor="valueReais">
+                {t("Valor")} ({simboloDaMoeda(moedaDoValor)})
+              </FieldLabel>
               <Input
                 id="valueReais"
                 inputMode="decimal"
@@ -425,25 +473,47 @@ export function NewLeadDialog({
                   {form.formState.errors.valueReais.message}
                 </p>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="expected_close_date">{t("Fechamento previsto")}</Label>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="expected_close_date">{t("Fechamento previsto")}</FieldLabel>
               <Input
                 id="expected_close_date"
                 type="date"
                 {...form.register("expected_close_date")}
               />
-            </div>
-          </div>
+            </Field>
+          </FieldRow>
+          </FieldSection>
 
-          <div className="space-y-2">
-            <Label htmlFor="tagsRaw">{t("Tags (separadas por vírgula)")}</Label>
-            <Input
-              id="tagsRaw"
-              placeholder="vip, recompra"
-              {...form.register("tagsRaw")}
+          <FieldSection
+            title={t("Mais dados")}
+            recolhida={!maisAberto}
+            aoAlternar={() => setMaisAberto((v) => !v)}
+          >
+          <Field>
+            <FieldLabel htmlFor="description">{t("Descrição")}</FieldLabel>
+            <Textarea
+              id="description"
+              rows={3}
+              placeholder={t("Contexto, observações, links…")}
+              {...form.register("description")}
             />
-          </div>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="tagsRaw">{t("Tags")}</FieldLabel>
+            <EtiquetasDoContato
+              inputId="tagsRaw"
+              ocultarVazio
+              value={tagsDoNegocio}
+              onChange={(proximas) =>
+                form.setValue("tagsRaw", proximas.join(","), { shouldDirty: true })
+              }
+              onPendente={setEtiquetaPendente}
+              disabled={create.isPending}
+            />
+          </Field>
+          </FieldSection>
 
           {/* OS CAMPOS QUE A ETAPA EXIGE (issue #3038) — pelo renderizador ÚNICO
               dos campos personalizados (`CustomFieldsEditor`, o mesmo do dossiê
@@ -455,7 +525,7 @@ export function NewLeadDialog({
               a MESMA do servidor (`recusaDeCamposObrigatorios`), agora ao lado
               do campo — o aviso antigo aparecia sem nada para preencher. */}
           {camposExigidos.length > 0 && (
-            <div className="space-y-3 rounded-md border border-border p-3">
+            <div className="mt-6 space-y-3">
               <p className="text-sm font-medium">
                 {t("A etapa escolhida exige alguns dados. Preencha para continuar.")}
               </p>
@@ -510,11 +580,12 @@ export function NewLeadDialog({
               </div>
             </div>
           )}
+          </DialogBody>
 
           <DialogFooter>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={create.isPending}
             >

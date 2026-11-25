@@ -2,10 +2,10 @@
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useT } from "@/hooks/i18n/useT";
 import type { AgentRow } from "@/hooks/ai/useAgent";
+import { aparenciaDoAgente } from "@/lib/ai/agents/aparencia";
+import { AvatarDoAgente } from "./AvatarDoAgente";
 import { AgentStatusBadge, deriveAgentStatus } from "./AgentStatusBadge";
 import { AgentRowMenu } from "./AgentRowMenu";
 
@@ -52,58 +52,86 @@ export function modeloEmVigor(agent: AgentRow): string {
   return `${provedor} · ${resto.join("/")}`;
 }
 
+/**
+ * O modelo em nome de gente, SÓ para o cartão: «anthropic · claude-sonnet-5» vira
+ * «Claude Sonnet 5». O que não segue o padrão (outro provedor, id desconhecido)
+ * aparece como veio — nunca se inventa um nome. O valor gravado e o
+ * `modeloEmVigor` (que o teste de contrato fixa) não mudam.
+ */
+export function modeloParaLeigo(modelo: string): string {
+  const id = modelo.includes(" · ") ? modelo.split(" · ").slice(1).join(" · ") : modelo;
+  const m = /^claude-(opus|sonnet|haiku|fable)-(\d+(?:-\d+)*)$/.exec(id);
+  const [, nomeDaFamilia, versao] = m ?? [];
+  if (!nomeDaFamilia || !versao) return modelo;
+  const familia = nomeDaFamilia.charAt(0).toUpperCase() + nomeDaFamilia.slice(1);
+  return `Claude ${familia} ${versao.replace(/-/g, ".")}`;
+}
+
+/** O tipo do agente em palavra de gente; o valor técnico (`kind`) segue o mesmo no banco. Tipo desconhecido aparece como veio. */
+function tipoDoAgente(kind: string, t: (texto: string) => string): string {
+  if (kind === "mcp_agent") return t("Agente com ferramentas");
+  if (kind === "rag_bot") return t("Responde pela base de conhecimento");
+  return kind;
+}
+
+/**
+ * O AGENTE NA LISTA, como LINHA (pedido da dona, 25/11/2026, com print de
+ * referência): rosto, nome, estado e, embaixo, a descrição e o modelo; o menu
+ * de ações na ponta. O nome é o link para a tela do agente.
+ */
 export function AgentCard({ agent, canWrite }: Props) {
   const t = useT();
   const status = deriveAgentStatus(agent);
+  const meta = [
+    <span
+      key="modelo"
+      title={
+        origemDoModelo(agent) === "versao_publicada"
+          ? t("Modelo da versão publicada — é o que atende o cliente.")
+          : t("Modelo do cadastro; nenhuma versão publicada ainda.")
+      }
+    >
+      {modeloParaLeigo(modeloEmVigor(agent))}
+    </span>,
+    // "Agente com ferramentas" é o tipo de quase todo agente: repetido em toda
+    // linha, não diz nada. Só aparece o tipo que FOGE do comum.
+    agent.kind === "mcp_agent" || !agent.kind ? null : `${t("Tipo")}: ${tipoDoAgente(agent.kind, t)}`,
+    // A ordem só importa quando alguém a mexeu.
+    agent.priority ? `${t("Ordem de preferência")}: ${agent.priority}` : null,
+  ].filter(Boolean);
 
   return (
-    <Card className="flex h-full flex-col gap-3 p-4">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate font-medium" title={agent.name}>
-            {agent.name}
-          </h3>
-          <p
-            className="truncate text-xs text-muted-foreground"
-            title={
-              origemDoModelo(agent) === "versao_publicada"
-                ? t("Modelo da versão publicada — é o que atende o cliente.")
-                : t("Modelo do cadastro; nenhuma versão publicada ainda.")
-            }
+    <div className="group relative flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5">
+      <AvatarDoAgente aparencia={aparenciaDoAgente(agent.config, agent.name)} className="rounded-full" />
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/app/ai/agents/${agent.id}`}
+            className="truncate text-base font-semibold text-foreground after:absolute after:inset-0 hover:underline"
           >
-            {modeloEmVigor(agent)}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
+            {agent.name}
+          </Link>
+          <AgentStatusBadge status={status} />
           {agent.is_default && (
             <Badge variant="secondary" className="text-xs">
               {t("default")}
             </Badge>
           )}
-          <AgentStatusBadge status={status} />
-          {canWrite && <AgentRowMenu agent={agent} />}
         </div>
+        {agent.description ? (
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">{agent.description}</p>
+        ) : null}
+        <p className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">
+          {meta.map((m, n) => (
+            <span key={n}>{m}</span>
+          ))}
+        </p>
       </div>
-      {agent.description && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">{agent.description}</p>
-      )}
-      <dl className="grid grid-cols-2 gap-2 pt-1 text-xs">
-        <div>
-          <dt className="text-muted-foreground">{t("Tipo")}</dt>
-          <dd className="font-mono">{agent.kind ?? "rag_bot"}</dd>
+      {canWrite ? (
+        <div className="relative z-10 shrink-0">
+          <AgentRowMenu agent={agent} />
         </div>
-        <div>
-          <dt className="text-muted-foreground">{t("Prioridade")}</dt>
-          <dd className="font-mono">{agent.priority ?? "—"}</dd>
-        </div>
-      </dl>
-      <div className="mt-auto pt-2">
-        <Link href={`/app/ai/agents/${agent.id}`}>
-          <Button variant="outline" size="sm" className="w-full">
-            {canWrite ? t("Editar") : t("Visualizar")}
-          </Button>
-        </Link>
-      </div>
-    </Card>
+      ) : null}
+    </div>
   );
 }

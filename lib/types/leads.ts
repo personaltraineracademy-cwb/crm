@@ -1,4 +1,5 @@
 import type { ScoreBand } from "@/lib/kanban/score-band";
+import type { OrigemResumida } from "@/lib/leads/origem-resumida";
 import type { ResumoDasTarefas } from "@/lib/tarefas/tipos";
 
 /**
@@ -126,6 +127,13 @@ export interface Lead {
    * Os links vêm de `contacts.custom_fields` (`lib/leads/links-de-contato.ts`),
    * já validados — só http/https.
    */
+  /**
+   * Derivado (não é coluna): a origem do CONTATO deste negócio (UTM do link ou
+   * anúncio), lida de `contacts.source` e `contacts.source_metadata`. É o que o
+   * card e o dossiê mostram em "Origem". Ausente quando o negócio não tem
+   * contato ou o contato foi anonimizado (LGPD).
+   */
+  contact_origem?: OrigemResumida;
   contact_phone?: string;
   contact_email?: string;
   contact_links?: Array<{ tipo: string; href: string }>;

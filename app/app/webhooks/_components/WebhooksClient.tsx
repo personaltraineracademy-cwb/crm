@@ -32,21 +32,20 @@ export function WebhooksClient({ abaInicial }: { abaInicial?: AbaDosWebhooks }) 
     // Ao acrescentar ou renomear aba, MEDIR de novo — este número não se
     // estima a olho.
     //
-    // Abaixo de `lg` a aba tem 44px (`min-h-11` do trigger) e a lista quebra
-    // linha (`flex-wrap` abaixo): uma fila = 44 + 8 do `p-1` = 52px. Abaixo de
-    // `sm` (a 390px sobram ~310px úteis) as quatro abas viram DUAS filas, 96px.
-    // Contas pelas classes, não medidas; o `max-w-full` impede que os 432px
-    // empurrem o <main> para o lado no celular.
+    // Abaixo de `lg` a aba tem 44px (`min-h-11` do trigger) e a lista é UMA fila
+    // que rola de lado, com esmaecimento na ponta (guia 2.5: nunca quebrar em
+    // duas linhas): 44 + 4 do `p-0.5` = 48px. Conta pelas classes; o `max-w-full`
+    // impede que os 432px empurrem o <main> para o lado no celular.
     return (
       <div className="flex-1">
-        <Skeleton className="h-24 w-[432px] max-w-full sm:h-[52px] lg:h-9" />
+        <Skeleton className="h-12 w-[432px] max-w-full lg:h-9" />
       </div>
     );
   }
 
   return (
     <Tabs defaultValue={abaInicial ? ABAS[abaInicial] : "sources"} className="flex-1">
-      <TabsList className="h-auto flex-wrap justify-start">
+      <TabsList className="justify-start">
         <TabsTrigger value="sources">{t("Receber dados")}</TabsTrigger>
         <TabsTrigger value="capturas">{t("Leads recebidos")}</TabsTrigger>
         <TabsTrigger value="rules">{t("Automações")}</TabsTrigger>

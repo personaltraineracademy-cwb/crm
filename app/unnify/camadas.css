@@ -31,51 +31,140 @@
   }
 }
 .camada-cortina[data-state="open"] {
-  animation: camada-cortina-entra var(--duration-fast) var(--ease-out) both;
+  animation: camada-cortina-entra var(--duracao-entrada) var(--ease-entrada) both;
 }
 .camada-cortina[data-state="closed"] {
-  animation: camada-cortina-sai var(--duration-fast) var(--ease-out) both;
+  animation: camada-cortina-sai var(--duracao-saida) var(--ease-saida) both;
 }
 
-/* ---- Diálogo (Work): fade + zoom 0,985, 120ms, emphasized --------------- */
+/* ---- Diálogo: esqueleto, sombra e movimento (guia de acabamento §4.3) ---
+   Duas formas, escolhidas pelo que há DENTRO (`:has`):
+   · legado, sem `DialogBody`: a base do `dialog.tsx` (grid, padding e gap de
+     24, teto de 100dvh − 2rem, o conteúdo inteiro rola, #2044). Aqui só o
+     rodapé muda: fica colado embaixo da janela (sticky), sempre à vista;
+   · novo, com `DialogBody`: grid de 3 linhas (cabeçalho, corpo, rodapé) sem
+     padding próprio e com `overflow: hidden`; só o corpo rola.
+   Entrada 200ms desacelerando e saída 150ms acelerando (--ease-entrada e
+   --ease-saida), só opacidade e escala. */
+.camada-dialogo {
+  box-shadow: var(--sombra-camada);
+}
+[data-slot="dialog-content"].camada-dialogo:has([data-slot="dialog-body"]) {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+[data-slot="dialog-content"].camada-dialogo:not(:has([data-slot="dialog-body"]))
+  [data-slot="dialog-header"] {
+  padding: 0 2.5rem 0 0;
+}
+[data-slot="dialog-content"].camada-dialogo:not(:has([data-slot="dialog-body"]))
+  [data-slot="dialog-footer"] {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: 0 -1.5rem -1.5rem;
+  padding: 1rem 1.5rem;
+  /* OPACO: o `muted/40` translúcido deixava o campo de baixo aparecer através
+     do rodapé (revisão da rodada 2, defeito 2). A mesma mistura, sobre o fundo
+     da camada. */
+  background: color-mix(in srgb, var(--muted) 40%, var(--popover));
+}
+
+/* Celular (< 640): o diálogo de formulário (com `DialogBody`) vira folha que
+   sobe de baixo: largura total, raio 16 só em cima, teto de 92dvh e rodapé com
+   a área segura. Confirmação e diálogo legado seguem centralizados (a tela − 32). */
+@media (max-width: 639px) {
+  [data-slot="dialog-content"].camada-dialogo:has([data-slot="dialog-body"]) {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    translate: 0 0;
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    border-radius: 1rem 1rem 0 0;
+    border-bottom-width: 0;
+  }
+  [data-slot="dialog-content"].camada-dialogo:has([data-slot="dialog-body"]) [data-slot="dialog-footer"] {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    border-radius: 0;
+  }
+}
+
 @keyframes camada-dialogo-entra {
   from {
     opacity: 0;
-    scale: 0.985;
+    scale: 0.98;
   }
 }
 @keyframes camada-dialogo-sai {
   to {
     opacity: 0;
-    scale: 0.985;
+    scale: 0.98;
   }
 }
 .camada-dialogo[data-state="open"] {
-  animation: camada-dialogo-entra var(--duration-fast) var(--ease-out-slow) both;
+  animation: camada-dialogo-entra var(--duracao-entrada) var(--ease-entrada) both;
 }
 .camada-dialogo[data-state="closed"] {
-  animation: camada-dialogo-sai var(--duration-fast) var(--ease-out-slow) both;
+  animation: camada-dialogo-sai var(--duracao-saida) var(--ease-saida) both;
 }
 
-/* ---- Painel lateral: desliza 2,5rem + opacidade, 180ms, standard --------
-   O lado vem de `data-lado` (o `Dialog.Content` do Radix não emite
-   `data-side`). Com 2,5rem, e não 100%, a gaveta PRECISA da opacidade: ela
-   nasce a 40px do lugar e chega ao mesmo tempo em que aparece. */
+/* ---- Painel lateral: esqueleto, sombra e movimento (guia §4.4) -----------
+   Desliza 1,5rem (24px) + opacidade; entrada 250ms desacelerando, saída
+   200ms acelerando. O lado vem de `data-lado` (o `Dialog.Content` do Radix
+   não emite `data-side`). Com 1,5rem, e não 100%, a gaveta PRECISA da
+   opacidade: ela nasce a 24px do lugar e chega ao mesmo tempo em que aparece.
+
+   Esqueleto novo (com `SheetBody`): coluna sem padding, cabeçalho e rodapé
+   fixos e só o corpo rola. Legado (sem `SheetBody`): o conteúdo inteiro rola e
+   o rodapé fica colado embaixo da janela. */
 .camada-gaveta {
-  --camada-gaveta-de: 2.5rem 0;
+  --camada-gaveta-de: 1.5rem 0;
+  box-shadow: var(--sombra-camada);
 }
 .camada-gaveta[data-lado="left"] {
-  --camada-gaveta-de: -2.5rem 0;
+  --camada-gaveta-de: -1.5rem 0;
 }
 .camada-gaveta[data-lado="top"] {
-  --camada-gaveta-de: 0 -2.5rem;
+  --camada-gaveta-de: 0 -1.5rem;
 }
 .camada-gaveta[data-lado="bottom"] {
-  --camada-gaveta-de: 0 2.5rem;
+  --camada-gaveta-de: 0 1.5rem;
   /* A gaveta de baixo encosta no indicador de home: reserva a área segura.
      Classe + atributo vence o `p-6` da base por especificidade. */
   padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
 }
+
+[data-slot="sheet-content"].camada-gaveta {
+  overflow: hidden;
+}
+[data-slot="sheet-content"].camada-gaveta:has([data-slot="sheet-body"]) {
+  gap: 0;
+  padding: 0;
+}
+[data-slot="sheet-content"].camada-gaveta:has([data-slot="sheet-body"]) [data-slot="sheet-header"] {
+  padding: 1rem 3.5rem 1rem 1.5rem;
+}
+[data-slot="sheet-content"].camada-gaveta:has([data-slot="sheet-body"]) [data-slot="sheet-body"] {
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+[data-slot="sheet-content"].camada-gaveta:not(:has([data-slot="sheet-body"])) {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+[data-slot="sheet-content"].camada-gaveta:not(:has([data-slot="sheet-body"])) [data-slot="sheet-footer"] {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: auto -1.5rem -1.5rem;
+  padding: 1rem 1.5rem;
+  background: color-mix(in srgb, var(--muted) 40%, var(--popover));
+}
+
 @keyframes camada-gaveta-entra {
   from {
     opacity: 0;
@@ -89,10 +178,10 @@
   }
 }
 .camada-gaveta[data-state="open"] {
-  animation: camada-gaveta-entra var(--duration-base) var(--ease-out) both;
+  animation: camada-gaveta-entra 250ms var(--ease-entrada) both;
 }
 .camada-gaveta[data-state="closed"] {
-  animation: camada-gaveta-sai var(--duration-base) var(--ease-out) both;
+  animation: camada-gaveta-sai 200ms var(--ease-saida) both;
 }
 
 /* ---- Popover e menu: fade + zoom 95% + 8px da borda, 150ms -------------

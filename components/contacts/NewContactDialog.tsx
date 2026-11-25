@@ -8,6 +8,7 @@ import { roleAtLeast } from "@/lib/auth/types";
 import { PAIS_PADRAO, perfilDoPais } from "@/lib/legal/perfil-do-pais";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,7 +17,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldControl,
+  FieldError,
+  FieldHint,
+  FieldLabel,
+  FieldRow,
+  FieldSection,
+} from "@/components/ui/field";
 import { normalizarTags } from "@/lib/contacts/tag-normalizada";
 import { contactCreateSchemaDoPais, type ContactCreate } from "@/lib/schemas/contacts";
 import type { Contact } from "@/lib/types/contacts";
@@ -66,6 +75,10 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
   // papéis a paleta nem chega ao campo, como na ficha e no editor do Inbox.
   const podeDefinirCor = roleAtLeast(org?.role, "manager");
   const [serverError, setServerError] = useState<string | null>(null);
+  // Erro de validação POR CAMPO (guia de acabamento §4.6): aparece sob o campo,
+  // com `aria-invalid`. Sem campo identificável (a regra "email ou telefone"),
+  // marca os dois identificadores e escreve a mensagem sob o email.
+  const [errosDeCampo, setErrosDeCampo] = useState<Partial<Record<keyof FormShape, string>>>({});
   // A etiqueta que o texto AINDA digitado no campo viraria — o mesmo fio do
   // EditContactDialog (#2732): sem ele, quem digita e clica em "Criar contato"
   // sem Enter perde a etiqueta em silêncio.
@@ -96,6 +109,7 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
 
   async function onSubmit(values: FormShape) {
     setServerError(null);
+    setErrosDeCampo({});
     // A MESMA normalização da API (lib/contacts/tag-normalizada): o que a ficha
     // grava é o que o filtro `?tag=` casa (issue #1224).
     const tags = normalizarTags([
@@ -115,7 +129,13 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
     const parsed = contactCreateSchemaDoPais(perfil).safeParse(payload);
     if (!parsed.success) {
       const first = parsed.error.issues[0];
-      setServerError(first?.message ?? t("Dados inválidos"));
+      const mensagem = first?.message ?? t("Dados inválidos");
+      const campo = first?.path[0];
+      if (campo === "name" || campo === "email" || campo === "phone_number" || campo === "cpf") {
+        setErrosDeCampo({ [campo]: mensagem });
+      } else {
+        setErrosDeCampo({ email: mensagem, phone_number: "" });
+      }
       return;
     }
 
@@ -123,6 +143,7 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
       const resposta = await create.mutateAsync(parsed.data as ContactCreate);
       toast.success(t("Contato criado"));
       form.reset();
+      setErrosDeCampo({});
       setEtiquetaPendente(null);
       onOpenChange(false);
       // `.data` é o envelope do `ok()`, e dentro dele mora `{ contact, action }`.
@@ -136,6 +157,10 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
     }
   }
 
+  const telefoneRotulo = t("Telefone");
+  const telefoneAjuda =
+    perfil.codigo === PAIS_PADRAO ? t("DDD + número") : t("Formato internacional (E.164)");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -145,60 +170,77 @@ export function NewContactDialog({ open, onOpenChange, nomeInicial, onCriado }: 
             {t("Preencha pelo menos um identificador (email ou telefone).")}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">{t("Nome")}</Label>
-            <Input id="name" {...form.register("name")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("Email")}</Label>
-            <Input id="email" type="email" {...form.register("email")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone_number">
-              {perfil.codigo === PAIS_PADRAO
-                ? t("Telefone (DDD + número)")
-                : t("Telefone (E.164)")}
-            </Label>
-            <Input
-              id="phone_number"
-              placeholder={perfil.telefoneExemplo}
-              {...form.register("phone_number")}
-            />
-          </div>
-          <div className="space-y-2">
-            {/* O documento é o do PAÍS da organização — a API já valida por ele
-                (`contactCreateSchemaDoPais`); só a tela escrevia "CPF" em duro. */}
-            <Label htmlFor="cpf">
-              {perfil.documento.rotulo} ({t("opcional")})
-            </Label>
-            <Input id="cpf" placeholder={perfil.documento.exemplo} {...form.register("cpf")} />
-          </div>
-          <div className="space-y-2">
-            {/* Era um campo de texto livre "separadas por vírgula" — o formato
-                que a ficha deixou na #2732 e o funil na #2979. Aqui o mesmo
-                seletor da ficha: sugere o que já existe, reusa a grafia gravada
-                e colore com o tom do vocabulário. */}
-            <Label htmlFor="new-tags">{t("Tags")}</Label>
-            <EtiquetasDoContato
-              inputId="new-tags"
-              value={tags}
-              onChange={(next) => form.setValue("tags", next, { shouldDirty: true })}
-              vocabulario={vocabulario.data}
-              disabled={create.isPending}
-              onPendente={setEtiquetaPendente}
-              onDefinirCor={
-                podeDefinirCor ? (tag, cor) => void definirCor(tag, cor) : undefined
-              }
-            />
-          </div>
-          {serverError && (
-            <p className="text-sm text-danger-foreground">{serverError}</p>
-          )}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="contents">
+          <DialogBody>
+            <FieldSection title={t("Identificação")}>
+              <Field invalid={errosDeCampo.name !== undefined}>
+                <FieldLabel opcional>{t("Nome")}</FieldLabel>
+                <FieldControl>
+                  <Input {...form.register("name")} />
+                </FieldControl>
+                <FieldError>{errosDeCampo.name}</FieldError>
+              </Field>
+            </FieldSection>
+            <FieldSection title={t("Como falar")}>
+              <FieldRow>
+                <Field invalid={errosDeCampo.email !== undefined}>
+                  <FieldLabel>{t("Email")}</FieldLabel>
+                  <FieldControl>
+                    <Input type="email" {...form.register("email")} />
+                  </FieldControl>
+                  <FieldError>{errosDeCampo.email}</FieldError>
+                </Field>
+                <Field invalid={errosDeCampo.phone_number !== undefined}>
+                  <FieldLabel>{telefoneRotulo}</FieldLabel>
+                  <FieldControl>
+                    <Input
+                      placeholder={perfil.telefoneExemplo}
+                      {...form.register("phone_number")}
+                    />
+                  </FieldControl>
+                  <FieldHint>{telefoneAjuda}</FieldHint>
+                  <FieldError>{errosDeCampo.phone_number}</FieldError>
+                </Field>
+              </FieldRow>
+            </FieldSection>
+            <FieldSection title={t("Mais dados")}>
+              <Field invalid={errosDeCampo.cpf !== undefined}>
+                {/* O documento é o do PAÍS da organização — a API já valida por ele
+                    (`contactCreateSchemaDoPais`); só a tela escrevia "CPF" em duro. */}
+                <FieldLabel opcional>{perfil.documento.rotulo}</FieldLabel>
+                <FieldControl>
+                  <Input placeholder={perfil.documento.exemplo} {...form.register("cpf")} />
+                </FieldControl>
+                <FieldError>{errosDeCampo.cpf}</FieldError>
+              </Field>
+              <Field>
+                {/* Era um campo de texto livre "separadas por vírgula" — o formato
+                    que a ficha deixou na #2732 e o funil na #2979. Aqui o mesmo
+                    seletor da ficha: sugere o que já existe, reusa a grafia gravada
+                    e colore com o tom do vocabulário. */}
+                <FieldLabel htmlFor="new-tags" opcional>
+                  {t("Tags")}
+                </FieldLabel>
+                <EtiquetasDoContato
+                  ocultarVazio
+                  inputId="new-tags"
+                  value={tags}
+                  onChange={(next) => form.setValue("tags", next, { shouldDirty: true })}
+                  vocabulario={vocabulario.data}
+                  disabled={create.isPending}
+                  onPendente={setEtiquetaPendente}
+                  onDefinirCor={
+                    podeDefinirCor ? (tag, cor) => void definirCor(tag, cor) : undefined
+                  }
+                />
+              </Field>
+            </FieldSection>
+            {serverError && <p className="text-danger-foreground mt-4 text-sm">{serverError}</p>}
+          </DialogBody>
           <DialogFooter>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={create.isPending}
             >

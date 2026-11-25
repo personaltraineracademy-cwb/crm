@@ -90,6 +90,7 @@ export function FunisClient({
   arquivados: arquivadosDoServidor,
   podeGerenciar,
   podeImportar,
+  titulo,
 }: {
   funis: FunilDaLista[];
   /**
@@ -102,6 +103,8 @@ export function FunisClient({
   podeGerenciar: boolean;
   /** Espelha o `requireRole("agent")` de `POST /api/v1/leads/import`. */
   podeImportar: boolean;
+  /** O título da página: fica na MESMA linha das ações (guia de acabamento §2.6). */
+  titulo?: React.ReactNode;
 }) {
   const t = useT();
   /**
@@ -363,7 +366,6 @@ export function FunisClient({
                     }}
                   >
                     <AlertDialogContent
-                      className="sm:max-w-md"
                       data-testid={`excluir-painel-${funil.id}`}
                     >
                       <AlertDialogHeader>
@@ -428,6 +430,8 @@ export function FunisClient({
 
   if (funis.length === 0) {
     return (
+      <>
+      {titulo}
       <div className="flex flex-1 flex-col items-center justify-center gap-4">
         {formularioDeCriacao}
         {novo === null && (
@@ -454,11 +458,14 @@ export function FunisClient({
             de um arquivo que o usuário não consegue ver. */}
         {gavetaDeArquivados}
       </div>
+      </>
     );
   }
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {titulo}
       {(podeGerenciar || podeImportar) && (
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
           {/* A porta da importação fica AQUI, e não numa tela própria: é desta
@@ -473,6 +480,7 @@ export function FunisClient({
           ) : null}
         </div>
       )}
+      </div>
 
       {formularioDeCriacao}
 
@@ -679,22 +687,23 @@ export function FunisClient({
                       )}
                     </p>
                   )}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap justify-end gap-2">
                     <Button
+                      variant="outline"
                       size="sm"
-                      onClick={() => pedirArquivamento(funil.id, false)}
+                      onClick={() => setArquivando(null)}
                       disabled={ocupado}
-                      data-testid={`arquivar-confirmar-${funil.id}`}
                     >
-                      {t("Arquivar")}
+                      {t("Cancelar")}
                     </Button>
                     {/* Excluir de vez só passa no funil que NUNCA recebeu negócio.
                         A tela não sabe disso antes de perguntar — e não precisa
                         saber: a rota recusa explicando, e a explicação aparece
                         aqui mesmo. Fazer a tela adivinhar exigiria uma segunda
-                        contagem, que discordaria da do servidor. */}
+                        contagem, que discordaria da do servidor. Ação destrutiva
+                        leva a variante de perigo (guia de acabamento §4.5). */}
                     <Button
-                      variant="ghost"
+                      variant="destructive"
                       size="sm"
                       onClick={() => pedirArquivamento(funil.id, true)}
                       disabled={ocupado}
@@ -702,8 +711,13 @@ export function FunisClient({
                     >
                       {t("Excluir de vez")}
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setArquivando(null)} disabled={ocupado}>
-                      {t("Cancelar")}
+                    <Button
+                      size="sm"
+                      onClick={() => pedirArquivamento(funil.id, false)}
+                      disabled={ocupado}
+                      data-testid={`arquivar-confirmar-${funil.id}`}
+                    >
+                      {t("Arquivar")}
                     </Button>
                   </div>
                 </Card>

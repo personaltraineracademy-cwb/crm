@@ -104,7 +104,7 @@ const MAX_SILENCIO_MINUTOS = 10_080;
 const KIND_LABEL: Record<TriggerKind, string> = {
   appointment_no_show:"Falta confirmada pela equipe",
   manual: "Manual",
-  silence: "Silêncio",
+  silence: "Cliente sem responder",
   stage_change: "Etapa do funil",
   // "Agente pediu ajuda", e não "Pedido de ajuda": numa lista ao lado de
   // "Manual", "Silêncio" e "Etapa do funil", o rótulo sem sujeito não diz
@@ -236,6 +236,14 @@ function toTriggerConfig(form: TriggerFormState): Record<string, unknown> {
   };
 }
 
+/**
+ * Minutos em palavra de gente: «1440 min» vira «24 h». Só vira hora quando passa
+ * de duas e fecha redondo (60 min continua «60 min»; 90 min continua «90 min»).
+ */
+function duracaoLegivel(minutos: number): string {
+  return minutos >= 120 && minutos % 60 === 0 ? `${minutos / 60} h` : `${minutos} min`;
+}
+
 function summaryLabel(
   cfg: Record<string, unknown>,
   etapa: { stageName: string; pipelineName: string } | null,
@@ -250,14 +258,18 @@ function summaryLabel(
     const pausa = params?.reentry_pause_minutes;
     const teto = params?.max_silence_minutes;
     const detalhe = [
-      typeof minutes === "number" ? (typeof teto === "number" && teto > 0 ? `${minutes}–${teto} min` : `${minutes} min`) : null,
+      typeof minutes === "number"
+        ? typeof teto === "number" && teto > 0
+          ? `${duracaoLegivel(minutes)}–${duracaoLegivel(teto)}`
+          : duracaoLegivel(minutes)
+        : null,
       typeof pausa === "number" && pausa > 0
         ? params?.reentry_pause_basis === "ultimo_envio"
           ? `${t("no máximo 1× a cada")} ${Math.round((pausa / 60) * 10) / 10} h`
           : `${t("pausa de")} ${Math.round((pausa / 60) * 10) / 10} h`
         : null,
     ].filter(Boolean);
-    return `${t("Gatilho")}: ${t("Silêncio")}${detalhe.length > 0 ? ` (${detalhe.join(" · ")})` : ""}`;
+    return `${t("Gatilho")}: ${t("Cliente sem responder")}${detalhe.length > 0 ? ` (${detalhe.join(" · ")})` : ""}`;
   }
   if (cfg.kind === "inbound_after_silence") {
     const minutes = (cfg.params as { threshold_minutes?: number } | undefined)?.threshold_minutes;

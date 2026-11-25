@@ -1,0 +1,138 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Unnify CRM — movimento do QUADRO (kanban).
+
+   Mesma convenção de `camadas.css`: os números do Work (DS §7.1), só
+   `transform` e opacidade, e propriedades individuais (`scale`, `rotate`,
+   `translate`), nunca `transform`. Aqui isso não é gosto: o `transform` do card
+   é do `@hello-pangea/dnd`, que escreve nele em linha a posição do arrasto e a
+   da soltura. `scale` e `rotate` SOMAM a ele em vez de disputá-lo.
+
+   Por que `animation` e não `transition` no card: durante o arrasto a
+   biblioteca grava `transition` em linha no próprio elemento (a dela, de
+   `transform` e `opacity`), e isso apagaria qualquer `transition` de classe. A
+   `animation` não passa por essa propriedade.
+
+   A sombra de levantar é uma CAMADA (`::after`) que entra por opacidade: animar
+   `box-shadow` repinta o card a cada quadro. O card tem `overflow: hidden`
+   (cortar o conteúdo nos cantos), o que também cortaria uma sombra de fora;
+   por isso, só enquanto está levantado, ele libera o transbordo.
+
+   Entrada e saída de card (um negócio criado, excluído ou movido pelo menu) e
+   o deslize dos vizinhos que abrem ou fecham o espaço são feitos em
+   `components/kanban/movimento-da-lista.ts`, pela Web Animations API, com os
+   mesmos números daqui (200 ms, `--ease-out`, 8px).
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* A soltura do card (`ASSENTAR_S` em KanbanCard.tsx) dura o mesmo. */
+  --kanban-assentar: 220ms;
+  --kanban-levantar: var(--duration-base);
+  /* A sombra do card levantado (DS §6.3, elevação do cartão em arrasto). */
+  --kanban-sombra-levantada: 0 12px 28px rgb(0 0 0 / 14%), 0 4px 10px rgb(0 0 0 / 8%);
+}
+
+/* ---- Card: levantar ---------------------------------------------------- */
+.kanban-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--kanban-sombra-levantada);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes kanban-card-levanta {
+  from {
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+@keyframes kanban-sombra-entra {
+  from {
+    opacity: 0;
+  }
+}
+.kanban-card[data-arrasto="levantado"] {
+  overflow: visible;
+  scale: 1.03;
+  rotate: 1deg;
+  animation: kanban-card-levanta var(--kanban-levantar) var(--ease-out);
+}
+.kanban-card[data-arrasto="levantado"]::after {
+  opacity: 1;
+  animation: kanban-sombra-entra var(--kanban-levantar) var(--ease-out);
+}
+
+/* ---- Card: assentar (a soltura) ----------------------------------------
+   Corre junto com a soltura da biblioteca, com a mesma duração: o card chega
+   ao lugar já no tamanho e no ângulo de repouso, e a sombra se apaga. */
+@keyframes kanban-card-assenta {
+  from {
+    scale: 1.03;
+    rotate: 1deg;
+  }
+}
+@keyframes kanban-sombra-sai {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.kanban-card[data-arrasto="assentando"] {
+  overflow: visible;
+  animation: kanban-card-assenta var(--kanban-assentar) var(--ease-out) both;
+}
+.kanban-card[data-arrasto="assentando"]::after {
+  animation: kanban-sombra-sai var(--kanban-assentar) var(--ease-out) both;
+}
+
+/* ---- Coluna de destino --------------------------------------------------
+   Um véu atrás dos cards (o `::before` vem antes deles na ordem de pintura e
+   os cards são `relative`), no tom de interação, com contorno de 1px por
+   dentro. Entra e sai por opacidade. Sem `isolation` nem `z-index` na coluna
+   de propósito: um contexto de empilhamento aqui prenderia o card arrastado
+   (que é `position: fixed` DENTRO dela) atrás da coluna vizinha. */
+.kanban-coluna-destino::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--interactive);
+  box-shadow: inset 0 0 0 1px var(--interactive-border);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+}
+.kanban-coluna-destino[data-recebendo]::before {
+  opacity: 1;
+}
+
+/* ---- Movimento reduzido (DS §7.3): nasce no lugar, sem percurso --------
+   O card levantado continua MOSTRANDO que está levantado (escala e sombra são
+   estado, não percurso); o que some é o caminho até lá. Os vizinhos que abrem
+   espaço também param de deslizar — a transição deles é da biblioteca, numa
+   folha de estilo dela. O card em arrasto fica de fora (`:not([data-arrasto])`):
+   a soltura dele precisa do `transitionend`, e a duração já vem reduzida a
+   1 ms de `KanbanCard.tsx`. */
+@media (prefers-reduced-motion: reduce) {
+  .kanban-card[data-arrasto],
+  .kanban-card[data-arrasto]::after {
+    animation: none !important;
+  }
+  .kanban-card[data-arrasto="assentando"] {
+    scale: 1;
+    rotate: 0deg;
+  }
+  .kanban-card[data-arrasto="assentando"]::after {
+    opacity: 0;
+  }
+  .kanban-coluna-destino::before {
+    transition: none;
+  }
+  [data-rfd-draggable-context-id]:not([data-arrasto]) {
+    transition: none !important;
+  }
+}

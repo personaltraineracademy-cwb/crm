@@ -172,7 +172,7 @@ export function BarraInferior() {
                 className={cn(
                   // Coluna ícone + rótulo `xs`/500, altura mínima 56, raio 12;
                   // ao tocar, `interactive-strong` (em `.casca-dock`).
-                  "relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5",
+                  "relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1.5",
                   "transition-[color,background-color] duration-fast",
                   aqui ? "text-primary" : "text-muted-foreground",
                 )}
@@ -188,7 +188,7 @@ export function BarraInferior() {
                     <ContadorDeCasos compacto className="-top-0.5 -right-1 ring-card" />
                   )}
                 </span>
-                <span className="w-full truncate text-center text-xs leading-tight font-medium">
+                <span className="w-full truncate text-center text-[11px] leading-tight font-medium tracking-tight">
                   {t(aba.label)}
                 </span>
                 {/*

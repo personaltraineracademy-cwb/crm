@@ -35,6 +35,8 @@ import { useT } from "@/hooks/i18n/useT";
 import * as React from "react";
 import Link from "next/link";
 
+import { NovoMaterialDialog } from "@/components/ai/NovoMaterialDialog";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
@@ -59,11 +61,35 @@ interface Props {
   value: string[];
   onChange: (ids: string[]) => void;
   disabled?: boolean;
+  /**
+   * Chamado depois que um material é cadastrado AQUI, na tela do agente. Quem
+   * hospeda recarrega a lista de materiais (ela vem do servidor). Ausente = o
+   * botão de cadastrar não aparece, e o bloco é o de sempre.
+   */
+  aoCadastrarMaterial?: () => void;
 }
 
-export function BasesDoAgente({ materiais, value, onChange, disabled = false }: Props) {
+export function BasesDoAgente({
+  materiais,
+  value,
+  onChange,
+  disabled = false,
+  aoCadastrarMaterial,
+}: Props) {
   const t = useT();
   const marcados = new Set(value);
+  const [novoAberto, setNovoAberto] = React.useState(false);
+
+  /**
+   * O material nasce JÁ MARCADO para este assistente: quem cadastra um
+   * documento de dentro da tela do agente quer que ESTE agente o leia. Era o
+   * buraco do acervo — material novo ficava "consultado por nenhum assistente"
+   * até alguém lembrar de voltar aqui e marcar.
+   */
+  function materialCadastrado(id?: string): void {
+    if (id && !marcados.has(id)) onChange([...value, id]);
+    aoCadastrarMaterial?.();
+  }
 
   function alternar(id: string, marcado: boolean): void {
     const proximo = new Set(marcados);
@@ -154,6 +180,37 @@ export function BasesDoAgente({ materiais, value, onChange, disabled = false }: 
           ))}
         </div>
       )}
+
+      {aoCadastrarMaterial ? (
+        <>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setNovoAberto(true)}
+              disabled={disabled}
+              data-testid="agente-adicionar-material"
+            >
+              {t("Adicionar documento ou perguntas")}
+            </Button>
+            <Link
+              href="/app/ai/knowledge/sources"
+              className="text-xs text-muted-foreground underline underline-offset-4"
+            >
+              {t("Ver todos os materiais")}
+            </Link>
+          </div>
+          <NovoMaterialDialog
+            aberto={novoAberto}
+            onFechar={() => setNovoAberto(false)}
+            onCriado={materialCadastrado}
+            // A tela do agente não sabe o estado da chave; o cartão do material
+            // no acervo é quem diz se ele ficou esperando.
+            podeIndexar
+          />
+        </>
+      ) : null}
 
       {value.length === 0 && visiveis.length > 0 ? (
         <p data-testid="agente-sem-base-marcada" className="text-xs text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client";
 import { Droppable } from "@hello-pangea/dnd";
-import { useRef, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/lib/types/leads";
@@ -8,9 +8,10 @@ import type { Stage } from "@/lib/kanban/types";
 import { buildCardInput } from "@/lib/kanban/card-state";
 import { intervaloDaColuna } from "@/lib/kanban/selecao";
 import { formatSomaPorMoeda, formatValorDoNegocio, MOEDA_PADRAO, somaPorMoeda } from "@/lib/money";
-import { CaretDown, CaretRight } from "@/lib/ui/icons";
+import { CaretDown, CaretRight, Plus, Target, Trophy, XCircle } from "@/lib/ui/icons";
 import { KanbanCard, type GestoDeSelecao } from "./KanbanCard";
 import { TOM_MARCADOR, tomDaEtapa } from "./tons";
+import { useMovimentoDaLista } from "./movimento-da-lista";
 
 interface StageColumnProps {
   stage: Stage;
@@ -47,9 +48,34 @@ interface StageColumnProps {
   /** `manager`+ — mesmo corte de papel da rota que renomeia a etapa. */
   podeRenomear?: boolean;
   onRenomear?: (nome: string) => void;
+  /** O "+ Adicionar negócio" no pé da coluna, com a etapa dela. */
+  onAdicionar?: (stageId: string) => void;
+  /** O "+ Criar tarefa" do rodapé de cada card. */
+  onCriarTarefa?: (leadId: string) => void;
 }
 
-export function StageColumn({
+/**
+ * Comparação do `memo` da coluna e da lista: rasa, com UMA exceção — `leads` é
+ * comparado item a item. O quadro reagrupa os leads num array novo por etapa a
+ * cada mudança de dados, e comparado por referência esse array furava o `memo`
+ * de TODAS as colunas: soltar um card re-renderizava o funil inteiro (medido no
+ * portal: um quadro de 186 a 428 ms exatamente quando o card assentava). Item a
+ * item, só re-renderizam as colunas cujos leads mudaram — origem e destino.
+ */
+function mesmasProps<P extends { leads: Lead[] }>(a: P, b: P): boolean {
+  for (const chave of Object.keys(a) as (keyof P)[]) {
+    if (chave === "leads") continue;
+    if (!Object.is(a[chave], b[chave])) return false;
+  }
+  if (Object.keys(a).length !== Object.keys(b).length) return false;
+  return a.leads.length === b.leads.length && a.leads.every((l, i) => l === b.leads[i]);
+}
+
+/**
+ * `memo` com `mesmasProps`: com os callbacks estáveis do quadro, soltar um card
+ * re-renderiza só as colunas de origem e de destino.
+ */
+export const StageColumn = memo(function StageColumn({
   stage,
   posicao = 0,
   leads,
@@ -66,6 +92,8 @@ export function StageColumn({
   onMoverPara,
   podeRenomear = false,
   onRenomear,
+  onAdicionar,
+  onCriarTarefa,
 }: StageColumnProps) {
   const t = useT();
   // O TOTAL É POR MOEDA (#1531). Antes ele somava todos os `value_cents` e
@@ -127,7 +155,7 @@ export function StageColumn({
   // inteira — inclusive o `Droppable` — a cada card marcado.
   const ancora = useRef<string | null>(null);
 
-  const aoSelecionar = (leadId: string, gesto: GestoDeSelecao) => {
+  const decidirSelecao = (leadId: string, gesto: GestoDeSelecao) => {
     if (gesto === "intervalo") {
       const faixa = intervaloDaColuna(idsVisiveis, ancora.current, leadId);
       ancora.current = leadId;
@@ -137,6 +165,17 @@ export function StageColumn({
     ancora.current = leadId;
     onSelectMany?.([leadId], !selectedLeadIds?.has(leadId));
   };
+  // Identidade ESTÁVEL para os cards: a função acima é nova a cada render, e
+  // passá-la direto furava o `memo` de todos os cards da coluna. A versão mais
+  // recente fica num ref, gravado depois do commit (nunca durante o render).
+  const selecaoAtual = useRef(decidirSelecao);
+  useLayoutEffect(() => {
+    selecaoAtual.current = decidirSelecao;
+  });
+  const aoSelecionar = useCallback(
+    (leadId: string, gesto: GestoDeSelecao) => selecaoAtual.current(leadId, gesto),
+    [],
+  );
 
   const alternarEtapa = () => {
     ancora.current = null;
@@ -149,194 +188,290 @@ export function StageColumn({
   // Recolher é só da tela (DS §10.23, "Coluna do quadro"): a coluna vira uma
   // faixa estreita com o nome e a contagem. O `Droppable` continua montado, então
   // soltar um card numa etapa recolhida segue funcionando.
+  //
+  // Ganho e Perdido NASCEM recolhidas: são destino, não fila de trabalho. Viram
+  // dois alvos estreitos onde se solta o card, e o quadro fica com as etapas em
+  // que alguém ainda precisa agir. Um clique no cabeçalho abre a coluna inteira.
+  // Todas as colunas nascem ABERTAS, Ganho e Perdido inclusive (desenho de
+  // referência): recolher continua a um clique, no cabeçalho.
   const [recolhida, setRecolhida] = useState(false);
+  // Entrada, saída e deslize dos vizinhos fora do arrasto (movimento-da-lista.ts).
+  const listaRef = useRef<HTMLDivElement | null>(null);
+  useMovimentoDaLista(listaRef, idsVisiveis.join(","), !recolhida);
+
   const contagem =
     selecionadosAqui > 0 ? `${selecionadosAqui}/${leads.length}` : String(leads.length);
+
+  // Sem valor nenhum na coluna, o cabeçalho ainda diz "R$ 0,00" (desenho de
+  // referência): um total que some deixa a dúvida "não somou ou não carregou?".
+  // A moeda é a dos próprios negócios da coluna; coluna vazia usa a padrão.
+  const moedaDoZero = primeira ?? (leads[0] ? moedaDoLead(leads[0]) : MOEDA_PADRAO);
+  const IconeDoVazio = stage.is_won ? Trophy : stage.is_lost ? XCircle : Target;
 
   return (
     <div
       /*
         Largura (DS §5.3 e §10.23): a coluna cresce (`grow`) a partir de uma
-        base de 18rem até 28rem (`max-w-md`), para o quadro ocupar a largura
-        útil sem a coluna virar painel.
-
-        No celular continua `w-[85vw] max-w-80 snap-center`: a coluna cabe na
-        tela, uma por vez, e a sobra de 15% é onde a seguinte se anuncia — um
-        quadro que parece rolável, não cortado.
-
+        base de 18rem até 28rem (`max-w-md`). No celular `w-[85vw] max-w-80
+        snap-center`: uma coluna por vez, e a sobra anuncia a seguinte.
         Recolhida, vira uma faixa de 48px com o nome na vertical.
+
+        DESENHO DE REFERÊNCIA: o nome, a contagem e o total ficam FORA da caixa,
+        em cima; a caixa é a área de soltar, com borda e fundo pontilhado; o
+        "+ Adicionar negócio" fica embaixo dela.
       */
       className={cn(
-        "flex min-h-full shrink-0 snap-center flex-col rounded-xl border border-border bg-muted/40",
+        "flex min-h-full shrink-0 snap-center flex-col",
         recolhida ? "w-12" : "w-[85vw] max-w-80 md:w-72 md:max-w-md md:grow",
       )}
       data-etapa-do-quadro={stage.id}
       data-recolhida={recolhida || undefined}
     >
-      {/* Cabeçalho e total PRESOS no alto do quadro enquanto os cards rolam: com
-          uma etapa comprida, é o que diz em que etapa se está olhando. O fundo
-          opaco (`bg-background`) é o que impede os cards de aparecerem por baixo;
-          por dentro, a mesma camada translúcida da coluna, para o tom não mudar.
-
-          A BORDA DE CIMA É DO CABEÇALHO, não da coluna (#3030): a coluna tem
-          `border` e o cabeçalho `sticky top-0`, então ao rolar a borda da coluna
-          saía da tela e o cabeçalho ficava solto, sem contorno em cima. Com
-          `border-x border-t` aqui e `-mx-px -mt-px` (1px para cima e para os
-          lados), o contorno de cima cobre exatamente a borda da coluna e viaja
-          junto com o cabeçalho preso. */}
-      <div
-        className="sticky top-0 z-10 -mx-px -mt-px rounded-t-xl border-x border-t border-border bg-background"
-        data-cabecalho-da-etapa
-      >
-        <div className="rounded-t-xl bg-muted/40">
-          <div
+      {/* Cabeçalho PRESO no alto do quadro enquanto os cards rolam: com uma etapa
+          comprida, é o que diz em que etapa se está olhando. Fundo opaco para os
+          cards não aparecerem por baixo. */}
+      <div className="sticky top-0 z-10 bg-background" data-cabecalho-da-etapa>
+        <div
+          className={cn(
+            "group/etapa flex items-center",
+            recolhida
+              ? "flex-col gap-2 rounded-xl border border-border px-1 py-2"
+              : "gap-2 px-1 pt-1 pb-3",
+          )}
+        >
+          {/* Recolher (DS §10.23): discreto, aparece no hover e no foco. */}
+          <button
+            type="button"
+            onClick={() => setRecolhida((v) => !v)}
+            aria-expanded={!recolhida}
+            aria-label={`${recolhida ? t("Expandir etapa") : t("Recolher etapa")} ${stage.name}`}
+            title={recolhida ? t("Expandir etapa") : t("Recolher etapa")}
             className={cn(
-              "group/etapa flex items-center border-b border-border",
-              recolhida ? "flex-col gap-2 px-1 py-2" : "gap-2 py-2 pr-3 pl-2",
+              "inline-flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-[opacity,colors] hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
+              !recolhida && "opacity-0 group-hover/etapa:opacity-100 pointer-coarse:opacity-100",
             )}
           >
-            {/* Recolher (DS §10.23): 28×28, raio 6, chevron de 14. */}
-            <button
-              type="button"
-              onClick={() => setRecolhida((v) => !v)}
-              aria-expanded={!recolhida}
-              aria-label={`${recolhida ? t("Expandir etapa") : t("Recolher etapa")} ${stage.name}`}
-              title={recolhida ? t("Expandir etapa") : t("Recolher etapa")}
-              className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"
-            >
-              {recolhida ? (
-                <CaretRight size={14} aria-hidden />
-              ) : (
-                <CaretDown size={14} aria-hidden />
-              )}
-            </button>
-            {/* "Selecionar a etapa inteira" é o gesto que faz a ação em lote valer a
-            pena: sem ele, mover trinta cards deixa de ser trinta arrastes e vira
-            trinta cliques com modificador. Fica no cabeçalho porque é ali que a
-            etapa é um objeto — o mesmo lugar onde já se lê a contagem dela.
-            Indeterminado quando a seleção é parcial: "alguns" e "nenhum" não
-            podem ter a mesma aparência num controle que o próximo clique
-            inverte. Continua `<input>` nativo: o terceiro estado é a
-            propriedade `indeterminate`, que o e2e do lote lê. */}
-            {!recolhida && (
-              <input
-                type="checkbox"
-                checked={todosSelecionados}
-                ref={(el) => {
-                  if (el) el.indeterminate = selecionadosAqui > 0 && !todosSelecionados;
-                }}
-                disabled={idsVisiveis.length === 0}
-                onChange={alternarEtapa}
-                aria-label={
-                  todosSelecionados
-                    ? `${t("Desmarcar todos em")} ${stage.name}`
-                    : `${t("Selecionar todos em")} ${stage.name}`
-                }
-                className={cn(
-                  "size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
-                  "focus:opacity-100 disabled:cursor-default",
-                  // `pointer-coarse:opacity-100` pelo mesmo motivo da caixa do
-                  // card (ver `components/kanban/KanbanCard.tsx`): no toque o
-                  // hover nunca acontece, e "selecionar a etapa inteira" é o gesto
-                  // que faz a ação em lote valer a pena. Sem ele, mover trinta
-                  // cards no celular eram trinta arrastes.
-                  selecionadosAqui > 0
-                    ? "opacity-100"
-                    : "opacity-0 group-hover/etapa:opacity-100 pointer-coarse:opacity-100",
-                )}
-              />
-            )}
-            <span
-              className={cn("size-2 shrink-0 rounded-full", TOM_MARCADOR[tom])}
-              data-tom-da-etapa={tom}
-              aria-hidden
-            />
             {recolhida ? (
-              <h2
-                className="truncate text-sm font-semibold text-foreground [writing-mode:vertical-rl]"
-                title={stage.name}
-              >
-                {stage.name}
-              </h2>
-            ) : podeRenomear && onRenomear ? (
-              // `key` pelo nome: remonta (e descarta o rascunho) quando o nome
-              // GRAVADO muda — mesmo contrato de `NomeDaEtapa` em Configurações,
-              // para uma edição feita em outra aba não ficar escondida atrás de
-              // um rascunho velho aqui.
-              // Dentro do <h2>: a coluna segue sendo título para quem navega
-              // por leitor de tela, com ou sem permissão de renomear.
-              <h2 className="flex min-w-0 flex-1">
-                <NomeDaEtapaNoQuadro key={stage.name} nome={stage.name} onConfirmar={onRenomear} />
-              </h2>
+              <CaretRight size={14} aria-hidden />
             ) : (
-              <h2 className="flex-1 truncate text-sm font-semibold text-foreground">
-                {stage.name}
-              </h2>
+              <CaretDown size={14} aria-hidden />
             )}
-            <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
-              {contagem}
-            </span>
-          </div>
-
-          {temTotal && !recolhida && (
-            <div className="border-b border-border px-3 py-1.5 text-xs text-muted-foreground tabular-nums">
-              {formatSomaPorMoeda(totais, formatValorDoNegocio, { primeira })}
-              {ponderados !== null && (
-                <span className="ml-2">
-                  · {t("ponderado")}{" "}
-                  {formatSomaPorMoeda(ponderados, formatValorDoNegocio, { primeira })}
-                </span>
+          </button>
+          {/* "Selecionar a etapa inteira": o gesto que faz a ação em lote valer a
+              pena. Indeterminado com seleção parcial; `<input>` nativo porque o
+              e2e do lote lê a propriedade `indeterminate`. */}
+          {!recolhida && (
+            <input
+              type="checkbox"
+              checked={todosSelecionados}
+              ref={(el) => {
+                if (el) el.indeterminate = selecionadosAqui > 0 && !todosSelecionados;
+              }}
+              disabled={idsVisiveis.length === 0}
+              onChange={alternarEtapa}
+              aria-label={
+                todosSelecionados
+                  ? `${t("Desmarcar todos em")} ${stage.name}`
+                  : `${t("Selecionar todos em")} ${stage.name}`
+              }
+              className={cn(
+                "order-last size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
+                "focus:opacity-100 disabled:cursor-default",
+                selecionadosAqui > 0
+                  ? "opacity-100"
+                  : "opacity-0 group-hover/etapa:opacity-100 pointer-coarse:opacity-100",
               )}
-            </div>
+            />
           )}
+          <span
+            className={cn("size-2 shrink-0 rounded-full", TOM_MARCADOR[tom])}
+            data-tom-da-etapa={tom}
+            aria-hidden
+          />
+          {recolhida ? (
+            <h2
+              className="truncate text-sm font-semibold text-foreground [writing-mode:vertical-rl]"
+              title={stage.name}
+            >
+              {stage.name}
+            </h2>
+          ) : podeRenomear && onRenomear ? (
+            <h2 className="flex min-w-0 flex-1 items-baseline">
+              <NomeDaEtapaNoQuadro key={stage.name} nome={stage.name} onConfirmar={onRenomear} />
+            </h2>
+          ) : (
+            <h2
+              className="min-w-0 flex-1 truncate text-[0.9375rem] font-semibold text-foreground"
+              title={stage.name}
+            >
+              {stage.name}
+            </h2>
+          )}
+          <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+            ({contagem})
+          </span>
         </div>
+        {/* O total numa linha própria: na mesma linha do nome, o "ponderado"
+            empurrava o nome da etapa até ele sumir. */}
+        {!recolhida && (
+          <p
+            className="-mt-2 truncate px-1 pb-3 text-xs text-muted-foreground tabular-nums"
+            data-total-da-etapa
+          >
+            {temTotal ? (
+              <>
+                {formatSomaPorMoeda(totais, formatValorDoNegocio, { primeira })}
+                {ponderados !== null && (
+                  <span className="ml-1.5">
+                    · {t("ponderado")}{" "}
+                    {formatSomaPorMoeda(ponderados, formatValorDoNegocio, { primeira })}
+                  </span>
+                )}
+              </>
+            ) : (
+              formatValorDoNegocio(0, moedaDoZero)
+            )}
+          </p>
+        )}
       </div>
 
       <Droppable droppableId={stage.id} type="LEAD">
         {(provided, snapshot) => (
           <div
-            ref={provided.innerRef}
+            ref={(el) => {
+              provided.innerRef(el);
+              listaRef.current = el;
+            }}
             {...provided.droppableProps}
+            data-recebendo={snapshot.isDraggingOver || undefined}
             className={cn(
-              "flex flex-1 flex-col gap-2 rounded-b-xl p-2 transition-colors",
-              snapshot.isDraggingOver && "bg-interactive",
+              "kanban-coluna-destino relative flex flex-1 flex-col gap-2 rounded-2xl",
+              recolhida
+                ? "mt-2"
+                : "border border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] [background-size:16px_16px] p-2",
+              snapshot.isDraggingOver && !recolhida && "border-primary/60",
             )}
           >
-            {!recolhida &&
-              leads.map((lead, idx) => (
-                <KanbanCard
-                  key={lead.id}
-                  card={buildCardInput(lead, {
-                    stageName: stage.name,
-                    ownerNames,
-                    coolingIds,
-                    reactivations,
-                    canonicalTags,
-                  })}
-                  lead={lead}
-                  index={idx}
-                  pipelineId={pipelineId}
-                  isSelected={selectedLeadIds?.has(lead.id)}
-                  isSelecting={(selectedLeadIds?.size ?? 0) > 0}
-                  pulseCount={pulses?.get(lead.id) ?? 0}
-                  onSelect={aoSelecionar}
-                  onOpen={onOpen}
-                  etapas={etapas}
-                  onMoverPara={onMoverPara}
-                />
-              ))}
+            {!recolhida && (
+              <ListaDeCards
+                leads={leads}
+                stageName={stage.name}
+                pipelineId={pipelineId}
+                ownerNames={ownerNames}
+                coolingIds={coolingIds}
+                reactivations={reactivations}
+                canonicalTags={canonicalTags}
+                selectedLeadIds={selectedLeadIds}
+                pulses={pulses}
+                onSelect={aoSelecionar}
+                onOpen={onOpen}
+                etapas={etapas}
+                onMoverPara={onMoverPara}
+                onCriarTarefa={onCriarTarefa}
+              />
+            )}
             {provided.placeholder}
             {leads.length === 0 && !snapshot.isDraggingOver && !recolhida && (
-              <div className="flex h-20 items-center justify-center text-xs text-muted-foreground">
-                {t("vazio")}
+              <div
+                data-slot="coluna-vazia"
+                className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center"
+              >
+                <IconeDoVazio size={22} aria-hidden className="text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">{t("Nenhum negócio")}</p>
               </div>
             )}
           </div>
         )}
       </Droppable>
+
+      {!recolhida && onAdicionar && (
+        <button
+          type="button"
+          onClick={() => onAdicionar(stage.id)}
+          className="mt-2 inline-flex h-10 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+          data-adicionar-na-etapa={stage.id}
+        >
+          <Plus size={14} aria-hidden />
+          {t("Adicionar negócio")}
+        </button>
+      )}
     </div>
   );
+}, mesmasProps);
+
+interface ListaDeCardsProps {
+  leads: Lead[];
+  stageName: string;
+  pipelineId: string;
+  ownerNames?: Map<string, string | null>;
+  coolingIds?: Set<string>;
+  reactivations?: Map<string, { proposalId: string; expiresAt: string }>;
+  canonicalTags?: string[];
+  selectedLeadIds?: Set<string>;
+  pulses?: Map<string, number>;
+  onSelect: (leadId: string, gesto: GestoDeSelecao) => void;
+  onOpen?: (leadId: string) => void;
+  etapas?: Stage[];
+  onMoverPara?: (lead: Lead, stageId: string) => void;
+  onCriarTarefa?: (leadId: string) => void;
 }
+
+/**
+ * Os cards da coluna FORA do render-prop do `Droppable`. É a recomendação de
+ * desempenho do `@hello-pangea/dnd`: o render-prop roda de novo toda vez que o
+ * cursor entra ou sai da coluna (`isDraggingOver`), e sem este `memo` cada
+ * passagem re-renderizava todos os cards dela no meio do arrasto.
+ */
+const ListaDeCards = memo(function ListaDeCards({
+  leads,
+  stageName,
+  pipelineId,
+  ownerNames,
+  coolingIds,
+  reactivations,
+  canonicalTags,
+  selectedLeadIds,
+  pulses,
+  onSelect,
+  onOpen,
+  etapas,
+  onMoverPara,
+  onCriarTarefa,
+}: ListaDeCardsProps) {
+  // `buildCardInput` devolve um objeto novo a cada chamada, e um objeto novo
+  // fura o `memo` do card. Esta lista só re-renderiza quando os leads dela
+  // mudam (`mesmasProps`), então a coluna parada não reconstrói nada.
+  const cards = useMemo(
+    () =>
+      leads.map((lead) =>
+        buildCardInput(lead, { stageName, ownerNames, coolingIds, reactivations, canonicalTags }),
+      ),
+    [leads, stageName, ownerNames, coolingIds, reactivations, canonicalTags],
+  );
+  const isSelecting = (selectedLeadIds?.size ?? 0) > 0;
+
+  return (
+    <>
+      {leads.map((lead, idx) => (
+        <KanbanCard
+          key={lead.id}
+          card={cards[idx]!}
+          lead={lead}
+          index={idx}
+          pipelineId={pipelineId}
+          isSelected={selectedLeadIds?.has(lead.id)}
+          isSelecting={isSelecting}
+          pulseCount={pulses?.get(lead.id) ?? 0}
+          onSelect={onSelect}
+          onOpen={onOpen}
+          etapas={etapas}
+          onMoverPara={onMoverPara}
+          onCriarTarefa={onCriarTarefa}
+        />
+      ))}
+    </>
+  );
+}, mesmasProps);
 
 /**
  * O nome da etapa, editado no lugar — direto no cabeçalho da coluna.

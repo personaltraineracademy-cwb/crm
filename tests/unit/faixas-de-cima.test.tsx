@@ -83,7 +83,24 @@ describe("quem desconta as faixas", () => {
     const inbox = readFileSync("components/inbox/InboxLayout.tsx", "utf8");
     // As DUAS caixas da casca: a de fora e a coluna do conteúdo.
     expect(casca.split("min-h-[calc(100dvh-var(--faixas-de-cima,0px))]").length - 1).toBe(2);
-    expect(inbox).toMatch(/h-\[calc\(100dvh-var\(--faixas-de-cima,0px\)-3\.5rem/);
+
+    // A grade do Inbox não escreve mais a conta. Desde o tema petróleo a altura
+    // de toda ferramenta de tela cheia (Inbox, quadro, construtor, Casos) mora
+    // numa classe só, `casca-ferramenta`, em `components/shell/casca.css`. O que
+    // se mede é o PAR: a grade leva a classe E a classe desconta a variável.
+    // Uma metade sem a outra é o defeito de antes — a faixa do canal caído
+    // empurrando o campo de mensagem para fora da tela.
+    const grade = inbox.split("\n").find((l) => l.includes("grid relative"));
+    expect(grade, "não achei a grade do Inbox no layout").toBeDefined();
+    expect(grade).toContain("casca-ferramenta");
+
+    const css = readFileSync("components/shell/casca.css", "utf8");
+    const regra = css.match(/\.casca-ferramenta\s*\{[^}]*\}/)?.[0] ?? "";
+    expect(regra.replace(/\s+/g, " ")).toMatch(
+      /height: calc\( 100dvh - var\(--faixas-de-cima, 0px\) - 3\.5rem /,
+    );
+    // E a casca é quem carrega esse CSS: sem o import a classe não existe.
+    expect(casca).toContain('import "@/components/shell/casca.css";');
   });
 
   it("a barra de cima e a lateral grudam ABAIXO das faixas, sem passar por baixo delas", () => {

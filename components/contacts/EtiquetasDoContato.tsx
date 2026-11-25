@@ -111,6 +111,8 @@ interface Props {
   disabled?: boolean;
   /** `id` do `<input>`, para o `<Label htmlFor>` de quem monta a ficha. */
   inputId?: string;
+  /** Sem a frase "Nenhuma etiqueta…" quando a lista está vazia (formulários de cadastro). */
+  ocultarVazio?: boolean;
   /**
    * A etiqueta que o texto AINDA digitado viraria se o Enter fosse apertado
    * agora, ou `null` quando não há o que gravar. Quem monta o diálogo guarda
@@ -142,6 +144,7 @@ export function EtiquetasDoContato({
   canonicalTags,
   disabled = false,
   inputId = "etiquetas-do-contato",
+  ocultarVazio = false,
   onPendente,
   onDefinirCor,
 }: Props) {
@@ -253,9 +256,11 @@ export function EtiquetasDoContato({
     <div className="space-y-2">
       <div className="flex flex-wrap gap-1">
         {value.length === 0 ? (
-          <span className="text-xs text-muted-foreground">
-            {t("Nenhuma etiqueta neste contato.")}
-          </span>
+          ocultarVazio ? null : (
+            <span className="text-xs text-muted-foreground">
+              {t("Nenhuma etiqueta neste contato.")}
+            </span>
+          )
         ) : (
           value.map((tag) => (
             <Fragment key={tag}>

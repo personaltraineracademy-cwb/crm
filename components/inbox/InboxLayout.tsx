@@ -695,7 +695,11 @@ export function InboxLayout({
    * extremos possíveis da faixa o trilho NÃO chega a apertar a conversa abaixo
    * do piso — o teto próprio da lista (520) morde antes.
    */
-  const fichaOcupaEspaco = faixa?.temFicha === true && !painelRecolhido;
+  // Sem conversa aberta o painel do contato nem existe: a coluna sai da grade (um
+  // só estado vazio, no centro) e volta quando há conversa. Não toca na
+  // preferência de recolher, que é do usuário (cookie).
+  const semFicha = !selectedId;
+  const fichaOcupaEspaco = faixa?.temFicha === true && !painelRecolhido && !semFicha;
 
   useEffect(() => {
     const medir = () => setFaixa(faixaDaLargura(window.innerWidth));
@@ -735,7 +739,9 @@ export function InboxLayout({
   const estiloDaGrade: CSSProperties | undefined =
     faixa && larguras
       ? {
-          gridTemplateColumns: painelRecolhido && faixa.temFicha
+          gridTemplateColumns: semFicha
+            ? `${larguras.lista}px minmax(0,1fr)`
+            : painelRecolhido && faixa.temFicha
             ? // Recolhido: a ficha sai da conta e o trilho do painel entra no
               // lugar dela. A largura AJUSTADA da ficha não se perde — ela volta
               // inteira quando o painel reabre.
@@ -854,14 +860,16 @@ export function InboxLayout({
     <div
       ref={gradeRef}
       className={cn(
-        "grid relative h-[calc(100dvh-var(--faixas-de-cima,0px)-3.5rem-var(--space-6)-max(var(--space-6),var(--rodape-ocupado,0px)))] w-full grid-cols-1 lg:grid-cols-[300px_1fr]",
+        "casca-ferramenta grid relative w-full grid-cols-1 lg:gap-2 lg:grid-cols-[300px_1fr]",
         // Recolhido (issue #3004), a terceira trilha vira o trilho estreito do
         // botão de expandir e a conversa fica com o que era da ficha. Duas
         // listas em vez de uma classe com valor em variável: o Tailwind precisa
         // do literal para gerar o CSS.
-        painelRecolhido
-          ? "xl:grid-cols-[272px_1fr_2.75rem] 2xl:grid-cols-[300px_1fr_2.75rem]"
-          : "xl:grid-cols-[272px_1fr_296px] 2xl:grid-cols-[300px_1fr_320px]",
+        semFicha
+          ? "xl:grid-cols-[272px_1fr] 2xl:grid-cols-[300px_1fr]"
+          : painelRecolhido
+            ? "xl:grid-cols-[272px_1fr_2.75rem] 2xl:grid-cols-[300px_1fr_2.75rem]"
+            : "xl:grid-cols-[272px_1fr_296px] 2xl:grid-cols-[300px_1fr_320px]",
       )}
       style={estiloDaGrade}
       /*
@@ -903,7 +911,7 @@ export function InboxLayout({
       <div
         ref={listaRef}
         className={cn(
-          "h-full min-h-0 flex-col border-r border-border lg:flex",
+          "h-full min-h-0 flex-col overflow-hidden rounded-xl bg-card lg:flex",
           colunas.lista,
         )}
       >
@@ -961,7 +969,7 @@ export function InboxLayout({
         ref={conversaRef}
         data-teclado-aberto={tecladoAberto ? "" : undefined}
         className={cn(
-          "h-full min-h-0 min-w-0 flex-col lg:flex group/conversa",
+          "h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-xl bg-card lg:flex group/conversa",
           colunas.conversa,
         )}
       >
@@ -972,7 +980,7 @@ export function InboxLayout({
           conversa, e só aparece quando há uma.
         */}
         {selectedId && (
-          <div className="flex items-center gap-1 border-b border-border px-1 py-1 lg:hidden">
+          <div className="flex items-center gap-1 border-b border-border-subtle px-1 py-1 lg:hidden">
             <Button
               variant="ghost"
               size="sm"
@@ -1017,7 +1025,7 @@ export function InboxLayout({
               botaoBuscaRef={botaoBuscaRef}
             />
             {buscaAberta && (
-              <div className="flex items-center gap-2 border-b border-border px-4 py-1.5">
+              <div className="flex items-center gap-2 border-b border-border-subtle px-4 py-1.5">
                 <MagnifyingGlass size={16} className="shrink-0 text-muted-foreground" aria-hidden />
                 <input
                   type="search"
@@ -1131,13 +1139,15 @@ export function InboxLayout({
         )}
       </div>
 
-      <div className="hidden h-full min-h-0 min-w-0 xl:block">
-        <CRMSidePanel
-          conversation={selectedConversation}
-          recolhido={painelRecolhido}
-          onAlternarRecolhido={alternarPainelDoContato}
-        />
-      </div>
+      {!semFicha && (
+        <div className="hidden h-full min-h-0 min-w-0 xl:block">
+          <CRMSidePanel
+            conversation={selectedConversation}
+            recolhido={painelRecolhido}
+            onAlternarRecolhido={alternarPainelDoContato}
+          />
+        </div>
+      )}
 
       {/*
         AS DUAS DIVISÓRIAS (#2579) — só a partir do `lg`, quando as colunas
@@ -1166,14 +1176,14 @@ export function InboxLayout({
             onDoubleClick={restaurarPadrao}
             onKeyDown={(evento) => teclarNaDivisoria("lista", evento)}
             className="group absolute inset-y-0 z-10 flex w-2 -translate-x-1/2 cursor-col-resize touch-none select-none items-stretch justify-center focus-visible:outline-hidden"
-            style={{ left: `${efetivas.lista}px` }}
+            style={{ left: `${efetivas.lista + 4}px` }}
           >
             <span
               aria-hidden
-              className="w-px bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary"
+              className="w-px bg-transparent transition-colors group-hover:bg-primary group-focus-visible:bg-primary"
             />
           </span>
-          {faixa?.temFicha && !painelRecolhido && (
+          {faixa?.temFicha && !painelRecolhido && !semFicha && (
             <span
               role="separator"
               aria-orientation="vertical"
@@ -1188,11 +1198,11 @@ export function InboxLayout({
               onDoubleClick={restaurarPadrao}
               onKeyDown={(evento) => teclarNaDivisoria("ficha", evento)}
               className="group absolute inset-y-0 z-10 flex w-2 translate-x-1/2 cursor-col-resize touch-none select-none items-stretch justify-center focus-visible:outline-hidden"
-              style={{ right: `${efetivas.ficha}px` }}
+              style={{ right: `${efetivas.ficha + 4}px` }}
             >
               <span
                 aria-hidden
-                className="w-px bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary"
+                className="w-px bg-transparent transition-colors group-hover:bg-primary group-focus-visible:bg-primary"
               />
             </span>
           )}

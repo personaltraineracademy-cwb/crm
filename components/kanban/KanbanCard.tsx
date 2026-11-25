@@ -1,9 +1,16 @@
 "use client";
-import { Draggable } from "@hello-pangea/dnd";
-import type { MouseEvent } from "react";
+import { useRotuloDaOrigem } from "@/components/contacts/OrigemDoLead";
+import { origemDoNegocio } from "@/lib/leads/origem-resumida";
+import {
+  Draggable,
+  type DraggableStateSnapshot,
+  type DraggingStyle,
+  type NotDraggingStyle,
+} from "@hello-pangea/dnd";
+import { memo, type MouseEvent } from "react";
 import { useT } from "@/hooks/i18n/useT";
 import { useTagDeIdioma } from "@/hooks/i18n/useLocaleDeData";
-import { CalendarBlank, DragHandle } from "@/lib/ui/icons";
+import { CalendarBlank, DragHandle, Plus } from "@/lib/ui/icons";
 import { cn } from "@/lib/utils";
 import { formatValorDoNegocio, MOEDA_PADRAO } from "@/lib/money";
 import type { Lead } from "@/lib/types/leads";
@@ -59,6 +66,57 @@ interface KanbanCardProps {
   /** Repassados ao menu de ações ("Mover para…"). */
   etapas?: Stage[];
   onMoverPara?: (lead: Lead, stageId: string) => void;
+  /** O "+ Criar tarefa" do rodapé. Ausente = sem o rodapé. */
+  onCriarTarefa?: (leadId: string) => void;
+}
+
+/**
+ * Quanto dura o "assentar" depois de soltar, em segundos. O `@hello-pangea/dnd`
+ * calcula de 0,33 a 0,55 s pela distância; a linguagem de movimento do Unnify é
+ * de 150 a 250 ms com saída suave, a mesma do `movimento.css`
+ * (`--kanban-assentar`). Tem de ser MAIOR que zero: a biblioteca só encerra a
+ * soltura no `transitionend` do `transform`, e uma transição de 0 s nunca o
+ * dispara — por isso o movimento reduzido usa 1 ms, como a documentação dela
+ * manda, e não zero.
+ */
+const ASSENTAR_S = 0.22;
+const ASSENTAR_REDUZIDO_S = 0.001;
+
+function movimentoReduzido(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+/**
+ * O estilo que a biblioteca põe no card, com a soltura na linguagem do Unnify:
+ * 220 ms na curva `--ease-out` (a dela é 0,33 a 0,55 s). As propriedades
+ * continuam as dela (`transform` e `opacity`), porque é o `transform` que ela
+ * espera terminar.
+ */
+export function estiloDaSoltura(
+  style: DraggingStyle | NotDraggingStyle | undefined,
+  snapshot: Pick<DraggableStateSnapshot, "isDropAnimating" | "dropAnimation">,
+): DraggingStyle | NotDraggingStyle | undefined {
+  if (!style || !snapshot.isDropAnimating || !snapshot.dropAnimation) return style;
+  // Só o card em arrasto (`position: fixed`) aceita `transition` livre; o do
+  // card parado é `"none"` no tipo da biblioteca. Durante a soltura ela entrega
+  // sempre o estilo de arrasto, então esta linha só convence o compilador.
+  if (!("position" in style)) return style;
+  const s = movimentoReduzido() ? ASSENTAR_REDUZIDO_S : ASSENTAR_S;
+  return {
+    ...style,
+    transition: `transform ${s}s var(--ease-out), opacity ${s}s var(--ease-out)`,
+  };
+}
+
+/** O estado de arrasto que o `movimento.css` lê (`data-arrasto`). */
+function estadoDoArrasto(snapshot: Pick<DraggableStateSnapshot, "isDragging" | "isDropAnimating">) {
+  if (snapshot.isDropAnimating) return "assentando";
+  if (snapshot.isDragging) return "levantado";
+  return undefined;
 }
 
 function formatValor(cents: number | null, currency: string | null): string | null {
@@ -88,7 +146,12 @@ function formatValor(cents: number | null, currency: string | null): string | nu
  * e tarefa atrasada em perigo (④). A antiga borda esquerda colorida saiu — o
  * cartão do Work não tem faixa lateral.
  */
-export function KanbanCard({
+/**
+ * `memo`: o card só re-renderiza quando o que ELE mostra muda (o lead, a posição,
+ * a seleção, o pulso). A coluna entrega o `CardInput` memoizado e callbacks
+ * estáveis justamente para isto valer.
+ */
+export const KanbanCard = memo(function KanbanCard({
   card,
   lead,
   index,
@@ -100,6 +163,7 @@ export function KanbanCard({
   onOpen,
   etapas,
   onMoverPara,
+  onCriarTarefa,
 }: KanbanCardProps) {
   const t = useT();
   const value = formatValor(card.valueCents, card.currency);
@@ -107,6 +171,8 @@ export function KanbanCard({
   const age = stageAgeLabel(card.hoursInStage, t);
   const tagDeIdioma = useTagDeIdioma();
   const prazo = prazoRelativo(lead.expected_close_date, new Date(), t, tagDeIdioma);
+  const origem = origemDoNegocio(lead.contact_origem, lead.source_metadata, lead.source);
+  const rotuloDaOrigem = useRotuloDaOrigem();
   // A cor cadastrada da etiqueta (Configurações › Tags) manda; ela vira o
   // `tone-*` mais próximo. Sem cor cadastrada, o tom sai do próprio texto.
   const coresDasEtiquetas = useCoresDasEtiquetas();
@@ -138,11 +204,7 @@ export function KanbanCard({
   // O título é o maior e mais natural alvo do card. Quem lê "Segurando Shift,
   // um clique seleciona tudo entre o card anterior e o que você clicou" e clica
   // no card clica no nome dele — e recebia o dossiê.
-  const decidirClique = (e: {
-    shiftKey: boolean;
-    metaKey: boolean;
-    ctrlKey: boolean;
-  }): void => {
+  const decidirClique = (e: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean }): void => {
     if (e.shiftKey) {
       onSelect?.(card.id, "intervalo");
       return;
@@ -161,7 +223,11 @@ export function KanbanCard({
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
+          style={estiloDaSoltura(provided.draggableProps.style, snapshot)}
           {...provided.dragHandleProps}
+          // Levantar (escala e sombra) e assentar: `movimento.css`, só por
+          // `scale`, `rotate` e opacidade — o `transform` é da biblioteca.
+          data-arrasto={estadoDoArrasto(snapshot)}
           // O dnd marca o handle como role="button"; com o menu de ações dentro,
           // isso vira nested-interactive no axe. "group" mantém o foco e o
           // teclado do dnd (tabIndex e handlers continuam vindo do spread) sem
@@ -172,12 +238,15 @@ export function KanbanCard({
           // Tags saem do card (Lei A): ficam a um hover, sem ocupar altura.
           title={card.tags.length > 0 ? `Tags: ${card.tags.join(", ")}` : undefined}
           className={cn(
-            "group relative overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground",
+            "kanban-card group relative overflow-hidden rounded-xl border border-border bg-card p-3 text-card-foreground",
             // A sombra do cartão de tarefa do Work (DS §6.3) — o único cartão
-            // com sombra em repouso, porque é o único que se arrasta.
-            "shadow-[0_2px_4px_rgb(0_0_0/3%),0_6px_18px_rgb(0_0_0/2%)] transition-shadow",
+            // com sombra em repouso, porque é o único que se arrasta. Sem
+            // `transition-shadow`: sombra não se anima (a regra de movimento só
+            // anima `transform` e opacidade). A sombra de LEVANTAR é outra
+            // camada, que entra por opacidade (`movimento.css`).
+            "shadow-[0_2px_4px_rgb(0_0_0/3%),0_6px_18px_rgb(0_0_0/2%)]",
             "hover:shadow-[0_4px_16px_rgb(0_0_0/7%)]",
-            snapshot.isDragging && "rotate-1 shadow-md ring-1 ring-primary/40",
+            snapshot.isDragging && "ring-1 ring-primary/40",
             isSelected && "ring-2 ring-primary",
           )}
         >
@@ -199,9 +268,33 @@ export function KanbanCard({
               mas sem tinta: a cor mora no texto do slot ③. */}
           <span aria-hidden data-estado-do-card={state.border} className="hidden" />
 
+          {/* Situação do negócio (desenho de referência): a primeira linha do
+              card diz se ele está em andamento, ganho ou perdido. */}
+          <p
+            className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
+            data-situacao-do-card={lead.status}
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "size-1.5 rounded-full",
+                lead.status === "won"
+                  ? "bg-success"
+                  : lead.status === "lost"
+                    ? "bg-danger"
+                    : "bg-primary",
+              )}
+            />
+            {lead.status === "won"
+              ? t("Ganho")
+              : lead.status === "lost"
+                ? t("Perdido")
+                : t("Em andamento")}
+          </p>
+
           {/* ① identidade — altura FIXA de 2 linhas, com ou sem texto longo. */}
           <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 flex-1 items-start gap-1.5">
+            <div className="relative flex min-w-0 flex-1 items-start gap-1.5">
               {/* A largura é SEMPRE reservada (`h-4 w-4` num wrapper que não
                   some), só a tinta é condicional: o card tem orçamento fixo de
                   altura e largura, e uma caixa que aparece no hover EMPURRANDO
@@ -223,11 +316,12 @@ export function KanbanCard({
                   /* estado vem de `isSelected`; quem decide é o onClick acima */
                 }}
                 className={cn(
-                  "mt-0.5 size-4 shrink-0 cursor-pointer rounded-sm accent-primary transition-opacity",
+                  // SOBREPOSTA, e não reservada (guia M4): a caixa só existe no hover e
+                  // na seleção, e reservar 22px empurrava título, valor e rodapé para
+                  // x diferentes. `bg-card` para ler sobre o texto do título.
+                  "absolute top-0.5 left-0 z-10 size-4 cursor-pointer rounded-sm bg-card accent-primary transition-opacity",
                   "focus:opacity-100 focus-visible:outline-2 focus-visible:outline-ring",
-                  isSelected || isSelecting
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100",
+                  isSelected || isSelecting ? "opacity-100" : "opacity-0 group-hover:opacity-100",
                 )}
               />
               {card.canonicalTag && (
@@ -250,7 +344,7 @@ export function KanbanCard({
                   acessibilidade; deixar só onKeyDown daria uma ação que existe
                   e NÃO É DESCOBERTA por leitor de tela. O título como button
                   atende mouse, teclado e leitor sem desfazer a decisão antiga. */}
-              <h3 className="line-clamp-2 h-10 text-sm leading-5 font-medium text-foreground">
+              <h3 className="line-clamp-2 min-h-5 text-[0.9375rem] leading-5 font-semibold text-foreground">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -292,10 +386,10 @@ export function KanbanCard({
           </div>
 
           {/* ② valor — altura reservada mesmo sem valor, senão o card encolhe. */}
-          <div className="mt-1 flex h-5 items-center justify-between gap-2">
+          <div className="mt-2 flex h-6 items-center justify-between gap-2">
             <p
               className={cn(
-                "text-xs leading-5 font-medium tabular-nums",
+                "text-base leading-6 font-semibold tabular-nums",
                 value ? "text-foreground" : "text-muted-foreground",
               )}
             >
@@ -318,11 +412,28 @@ export function KanbanCard({
             )}
           </div>
 
+          {/* Origem rastreada (UTM do link ou anúncio): uma linha só, e só
+              quando existe — "cadastro manual" não gasta espaço do card. */}
+          {origem.rastreada && (
+            <p
+              className="mt-2 flex items-center gap-1 truncate text-xs text-muted-foreground"
+              title={[rotuloDaOrigem(origem.origem), origem.meio, origem.campanha, origem.anuncio]
+                .filter(Boolean)
+                .join(" · ")}
+              data-origem-do-card
+            >
+              <span className="shrink-0">{t("Origem")}:</span>
+              <span className="truncate font-medium text-foreground">
+                {[rotuloDaOrigem(origem.origem), origem.campanha].filter(Boolean).join(" · ")}
+              </span>
+            </p>
+          )}
+
           {/* Etiquetas (DS §10.23): chips de tom, gap 6, até 128px cada,
               truncadas. A lista inteira segue no `title` do card. */}
           {etiquetasVisiveis.length > 0 && (
             <ul
-              className="mt-1.5 flex h-5 items-center gap-1.5 overflow-hidden"
+              className="mt-3 flex h-5 items-center gap-1.5 overflow-hidden"
               aria-label={t("Tags")}
             >
               {etiquetasVisiveis.map((tag) => (
@@ -346,7 +457,7 @@ export function KanbanCard({
           )}
 
           {/* ③ a linha do agente — um slot, três estados, nunca três blocos. */}
-          <div className="mt-1.5 flex h-6 items-center gap-2 text-xs">
+          <div className="mt-3 flex h-6 items-center gap-2 text-xs empty:hidden">
             {state.slot.type === "awaiting" && (
               // A proposta do agente é a ÚNICA linha do card com ação: é o
               // ponto onde a decisão do humano entra. Sem os botões aqui, o
@@ -397,24 +508,54 @@ export function KanbanCard({
               negócio não tem nada disso, como a conversa acima. */}
           <ContatoNoCard lead={lead} />
 
-          {/* ④ dono (+ selo de tarefas) · ⑤ tempo no estágio */}
-          <div className="mt-1 flex h-6 items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <OwnerBadge
-                ownerKind={card.owner.kind}
-                ownerName={card.owner.name}
-                agentVersion={card.owner.agentVersion}
-              />
+          {/* ④ selo de tarefas · ⑤ tempo no estágio · dono no canto (desenho de
+              referência: o responsável é o disco à direita, o nome fica na dica). */}
+          <div className="mt-3 flex h-6 items-center justify-between gap-2">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
               <TarefasNoCard tarefas={lead.tarefas} />
+              {/* O tempo na etapa tem de CABER: o nome da etapa já está no
+                  cabeçalho da coluna, então aqui vai só "1h na etapa"; o texto
+                  inteiro fica no tooltip. Sem tempo, o nome da etapa. */}
+              <span
+                className="min-w-0 truncate text-xs whitespace-nowrap text-muted-foreground tabular-nums"
+                title={
+                  state.showStageAge && age
+                    ? `${age} ${t("em")} ${card.stageName}`
+                    : `${t("em")} ${card.stageName}`
+                }
+              >
+                {state.showStageAge && age
+                  ? `${age} ${t("na etapa")}`
+                  : `${t("em")} ${card.stageName}`}
+              </span>
             </div>
-            <span className="min-w-0 truncate text-xs whitespace-nowrap text-muted-foreground tabular-nums">
-              {state.showStageAge && age
-                ? `${age} ${t("em")} ${card.stageName}`
-                : `${t("em")} ${card.stageName}`}
-            </span>
+            <OwnerBadge
+              ownerKind={card.owner.kind}
+              ownerName={card.owner.name}
+              agentVersion={card.owner.agentVersion}
+              soDisco
+            />
           </div>
+
+          {/* "+ Criar tarefa" no rodapé (desenho de referência): abre o negócio
+              direto em Atividades, com o formulário de tarefa nova. */}
+          {onCriarTarefa && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCriarTarefa(card.id);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="-mx-3 mt-3 -mb-3 flex w-[calc(100%+1.5rem)] items-center justify-center gap-1.5 border-t border-border py-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+              data-criar-tarefa-no-card
+            >
+              <Plus size={12} aria-hidden />
+              {t("Criar tarefa")}
+            </button>
+          )}
         </div>
       )}
     </Draggable>
   );
-}
+});

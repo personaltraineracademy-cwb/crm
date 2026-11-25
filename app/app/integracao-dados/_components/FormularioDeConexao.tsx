@@ -9,13 +9,14 @@ import { z } from "zod";
 import { showApiError } from "@/components/feedback/ApiErrorToast";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -239,21 +240,22 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{editando ? t("Editar conexão") : t("Conectar banco de dados")}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" size="md">
+        <SheetHeader>
+          <SheetTitle>{editando ? t("Editar conexão") : t("Conectar banco de dados")}</SheetTitle>
+          <SheetDescription>
             {t(
               "A senha é cifrada antes de gravar e nunca é mostrada de volta. A conexão é somente leitura e só aceita TLS por padrão.",
             )}
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
         {/* `min-w-0`: o DialogContent é grid, e item de grid não encolhe abaixo
             do conteúdo. Sem isto o <pre> do guia (MySQL) alarga o formulário
             além da janela e o overflow-x-auto dele nunca entra em ação. */}
-        <form onSubmit={salvar} className="min-w-0 space-y-4">
+        <form onSubmit={salvar} className="flex min-h-0 flex-1 flex-col">
+          <SheetBody className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="ext-motor">{t("Tipo de banco")}</Label>
             <Select value={dbType} onValueChange={trocarMotor} disabled={editando}>
@@ -482,16 +484,17 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
             </div>
           </fieldset>
 
-          <DialogFooter>
+          </SheetBody>
+          <SheetFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={salvando}>
               {t("Cancelar")}
             </Button>
             <Button type="submit" disabled={salvando}>
               {salvando ? t("Salvando…") : t("Salvar")}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

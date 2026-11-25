@@ -54,7 +54,7 @@ export function PreviewPanel({ requestId }: PreviewPanelProps) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-h-[80vh] max-w-xl overflow-y-auto">
+        <DialogContent size="md" className="max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ChartBar size={18} aria-hidden />

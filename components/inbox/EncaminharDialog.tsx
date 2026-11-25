@@ -71,7 +71,7 @@ export function EncaminharDialog({
         onOpenChange(aberto);
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{t("Encaminhar mensagem")}</DialogTitle>
           <DialogDescription>{t("Escolha a conversa que vai receber esta mensagem.")}</DialogDescription>

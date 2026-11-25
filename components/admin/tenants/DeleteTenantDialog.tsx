@@ -98,7 +98,7 @@ export function DeleteTenantDialog({
         if (!aberto) fechar();
       }}
     >
-      <AlertDialogContent className="max-w-lg">
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("Excluir tenant definitivamente")}</AlertDialogTitle>
           <AlertDialogDescription asChild>

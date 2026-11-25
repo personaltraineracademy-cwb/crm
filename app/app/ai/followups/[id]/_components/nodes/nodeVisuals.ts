@@ -1,6 +1,20 @@
 import type { ComponentType } from "react";
 
-import { Bell, Play, Clock, GitBranch, Brain, ChatCircle, ArrowsClockwise, PaperPlaneTilt, Flag, Question, PuzzlePiece, Funnel, Tag } from "@/lib/ui/icons";
+import {
+  Bell,
+  Play,
+  Clock,
+  GitBranch,
+  Brain,
+  ChatCircle,
+  ArrowsClockwise,
+  PaperPlaneTilt,
+  Flag,
+  Question,
+  PuzzlePiece,
+  Funnel,
+  Tag,
+} from "@/lib/ui/icons";
 import type { FlowNode, NodeType } from "@/lib/followup/graph-schema";
 import { RESULTADOS_DO_FIM } from "@/lib/followup/vocabulario";
 import { NOS_DA_SUPERFICIE } from "@/lib/followup/validate-publish";
@@ -113,7 +127,13 @@ export const NODE_VISUALS: Record<NodeType, NodeVisual> = {
     paletteLabel: "Pergunta",
     icon: Question,
     defaultLabel: "Nova pergunta",
-    defaultConfig: () => ({ key: "novo_campo", label: "Nova pergunta", type: "text", required: true, permite_correcao: true }),
+    defaultConfig: () => ({
+      key: "novo_campo",
+      label: "Nova pergunta",
+      type: "text",
+      required: true,
+      permite_correcao: true,
+    }),
   },
   skill: {
     type: "skill",
@@ -273,3 +293,36 @@ export function describeNodeConfig(
     }
   }
 }
+
+/**
+ * Categoria de cada tipo de nó: agrupa a paleta e dá a cor do cartão no
+ * canvas (n8n, Make e HubSpot pintam o nó pela família, não pelo tipo).
+ * A ORDEM do objeto é a ordem dos grupos na paleta — e, dentro de cada grupo,
+ * vale a ordem de `NOS_DA_SUPERFICIE`.
+ */
+export type CategoriaDoNo = "gatilho" | "espera" | "logica" | "mensagem" | "crm" | "fim";
+
+export const CATEGORIAS_DO_NO: Record<CategoriaDoNo, { rotulo: string }> = {
+  gatilho: { rotulo: "Gatilho" },
+  espera: { rotulo: "Esperas" },
+  logica: { rotulo: "Lógica" },
+  mensagem: { rotulo: "Mensagens" },
+  crm: { rotulo: "Ações no CRM" },
+  fim: { rotulo: "Fim" },
+};
+
+export const CATEGORIA_DO_TIPO: Record<NodeType, CategoriaDoNo> = {
+  trigger: "gatilho",
+  wait: "espera",
+  condition: "logica",
+  ai_classify: "logica",
+  match_reply: "logica",
+  repeat: "logica",
+  action: "mensagem",
+  collect: "mensagem",
+  skill: "mensagem",
+  internal_task: "crm",
+  move_lead: "crm",
+  edit_lead_tag: "crm",
+  end: "fim",
+};

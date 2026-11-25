@@ -10,6 +10,8 @@ import { useTasks } from "@/hooks/tasks/useTasks";
 import { resumoDasTarefas, type NovaTarefa, type Tarefa } from "@/lib/tarefas/tipos";
 import { Plus } from "@/lib/ui/icons";
 
+import { AplicarPlanoNoNegocio } from "./AplicarPlanoNoNegocio";
+
 interface Props {
   leadId: string;
   /** O contato do negócio vai junto na tarefa nova: a tarefa nasce presa aos dois. */
@@ -68,7 +70,7 @@ export function TarefasDoNegocio({ leadId, contactId, podeEditar, aberto }: Prop
       <div className="mb-2 flex items-center justify-between gap-2">
         <h3
           id="dossie-tarefas"
-          className="text-xs font-medium text-text-muted"
+          className="text-sm font-semibold text-foreground"
         >
           {t("Tarefas")}
           {resumo.abertas > 0 ? (
@@ -85,14 +87,17 @@ export function TarefasDoNegocio({ leadId, contactId, podeEditar, aberto }: Prop
           ) : null}
         </h3>
         {podeEditar ? (
-          <button
-            type="button"
-            onClick={abrirNova}
-            className="flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-          >
-            <Plus size={12} aria-hidden />
-            {t("Nova tarefa")}
-          </button>
+          <div className="flex items-center gap-3">
+            <AplicarPlanoNoNegocio leadId={leadId} aberto={aberto} />
+            <button
+              type="button"
+              onClick={abrirNova}
+              className="flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+            >
+              <Plus size={12} aria-hidden />
+              {t("Nova tarefa")}
+            </button>
+          </div>
         ) : null}
       </div>
 

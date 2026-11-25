@@ -179,7 +179,7 @@ export function VersionHistory({ agentId, versions, readOnly }: Props) {
       </ol>
 
       <Dialog open={diffOpen} onOpenChange={setDiffOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent size="lg">
           <DialogHeader>
             <DialogTitle>
               {diffPair

@@ -69,7 +69,9 @@ describe("Sidebar agrupado", () => {
       .filter(Boolean);
     // Organização não tem título aqui: seu hub (Configurações) vive no rodapé
     // fixo, fora da área que rola — medido, ele caía fora da dobra até em 1080px.
-    expect(titulos).toEqual(["Atendimento", "CRM", "Agente de IA", "Canais", "Análise"]);
+    // "Análise" saiu em 25/11/2026: o essencial de Desempenho e Atividades foi
+    // para o Dashboard, e o resto do grupo mudou de casa.
+    expect(titulos).toEqual(["Atendimento", "CRM", "Agente de IA", "Canais"]);
   });
 
   it("leva às Etapas do funil pelo CRM, e não por Configurações", () => {
@@ -126,8 +128,11 @@ describe("Sidebar agrupado", () => {
     //
     // Canal oficial não está aqui de propósito: virou aba de Conexões no PR
     // #105, e Conexões é a porta.
-    const hubAnalise = screen.getByRole("link", { name: /Ver tudo em Análise/ });
-    expect(hubAnalise).toHaveAttribute("href", "/app/analise");
+    // DESDE 25/11/2026 a casa do Audit Log é Configurações (o hub do rodapé), ao
+    // lado de "Dados e acesso": o grupo Análise e o hub dele saíram do menu a
+    // pedido da dona. É a volta ao lugar que este teste chamava de enterro —
+    // decisão de produto, registrada aqui para não parecer regressão.
+    expect(screen.queryByRole("link", { name: /Ver tudo em Análise/ })).toBeNull();
     expect(screen.queryByRole("link", { name: /Audit Log/ })).toBeNull();
 
     // NUVEMSHOP SAIU, e esta linha é a reversão explícita de uma decisão que

@@ -9,13 +9,14 @@ import { refreshCredentialsView } from "../_actions";
 
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -231,15 +232,16 @@ export function AddCredentialDialog({ open, onOpenChange, providerInicial = "ant
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChangeWrapped}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("Adicionar credencial")}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={open} onOpenChange={onOpenChangeWrapped}>
+      <SheetContent side="right" size="md">
+        <SheetHeader>
+          <SheetTitle>{t("Adicionar credencial")}</SheetTitle>
+          <SheetDescription>
             {t("A chave é guardada cifrada. Depois de salva, só os quatro últimos caracteres aparecem na tela.")}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-4">
+          </SheetDescription>
+        </SheetHeader>
+        <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+          <SheetBody className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="cred-provider">{t("Provedor")}</Label>
             <Select value={provider} onValueChange={(v) => setProvider(v as ProvedorComChave)}>
@@ -341,7 +343,8 @@ export function AddCredentialDialog({ open, onOpenChange, providerInicial = "ant
             )}
           </div>
 
-          <DialogFooter>
+          </SheetBody>
+          <SheetFooter>
             <Button
               type="button"
               variant="outline"
@@ -353,9 +356,9 @@ export function AddCredentialDialog({ open, onOpenChange, providerInicial = "ant
             <Button type="submit" disabled={submitting}>
               {submitting ? t("Salvando…") : t("Salvar e validar")}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

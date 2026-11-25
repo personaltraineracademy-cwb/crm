@@ -55,6 +55,14 @@ vi.mock("@/hooks/inbox/useAssignableMembers", () => ({
     ],
   }),
 }));
+// O botão "Aplicar plano" mora no cabeçalho da seção desde 23/11/2026 e fala com
+// a fila de consultas (planos cadastrados + a rota que aplica). Não é assunto
+// deste arquivo, que prende o VÍNCULO da tarefa feita à mão; sem trocá-lo por um
+// vizinho inerte, montar a seção exigiria um `QueryClientProvider` e uma API
+// falsa só para um botão em que nenhum caso daqui clica.
+vi.mock("@/components/kanban/AplicarPlanoNoNegocio", () => ({
+  AplicarPlanoNoNegocio: () => null,
+}));
 vi.mock("next/link", () => ({
   default: ({ href, children, ...resto }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...resto}>

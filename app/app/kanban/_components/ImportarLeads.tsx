@@ -95,7 +95,7 @@ export function ImportarLeads({ funis }: { funis: FunilDaLista[] }) {
       </Button>
 
       <Dialog open={aberto} onOpenChange={setAberto}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent size="md">
           <DialogHeader>
             <DialogTitle>{t("Importar leads de uma planilha")}</DialogTitle>
           </DialogHeader>

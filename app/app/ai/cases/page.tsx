@@ -17,7 +17,7 @@ export default async function CasesPage() {
   const idioma = user.idioma;
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem-var(--space-6)-max(var(--space-6),var(--rodape-ocupado,0px)))] min-h-0 flex-col sm:p-6">
+    <div className="casca-ferramenta flex min-h-0 flex-col sm:p-6">
       <CaseList heading={
         <PageHeader
           title={traduzir("Casos", idioma)}

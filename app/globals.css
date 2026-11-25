@@ -31,6 +31,18 @@
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
+  /* Cores de DADOS dos gráficos — as mesmas do Unnify Pulse (hub-pta,
+     components/charts/useChartTheme.ts), para os painéis das duas pontas da
+     Unnify falarem a mesma língua visual. Não mudam sem pedido explícito. */
+  --grafico-1: #0b5cff;
+  --grafico-2: #0d9488;
+  --grafico-3: #f59e0b;
+  --grafico-4: #0047d9;
+  --grafico-5: #e14d4d;
+  --grafico-6: #64748b;
+  --grafico-7: #4ca8ff;
+  --grafico-8: #0f766e;
+  --grafico-grade: rgba(16, 24, 40, 0.08);
   /* Surfaces (light) */
   --color-bg: #faf9f6;
   --color-surface: #ffffff;
@@ -337,9 +349,28 @@
   --agenda-pessoa-6: #608bda; /* índigo */
   --agenda-pessoa-7: #7b5bad; /* violeta */
   --agenda-pessoa-8: #cc77b1; /* framboesa */
+  --grafico-1: #0b5cff;
+  --grafico-2: #0d9488;
+  --grafico-3: #f59e0b;
+  --grafico-4: #0047d9;
+  --grafico-5: #e14d4d;
+  --grafico-6: #64748b;
+  --grafico-7: #4ca8ff;
+  --grafico-8: #0f766e;
+  --grafico-grade: rgba(16, 24, 40, 0.08);
 }
 
 [data-theme="dark"] {
+  /* Cores de dados no escuro (Unnify Pulse, PIE_COLORS_DARK). */
+  --grafico-1: #71a8ff;
+  --grafico-2: #68ddf8;
+  --grafico-3: #fbbf24;
+  --grafico-4: #4ca8ff;
+  --grafico-5: #f87171;
+  --grafico-6: #8f99a7;
+  --grafico-7: #93bdff;
+  --grafico-8: #5eead4;
+  --grafico-grade: rgba(255, 255, 255, 0.07);
   /* Surfaces (dark — drawn) */
   --color-bg: #161510;
   --color-surface: #1d1c17;

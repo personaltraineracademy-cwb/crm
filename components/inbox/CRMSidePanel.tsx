@@ -1,5 +1,7 @@
 "use client";
 
+import { OrigemDoLead } from "@/components/contacts/OrigemDoLead";
+import type { OrigemResumida } from "@/lib/leads/origem-resumida";
 import { CartaoDaCarteira } from "@/components/contacts/CartaoDaCarteira";
 import { RoteirosDoContato } from "@/components/contacts/RoteirosDoContato";
 import { AcervoSearch } from "./AcervoSearch";
@@ -761,6 +763,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   const [fatos, setFatos] = useState<Array<{ id: string; headline: string; body: string }>>([]);
   const [historico, setHistorico] = useState<Array<{ id: string; desfecho: string; fechada_em: string }>>([]);
   const [anuncios, setAnuncios] = useState<{ origem: AnuncioDeOrigem | null; recente: AnuncioMaisRecente | null }>({ origem: null, recente: null });
+  const [origemDoContato, setOrigemDoContato] = useState<OrigemResumida | null>(null);
   const [summaryContactId, setSummaryContactId] = useState<string | null>(null);
   /**
    * O TERCEIRO ESTADO. Antes existiam dois — carregando e "tem N itens" — e a
@@ -826,6 +829,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
             historico?: Array<{ id: string; desfecho: string; fechada_em: string }>;
             anuncio_de_origem?: AnuncioDeOrigem | null;
             anuncio_mais_recente?: AnuncioMaisRecente | null;
+            origem?: OrigemResumida | null;
           };
         }>(`/api/v1/contacts/${contactId}/crm-summary`);
         if (cancelled) return;
@@ -855,6 +859,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
         setDemandas(r.data.demandas ?? []);
         setFatos(r.data.fatos ?? []); setHistorico(r.data.historico ?? []);
         setAnuncios({ origem: r.data.anuncio_de_origem ?? null, recente: r.data.anuncio_mais_recente ?? null });
+        setOrigemDoContato(r.data.origem ?? null);
       } catch {
         if (cancelled) return;
         // Falha NÃO vira lista vazia. Os dados ficam `null` e o painel diz que
@@ -935,7 +940,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   if (recolhido && onAlternarRecolhido) {
     return (
       <aside
-        className="flex h-full flex-col items-center border-l border-border bg-background py-2"
+        className="flex h-full flex-col items-center rounded-xl bg-card py-2"
         data-testid="inbox-painel-recolhido"
       >
         <BotaoDeRecolherDoPainel recolhido onAlternar={onAlternarRecolhido} />
@@ -945,7 +950,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
 
   if (!conversation) {
     return (
-      <aside className="relative flex h-full items-center justify-center border-l border-border p-4 text-center text-xs text-muted-foreground">
+      <aside className="relative flex h-full items-center justify-center rounded-xl bg-card p-4 text-center text-xs text-muted-foreground">
         {onAlternarRecolhido && (
           <div className="absolute top-2 right-2">
             <BotaoDeRecolherDoPainel recolhido={false} onAlternar={onAlternarRecolhido} />
@@ -957,7 +962,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
   }
 
   return (
-    <aside className="flex h-full flex-col gap-5 overflow-y-auto border-l border-border bg-background p-4">
+    <aside className="flex h-full flex-col gap-5 overflow-y-auto rounded-xl bg-card p-4">
       {/*
         O CONTROLE DE RECOLHER, NO ALTO (issue #3004) — mesmo lugar do recolher
         do menu da esquerda. `sticky` para não rolar para fora com o conteúdo, e
@@ -967,7 +972,7 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
         desenha nada: quem já tem o gesto de fechar não precisa deste.
       */}
       {onAlternarRecolhido && (
-        <div className="sticky top-0 z-10 -mx-4 -mt-4 flex shrink-0 justify-end border-b border-border bg-background px-4 py-1">
+        <div className="sticky top-0 z-10 -mx-4 -mt-4 flex shrink-0 justify-end rounded-t-xl border-b border-border-subtle bg-card px-4 py-1">
           <BotaoDeRecolherDoPainel recolhido={false} onAlternar={onAlternarRecolhido} />
         </div>
       )}
@@ -1071,6 +1076,17 @@ export function CRMSidePanel({ conversation, recolhido = false, onAlternarRecolh
 
       {contactId && summaryContactId === contactId && !erro && (
         <AnuncioDoContato contactId={contactId} origem={anuncios.origem} recente={anuncios.recente} />
+      )}
+
+      {/* De onde a pessoa veio (UTM do link ou anúncio) — a mesma peça do
+          dossiê do negócio, para o atendente não precisar sair da conversa. */}
+      {contactId && summaryContactId === contactId && !erro && origemDoContato && (
+        <section data-testid="inbox-origem">
+          <h3 className="text-sm font-semibold text-foreground">{t("Origem")}</h3>
+          <div className="mt-2">
+            <OrigemDoLead origem={origemDoContato} />
+          </div>
+        </section>
       )}
 
       <LeadEnrichment

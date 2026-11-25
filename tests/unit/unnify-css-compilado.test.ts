@@ -171,31 +171,31 @@ describe("CSS compilado do Unnify", () => {
   });
 
   const CORES: Array<[string, string, string, string]> = [
-    [".bg-primary", "background-color", "#0066cc", "#75b7ff"],
-    [".text-primary", "color", "#0066cc", "#75b7ff"],
-    [".bg-background", "background-color", "#f1f3f6", "#181a1e"],
-    [".bg-card", "background-color", "#ffffff", "#23262b"],
-    [".text-muted-foreground", "color", "#626a77", "#b4bbc6"],
-    [".text-foreground", "color", "#20242c", "#f3f5f8"],
-    [".bg-muted", "background-color", "#e8ecf1", "#202328"],
-    [".bg-popover", "background-color", "#ffffff", "#292d33"],
-    [".border-border", "border-color", "#d2d9e2", "#353a42"],
-    [".border-input", "border-color", "#868d98", "#6a717a"],
-    [".ring-ring", "--tw-ring-color", "#0066cc", "#75b7ff"],
+    [".bg-primary", "background-color", "#24555e", "#8fb3bb"],
+    [".text-primary", "color", "#24555e", "#8fb3bb"],
+    [".bg-background", "background-color", "#edf2f3", "#0e1213"],
+    [".bg-card", "background-color", "#ffffff", "#1a1e1f"],
+    [".text-muted-foreground", "color", "#5a6e6f", "#b1bdc0"],
+    [".text-foreground", "color", "#10201f", "#f1f6f7"],
+    [".bg-muted", "background-color", "#e7edee", "#1f2324"],
+    [".bg-popover", "background-color", "#ffffff", "#202526"],
+    [".border-border", "border-color", "#d1dadc", "#343839"],
+    [".border-input", "border-color", "#7d8d8f", "#6f7677"],
+    [".ring-ring", "--tw-ring-color", "#24555e", "#8fb3bb"],
     [".bg-destructive", "background-color", "#b42318", "#ff918a"],
     [".text-destructive", "color", "#b42318", "#ff918a"],
-    [".text-destructive-foreground", "color", "#ffffff", "#08131c"],
-    [".bg-accent", "background-color", "#0066cc", "#75b7ff"],
-    [".bg-accent-soft", "background-color", "#eaf2fc", "#203750"],
-    [".text-accent-foreground", "color", "#ffffff", "#08131c"],
-    [".text-sky-500", "color", "#0066cc", "#0066cc"],
-    [".text-sky-700", "color", "#0055aa", "#0055aa"],
+    [".text-destructive-foreground", "color", "#ffffff", "#001717"],
+    [".bg-accent", "background-color", "#24555e", "#8fb3bb"],
+    [".bg-accent-soft", "background-color", "#e6f4f7", "#1d3b3c"],
+    [".text-accent-foreground", "color", "#ffffff", "#001717"],
+    [".text-sky-500", "color", "#24555e", "#24555e"],
+    [".text-sky-700", "color", "#254142", "#254142"],
     [".bg-amber-500", "background-color", "#f4a93c", "#f4a93c"],
     [".text-amber-800", "color", "#92400e", "#92400e"],
     [".text-danger", "color", "#b42318", "#ffb4ae"], // texto de estado = foreground
     [".border-warning-border", "border-color", "#fde68a", "#78350f"],
-    [".bg-surface-sunken", "background-color", "#e8ecf1", "#202328"],
-    [".hover\\:text-accent-strong:hover", "color", "#005bb5", "#91c5ff"],
+    [".bg-surface-sunken", "background-color", "#e7edee", "#1f2324"],
+    [".hover\\:text-accent-strong:hover", "color", "#1a4951", "#acc6cb"],
     [".bg-success-bg", "background-color", "#ddfbef", "#052e1c"],
     [".text-error-fg", "color", "#b42318", "#ffb4ae"],
   ];
@@ -215,14 +215,14 @@ describe("CSS compilado do Unnify", () => {
       danger: ["#dc2626", "#ff918a"],
       error: ["#dc2626", "#ff918a"],
       success: ["#0c7f57", "#34d399"],
-      info: ["#0066cc", "#75b7ff"],
+      info: ["#24555e", "#98b9c0"],
     };
     const TEXTO: Record<(typeof ESTADOS)[number], [string, string]> = {
       warning: ["#92400e", "#fcd34d"],
       danger: ["#b42318", "#ffb4ae"],
       error: ["#b42318", "#ffb4ae"],
       success: ["#065f46", "#6ee7b7"],
-      info: ["#0055aa", "#c6e0ff"],
+      info: ["#375f62", "#c3e4eb"],
     };
     for (const e of ESTADOS) {
       it(`${e}: texto ${TEXTO[e].join(" / ")}, sólida ${SOLIDA[e].join(" / ")}`, () => {
@@ -262,13 +262,13 @@ describe("CSS compilado do Unnify", () => {
     const seletor = '.dark\\:text-sky-400:where([data-theme="dark"], [data-theme="dark"] *)';
     const valor = utilitario(seletor, "color");
     expect(valor).toBeDefined();
-    expect(resolver(valor!, "escuro")).toBe("#75b7ff");
+    expect(resolver(valor!, "escuro")).toBe("#8fb3bb");
   });
 
   it("opacidade sobre a paleta remapeada tem fallback com a cor certa", () => {
     // Sem `color-mix`, o Tailwind usa o hex literal calculado — por isso a
     // paleta está em `@theme` sem `inline` (mapa §5.2).
-    expect(utilitario(".bg-sky-500\\/10", "background-color")).toMatch(/#0066cc/i);
+    expect(utilitario(".bg-sky-500\\/10", "background-color")).toMatch(/#24555e/i);
   });
 
   it("pesos acima de 600 não existem", () => {
@@ -320,7 +320,7 @@ describe("CSS compilado do Unnify", () => {
 /* ─────────────────────────────────────────────────────────────────────────
    Marca × folha estática: o mesmo pixel com e sem a marca do Unnify.
 
-   A tabela fixa da marca (`lib/branding/unnify.ts`) faz a semente `#0066cc`
+   A tabela fixa da marca (`lib/branding/unnify.ts`) faz a semente `#24555e`
    injetar EXATAMENTE as paradas e os papéis que `app/unnify/tokens.css` já
    declara. Aqui isso é medido em cascata de verdade (herança `<html>` →
    `<body>` → elemento), no CSS COMPILADO, com o bloco que o `app/layout.tsx`
@@ -432,36 +432,36 @@ function cascata(tema: Tema, c: Cenario = {}): { html: Computado; body: Computad
 /** DESIGN-SYSTEM.md §3.2, à mão (os mesmos literais de lib/branding/unnify.test.ts). */
 const UNNIFY: Record<Tema, Record<string, string>> = {
   claro: {
-    primary: "#0066cc",
+    primary: "#24555e",
     "primary-foreground": "#ffffff",
-    "primary-hover": "#005bb5",
-    "primary-pressed": "#004f9e",
-    "accent-pressed": "#004f9e",
-    "accent-soft": "#eaf2fc",
-    ring: "#0066cc",
-    foco: "#0066cc",
-    interactive: "#eaf2fc",
-    "interactive-strong": "#dceafa",
-    "interactive-border": "#9bbbe0",
-    "interactive-foreground": "#0055aa",
-    "selecao-fundo": "#dceafa",
-    "selecao-texto": "#0055aa",
+    "primary-hover": "#1a4951",
+    "primary-pressed": "#0b3d45",
+    "accent-pressed": "#0b3d45",
+    "accent-soft": "#e6f4f7",
+    ring: "#24555e",
+    foco: "#24555e",
+    interactive: "#e6f4f7",
+    "interactive-strong": "#d5eef2",
+    "interactive-border": "#a0bec4",
+    "interactive-foreground": "#375f62",
+    "selecao-fundo": "#d5eef2",
+    "selecao-texto": "#375f62",
   },
   escuro: {
-    primary: "#75b7ff",
-    "primary-foreground": "#08131c",
-    "primary-hover": "#91c5ff",
-    "primary-pressed": "#5ca8fb",
-    "accent-pressed": "#5ca8fb",
-    "accent-soft": "#203750",
-    ring: "#75b7ff",
-    foco: "#75b7ff",
-    interactive: "#203750",
-    "interactive-strong": "#203d5c",
-    "interactive-border": "#416d98",
-    "interactive-foreground": "#c6e0ff",
-    "selecao-fundo": "#203d5c",
-    "selecao-texto": "#c6e0ff",
+    primary: "#8fb3bb",
+    "primary-foreground": "#001717",
+    "primary-hover": "#acc6cb",
+    "primary-pressed": "#85acb3",
+    "accent-pressed": "#85acb3",
+    "accent-soft": "#1d3b3c",
+    ring: "#8fb3bb",
+    foco: "#8fb3bb",
+    interactive: "#1d3b3c",
+    "interactive-strong": "#254142",
+    "interactive-border": "#596e70",
+    "interactive-foreground": "#c3e4eb",
+    "selecao-fundo": "#254142",
+    "selecao-texto": "#c3e4eb",
   },
 };
 
@@ -508,7 +508,7 @@ const PRIMITIVOS_DO_BODY = new Set([
   ),
 ]);
 
-describe("marca #0066cc × folha estática: o mesmo pixel", () => {
+describe("marca #24555e × folha estática: o mesmo pixel", () => {
   for (const tema of ["claro", "escuro"] as const) {
     describe(tema, () => {
       it("SEM marca, a folha sozinha dá os papéis do Unnify, fora e dentro de /app", () => {
@@ -517,19 +517,19 @@ describe("marca #0066cc × folha estática: o mesmo pixel", () => {
         expect(medir(body)).toEqual(UNNIFY[tema]);
       });
 
-      it("COM a marca da instalação #0066cc injetada, TODA variável computada é idêntica", () => {
+      it("COM a marca da instalação #24555e injetada, TODA variável computada é idêntica", () => {
         const sem = cascata(tema);
-        const com = cascata(tema, { instalacao: blocoDaMarca("#0066cc") });
+        const com = cascata(tema, { instalacao: blocoDaMarca("#24555e") });
         expect(medir(com.html)).toEqual(UNNIFY[tema]);
         expect(semBrand(com.html)).toEqual(semBrand(sem.html));
         expect(semBrand(com.body)).toEqual(semBrand(sem.body));
-        expect(com.html.get("--color-brand")).toBe("#0066cc");
+        expect(com.html.get("--color-brand")).toBe("#24555e");
       });
 
-      it("COM a marca da organização #0066cc injetada no <body>, idem", () => {
+      it("COM a marca da organização #24555e injetada no <body>, idem", () => {
         const sem = cascata(tema);
         const com = cascata(tema, {
-          organizacao: blocoDaMarca("#0066cc", ESCOPO_DA_ORGANIZACAO),
+          organizacao: blocoDaMarca("#24555e", ESCOPO_DA_ORGANIZACAO),
         });
         expect(medir(com.body)).toEqual(UNNIFY[tema]);
         expect(semBrand(com.body)).toEqual(semBrand(sem.body));

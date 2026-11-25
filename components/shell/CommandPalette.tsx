@@ -52,9 +52,9 @@ export function CommandPalette({
         Work: quem fecha é o `Esc` (tecla ou o botão "Esc" do campo, que
         também serve ao dedo) e o clique fora.
       */}
-      <DialogContent
+      <DialogContent size="md"
         showCloseButton={false}
-        className="top-[12vh] flex max-h-[76vh] max-w-xl translate-y-0 flex-col gap-0 overflow-hidden p-0"
+        className="top-[12vh] flex max-h-[76vh] translate-y-0 flex-col gap-0 overflow-hidden p-0"
       >
         <DialogTitle className="sr-only">{t("Buscar telas")}</DialogTitle>
         {/* O miolo é um componente à parte porque o Radix o DESMONTA ao fechar:

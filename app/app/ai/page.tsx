@@ -19,6 +19,12 @@ export const metadata: Metadata = { title: "Agente de IA" };
  * Passa `locale` (o padrão do `NavHub` é pt-BR): sem isso o hub inteiro ficava
  * em português mesmo com idioma=es — títulos, seções e descrições.
  */
+/**
+ * As três portas de quem é dono do negócio: quem atende, o que ele sabe e
+ * como ele retoma uma conversa parada. O resto continua aqui, sob "Avançado".
+ */
+const ESSENCIAIS_DE_IA = ["/app/ai/agents", "/app/ai/knowledge/sources", "/app/ai/followups"] as const;
+
 export default async function AiHubPage() {
   const user = await requireAuth();
   const activeOrg = await resolveActiveOrg(user);
@@ -37,6 +43,7 @@ export default async function AiHubPage() {
         idioma,
       )}
       locale={idioma}
+      essenciais={ESSENCIAIS_DE_IA}
     />
   );
 }

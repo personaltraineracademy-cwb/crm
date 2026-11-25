@@ -174,7 +174,7 @@ export function AgendaDePausa({ canais }: { canais: CanalDaLista[] }) {
           {t("Agendar pausa")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{t("Janela de manutenção")}</DialogTitle>
           <DialogDescription>

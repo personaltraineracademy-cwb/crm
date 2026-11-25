@@ -66,7 +66,7 @@ export function PageHeader({
     >
       <div
         className={cn(
-          "flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4",
+          "flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
           emCartao ? "p-4 sm:p-5" : "pb-1",
         )}
       >

@@ -8,6 +8,9 @@ import type { AgentRow } from "@/hooks/ai/useAgent";
 import { AgentsList } from "./_components/AgentsList";
 import { logger } from "@/lib/logger";
 import { PageHeader } from "@/components/ui/page-header";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Plus } from "@/lib/ui/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -56,11 +59,17 @@ export default async function AgentsListPage() {
   return (
     <div className="flex h-full flex-col gap-6 p-6">
       <PageHeader
-        title={traduzir("Agentes de IA", idioma)}
-        description={traduzir(
-          "Configure o comportamento dos agentes que respondem no WhatsApp.",
-          idioma,
-        )}
+        title={traduzir("Agentes", idioma)}
+        description={traduzir("Crie, treine e gerencie seus agentes de IA.", idioma)}
+        actions={
+          canWrite ? (
+            <Link href="/app/ai/agents/new">
+              <Button>
+                <Plus size={14} aria-hidden className="mr-2" /> {traduzir("Criar agente", idioma)}
+              </Button>
+            </Link>
+          ) : undefined
+        }
       />
       <AgentsList initialData={agents} canWrite={canWrite} />
     </div>

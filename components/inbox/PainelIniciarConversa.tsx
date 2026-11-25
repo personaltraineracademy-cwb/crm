@@ -47,6 +47,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -54,7 +55,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldHint, FieldLabel, FieldSection } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -151,125 +152,134 @@ function CorpoDoPainel({
 
   return (
     <>
-      <div className="space-y-4">
-        {/* ── Passo 1: para quem ─────────────────────────────────────────── */}
-        <div className="space-y-1.5">
-          <Label htmlFor="iniciar-conversa-para-quem">{t("Para quem")}</Label>
-          <Input
-            id="iniciar-conversa-para-quem"
-            value={termo}
-            autoComplete="off"
-            placeholder={t("Telefone ou nome do contato")}
-            onChange={(evento) => {
-              setTermo(evento.target.value);
-              setContatoEscolhido(null);
-            }}
-          />
-
-          {alvoContato ? (
-            <div
-              className={cn(
-                "flex items-center gap-2 rounded-lg border border-primary bg-primary/5 px-3 py-2",
-                "text-sm",
-              )}
-            >
-              <UserCircle size={16} weight="regular" aria-hidden className="shrink-0" />
-              <span className="min-w-0 flex-1 truncate">
-                {t("Contato existente")}: {rotuloDoContato(alvoContato, t)}
-              </span>
-            </div>
-          ) : telefone ? (
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
-              <UserCircle size={16} weight="regular" aria-hidden className="shrink-0" />
-              <span className="min-w-0 flex-1 truncate">
-                {t("Novo contato")}: {phoneForDisplay(telefone)}
-              </span>
-            </div>
-          ) : null}
-
-          {outros.length > 0 && (
-            <div className="max-h-40 space-y-1 overflow-y-auto pt-1">
-              {outros.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  className={cn(
-                    "flex w-full items-center gap-2 rounded-lg border border-border px-3 py-2 text-left text-sm",
-                    "hover:border-interactive-border hover:bg-interactive transition-colors",
-                  )}
-                  onClick={() => setContatoEscolhido(c)}
-                >
-                  <Users size={16} weight="regular" aria-hidden className="shrink-0" />
-                  <span className="min-w-0 flex-1 truncate">{rotuloDoContato(c, t)}</span>
-                  {c.phone_number && (
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {phoneForDisplay(c.phone_number)}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {termoBuscado.length >= 2 && !busca.isFetching && outros.length === 0 && !alvoContato && (
-            <p className="text-xs text-muted-foreground">{t("Nenhum contato encontrado")}</p>
-          )}
-        </div>
-
-        {/* ── Passo 3: nome do contato novo e primeira mensagem ───────────── */}
-        {!alvoContato && (
-          <div className="space-y-1.5">
-            <Label htmlFor="iniciar-conversa-nome">{t("Nome (opcional)")}</Label>
+      <DialogBody>
+        <FieldSection title={t("Destinatário")}>
+          {/* ── Passo 1: para quem ─────────────────────────────────────────── */}
+          <Field>
+            <FieldLabel obrigatorio htmlFor="iniciar-conversa-para-quem">
+              {t("Para quem")}
+            </FieldLabel>
             <Input
-              id="iniciar-conversa-nome"
-              value={nome}
+              id="iniciar-conversa-para-quem"
+              value={termo}
               autoComplete="off"
-              placeholder={t("Como o contato aparece no CRM")}
-              onChange={(evento) => setNome(evento.target.value)}
+              placeholder={t("Telefone ou nome do contato")}
+              onChange={(evento) => {
+                setTermo(evento.target.value);
+                setContatoEscolhido(null);
+              }}
             />
-          </div>
-        )}
 
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="iniciar-conversa-mensagem">{t("Primeira mensagem")}</Label>
-            {listaDeModelos.length > 0 && (
-              <Select
-                value={modelo}
-                onValueChange={(escolhido) => {
-                  setModelo(escolhido);
-                  const achado = listaDeModelos.find((m) => m.id === escolhido);
-                  if (achado) setMensagem(achado.body);
-                }}
+            {alvoContato ? (
+              <div
+                className={cn(
+                  "flex items-center gap-2 rounded-lg border border-primary bg-primary/5 px-3 py-2",
+                  "text-sm",
+                )}
               >
-                <SelectTrigger
-                  className="h-7 w-auto gap-1 text-xs"
-                  aria-label={t("Usar modelo de mensagem")}
-                >
-                  <SelectValue placeholder={t("Usar modelo de mensagem")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {listaDeModelos.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <UserCircle size={16} weight="regular" aria-hidden className="shrink-0" />
+                <span className="min-w-0 flex-1 truncate">
+                  {t("Contato existente")}: {rotuloDoContato(alvoContato, t)}
+                </span>
+              </div>
+            ) : telefone ? (
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
+                <UserCircle size={16} weight="regular" aria-hidden className="shrink-0" />
+                <span className="min-w-0 flex-1 truncate">
+                  {t("Novo contato")}: {phoneForDisplay(telefone)}
+                </span>
+              </div>
+            ) : null}
+
+            {outros.length > 0 && (
+              <div className="max-h-40 space-y-1 overflow-y-auto pt-1">
+                {outros.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-lg border border-border px-3 py-2 text-left text-sm",
+                      "hover:border-interactive-border hover:bg-interactive transition-colors",
+                    )}
+                    onClick={() => setContatoEscolhido(c)}
+                  >
+                    <Users size={16} weight="regular" aria-hidden className="shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">{rotuloDoContato(c, t)}</span>
+                    {c.phone_number && (
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {phoneForDisplay(c.phone_number)}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             )}
-          </div>
-          <Textarea
-            id="iniciar-conversa-mensagem"
-            value={mensagem}
-            rows={3}
-            placeholder={t("O que dizer ao contato (opcional)")}
-            onChange={(evento) => setMensagem(evento.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">
-            {t("A conversa abre atribuída a você: a IA não assume este atendimento.")}
-          </p>
-        </div>
-      </div>
+
+            {termoBuscado.length >= 2 &&
+              !busca.isFetching &&
+              outros.length === 0 &&
+              !alvoContato && (
+                <p className="text-xs text-muted-foreground">{t("Nenhum contato encontrado")}</p>
+              )}
+          </Field>
+
+          {/* ── Passo 3: nome do contato novo e primeira mensagem ───────────── */}
+          {!alvoContato && (
+            <Field>
+              <FieldLabel htmlFor="iniciar-conversa-nome">{t("Nome")}</FieldLabel>
+              <Input
+                id="iniciar-conversa-nome"
+                value={nome}
+                autoComplete="off"
+                placeholder={t("Como o contato aparece no CRM")}
+                onChange={(evento) => setNome(evento.target.value)}
+              />
+            </Field>
+          )}
+        </FieldSection>
+
+        <FieldSection title={t("Mensagem")}>
+          <Field>
+            <div className="flex items-center justify-between gap-2">
+              <FieldLabel htmlFor="iniciar-conversa-mensagem">{t("Primeira mensagem")}</FieldLabel>
+              {listaDeModelos.length > 0 && (
+                <Select
+                  value={modelo}
+                  onValueChange={(escolhido) => {
+                    setModelo(escolhido);
+                    const achado = listaDeModelos.find((m) => m.id === escolhido);
+                    if (achado) setMensagem(achado.body);
+                  }}
+                >
+                  <SelectTrigger
+                    className="h-7 w-auto gap-1 text-xs"
+                    aria-label={t("Usar modelo de mensagem")}
+                  >
+                    <SelectValue placeholder={t("Usar modelo de mensagem")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {listaDeModelos.map((m) => (
+                      <SelectItem key={m.id} value={m.id}>
+                        {m.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            <Textarea
+              id="iniciar-conversa-mensagem"
+              value={mensagem}
+              rows={3}
+              placeholder={t("O que dizer ao contato")}
+              onChange={(evento) => setMensagem(evento.target.value)}
+            />
+            <FieldHint>
+              {t("A conversa abre atribuída a você: a IA não assume este atendimento.")}
+            </FieldHint>
+          </Field>
+        </FieldSection>
+      </DialogBody>
 
       <DialogFooter>
         <Button type="button" variant="outline" disabled={abrindo} onClick={aoCancelar}>
@@ -348,7 +358,10 @@ export function IniciarConversaDialog({
       const texto = primeiraMensagem.current.trim();
       if (texto && assumiu) {
         try {
-          await apiClient.post("/api/v1/messages", { conversation_id: conversationId, body: texto });
+          await apiClient.post("/api/v1/messages", {
+            conversation_id: conversationId,
+            body: texto,
+          });
         } catch {
           // A conversa existe: perder a primeira frase é ruim, perder a tela é
           // pior. O erro é dito, e o atendente continua onde precisa estar.
@@ -365,7 +378,7 @@ export function IniciarConversaDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-lg">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("Nova conversa")}</DialogTitle>
             <DialogDescription>
